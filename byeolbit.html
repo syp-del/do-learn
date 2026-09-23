@@ -1,0 +1,2218 @@
+<title>별빛 책탑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
+
+<style>
+  :root{
+    --cream:#FFF9F5;
+    --surface:#FFFFFF;
+    --berry:#FF8FA8;
+    --berry-deep:#E85C7C;
+    --berry-soft:#FFE3EA;
+    --mint:#9BE0C8;
+    --mint-deep:#3FA687;
+    --mint-soft:#E2F7EF;
+    --butter:#FFD98E;
+    --butter-deep:#D99A2B;
+    --cocoa:#6B4A52;
+    --cocoa-soft:#A5858D;
+    --blush:#F3DDE2;
+    --shadow:0 6px 18px rgba(214,150,166,.16);
+    --shadow-lift:0 12px 30px rgba(214,150,166,.26);
+    --r-lg:22px; --r-md:16px; --r-sm:11px;
+    --display:'Gaegu','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    --body:'Apple SD Gothic Neo','Pretendard','Malgun Gothic',system-ui,sans-serif;
+  }
+
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--cream); color:var(--cocoa);
+    font-family:var(--body); font-size:16px; line-height:1.55;
+    -webkit-text-size-adjust:100%; overscroll-behavior-y:contain;
+  }
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  img{max-width:100%;}
+  button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;}
+  input,select,textarea{font:inherit;color:inherit;}
+  :focus-visible{outline:3px solid var(--berry-deep);outline-offset:2px;border-radius:6px;}
+  .hz{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+
+  /* ---------- shell ---------- */
+  #app{height:100%;display:flex;flex-direction:column;}
+  .screen{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .wrap{max-width:860px;margin:0 auto;padding-left:16px;padding-right:16px;padding-block:18px 26px;}
+
+  .topbar{
+    display:flex;align-items:center;gap:12px;justify-content:space-between;
+    padding:10px 16px calc(10px) 16px;
+    padding-top:calc(10px + env(safe-area-inset-top,0px));
+    background:var(--cream);position:sticky;top:0;z-index:20;
+    border-bottom:1px solid var(--blush);
+  }
+  .topbar h1{font-family:var(--display);font-size:26px;margin:0;letter-spacing:-.01em;}
+  .whoami{display:flex;align-items:center;gap:8px;background:var(--surface);
+    border:2px solid var(--blush);border-radius:999px;padding:5px 13px 5px 6px;box-shadow:var(--shadow);min-height:44px;}
+  .avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:19px;flex:none;}
+  .whoami b{font-family:var(--display);font-size:19px;font-weight:700;}
+
+  nav.tabs{
+    display:flex;background:var(--surface);border-top:2px solid var(--blush);
+    padding-bottom:env(safe-area-inset-bottom,0px);z-index:30;
+  }
+  nav.tabs button{
+    flex:1;min-height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+    font-family:var(--display);font-size:16px;font-weight:700;color:var(--cocoa-soft);
+    border-top:4px solid transparent;margin-top:-2px;padding:6px 2px;
+  }
+  nav.tabs button .ico{font-size:21px;line-height:1;}
+  nav.tabs button[aria-current="true"]{color:var(--berry-deep);border-top-color:var(--berry);}
+
+  /* ---------- pieces ---------- */
+  .card{background:var(--surface);border-radius:var(--r-lg);padding:16px 17px;box-shadow:var(--shadow);}
+  .stack{display:flex;flex-direction:column;gap:14px;}
+  .row{display:flex;align-items:center;gap:10px;}
+  .grow{flex:1;min-width:0;}
+  h2.sec{font-family:var(--display);font-size:24px;margin:2px 0 10px;}
+  h3.sub{font-family:var(--display);font-size:20px;margin:0 0 8px;}
+  .muted{color:var(--cocoa-soft);font-size:14px;}
+  .big{font-family:var(--display);font-size:46px;line-height:1;font-variant-numeric:tabular-nums;}
+
+  .btn{
+    min-height:52px;padding:0 20px;border-radius:999px;background:var(--berry);color:#fff;
+    font-family:var(--display);font-size:20px;font-weight:700;box-shadow:var(--shadow);
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:transform .12s;
+  }
+  .btn:active{transform:scale(.96);}
+  .btn.ghost{background:var(--surface);color:var(--cocoa);border:2px solid var(--blush);box-shadow:none;}
+  .btn.mint{background:var(--mint-deep);}
+  .btn.wide{width:100%;}
+  .btn.sm{min-height:42px;font-size:17px;padding:0 15px;}
+  .btn[disabled]{opacity:.45;box-shadow:none;}
+
+  .chip{
+    min-height:44px;padding:0 15px;border-radius:999px;border:2px solid var(--blush);
+    background:var(--surface);font-family:var(--display);font-size:18px;font-weight:700;
+    display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  }
+  .chip[aria-pressed="true"]{background:var(--berry-soft);border-color:var(--berry);color:var(--berry-deep);}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+
+  .field{width:100%;min-height:52px;border-radius:var(--r-md);border:2px solid var(--blush);
+    background:var(--surface);padding:10px 14px;font-size:17px;}
+  .field:focus{border-color:var(--berry);}
+
+  .banner{border-radius:var(--r-md);padding:11px 14px;font-size:14px;display:flex;gap:9px;align-items:flex-start;}
+  .banner.warn{background:var(--butter);color:#6a4a10;}
+  .banner.info{background:var(--mint-soft);color:#215a49;}
+
+  .empty{text-align:center;padding:30px 16px;}
+  .empty .face{font-size:44px;}
+  .empty p{margin:8px 0 14px;color:var(--cocoa-soft);}
+
+  /* ---------- today ---------- */
+  .todo{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--blush);}
+  .todo:last-child{border-bottom:0;}
+  .tick{width:46px;height:46px;border-radius:50%;border:3px solid var(--blush);background:var(--surface);
+    display:grid;place-items:center;font-size:23px;flex:none;transition:transform .15s;}
+  .tick[aria-pressed="true"]{background:var(--mint);border-color:var(--mint-deep);}
+  .tick:active{transform:scale(.9);}
+  .todo .name{font-size:17px;}
+  .todo.done .name{color:var(--cocoa-soft);text-decoration:line-through;}
+  .timer{font-family:var(--display);font-size:19px;font-variant-numeric:tabular-nums;color:var(--berry-deep);min-width:52px;text-align:right;}
+
+  .weekstrip{display:flex;gap:6px;justify-content:space-between;}
+  .weekstrip div{flex:1;text-align:center;}
+  .weekstrip .dot{height:38px;border-radius:12px;background:var(--blush);display:grid;place-items:center;font-size:19px;}
+  .weekstrip .dot.on{background:var(--berry-soft);}
+  .weekstrip .dot.today{outline:3px solid var(--berry);outline-offset:1px;}
+  .weekstrip small{font-size:12px;color:var(--cocoa-soft);}
+
+  /* ---------- shelf ---------- */
+  /* 책탑은 좌우로 밀지 않고 한 화면에 모두 보이도록 줄바꿈 격자 */
+  .towers{display:grid;grid-template-columns:repeat(3,1fr);gap:20px 12px;align-items:end;}
+  @media (max-width:430px){ .towers{grid-template-columns:repeat(2,1fr);} }
+  @media (min-width:1120px){ .towers{grid-template-columns:repeat(6,1fr);} }
+  .tower{display:flex;flex-direction:column;justify-content:flex-end;min-width:0;}
+  .tower .spines{display:flex;flex-direction:column-reverse;gap:3px;min-height:76px;justify-content:flex-start;}
+  .spine{
+    border-radius:5px 7px 7px 5px;display:flex;align-items:center;padding:0 10px;
+    font-size:13px;color:#4A3036;cursor:pointer;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    box-shadow:inset 3px 0 0 rgba(255,255,255,.75), inset 0 -3px 0 rgba(90,50,60,.10);
+  }
+  .spine.fresh{animation:drop .55s cubic-bezier(.3,1.5,.5,1);}
+  @keyframes drop{from{transform:translateY(-52px);opacity:0}to{transform:none;opacity:1}}
+  .ribbon{height:7px;border-radius:4px;background:var(--butter);
+    box-shadow:inset 0 -2px 0 rgba(150,100,10,.18);}
+  .tower .ghostbox{border:2px dashed var(--blush);border-radius:8px;height:64px;
+    display:grid;place-items:center;font-size:13px;color:var(--cocoa-soft);}
+  .plank{height:12px;border-radius:0 0 7px 7px;background:linear-gradient(180deg,#F0D3D9,#E4BFC7);
+    box-shadow:0 5px 10px rgba(198,150,162,.30);margin-top:4px;}
+  .tower .label{font-family:var(--display);font-size:19px;text-align:center;margin-top:8px;}
+  .tower .count{font-size:13px;color:var(--cocoa-soft);text-align:center;}
+
+  .covers{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px;}
+  .cover{aspect-ratio:3/4;border-radius:var(--r-sm);overflow:hidden;background:var(--blush);
+    display:grid;place-items:center;text-align:center;font-size:12px;padding:6px;box-shadow:var(--shadow);}
+  .cover img{width:100%;height:100%;object-fit:cover;}
+
+  /* ---------- words ---------- */
+  .wordcard{border:2px solid var(--blush);border-radius:var(--r-md);padding:13px 14px;}
+  .wordcard .term{font-family:var(--display);font-size:27px;line-height:1.1;}
+  .boxdots{display:flex;gap:3px;}
+  .boxdots i{width:8px;height:8px;border-radius:50%;background:var(--blush);display:block;}
+  .boxdots i.on{background:var(--berry);}
+  .flash{min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;}
+  .flash .term{font-family:var(--display);font-size:42px;}
+
+  /* ---------- versus ---------- */
+  .vsrow{display:grid;grid-template-columns:1fr 66px 1fr;align-items:center;gap:9px;margin-bottom:13px;}
+  .bar{height:30px;border-radius:999px;background:var(--blush);overflow:hidden;display:flex;}
+  .bar.l{justify-content:flex-end;}
+  .bar span{display:block;height:100%;border-radius:999px;transition:width .5s cubic-bezier(.3,1.2,.5,1);}
+  .vslabel{font-family:var(--display);font-size:17px;text-align:center;color:var(--cocoa-soft);}
+  .vsnum{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums;}
+  .badge{border-radius:var(--r-md);padding:11px;text-align:center;background:var(--butter);}
+  .badge .b{font-family:var(--display);font-size:19px;}
+  .gauge{height:26px;border-radius:999px;background:var(--blush);overflow:hidden;}
+  .gauge span{display:block;height:100%;background:linear-gradient(90deg,var(--mint),var(--butter),var(--berry));}
+
+  /* ---------- games ---------- */
+  .lock{text-align:center;padding:26px 16px;}
+  .lock .big-lock{font-size:60px;}
+  .memgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;max-width:420px;margin:0 auto;}
+  .memcard{aspect-ratio:1;border-radius:var(--r-sm);background:var(--berry);display:grid;place-items:center;
+    font-size:30px;box-shadow:var(--shadow);transition:transform .2s;}
+  .memcard.flipped{background:var(--surface);border:2px solid var(--blush);}
+  .memcard.matched{background:var(--mint-soft);border:2px solid var(--mint-deep);}
+  .memcard:active{transform:scale(.94);}
+  #starcanvas{width:100%;max-width:460px;aspect-ratio:3/4;border-radius:var(--r-md);background:#FFF3F6;
+    display:block;margin:0 auto;touch-action:none;box-shadow:var(--shadow);}
+  .matchcol{display:flex;flex-direction:column;gap:8px;}
+  .matchbtn{min-height:54px;border-radius:var(--r-md);border:2px solid var(--blush);background:var(--surface);
+    padding:6px 10px;font-size:15px;text-align:center;}
+  .matchbtn[aria-pressed="true"]{background:var(--berry-soft);border-color:var(--berry);}
+  .matchbtn.gone{opacity:.25;}
+
+  /* ---------- modal ---------- */
+  .modal{position:fixed;inset:0;background:rgba(74,48,54,.45);z-index:60;display:flex;
+    align-items:flex-end;justify-content:center;padding:0;}
+  .sheet{background:var(--cream);width:100%;max-width:640px;border-radius:26px 26px 0 0;
+    padding:18px 17px calc(20px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow-y:auto;
+    animation:up .26s cubic-bezier(.2,1.1,.4,1);}
+  @keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+  /* 패드처럼 넓은 화면에서는 아래 시트가 아니라 한가운데 카드로 */
+  @media (min-width:700px){
+    .modal{align-items:center;padding:24px;}
+    .sheet{border-radius:26px;max-height:84vh;padding:22px 22px 22px;}
+  }
+  .sheet h3{font-family:var(--display);font-size:25px;margin:0 0 4px;}
+  .sheet .close{position:absolute;right:14px;top:10px;}
+  #video{width:100%;border-radius:var(--r-md);background:#000;aspect-ratio:4/3;object-fit:cover;}
+
+  .pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:290px;margin:0 auto;}
+  .pinpad button{min-height:60px;border-radius:var(--r-md);background:var(--surface);
+    border:2px solid var(--blush);font-family:var(--display);font-size:27px;}
+  .pindots{display:flex;gap:11px;justify-content:center;margin:12px 0;}
+  .pindots i{width:16px;height:16px;border-radius:50%;background:var(--blush);display:block;}
+  .pindots i.on{background:var(--berry);}
+
+  /* ---------- 시작 화면 ---------- */
+  .gate{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:26px 16px;}
+  .hero{width:100%;max-width:620px;text-align:center;}
+  .hero .sky{
+    border-radius:30px;padding:26px 20px 24px;position:relative;overflow:hidden;
+    background:linear-gradient(170deg,#FFE9F0 0%,#FFF4E8 55%,#E9F8F1 100%);
+    box-shadow:var(--shadow-lift);
+  }
+  .hero .sky::after{
+    content:'';position:absolute;inset:auto -30px -60px -30px;height:120px;border-radius:50%;
+    background:rgba(255,255,255,.55);
+  }
+  .hero .datewrap{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;}
+  .hero .dateline{font-family:var(--display);font-size:22px;color:var(--cocoa);}
+  .wbtn{border-radius:999px;background:rgba(255,255,255,.8);border:2px solid rgba(255,255,255,.9);
+    padding:3px 13px 3px 9px;font-family:var(--display);font-size:19px;min-height:40px;display:inline-flex;align-items:center;gap:5px;}
+  .hero .greet{position:relative;z-index:1;font-family:var(--display);font-size:38px;line-height:1.2;margin:12px 0 4px;}
+  .hero .cheer{position:relative;z-index:1;font-size:16px;color:#7B5760;margin:0;}
+  .hero .doodle{position:relative;z-index:1;font-size:38px;margin-top:8px;}
+
+  .kidpick{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
+  .kidcard{width:168px;border-radius:26px;background:var(--surface);box-shadow:var(--shadow-lift);
+    padding:20px 12px 16px;text-align:center;transition:transform .15s;border:3px solid transparent;}
+  .kidcard:active{transform:scale(.95);}
+  .kidcard .av{width:76px;height:76px;border-radius:50%;margin:0 auto 9px;display:grid;place-items:center;font-size:40px;}
+  .kidcard .nm{font-family:var(--display);font-size:25px;}
+  .kidcard .mini{display:flex;justify-content:center;gap:10px;margin-top:7px;font-size:13px;color:var(--cocoa-soft);}
+  .kidcard .ring{height:8px;border-radius:999px;background:var(--blush);margin-top:10px;overflow:hidden;}
+  .kidcard .ring span{display:block;height:100%;border-radius:999px;}
+
+  .weatherpick{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;}
+  .weatherpick button{width:82px;height:82px;border-radius:22px;border:2px solid var(--blush);
+    background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:30px;}
+  .weatherpick button span{font-size:13px;font-family:var(--display);}
+  .weatherpick button[aria-pressed="true"]{background:var(--berry-soft);border-color:var(--berry);}
+
+  /* 승인 요청 알림 */
+  .askcard{border-radius:22px;padding:15px 16px;background:var(--butter);color:#67480C;
+    box-shadow:var(--shadow);display:flex;gap:12px;align-items:center;}
+  .askcard .bell{font-size:30px;animation:ring 1.6s ease-in-out infinite;}
+  @keyframes ring{0%,70%,100%{transform:rotate(0)}80%{transform:rotate(13deg)}90%{transform:rotate(-13deg)}}
+  .dot-badge{display:inline-block;min-width:20px;height:20px;border-radius:999px;background:var(--berry-deep);
+    color:#fff;font-size:12px;line-height:20px;text-align:center;padding:0 5px;margin-left:5px;}
+  .waiting{display:flex;gap:5px;justify-content:center;margin:10px 0;}
+  .waiting i{width:11px;height:11px;border-radius:50%;background:var(--berry);animation:bob 1.1s infinite;}
+  .waiting i:nth-child(2){animation-delay:.15s} .waiting i:nth-child(3){animation-delay:.3s}
+  @keyframes bob{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-7px);opacity:1}}
+
+  /* 상단 날짜 칩 */
+  .topbar .stack-t{display:flex;flex-direction:column;gap:1px;min-width:0;}
+  .datechip{font-size:13px;color:var(--cocoa-soft);display:inline-flex;align-items:center;gap:4px;
+    background:none;padding:0;text-align:left;}
+
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden;}
+  .confetti i{position:absolute;width:10px;height:14px;border-radius:2px;animation:fall 1.7s linear forwards;}
+  @keyframes fall{to{transform:translateY(105vh) rotate(640deg);opacity:0}}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms !important;transition-duration:.01ms !important;}
+  }
+  @media (max-width:420px){
+    .tower{width:144px;}
+    nav.tabs button{font-size:14px;}
+  }
+</style>
+
+<div id="app">
+  <div class="topbar">
+    <div class="stack-t">
+      <h1>별빛 책탑</h1>
+      <button class="datechip" id="dateChip"></button>
+    </div>
+    <button class="whoami" id="whoami" hidden></button>
+  </div>
+  <div class="screen" id="screen"></div>
+  <nav class="tabs" id="tabs" hidden></nav>
+</div>
+<div id="modalRoot"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   별빛 책탑 — 초등 1학년 자매를 위한 읽기·낱말·할 일 앱
+   단일 HTML. 데이터는 Artifact의 db 기능에 저장되고,
+   db를 쓸 수 없는 환경에서는 메모리로 동작한다(경고 배너 표시).
+   ============================================================ */
+
+const COLLS = ['profiles','books','words','todos','sessions','unlocks','dict','requests'];
+const DEFAULT_CATS = ['그림책','동화책','영어책','지식책','만화','시'];
+const KID_COLORS = [
+  {bg:'#FFE3EA', ink:'#E85C7C', bar:'#FF8FA8'},
+  {bg:'#E2F7EF', ink:'#2F8F73', bar:'#6FCFB0'},
+  {bg:'#FFF1D6', ink:'#B77E15', bar:'#FFD98E'},
+  {bg:'#EAE6FB', ink:'#6A5AC0', bar:'#B3A6EE'}
+];
+const AVATARS = ['🐰','🐱','🦊','🐻','🐨','🦄','🐧','🐣'];
+const DAYNAMES = ['일','월','화','수','목','금','토'];
+
+const WEATHERS = [
+  { icon:'☀️', label:'맑음' }, { icon:'🌤', label:'구름 조금' }, { icon:'☁️', label:'흐림' },
+  { icon:'🌧', label:'비' },  { icon:'⛈', label:'천둥비' },    { icon:'❄️', label:'눈' },
+  { icon:'🌫', label:'안개' }, { icon:'🌬', label:'바람' }
+];
+// 오늘의 응원 문구 — 날짜로 고르므로 하루 동안 바뀌지 않는다
+const CHEERS = [
+  '오늘도 한 뼘 자라는 날이에요',
+  '천천히 가도 괜찮아요. 멈추지만 않으면 돼요',
+  '어제보다 한 글자 더 읽으면 그게 성공이에요',
+  '모르는 낱말을 만나면 오히려 좋아요. 하나 배우니까요',
+  '작은 일을 끝낸 사람이 큰 일도 해내요',
+  '오늘 읽은 책 한 권이 내일의 이야기가 돼요',
+  '틀려도 괜찮아요. 해 본 사람만 틀릴 수 있어요',
+  '집중한 10분이 흘려보낸 1시간보다 길어요',
+  '책장에 책이 한 권씩 쌓이는 소리가 들려요',
+  '오늘의 나는 어제의 나보다 조금 더 멋져요'
+];
+function cheerOfDay(){
+  const d = new Date();
+  const n = Math.floor((d - new Date(d.getFullYear(),0,0)) / 86400000);
+  return CHEERS[n % CHEERS.length];
+}
+function greetOfHour(){
+  const h = new Date().getHours();
+  if (h < 6)  return '아직 이른 새벽이에요';
+  if (h < 11) return '좋은 아침이에요!';
+  if (h < 14) return '점심 먹고 힘내요!';
+  if (h < 18) return '즐거운 오후예요!';
+  if (h < 21) return '오늘 하루 수고했어요';
+  return '잘 준비할 시간이에요';
+}
+function dateLabel(){
+  const d = new Date();
+  return `${d.getMonth()+1}월 ${d.getDate()}일 ${DAYNAMES[d.getDay()]}요일`;
+}
+function todayWeather(){
+  const w = S.settings.weather;
+  return (w && w.date === todayKey()) ? w : null;
+}
+
+/* ---------- 상태 ---------- */
+const S = {
+  db:null, sample:null, assets:null, downloads:null,
+  capsResolved:false, persistent:false,
+  data:Object.fromEntries(COLLS.map(c=>[c,[]])),
+  settings:{ pin:'1234', gameMinutes:20, weeklyGoal:20, cats:DEFAULT_CATS.slice(),
+             kakaoKey:'', weather:null, geo:null },
+  kidId:null, tab:'today',
+  running:null,           // {todoId, startedAt}
+  freshBookId:null,
+  view:{}                 // 화면별 임시 상태
+};
+
+/* ---------- 유틸 ---------- */
+const $ = s => document.querySelector(s);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const todayKey = (d=new Date()) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const clamp = (n,a,b) => Math.max(a, Math.min(b, n));
+
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+function fmtDur(sec){
+  sec = Math.max(0, Math.round(sec));
+  const h = Math.floor(sec/3600), m = Math.floor(sec%3600/60);
+  if (h) return `${h}시간 ${m}분`;
+  if (m) return `${m}분`;
+  return `${sec}초`;
+}
+function fmtClock(sec){
+  sec = Math.max(0, Math.round(sec));
+  return `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`;
+}
+function weekStart(d=new Date()){            // 월요일 시작
+  const x = new Date(d); x.setHours(0,0,0,0);
+  x.setDate(x.getDate() - ((x.getDay()+6)%7));
+  return x;
+}
+/* 이름 뒤 조사를 받침에 맞춰 붙인다 — "하윤이가" / "나리가" */
+function hasJong(name){
+  const s = String(name||'').trim();
+  if (!s) return false;
+  const c = s.charCodeAt(s.length-1);
+  if (c < 0xAC00 || c > 0xD7A3) return false;     // 한글이 아니면 받침 없는 걸로
+  return (c - 0xAC00) % 28 > 0;
+}
+const subj = name => `${name}${hasJong(name) ? '이가' : '가'}`;   // ~이/가
+const topic = name => `${name}${hasJong(name) ? '이는' : '는'}`;  // ~이/는
+
+function hueFor(str){
+  let h = 0; for (let i=0;i<String(str).length;i++) h = (h*31 + str.charCodeAt(i)) % 360;
+  return h;
+}
+const SPINE_COLORS = ['#FFC2CE','#FFD6A5','#BFE7D2','#CBDDF7','#E4D2F3','#FFE79C','#F7C4DC','#AEE0DA'];
+function spineColor(id){ return SPINE_COLORS[hueFor(id) % SPINE_COLORS.length]; }
+function spineHeight(id){ return 28 + (hueFor(id + 'h') % 4) * 4; }   // 책마다 두께가 다르게
+
+/* ============================================================
+   저장 계층 — db가 있으면 db, 없으면 메모리
+   ============================================================ */
+const Store = {
+  async add(coll, data){
+    const id = uid();
+    S.data[coll].push({id, ...data});
+    render();
+    if (S.db){ try { await S.db.collection(coll).doc(id).set(data); } catch(e){ warnWrite(e); } }
+    return id;
+  },
+  async update(coll, id, patch){
+    const rec = S.data[coll].find(r=>r.id===id);
+    if (rec) Object.assign(rec, patch);
+    render();
+    if (S.db){ try { await S.db.collection(coll).doc(id).update(patch); } catch(e){ warnWrite(e); } }
+  },
+  async remove(coll, id){
+    S.data[coll] = S.data[coll].filter(r=>r.id!==id);
+    render();
+    if (S.db){ try { await S.db.collection(coll).doc(id).delete(); } catch(e){ warnWrite(e); } }
+  },
+  async saveSettings(patch){
+    Object.assign(S.settings, patch);
+    render();
+    if (S.db){ try { await S.db.doc('settings/app').set({...S.settings}); } catch(e){ warnWrite(e); } }
+  }
+};
+let writeWarned = false;
+function warnWrite(e){
+  if (writeWarned) return;
+  writeWarned = true;
+  S.persistent = false;
+  console.warn('db write failed', e);
+  render();
+}
+
+/* ---------- 기능(capability) 연결 ---------- */
+async function connect(){
+  const c = window.claude;
+  if (!c || typeof c.use !== 'function'){ S.capsResolved = true; render(); return; }
+  const grab = async n => { try { return await c.use(n); } catch(e){ return null; } };
+  const [db, sample, assets, downloads] = await Promise.all(
+    ['db','sample','assets','downloads'].map(grab)
+  );
+  S.sample = sample; S.assets = assets; S.downloads = downloads;
+  S.capsResolved = true;
+
+  if (db){
+    S.db = db; S.persistent = true;
+    for (const coll of COLLS){
+      try {
+        db.collection(coll).onSnapshot(snap => {
+          S.data[coll] = snap.docs.map(d => ({ id:d.id, ...(d.data()||{}) }));
+          render();
+        }, err => { console.warn('snapshot', coll, err); });
+      } catch(e){ console.warn('subscribe failed', coll, e); }
+    }
+    try {
+      db.doc('settings/app').onSnapshot(snap => {
+        if (snap.exists){
+          const d = snap.data()||{};
+          S.settings = {...S.settings, ...d};
+          if (!Array.isArray(S.settings.cats) || !S.settings.cats.length) S.settings.cats = DEFAULT_CATS.slice();
+        }
+        render();
+      });
+    } catch(e){}
+  }
+  render();
+}
+
+/* ============================================================
+   데이터 조회 헬퍼
+   ============================================================ */
+const kids = () => S.data.profiles.slice().sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||''));
+const kid = id => S.data.profiles.find(p=>p.id===id);
+const curKid = () => kid(S.kidId);
+const kidColor = k => KID_COLORS[(k && k.colorIdx) || 0] || KID_COLORS[0];
+
+function todosFor(kidId, date=new Date()){
+  const dow = date.getDay();
+  return S.data.todos.filter(t =>
+    t.kidId === kidId && !t.archived &&
+    (!Array.isArray(t.repeatDays) || t.repeatDays.length === 0 || t.repeatDays.includes(dow))
+  );
+}
+function sessionOf(kidId, todoId, dateKey){
+  return S.data.sessions.find(s => s.kidId===kidId && s.todoId===todoId && s.date===dateKey);
+}
+function doneCount(kidId, dateKey){
+  const list = todosFor(kidId, new Date(dateKey + 'T12:00:00'));
+  return list.filter(t => { const s = sessionOf(kidId, t.id, dateKey); return s && s.done; }).length;
+}
+function todaySeconds(kidId){
+  const k = todayKey();
+  let sum = S.data.sessions.filter(s=>s.kidId===kidId && s.date===k)
+    .reduce((a,s)=>a+(s.durationSec||0),0);
+  if (S.running && S.kidId===kidId) sum += (Date.now()-S.running.startedAt)/1000;
+  return sum;
+}
+function allDoneToday(kidId){
+  const list = todosFor(kidId);
+  return list.length > 0 && list.every(t => { const s = sessionOf(kidId, t.id, todayKey()); return s && s.done; });
+}
+function activeUnlock(kidId){
+  const now = Date.now();
+  return S.data.unlocks.find(u => u.kidId===kidId && new Date(u.expiresAt).getTime() > now);
+}
+function weekStats(kidId){
+  const start = weekStart().getTime();
+  const books = S.data.books.filter(b=>b.kidId===kidId && new Date(b.readAt||0).getTime()>=start).length;
+  const words = S.data.words.filter(w=>w.kidId===kidId && new Date(w.createdAt||0).getTime()>=start).length;
+  let sched = 0, done = 0;
+  for (let i=0;i<7;i++){
+    const d = new Date(weekStart()); d.setDate(d.getDate()+i);
+    if (d > new Date()) break;
+    const key = todayKey(d);
+    const list = todosFor(kidId, d);
+    sched += list.length;
+    done += list.filter(t => { const s = sessionOf(kidId, t.id, key); return s && s.done; }).length;
+  }
+  return { books, words, done, sched, rate: sched ? Math.round(done/sched*100) : 0 };
+}
+
+/* ============================================================
+   렌더 진입점
+   ============================================================ */
+let renderQueued = false;
+function render(){
+  if (renderQueued) return;
+  renderQueued = true;
+  requestAnimationFrame(() => { renderQueued = false; draw(); });
+}
+
+function draw(){
+  const screen = $('#screen'), tabs = $('#tabs'), who = $('#whoami');
+
+  const w = todayWeather();
+  $('#dateChip').innerHTML = `${esc(dateLabel())} <span style="font-size:15px">${w ? w.icon : '＋'}</span>`;
+  $('#dateChip').setAttribute('aria-label', w ? `오늘 날씨 ${w.label}, 눌러서 바꾸기` : '오늘 날씨 고르기');
+
+  // 아직 아무 프로필도 없음 → 첫 설정
+  if (!S.data.profiles.length){
+    tabs.hidden = true; who.hidden = true;
+    screen.innerHTML = viewSetup();
+    return;
+  }
+  // 프로필 미선택 → 시작 화면
+  if (!S.kidId || !curKid()){
+    tabs.hidden = true; who.hidden = true;
+    screen.innerHTML = viewGate();
+    return;
+  }
+
+  const k = curKid(), col = kidColor(k);
+  who.hidden = false;
+  who.innerHTML = `<span class="avatar" style="background:${col.bg}">${esc(k.avatar||'🐰')}</span><b>${esc(k.name)}</b>`;
+
+  tabs.hidden = false;
+  const items = [
+    ['today','오늘','🌤'], ['shelf','책장','📚'], ['words','단어','🫧'],
+    ['versus','대결','🏆'], ['games','게임','🎈']
+  ];
+  tabs.innerHTML = items.map(([id,label,ico]) =>
+    `<button data-tab="${id}" aria-current="${S.tab===id}"><span class="ico">${ico}</span>${label}</button>`
+  ).join('');
+
+  // 다른 아이가 올린 승인 요청은 어느 화면에서든 보이게 한다 (부모님 폰에서 바로 승인)
+  const others = pendingRequests().filter(r => r.kidId !== S.kidId);
+
+  const views = { today:viewToday, shelf:viewShelf, words:viewWords, versus:viewVersus, games:viewGames };
+  screen.innerHTML = `<div class="wrap stack">${storageBanner()}${others.map(askCard).join('')}${(views[S.tab]||viewToday)()}</div>`;
+}
+
+function storageBanner(){
+  if (!S.capsResolved) return '';
+  if (S.persistent) return '';
+  return `<div class="banner warn"><span>⚠️</span><span><b>기록이 저장되지 않아요.</b>
+    이 화면을 닫으면 오늘 넣은 내용이 사라집니다. claude.ai에 로그인한 상태로 열어주세요.</span></div>`;
+}
+
+/* ============================================================
+   화면: 첫 설정 / 프로필 선택
+   ============================================================ */
+function viewSetup(){
+  return `<div class="wrap gate">
+    <div style="font-size:52px">🌸</div>
+    <h2 class="sec" style="margin:0">처음 오셨네요!</h2>
+    <p class="muted" style="text-align:center;max-width:380px;margin:0">
+      함께 쓸 두 친구의 이름을 알려주세요. 나중에 부모님 화면에서 바꿀 수 있어요.</p>
+    <div class="card stack" style="width:100%;max-width:380px">
+      <input class="field" id="setup1" placeholder="첫째 이름" maxlength="10">
+      <input class="field" id="setup2" placeholder="둘째 이름" maxlength="10">
+      <button class="btn wide" id="setupGo">시작하기</button>
+      <p class="muted" style="text-align:center;margin:0">부모님 비밀번호는 <b>1234</b>로 시작해요.</p>
+    </div>
+  </div>`;
+}
+
+function viewGate(){
+  const w = todayWeather();
+  const pend = pendingRequests();
+
+  return `<div class="wrap gate">
+    ${pend.length ? `<div style="width:100%;max-width:620px" class="stack">${pend.map(askCard).join('')}</div>` : ''}
+
+    <div class="hero">
+      <div class="sky">
+        <div class="datewrap">
+          <span class="dateline">${esc(dateLabel())}</span>
+          <button class="wbtn" id="pickWeather">${w ? `${w.icon} ${esc(w.label)}` : '☁️ 오늘 날씨는?'}</button>
+        </div>
+        <div class="greet">${esc(greetOfHour())}</div>
+        <p class="cheer">${esc(cheerOfDay())}</p>
+        <div class="doodle">📚 ⭐ 🫧</div>
+      </div>
+    </div>
+
+    <h2 class="sec" style="margin:0">누가 공부할까요?</h2>
+    <div class="kidpick">${kids().map(k=>{
+      const c = kidColor(k), st = weekStats(k.id);
+      const list = todosFor(k.id), done = doneCount(k.id, todayKey());
+      const pct = list.length ? done/list.length*100 : 0;
+      return `<button class="kidcard" data-pick="${k.id}" style="border-color:${pct>=100?c.bar:'transparent'}">
+        <span class="av" style="background:${c.bg}">${esc(k.avatar||'🐰')}</span>
+        <div class="nm">${esc(k.name)}</div>
+        <div class="mini"><span>📚 ${st.books}</span><span>🫧 ${st.words}</span></div>
+        <div class="ring"><span style="width:${pct}%;background:${c.bar}"></span></div>
+        <div class="muted" style="font-size:12px;margin-top:4px">
+          ${list.length ? (pct>=100 ? '오늘 할 일 끝! 🎉' : `할 일 ${done}/${list.length}`) : '할 일이 없어요'}</div>
+      </button>`;
+    }).join('')}</div>
+
+    <button class="btn ghost sm" id="openParent">👩‍🦰 부모님 화면${
+      pend.length ? `<span class="dot-badge">${pend.length}</span>` : ''}</button>
+  </div>`;
+}
+
+function askCard(r){
+  return `<div class="askcard">
+    <span class="bell">🔔</span>
+    <div class="grow">
+      <b style="font-family:var(--display);font-size:20px">${esc(subj(r.kidName||'아이'))} 게임을 하고 싶대요!</b>
+      <div style="font-size:13px">오늘 할 일을 모두 마쳤어요 · ${r.minutes||20}분 요청</div>
+    </div>
+    <button class="btn sm" data-approve="${r.id}">승인</button>
+    <button class="btn ghost sm" data-deny="${r.id}">나중에</button>
+  </div>`;
+}
+function pendingRequests(){
+  return S.data.requests.filter(r => r.status === 'pending')
+    .sort((a,b)=>String(a.createdAt).localeCompare(String(b.createdAt)));
+}
+
+/* ============================================================
+   화면: 오늘
+   ============================================================ */
+function viewToday(){
+  const k = curKid(), col = kidColor(k);
+  const list = todosFor(S.kidId), key = todayKey();
+  const done = doneCount(S.kidId, key);
+  const all = list.length > 0 && done === list.length;
+
+  const strip = Array.from({length:7}, (_,i) => {
+    const d = new Date(weekStart()); d.setDate(d.getDate()+i);
+    const dk = todayKey(d), isToday = dk === key, future = d > new Date();
+    const tl = todosFor(S.kidId, d);
+    const ok = tl.length > 0 && doneCount(S.kidId, dk) === tl.length;
+    return `<div><div class="dot ${ok?'on':''} ${isToday?'today':''}">${ok?'🍓':(future?'':'·')}</div>
+      <small>${DAYNAMES[d.getDay()]}</small></div>`;
+  }).join('');
+
+  return `
+  <div class="card">
+    <div class="row">
+      <div class="grow">
+        <div class="muted">오늘 공부한 시간</div>
+        <div class="big" style="color:${col.ink}" id="todayTime">${fmtDur(todaySeconds(S.kidId))}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="muted">할 일</div>
+        <div class="big" style="color:${col.ink}">${done}<span style="font-size:24px">/${list.length}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="sub">이번 주</h3>
+    <div class="weekstrip">${strip}</div>
+  </div>
+
+  <div class="card">
+    <div class="row" style="margin-bottom:6px">
+      <h3 class="sub grow" style="margin:0">오늘 할 일</h3>
+      <button class="btn ghost sm" id="addTodo">+ 추가</button>
+    </div>
+    ${list.length ? list.map(t=>todoRow(t,key)).join('') : `
+      <div class="empty"><div class="face">🧺</div>
+        <p>아직 할 일이 없어요.<br>부모님이 넣어주시거나 직접 추가해도 돼요.</p></div>`}
+  </div>
+
+  ${all ? `<div class="card" style="text-align:center;background:var(--mint-soft)">
+      <div style="font-size:40px">🎉</div>
+      <h3 class="sub">오늘 할 일을 다 했어요!</h3>
+      <button class="btn mint" id="goGames">게임 열어달라고 하기</button>
+    </div>` : ''}
+  `;
+}
+
+function todoRow(t, key){
+  const s = sessionOf(S.kidId, t.id, key);
+  const done = !!(s && s.done);
+  const running = S.running && S.running.todoId === t.id;
+  const secs = (s && s.durationSec) || 0;
+  return `<div class="todo ${done?'done':''}">
+    <button class="tick" data-tick="${t.id}" aria-pressed="${done}" aria-label="${esc(t.title)} 완료">${done?'✓':''}</button>
+    <div class="grow">
+      <div class="name">${esc(t.icon||'')} ${esc(t.title)}</div>
+      ${secs ? `<div class="muted">${fmtDur(secs)} 했어요</div>` : ''}
+    </div>
+    ${running
+      ? `<span class="timer" data-live="${t.id}">${fmtClock((Date.now()-S.running.startedAt)/1000)}</span>
+         <button class="btn sm" data-stop="${t.id}">끝</button>`
+      : (done ? '' : `<button class="btn ghost sm" data-start="${t.id}">시작</button>`)}
+    ${t.createdBy === 'kid' ? `<button class="btn ghost sm" data-deltodo="${t.id}" aria-label="지우기">🗑</button>` : ''}
+  </div>`;
+}
+
+/* ============================================================
+   화면: 책장
+   ============================================================ */
+function viewShelf(){
+  const mine = S.data.books.filter(b=>b.kidId===S.kidId)
+    .sort((a,b)=>String(a.readAt).localeCompare(String(b.readAt)));
+  const cats = S.settings.cats && S.settings.cats.length ? S.settings.cats : DEFAULT_CATS;
+
+  const towers = cats.map(cat=>{
+    const bs = mine.filter(b=>b.category===cat);
+    const shown = bs.slice(-14);
+    const spines = shown.map((b,i)=>{
+      const nth = bs.length - shown.length + i + 1;
+      const ribbon = (nth % 10 === 0) ? `<div class="ribbon" title="${nth}권째!"></div>` : '';
+      return `<div class="spine ${b.id===S.freshBookId?'fresh':''}" data-book="${b.id}"
+        style="background:${spineColor(b.id)};height:${spineHeight(b.id)}px"
+        >${esc(b.title||'제목 없는 책')}</div>${ribbon}`;
+    }).join('');
+    return `<div class="tower">
+      <div class="spines">${spines || '<div class="ghostbox">여기에 쌓아요</div>'}</div>
+      <div class="plank"></div>
+      <div class="label">${esc(cat)}</div>
+      <div class="count">${bs.length}권</div>
+    </div>`;
+  }).join('');
+
+  const withCovers = mine.filter(b=>b.coverAssetId || b.coverUrl).slice().reverse();
+
+  return `
+  <div class="card">
+    <div class="row" style="margin-bottom:10px">
+      <div class="grow">
+        <h3 class="sub" style="margin:0">내 책탑</h3>
+        <div class="muted">모두 ${mine.length}권 읽었어요</div>
+      </div>
+      <button class="btn" id="addBook">📷 책 등록</button>
+    </div>
+    <div class="towers">${towers}</div>
+  </div>
+
+  ${withCovers.length ? `<div class="card">
+    <h3 class="sub">표지 모음</h3>
+    <div class="covers">${withCovers.map(b=>`
+      <button class="cover" data-book="${b.id}">
+        ${b.coverAssetId ? `<img src="/_blob/${esc(b.coverAssetId)}" alt="${esc(b.title)}">`
+          : (b.coverUrl ? `<img src="${esc(b.coverUrl)}" alt="${esc(b.title)}">` : esc(b.title))}
+      </button>`).join('')}</div>
+  </div>` : ''}
+
+  ${!mine.length ? `<div class="card empty">
+    <div class="face">📚</div>
+    <p>첫 책을 등록해 볼까요?<br>책 뒤쪽 바코드를 찍으면 돼요.</p>
+    <button class="btn" id="addBook2">📷 책 등록하기</button>
+  </div>` : ''}
+  `;
+}
+
+/* ============================================================
+   화면: 단어 가방
+   ============================================================ */
+function viewWords(){
+  const mine = S.data.words.filter(w=>w.kidId===S.kidId).slice().reverse();
+  const due = mine.filter(w => !w.nextReviewAt || new Date(w.nextReviewAt) <= new Date());
+  const mode = S.view.dictMode || 'ek';
+  const r = S.view.dictResult;
+
+  return `
+  <div class="card">
+    <h3 class="sub">사전에서 찾아보기</h3>
+    <div class="chips" style="margin-bottom:9px">
+      ${[['ek','영한'],['ee','영영'],['kk','한글']].map(([m,l])=>
+        `<button class="chip" data-mode="${m}" aria-pressed="${mode===m}">${l}</button>`).join('')}
+    </div>
+    <div class="row" style="gap:8px">
+      <input class="field grow" id="dictInput"
+        placeholder="${S.view.listening ? '듣고 있어요…' : (mode==='kk'?'낱말을 적어요 (예: 무지개)':'단어를 적어요 (예: rainbow)')}"
+        value="${esc(S.view.dictQuery||'')}" enterkeyhint="search">
+      <button class="btn ${S.view.listening?'':'ghost'} sm" id="micBtn"
+        aria-label="말로 찾기" aria-pressed="${!!S.view.listening}" style="min-width:56px">${S.view.listening?'🔴':'🎙'}</button>
+    </div>
+    ${S.view.listening ? `<p class="muted" style="text-align:center;margin:8px 0 0">
+      🎧 말해보세요 — 들은 대로 적어드릴게요</p>` : ''}
+    <button class="btn wide" id="dictGo" style="margin-top:9px">찾아보기</button>
+    ${S.view.dictBusy ? `<p class="muted" style="text-align:center;margin-top:10px">🔎 찾는 중이에요…</p>` : ''}
+    ${S.view.dictError ? `<div class="banner warn" style="margin-top:10px"><span>😥</span><span>${esc(S.view.dictError)}</span></div>` : ''}
+    ${r ? `<div class="wordcard" style="margin-top:12px">
+        <div class="row">
+          <div class="grow">
+            <div class="term">${esc(r.emoji||'')} ${esc(r.term)}</div>
+            ${r.reading ? `<div class="muted">${esc(r.reading)}</div>` : ''}
+          </div>
+          <button class="btn ghost sm" data-say="${esc(r.term)}" data-lang="${mode==='kk'?'ko':'en'}">🔊</button>
+        </div>
+        <p style="margin:8px 0 4px">${esc(r.meaning)}</p>
+        ${r.example ? `<p class="muted" style="margin:0">“${esc(r.example)}”</p>` : ''}
+        ${r.exampleKo ? `<p class="muted" style="margin:2px 0 0">${esc(r.exampleKo)}</p>` : ''}
+        <button class="btn wide mint sm" id="saveWord" style="margin-top:11px">🫧 단어 가방에 담기</button>
+      </div>` : ''}
+  </div>
+
+  ${due.length ? `<div class="card" style="background:var(--mint-soft)">
+    <h3 class="sub">복습할 단어 ${Math.min(due.length,10)}장</h3>
+    <p class="muted" style="margin:0 0 10px">한 번 더 보면 오래 기억나요.</p>
+    <button class="btn mint wide" id="startReview">복습 시작</button>
+  </div>` : ''}
+
+  <div class="card">
+    <div class="row" style="margin-bottom:8px">
+      <h3 class="sub grow" style="margin:0">내 단어 가방</h3>
+      <span class="muted">${mine.length}개</span>
+    </div>
+    ${mine.length ? `<div class="stack">${mine.map(w=>`
+      <div class="wordcard">
+        <div class="row">
+          <div class="grow">
+            <div class="term">${esc(w.emoji||'')} ${esc(w.term)}</div>
+            <div style="font-size:15px">${esc(w.meaning||'')}</div>
+          </div>
+          <div class="stack" style="gap:6px;align-items:flex-end">
+            <button class="btn ghost sm" data-say="${esc(w.term)}" data-lang="${w.lang==='ko'?'ko':'en'}">🔊</button>
+            <div class="boxdots">${[1,2,3,4,5].map(i=>`<i class="${(w.box||1)>=i?'on':''}"></i>`).join('')}</div>
+          </div>
+        </div>
+      </div>`).join('')}</div>`
+    : `<div class="empty"><div class="face">🫧</div>
+        <p>아직 담은 단어가 없어요.<br>책을 등록할 때 어려운 낱말을 담아보세요.</p></div>`}
+  </div>`;
+}
+
+/* ============================================================
+   화면: 대결
+   ============================================================ */
+function viewVersus(){
+  const ks = kids();
+  if (ks.length < 2){
+    return `<div class="card empty"><div class="face">🏆</div>
+      <p>친구가 한 명 더 있어야 대결할 수 있어요.<br>부모님 화면에서 추가해 주세요.</p></div>`;
+  }
+  const [a, b] = ks;
+  const sa = weekStats(a.id), sb = weekStats(b.id);
+  const ca = kidColor(a), cb = kidColor(b);
+
+  const rowFor = (label, va, vb) => {
+    const max = Math.max(va, vb, 1);
+    return `<div class="vsrow">
+      <div class="row" style="gap:6px;justify-content:flex-end">
+        <span class="vsnum" style="color:${ca.ink}">${va}</span>
+        <div class="bar l grow"><span style="width:${va/max*100}%;background:${ca.bar}"></span></div>
+      </div>
+      <div class="vslabel">${label}</div>
+      <div class="row" style="gap:6px">
+        <div class="bar grow"><span style="width:${vb/max*100}%;background:${cb.bar}"></span></div>
+        <span class="vsnum" style="color:${cb.ink}">${vb}</span>
+      </div>
+    </div>`;
+  };
+
+  const badge = (title, ico, va, vb) => {
+    const who = va === vb ? '둘 다' : (va > vb ? a.name : b.name);
+    return `<div class="badge"><div style="font-size:26px">${ico}</div>
+      <div class="b">${title}</div><div class="muted">${esc(who)}</div></div>`;
+  };
+
+  const total = sa.books + sb.books;
+  const goal = S.settings.weeklyGoal || 20;
+
+  return `
+  <div class="card">
+    <h3 class="sub">이번 주 대결</h3>
+    <div class="row" style="justify-content:space-between;margin-bottom:12px">
+      <div class="row"><span class="avatar" style="background:${ca.bg}">${esc(a.avatar)}</span>
+        <b style="font-family:var(--display);font-size:21px">${esc(a.name)}</b></div>
+      <div class="row"><b style="font-family:var(--display);font-size:21px">${esc(b.name)}</b>
+        <span class="avatar" style="background:${cb.bg}">${esc(b.avatar)}</span></div>
+    </div>
+    ${rowFor('읽은 책', sa.books, sb.books)}
+    ${rowFor('모은 단어', sa.words, sb.words)}
+    ${rowFor('할 일 %', sa.rate, sb.rate)}
+  </div>
+
+  <div class="card">
+    <h3 class="sub">이번 주 왕관</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px">
+      ${badge('책왕','📚',sa.books,sb.books)}
+      ${badge('단어왕','🫧',sa.words,sb.words)}
+      ${badge('성실왕','⏰',sa.rate,sb.rate)}
+    </div>
+  </div>
+
+  <div class="card" style="background:var(--mint-soft)">
+    <h3 class="sub">둘이 함께 모으기</h3>
+    <p class="muted" style="margin:0 0 9px">이번 주 같이 ${goal}권을 읽으면 특별한 날이에요!</p>
+    <div class="gauge"><span style="width:${clamp(total/goal*100,0,100)}%"></span></div>
+    <div class="row" style="justify-content:space-between;margin-top:6px">
+      <span class="muted">${total}권</span><span class="muted">${goal}권</span>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   화면: 게임
+   ============================================================ */
+function viewGames(){
+  const un = activeUnlock(S.kidId);
+  if (!un){
+    const mine = pendingRequests().find(r => r.kidId === S.kidId);
+    if (mine){
+      return `<div class="card lock">
+        <div class="big-lock">⏳</div>
+        <h3 class="sub">부모님께 알렸어요!</h3>
+        <p class="muted">부모님이 휴대폰에서 “승인”을 눌러주시면<br>바로 열려요. 조금만 기다려요.</p>
+        <div class="waiting"><i></i><i></i><i></i></div>
+        <button class="btn wide" id="pinHere">부모님이 옆에 계세요</button>
+        <button class="btn ghost wide sm" id="cancelReq" style="margin-top:9px">요청 취소</button>
+      </div>`;
+    }
+    const list = todosFor(S.kidId), left = list.length - doneCount(S.kidId, todayKey());
+    const ready = allDoneToday(S.kidId);
+    return `<div class="card lock">
+      <div class="big-lock">${ready?'🔓':'🔒'}</div>
+      <h3 class="sub">${ready ? '준비 끝! 부모님께 물어보세요' : '게임은 아직 잠겨 있어요'}</h3>
+      <p class="muted">${ready
+        ? '부모님 휴대폰으로 “승인해 주세요” 알림을 보내요.'
+        : (list.length ? `오늘 할 일이 ${left}개 남았어요.` : '오늘 할 일부터 정해볼까요?')}</p>
+      <button class="btn wide" id="askUnlock" ${ready?'':'disabled'}>🔔 부모님께 승인 받기</button>
+    </div>`;
+  }
+
+  const left = (new Date(un.expiresAt).getTime() - Date.now())/1000;
+  const g = S.view.game;
+  return `
+  <div class="card row" style="background:var(--mint-soft)">
+    <div class="grow"><div class="muted">남은 게임 시간</div>
+      <div class="big" style="font-size:34px" id="unlockLeft">${fmtClock(left)}</div></div>
+    ${g ? `<button class="btn ghost sm" id="quitGame">그만하기</button>` : ''}
+  </div>
+  ${g ? gameBody(g) : `
+  <div class="card">
+    <h3 class="sub">무슨 게임 할까요?</h3>
+    <div class="stack">
+      <button class="btn wide ghost" data-game="memory" style="justify-content:flex-start">🐰 같은 그림 찾기</button>
+      <button class="btn wide ghost" data-game="stars" style="justify-content:flex-start">⭐ 별똥별 받기</button>
+      <button class="btn wide ghost" data-game="match" style="justify-content:flex-start">🫧 단어 짝 맞추기 <span class="muted" style="font-size:14px">별 2배!</span></button>
+    </div>
+  </div>`}`;
+}
+
+function gameBody(g){
+  if (g === 'memory'){
+    const st = S.view.mem;
+    return `<div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <h3 class="sub grow" style="margin:0">같은 그림 찾기</h3>
+        <span class="muted">${st.matched.length/2}/${st.cards.length/2} 짝</span>
+      </div>
+      <div class="memgrid">${st.cards.map((c,i)=>{
+        const open = st.matched.includes(i) || st.open.includes(i);
+        return `<button class="memcard ${open?'flipped':''} ${st.matched.includes(i)?'matched':''}"
+          data-mem="${i}">${open?c:''}</button>`;
+      }).join('')}</div>
+      ${st.matched.length === st.cards.length
+        ? `<p style="text-align:center;font-family:var(--display);font-size:24px;margin:14px 0 0">다 찾았어요! ⭐ +3</p>` : ''}
+    </div>`;
+  }
+  if (g === 'stars'){
+    return `<div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <h3 class="sub grow" style="margin:0">별똥별 받기</h3>
+        <span class="muted" id="starScore">0개</span>
+      </div>
+      <canvas id="starcanvas"></canvas>
+      <p class="muted" style="text-align:center;margin:9px 0 0">바구니를 손가락으로 움직여요</p>
+    </div>`;
+  }
+  if (g === 'match'){
+    const st = S.view.match;
+    if (!st.pairs.length){
+      return `<div class="card empty"><div class="face">🫧</div>
+        <p>단어 가방에 낱말이 4개는 있어야 해요.<br>책을 읽고 단어를 담아보세요!</p></div>`;
+    }
+    return `<div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <h3 class="sub grow" style="margin:0">단어 짝 맞추기</h3>
+        <span class="muted">${st.solved.length}/${st.pairs.length}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="matchcol">${st.left.map(p=>`
+          <button class="matchbtn ${st.solved.includes(p.id)?'gone':''}" data-ml="${p.id}"
+            aria-pressed="${st.pick===p.id}" ${st.solved.includes(p.id)?'disabled':''}>${esc(p.term)}</button>`).join('')}</div>
+        <div class="matchcol">${st.right.map(p=>`
+          <button class="matchbtn ${st.solved.includes(p.id)?'gone':''}" data-mr="${p.id}"
+            ${st.solved.includes(p.id)?'disabled':''}>${esc(p.meaning)}</button>`).join('')}</div>
+      </div>
+      ${st.solved.length === st.pairs.length
+        ? `<p style="text-align:center;font-family:var(--display);font-size:24px;margin:14px 0 0">완벽해요! ⭐ +6</p>` : ''}
+    </div>`;
+  }
+  return '';
+}
+
+/* ============================================================
+   모달
+   ============================================================ */
+function openModal(html){
+  $('#modalRoot').innerHTML = `<div class="modal" id="modal"><div class="sheet" style="position:relative">
+    <button class="close btn ghost sm" data-close="1" aria-label="닫기">✕</button>${html}</div></div>`;
+}
+function closeModal(){
+  stopScanner();
+  $('#modalRoot').innerHTML = '';
+}
+
+/* ---------- 책 등록 마법사 ---------- */
+function bookWizard(){
+  const w = S.view.wiz;
+  if (w.step === 'scan'){
+    return `<h3>책 등록하기</h3>
+      <p class="muted" style="margin:0 0 10px">책 뒤쪽 바코드를 네모 안에 맞춰주세요.</p>
+      <video id="video" playsinline muted></video>
+      <p class="muted" id="scanMsg" style="text-align:center;margin:9px 0">${esc(w.msg||'카메라를 켜는 중…')}</p>
+      <div class="stack">
+        <button class="btn ghost wide" id="wizManual">바코드 없이 직접 적을래요</button>
+      </div>`;
+  }
+  if (w.step === 'info'){
+    return `<h3>어떤 책인가요?</h3>
+      ${w.isbn ? `<p class="muted" style="margin:0 0 8px">바코드: ${esc(w.isbn)}</p>` : ''}
+      ${w.busy ? `<p class="muted">🔎 책을 찾아보는 중이에요…</p>` : ''}
+      ${w.guessNote ? `<div class="banner info" style="margin-bottom:10px"><span>💡</span><span>${esc(w.guessNote)}</span></div>` : ''}
+      <div class="stack">
+        <input class="field" id="wizTitle" placeholder="책 제목" value="${esc(w.title||'')}">
+        <input class="field" id="wizAuthor" placeholder="지은이 (몰라도 괜찮아요)" value="${esc(w.author||'')}">
+        <button class="btn ghost wide sm" id="wizSearchTitle">🔍 제목으로 책 찾기</button>
+        ${w.candidates ? `<div class="stack" style="gap:7px">
+          ${w.candidates.length ? w.candidates.map((c,i)=>`
+            <button class="matchbtn" data-cand="${i}" style="text-align:left;min-height:auto;padding:9px 11px">
+              <b>${esc(c.title)}</b><br><span class="muted">${esc(c.author||'지은이 몰라요')}${c.publisher?' · '+esc(c.publisher):''}</span>
+            </button>`).join('')
+            : '<p class="muted" style="margin:0">그런 제목의 책을 못 찾았어요.</p>'}
+        </div>` : ''}
+        <div>
+          <div class="muted" style="margin-bottom:6px">어떤 종류예요?</div>
+          <div class="chips">${(S.settings.cats||DEFAULT_CATS).map(c=>
+            `<button class="chip" data-cat="${esc(c)}" aria-pressed="${w.category===c}">${esc(c)}</button>`).join('')}</div>
+        </div>
+        <div>
+          <div class="muted" style="margin-bottom:6px">재미있었나요?</div>
+          <div class="chips">${[1,2,3].map(n=>
+            `<button class="chip" data-stars="${n}" aria-pressed="${w.stars===n}">${'⭐'.repeat(n)}</button>`).join('')}</div>
+        </div>
+        <button class="btn wide" id="wizToCover">다음 · 표지 찍기</button>
+      </div>`;
+  }
+  if (w.step === 'cover'){
+    return `<h3>표지를 찍어요</h3>
+      <p class="muted" style="margin:0 0 10px">책 표지를 사진으로 찍으면 책장에 예쁘게 남아요.</p>
+      ${w.coverPreview ? `<img src="${esc(w.coverPreview)}" alt="찍은 표지"
+        style="width:100%;border-radius:var(--r-md);margin-bottom:10px">` : ''}
+      <div class="stack">
+        <input type="file" accept="image/*" capture="environment" id="coverInput" class="field">
+        ${w.uploading ? `<p class="muted" style="text-align:center">사진을 올리는 중…</p>` : ''}
+        <button class="btn wide" id="wizSave">책장에 쌓기 📚</button>
+        <button class="btn ghost wide" id="wizSkipCover">표지 없이 등록할래요</button>
+      </div>`;
+  }
+  if (w.step === 'words'){
+    return `<h3>어려운 낱말이 있었나요?</h3>
+      <p class="muted" style="margin:0 0 10px">담아두면 나중에 단어 가방에서 공부할 수 있어요.</p>
+      <div class="stack">
+        <input class="field" id="wizWord" placeholder="낱말 하나 (예: 무지개)" enterkeyhint="done">
+        <div class="chips" id="wizWordList">${(w.words||[]).map(t=>`<span class="chip">${esc(t)}</span>`).join('')}</div>
+        <button class="btn ghost wide" id="wizAddWord">+ 담기</button>
+        <button class="btn wide mint" id="wizDone">다 했어요!</button>
+      </div>`;
+  }
+  return '';
+}
+
+/* ---------- PIN ---------- */
+function pinSheet(title, note){
+  const v = S.view.pin || '';
+  return `<h3>${esc(title)}</h3>
+    <p class="muted" style="margin:0 0 6px">${esc(note||'부모님만 아는 4자리 숫자예요.')}</p>
+    <div class="pindots">${[0,1,2,3].map(i=>`<i class="${v.length>i?'on':''}"></i>`).join('')}</div>
+    ${S.view.pinError ? `<p style="text-align:center;color:var(--berry-deep)">${esc(S.view.pinError)}</p>` : ''}
+    <div class="pinpad">
+      ${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-pin="${n}">${n}</button>`).join('')}
+      <button data-pinclear="1">지움</button>
+      <button data-pin="0">0</button>
+      <button data-pinback="1">←</button>
+    </div>`;
+}
+
+/* ---------- 부모 화면 ---------- */
+function parentSheet(){
+  const ks = kids();
+  const t = S.view.parentTab || 'todos';
+  const tabBtn = (id,label) => `<button class="chip" data-ptab="${id}" aria-pressed="${t===id}">${label}</button>`;
+
+  let body = '';
+  if (t === 'todos'){
+    body = ks.map(k=>{
+      const list = S.data.todos.filter(x=>x.kidId===k.id && !x.archived);
+      return `<div class="card" style="margin-bottom:12px">
+        <h3 class="sub">${esc(k.name)}의 할 일</h3>
+        ${list.length ? list.map(x=>`<div class="todo">
+          <div class="grow"><div class="name">${esc(x.icon||'')} ${esc(x.title)}</div>
+            <div class="muted">${(!x.repeatDays||!x.repeatDays.length)?'매일':x.repeatDays.map(d=>DAYNAMES[d]).join('·')}
+              ${x.createdBy==='kid'?' · 아이가 추가':''}</div></div>
+          <button class="btn ghost sm" data-parentdel="${x.id}">🗑</button>
+        </div>`).join('') : '<p class="muted">아직 없어요.</p>'}
+        <div class="row" style="gap:8px;margin-top:10px">
+          <input class="field grow" data-newtodo="${k.id}" placeholder="할 일 적기 (예: 책 20분 읽기)">
+          <button class="btn sm" data-addtodo="${k.id}">추가</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  if (t === 'kids'){
+    body = ks.map((k,i)=>`<div class="card" style="margin-bottom:12px">
+      <div class="row" style="margin-bottom:9px">
+        <span class="avatar" style="background:${kidColor(k).bg}">${esc(k.avatar)}</span>
+        <input class="field grow" data-kidname="${k.id}" value="${esc(k.name)}" maxlength="10">
+      </div>
+      <div class="muted" style="margin-bottom:5px">아바타</div>
+      <div class="chips" style="margin-bottom:9px">${AVATARS.map(a=>
+        `<button class="chip" data-kidav="${k.id}|${a}" aria-pressed="${k.avatar===a}">${a}</button>`).join('')}</div>
+      <div class="muted" style="margin-bottom:5px">색깔</div>
+      <div class="chips">${KID_COLORS.map((c,ci)=>
+        `<button class="chip" data-kidcol="${k.id}|${ci}" aria-pressed="${(k.colorIdx||0)===ci}"
+          style="background:${c.bg};border-color:${c.bar}">${ci===(k.colorIdx||0)?'✓':'  '}</button>`).join('')}</div>
+    </div>`).join('') + `<button class="btn ghost wide" id="addKid">+ 친구 추가</button>`;
+  }
+  if (t === 'settings'){
+    body = `<div class="card stack">
+      <div><div class="muted">게임 시간 (분)</div>
+        <input class="field" type="number" min="5" max="120" id="setGameMin" value="${S.settings.gameMinutes}"></div>
+      <div><div class="muted">이번 주 함께 읽기 목표 (권)</div>
+        <input class="field" type="number" min="2" max="200" id="setGoal" value="${S.settings.weeklyGoal}"></div>
+      <div><div class="muted">책 종류 (쉼표로 구분)</div>
+        <input class="field" id="setCats" value="${esc((S.settings.cats||DEFAULT_CATS).join(', '))}"></div>
+      <div><div class="muted">카카오 책 검색 REST 키 (선택)</div>
+        <input class="field" id="setKakao" value="${esc(S.settings.kakaoKey||'')}" placeholder="없어도 앱은 잘 돌아가요">
+        <p class="muted" style="margin:5px 0 0">키를 넣으면 바코드만 찍어도 제목·표지를 자동으로 가져와요.
+          먼저 아래 연결 테스트가 통과해야 합니다.</p></div>
+      <button class="btn ghost wide" id="setPin">비밀번호 바꾸기</button>
+      <button class="btn ghost wide" id="netTest">🌐 연결 테스트</button>
+      <div id="netResult"></div>
+      <button class="btn ghost wide" id="${S.settings.sampleLoaded?'clearSample':'seedSample'}">
+        ${S.settings.sampleLoaded ? '🧹 샘플 데이터 지우기' : '🎁 샘플 데이터 넣어보기'}</button>
+      <p class="muted" style="margin:-4px 0 0;font-size:13px">
+        예시 책·낱말·할 일을 채워 화면이 어떻게 보이는지 볼 수 있어요. 언제든 한 번에 지울 수 있습니다.</p>
+      <button class="btn ghost wide" id="exportData">💾 전체 기록 내보내기</button>
+      <div id="exportBox"></div>
+    </div>`;
+  }
+  if (t === 'unlock'){
+    const pend = pendingRequests();
+    body = `${pend.length ? `<div class="stack" style="margin-bottom:12px">${pend.map(askCard).join('')}</div>` : ''}
+    <div class="card stack">
+      ${ks.map(k=>{
+        const un = activeUnlock(k.id);
+        return `<div class="row">
+          <div class="grow"><b style="font-family:var(--display);font-size:20px">${esc(k.name)}</b>
+            <div class="muted">${un ? `게임 중 · ${fmtClock((new Date(un.expiresAt)-Date.now())/1000)} 남음`
+              : (allDoneToday(k.id) ? '할 일 다 함 · 열어줄 수 있어요' : '할 일이 남았어요')}</div></div>
+          ${un ? `<button class="btn ghost sm" data-relock="${k.id}">지금 잠그기</button>`
+               : `<button class="btn sm" data-grant="${k.id}">${S.settings.gameMinutes}분 열어주기</button>`}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }
+
+  return `<h3>부모님 화면</h3>
+    <div class="chips" style="margin:8px 0 14px">
+      ${tabBtn('todos','할 일')}${tabBtn('kids','아이')}${tabBtn('unlock','게임 승인' +
+      (pendingRequests().length ? `<span class="dot-badge">${pendingRequests().length}</span>` : ''))}${tabBtn('settings','설정')}
+    </div>
+    ${body}`;
+}
+
+/* ============================================================
+   사전 (Claude sample)
+   ============================================================ */
+const DICT_MODES = {
+  ek: { label:'영한', instruct:'영어 단어를 한국어로 풀이한다. meaning과 exampleKo는 한국어로, example은 아주 쉬운 영어 한 문장으로 쓴다.' },
+  ee: { label:'영영', instruct:'영어 단어를 아주 쉬운 영어로 풀이한다. meaning과 example은 영어로, exampleKo는 그 예문의 한국어 뜻으로 쓴다.' },
+  kk: { label:'한글', instruct:'한국어 낱말을 한국어로 풀이한다. meaning과 example은 한국어로 쓰고, exampleKo는 빈 문자열로 둔다.' }
+};
+
+async function lookupWord(term, mode){
+  const key = `${mode}:${term.trim().toLowerCase()}`;
+  const cached = S.data.dict.find(d => d.key === key);
+  if (cached) return cached.value;
+
+  if (!S.sample) throw new Error('지금은 사전을 쓸 수 없어요. 잠시 뒤 다시 열어보세요.');
+
+  const m = DICT_MODES[mode] || DICT_MODES.ek;
+  const prompt = `너는 초등학교 1학년 아이에게 낱말을 알려주는 다정한 선생님이야.
+낱말: "${term}"
+사전 종류: ${m.label}. ${m.instruct}
+
+아래 JSON 하나만 출력해. 설명도 마크다운도 코드펜스도 쓰지 마.
+{"term":"","reading":"","meaning":"","example":"","exampleKo":"","emoji":""}
+
+규칙:
+- meaning은 15자 안팎의 한 문장. 어려운 한자어와 전문 용어를 쓰지 마.
+- reading: 영어 단어면 한글로 읽는 법(예: 레인보우), 한국어 낱말이면 빈 문자열.
+- emoji: 낱말이 떠오르는 이모지 딱 한 개.
+- 그런 낱말을 모르면 meaning에 "잘 모르겠어요"라고만 써.`;
+
+  const out = await S.sample.json(prompt, { modelTier:'quick', cache:true });
+  const val = {
+    term: (out && out.term) || term,
+    reading: (out && out.reading) || '',
+    meaning: (out && out.meaning) || '',
+    example: (out && out.example) || '',
+    exampleKo: (out && out.exampleKo) || '',
+    emoji: (out && out.emoji) || '📖'
+  };
+  Store.add('dict', { key, value: val, createdAt:new Date().toISOString() });
+  return val;
+}
+
+async function guessBook(isbn){
+  if (!S.sample) return null;
+  const prompt = `ISBN ${isbn} 인 책을 아니? 한국에서 나온 어린이 책일 가능성이 높아.
+확실하지 않으면 절대 지어내지 말고 known을 false로 해.
+JSON 하나만 출력해: {"known":true,"title":"","author":"","category":"그림책"}
+category는 다음 중 하나: ${(S.settings.cats||DEFAULT_CATS).join(', ')}`;
+  try {
+    const out = await S.sample.json(prompt, { modelTier:'quick', cache:true });
+    return (out && out.known && out.title) ? out : null;
+  } catch(e){ return null; }
+}
+
+/* ---------- 카카오 책 검색 ----------
+   GET https://dapi.kakao.com/v3/search/book
+     ?target=isbn|title &query=<검색어> &size=<개수>
+     헤더: Authorization: KakaoAK <REST API 키>
+   응답 documents[]: title, authors[], publisher, thumbnail, isbn, contents
+   키는 부모님 화면 → 설정에서 넣는다(코드에 박아두지 않는다).       */
+const KAKAO_URL = 'https://dapi.kakao.com/v3/search/book';
+
+async function kakaoSearch(query, target){
+  const key = (S.settings.kakaoKey||'').trim();
+  if (!key) return { ok:false, reason:'nokey' };
+  try {
+    const url = `${KAKAO_URL}?target=${target}&query=${encodeURIComponent(query)}&size=${target==='isbn'?1:6}`;
+    const res = await fetch(url, { headers: { Authorization: 'KakaoAK ' + key } });
+    if (res.status === 401 || res.status === 403) return { ok:false, reason:'badkey' };
+    if (res.status === 429) return { ok:false, reason:'quota' };
+    if (!res.ok) return { ok:false, reason:'http' };
+    const j = await res.json();
+    const docs = (j.documents || []).map(d => ({
+      title: d.title || '',
+      author: (d.authors || []).join(', '),
+      publisher: d.publisher || '',
+      coverUrl: d.thumbnail || '',
+      isbn: (d.isbn || '').split(' ').pop() || ''
+    }));
+    return { ok:true, docs };
+  } catch(e){
+    return { ok:false, reason:'blocked' };   // CSP 또는 네트워크 차단
+  }
+}
+const KAKAO_MSG = {
+  nokey:   '카카오 키가 없어서 자동으로 못 찾았어요. 제목을 적어주세요.',
+  badkey:  '카카오 키가 맞지 않아요. 부모님 화면 → 설정에서 확인해 주세요.',
+  quota:   '오늘 카카오 검색을 너무 많이 했어요. 제목을 적어주세요.',
+  http:    '카카오에서 답을 못 받았어요. 제목을 적어주세요.',
+  blocked: '이 앱에서는 카카오에 연결할 수 없어요(차단됨). 제목을 적어주세요.'
+};
+
+/* ============================================================
+   날씨 — 자동으로 가져오고, 안 되면 탭해서 고른다
+   ============================================================ */
+function weatherSheet(){
+  const cur = todayWeather();
+  return `<h3>오늘 날씨는 어때요?</h3>
+    <p class="muted" style="margin:0 0 12px">창밖을 보고 골라주세요.</p>
+    <div class="weatherpick">${WEATHERS.map((w,i)=>
+      `<button data-weather="${i}" aria-pressed="${cur && cur.icon===w.icon}">
+        ${w.icon}<span>${w.label}</span></button>`).join('')}</div>
+    <button class="btn ghost wide" id="autoWeather" style="margin-top:14px">📍 자동으로 가져오기</button>
+    <p class="muted" style="margin:7px 0 0;font-size:13px">위치를 한 번 알려주면 다음부터는 저절로 채워져요.</p>`;
+}
+function setWeather(icon, label){
+  Store.saveSettings({ weather:{ date:todayKey(), icon, label } });
+}
+// Open-Meteo WMO 코드 → 우리 아이콘
+function wmoToWeather(code){
+  if (code === 0) return WEATHERS[0];
+  if (code <= 2) return WEATHERS[1];
+  if (code === 3) return WEATHERS[2];
+  if (code === 45 || code === 48) return WEATHERS[6];
+  if (code >= 95) return WEATHERS[4];
+  if (code >= 71 && code <= 77) return WEATHERS[5];
+  if (code >= 51) return WEATHERS[3];
+  return WEATHERS[1];
+}
+async function fetchWeatherAt(lat, lon){
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(3)}&longitude=${lon.toFixed(3)}&current=weather_code&timezone=auto`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('http');
+  const j = await res.json();
+  const code = j && j.current && j.current.weather_code;
+  if (code == null) throw new Error('shape');
+  return wmoToWeather(code);
+}
+async function autoWeather(interactive){
+  const g = S.settings.geo;
+  try {
+    let lat, lon;
+    if (g && typeof g.lat === 'number'){ lat = g.lat; lon = g.lon; }
+    else {
+      if (!interactive || !navigator.geolocation) return false;
+      const pos = await new Promise((res, rej) =>
+        navigator.geolocation.getCurrentPosition(res, rej, { timeout:8000, maximumAge:600000 }));
+      lat = pos.coords.latitude; lon = pos.coords.longitude;
+      await Store.saveSettings({ geo:{ lat, lon } });
+    }
+    const w = await fetchWeatherAt(lat, lon);
+    await Store.saveSettings({ weather:{ date:todayKey(), icon:w.icon, label:w.label } });
+    return true;
+  } catch(e){
+    if (interactive) alert('날씨를 자동으로 가져오지 못했어요. 아래에서 직접 골라주세요.');
+    return false;
+  }
+}
+
+/* ============================================================
+   음성
+   ============================================================ */
+function speak(text, lang){
+  try {
+    if (!window.speechSynthesis) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang === 'ko' ? 'ko-KR' : 'en-US';
+    u.rate = 0.85;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  } catch(e){}
+}
+/* 마이크로 듣고 → 글자로 적어준다 (브라우저 내장 음성인식). */
+function listen(lang, onResult){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR){
+    S.view.dictError = '이 기기에서는 말로 찾기를 쓸 수 없어요. 글자로 적어주세요.';
+    render(); return;
+  }
+  try {
+    const r = new SR();
+    r.lang = lang === 'ko' ? 'ko-KR' : 'en-US';
+    r.interimResults = false; r.maxAlternatives = 1;
+    S.view.listening = true; S.view.dictError = ''; render();
+    const stop = () => { S.view.listening = false; render(); };
+    r.onresult = e => { stop(); onResult(String(e.results[0][0].transcript||'').trim()); };
+    r.onerror = ev => {
+      stop();
+      S.view.dictError = (ev && ev.error === 'not-allowed')
+        ? '마이크를 쓰려면 “허용”을 눌러주세요.'
+        : '잘 못 들었어요. 한 번 더 말해볼까요?';
+      render();
+    };
+    r.onend = stop;
+    r.start();
+  } catch(e){ S.view.listening = false; render(); }
+}
+
+/* ============================================================
+   바코드 스캐너
+   ============================================================ */
+let scanState = { stream:null, reader:null, raf:0, stopped:false };
+
+async function startScanner(){
+  const w = S.view.wiz;
+  scanState.stopped = false;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' }, width:{ideal:1280}, height:{ideal:960} }, audio:false
+    });
+    scanState.stream = stream;
+    const v = document.getElementById('video');
+    if (!v){ stopScanner(); return; }
+    v.srcObject = stream;
+    await v.play().catch(()=>{});
+    setScanMsg('바코드를 비춰주세요');
+
+    if ('BarcodeDetector' in window){
+      const det = new window.BarcodeDetector({ formats:['ean_13','ean_8','isbn'] });
+      const tick = async () => {
+        if (scanState.stopped) return;
+        try {
+          const codes = await det.detect(v);
+          if (codes && codes.length){ onIsbn(codes[0].rawValue); return; }
+        } catch(e){}
+        scanState.raf = requestAnimationFrame(tick);
+      };
+      scanState.raf = requestAnimationFrame(tick);
+      return;
+    }
+    if (window.ZXing && window.ZXing.BrowserMultiFormatReader){
+      const reader = new window.ZXing.BrowserMultiFormatReader();
+      scanState.reader = reader;
+      reader.decodeFromVideoElement(v, (result) => {
+        if (result && !scanState.stopped) onIsbn(result.getText());
+      }).catch(()=>{});
+      return;
+    }
+    setScanMsg('이 기기에서는 바코드를 못 읽어요. 아래에서 직접 적어주세요.');
+  } catch(err){
+    setScanMsg('카메라를 켤 수 없어요. 아래에서 직접 적어주세요.');
+  }
+}
+function setScanMsg(msg){
+  S.view.wiz.msg = msg;
+  const el = document.getElementById('scanMsg');
+  if (el) el.textContent = msg;
+}
+function stopScanner(){
+  scanState.stopped = true;
+  if (scanState.raf) cancelAnimationFrame(scanState.raf);
+  if (scanState.reader){ try{ scanState.reader.reset(); }catch(e){} scanState.reader = null; }
+  if (scanState.stream){ scanState.stream.getTracks().forEach(t=>{ try{t.stop();}catch(e){} }); scanState.stream = null; }
+}
+
+async function onIsbn(raw){
+  const isbn = String(raw||'').replace(/[^0-9Xx]/g,'');
+  stopScanner();
+  const w = S.view.wiz;
+  w.isbn = isbn; w.step = 'info'; w.busy = true;
+  openModal(bookWizard());
+
+  // 1순위: 카카오 책 검색
+  const k = await kakaoSearch(isbn, 'isbn');
+  if (k.ok && k.docs.length){
+    const d = k.docs[0];
+    w.title = d.title; w.author = d.author; w.coverUrl = d.coverUrl; w.publisher = d.publisher;
+    w.found = 'kakao';
+    w.guessNote = '카카오에서 책을 찾았어요! 맞는지 봐주세요.';
+  } else {
+    // 2순위: Claude에게 물어보기
+    const g = await guessBook(isbn);
+    if (g){
+      w.title = g.title; w.author = g.author || '';
+      if (g.category && (S.settings.cats||DEFAULT_CATS).includes(g.category)) w.category = g.category;
+      w.found = 'ai';
+      w.guessNote = '이 책인 것 같아요. 다르면 고쳐주세요!';
+    } else {
+      w.found = 'manual';
+      w.guessNote = k.ok ? '그 바코드로는 책을 못 찾았어요. 표지를 보고 적어줄래요?'
+                         : (KAKAO_MSG[k.reason] || '책 이름을 못 찾았어요.');
+    }
+  }
+  w.busy = false;
+  openModal(bookWizard());
+}
+
+/* ============================================================
+   게임
+   ============================================================ */
+const MEM_FACES = ['🐰','🐱','🦊','🐻','🦄','🐧'];
+
+function startMemory(){
+  const cards = [...MEM_FACES, ...MEM_FACES].sort(()=>Math.random()-0.5);
+  S.view.mem = { cards, open:[], matched:[], lock:false };
+  S.view.game = 'memory';
+  render();
+}
+function memTap(i){
+  const st = S.view.mem;
+  if (st.lock || st.matched.includes(i) || st.open.includes(i)) return;
+  st.open.push(i);
+  if (st.open.length === 2){
+    const [a,b] = st.open;
+    if (st.cards[a] === st.cards[b]){
+      st.matched.push(a,b); st.open = [];
+      if (st.matched.length === st.cards.length){ awardStars(3); confetti(); }
+    } else {
+      st.lock = true;
+      setTimeout(()=>{ st.open = []; st.lock = false; render(); }, 750);
+    }
+  }
+  render();
+}
+
+function startMatch(){
+  const mine = S.data.words.filter(w=>w.kidId===S.kidId && w.meaning);
+  const pick = mine.sort(()=>Math.random()-0.5).slice(0,5);
+  const pairs = pick.map(w=>({ id:w.id, term:w.term, meaning:w.meaning }));
+  S.view.match = {
+    pairs,
+    left: pairs.slice().sort(()=>Math.random()-0.5),
+    right: pairs.slice().sort(()=>Math.random()-0.5),
+    pick:null, solved:[]
+  };
+  S.view.game = 'match';
+  render();
+}
+function matchTap(side, id){
+  const st = S.view.match;
+  if (st.solved.includes(id)) return;
+  if (side === 'l'){ st.pick = st.pick === id ? null : id; render(); return; }
+  if (!st.pick) return;
+  if (st.pick === id){
+    st.solved.push(id); st.pick = null;
+    if (st.solved.length === st.pairs.length){ awardStars(6); confetti(); }
+  } else {
+    st.pick = null;
+  }
+  render();
+}
+
+let starGame = null;
+function startStars(){
+  S.view.game = 'stars';
+  render();
+  requestAnimationFrame(() => {
+    const cv = document.getElementById('starcanvas');
+    if (!cv) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = cv.getBoundingClientRect();
+    cv.width = rect.width * dpr; cv.height = rect.height * dpr;
+    const ctx = cv.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const W = rect.width, H = rect.height;
+
+    const g = { basket:W/2, stars:[], score:0, t:0, alive:true, speed:1 };
+    starGame = g;
+
+    const move = e => {
+      const r = cv.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+      g.basket = clamp(x, 26, W-26);
+    };
+    cv.addEventListener('pointermove', move);
+    cv.addEventListener('pointerdown', move);
+
+    const loop = () => {
+      if (!g.alive || S.view.game !== 'stars') return;
+      g.t++;
+      g.speed = 1 + g.t/2600;
+      if (g.t % Math.max(22, 48 - Math.floor(g.t/90)) === 0){
+        g.stars.push({ x: 24 + Math.random()*(W-48), y:-14, v: (1.4 + Math.random()*1.1)*g.speed, r: 11 });
+      }
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle = '#FFF3F6'; ctx.fillRect(0,0,W,H);
+
+      for (let i=g.stars.length-1;i>=0;i--){
+        const s = g.stars[i];
+        s.y += s.v;
+        drawStar(ctx, s.x, s.y, s.r, '#FFD98E', '#D99A2B');
+        if (s.y > H-42 && s.y < H-8 && Math.abs(s.x - g.basket) < 34){
+          g.stars.splice(i,1); g.score++;
+          const el = document.getElementById('starScore');
+          if (el) el.textContent = g.score + '개';
+          continue;
+        }
+        if (s.y > H + 20) g.stars.splice(i,1);
+      }
+      // 바구니
+      ctx.fillStyle = '#FF8FA8';
+      ctx.beginPath();
+      ctx.moveTo(g.basket-32, H-34); ctx.lineTo(g.basket+32, H-34);
+      ctx.lineTo(g.basket+24, H-8); ctx.lineTo(g.basket-24, H-8);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#E85C7C';
+      ctx.fillRect(g.basket-34, H-38, 68, 7);
+
+      requestAnimationFrame(loop);
+    };
+    loop();
+  });
+}
+function drawStar(ctx, cx, cy, r, fill, stroke){
+  ctx.beginPath();
+  for (let i=0;i<10;i++){
+    const rad = i % 2 === 0 ? r : r/2.3;
+    const a = Math.PI/5 * i - Math.PI/2;
+    ctx[i?'lineTo':'moveTo'](cx + Math.cos(a)*rad, cy + Math.sin(a)*rad);
+  }
+  ctx.closePath();
+  ctx.fillStyle = fill; ctx.fill();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = stroke; ctx.stroke();
+}
+function stopStars(){ if (starGame) starGame.alive = false; starGame = null; }
+
+function awardStars(n){
+  const k = curKid();
+  if (!k) return;
+  Store.update('profiles', k.id, { stars: (k.stars||0) + n });
+}
+
+function confetti(){
+  const box = document.createElement('div');
+  box.className = 'confetti';
+  const colors = ['#FF8FA8','#9BE0C8','#FFD98E','#E85C7C','#B3A6EE'];
+  for (let i=0;i<40;i++){
+    const s = document.createElement('i');
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.top = '-20px';
+    s.style.background = colors[i % colors.length];
+    s.style.animationDelay = (Math.random()*0.5) + 's';
+    box.appendChild(s);
+  }
+  document.body.appendChild(box);
+  setTimeout(()=>box.remove(), 2600);
+}
+
+/* ============================================================
+   잠금 해제
+   ============================================================ */
+/* 아이가 요청을 올린다 → db를 통해 부모님 기기(같은 계정으로 연 모든 화면)에 몇 초 안에 뜬다.
+   카카오톡 알림이나 휴대폰 푸시는 이 페이지에서 보낼 수 없다 — 서버가 있어야 한다.
+   나중에 카카오를 붙이려면 이 함수와 approveRequest()만 바꾸면 된다. */
+async function requestUnlock(){
+  const k = curKid(); if (!k) return;
+  if (pendingRequests().some(r=>r.kidId===k.id)) return;
+  await Store.add('requests', {
+    kidId:k.id, kidName:k.name, status:'pending',
+    minutes:S.settings.gameMinutes || 20, createdAt:new Date().toISOString()
+  });
+}
+function approveRequest(reqId){
+  const r = S.data.requests.find(x=>x.id===reqId);
+  if (!r) return;
+  grantUnlock(r.kidId, r.minutes);
+  Store.update('requests', reqId, { status:'approved', decidedAt:new Date().toISOString() });
+}
+function denyRequest(reqId){
+  Store.update('requests', reqId, { status:'denied', decidedAt:new Date().toISOString() });
+}
+function grantUnlock(kidId, minutes){
+  const mins = minutes || S.settings.gameMinutes || 20;
+  Store.add('unlocks', {
+    kidId,
+    grantedAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + mins*60000).toISOString(),
+    minutes: mins
+  });
+}
+function relock(kidId){
+  S.data.unlocks.filter(u=>u.kidId===kidId).forEach(u=>Store.remove('unlocks', u.id));
+  if (kidId === S.kidId){ S.view.game = null; stopStars(); }
+}
+
+/* ============================================================
+   이벤트 배선
+   ============================================================ */
+document.addEventListener('click', async (e) => {
+  const t = e.target.closest('[data-tab],[data-pick],[data-tick],[data-start],[data-stop],[data-deltodo],'+
+    '[data-book],[data-mode],[data-say],[data-game],[data-mem],[data-ml],[data-mr],[data-cat],[data-stars],'+
+    '[data-close],[data-pin],[data-pinclear],[data-pinback],[data-ptab],[data-addtodo],[data-parentdel],'+
+    '[data-kidav],[data-kidcol],[data-grant],[data-relock],[data-approve],[data-deny],'+
+    '[data-weather],[data-cand],button');
+  if (!t) return;
+  const d = t.dataset;
+
+  /* --- 첫 설정 --- */
+  if (t.id === 'setupGo'){
+    const n1 = ($('#setup1').value||'').trim() || '첫째';
+    const n2 = ($('#setup2').value||'').trim();
+    const now = new Date().toISOString();
+    await Store.add('profiles', { name:n1, avatar:AVATARS[0], colorIdx:0, stars:0, createdAt:now });
+    if (n2) await Store.add('profiles', { name:n2, avatar:AVATARS[1], colorIdx:1, stars:0, createdAt:new Date(Date.now()+1).toISOString() });
+    if (confirm('예시 책과 낱말, 할 일을 넣어서 어떻게 보이는지 보여드릴까요?\n(부모님 화면에서 언제든 지울 수 있어요)')){
+      await seedSample();
+    }
+    return;
+  }
+
+  /* --- 날씨 --- */
+  if (t.id === 'pickWeather' || t.id === 'dateChip'){ openModal(weatherSheet()); return; }
+  if (d.weather){
+    const w = WEATHERS[+d.weather];
+    setWeather(w.icon, w.label); closeModal(); return;
+  }
+  if (t.id === 'autoWeather'){
+    const ok = await autoWeather(true);
+    if (ok) closeModal(); else openModal(weatherSheet());
+    return;
+  }
+
+  /* --- 프로필 --- */
+  if (d.pick){ S.kidId = d.pick; lsSet('byeolbit.kid', d.pick); S.tab='today'; render(); return; }
+  if (t.id === 'whoami'){ S.kidId = null; S.view.game=null; stopStars(); render(); return; }
+  if (t.id === 'openParent'){ S.view.pin=''; S.view.pinError=''; S.view.pinPurpose='parent'; openModal(pinSheet('부모님 화면')); return; }
+
+  /* --- 탭 --- */
+  if (d.tab){ S.tab = d.tab; if (d.tab!=='games'){ S.view.game=null; stopStars(); } render(); return; }
+
+  /* --- 할 일 --- */
+  if (d.tick){
+    const key = todayKey(), s = sessionOf(S.kidId, d.tick, key);
+    if (s && s.done) await Store.update('sessions', s.id, { done:false });
+    else if (s) await Store.update('sessions', s.id, { done:true });
+    else await Store.add('sessions', { kidId:S.kidId, todoId:d.tick, date:key, durationSec:0, done:true });
+    if (allDoneToday(S.kidId)) confetti();
+    return;
+  }
+  if (d.start){ S.running = { todoId:d.start, startedAt:Date.now() }; render(); return; }
+  if (d.stop){
+    const dur = (Date.now() - S.running.startedAt)/1000;
+    S.running = null;
+    const key = todayKey(), s = sessionOf(S.kidId, d.stop, key);
+    if (s) await Store.update('sessions', s.id, { durationSec:(s.durationSec||0)+dur, done:true });
+    else await Store.add('sessions', { kidId:S.kidId, todoId:d.stop, date:key, durationSec:dur, done:true });
+    if (allDoneToday(S.kidId)) confetti();
+    return;
+  }
+  if (d.deltodo){ await Store.update('todos', d.deltodo, { archived:true }); return; }
+  if (t.id === 'addTodo'){
+    const title = prompt('무슨 일을 할까요?');
+    if (title && title.trim()) await Store.add('todos', {
+      kidId:S.kidId, title:title.trim(), icon:'✨', repeatDays:[], createdBy:'kid', createdAt:new Date().toISOString()
+    });
+    return;
+  }
+  if (t.id === 'goGames'){ S.tab='games'; render(); return; }
+
+  /* --- 책 --- */
+  if (t.id === 'addBook' || t.id === 'addBook2'){
+    S.view.wiz = { step:'scan', category:(S.settings.cats||DEFAULT_CATS)[0], stars:3, words:[] };
+    openModal(bookWizard());
+    startScanner();
+    return;
+  }
+  if (t.id === 'wizManual'){
+    stopScanner();
+    S.view.wiz.step = 'info';
+    S.view.wiz.guessNote = '책 제목을 적어주세요.';
+    openModal(bookWizard());
+    return;
+  }
+  if (d.cat){ S.view.wiz.category = d.cat; openModal(bookWizard()); return; }
+  if (d.stars){ S.view.wiz.stars = +d.stars; openModal(bookWizard()); return; }
+  if (t.id === 'wizSearchTitle'){
+    const w = S.view.wiz;
+    w.title = ($('#wizTitle').value||'').trim();
+    if (!w.title){ alert('먼저 제목을 조금 적어주세요!'); return; }
+    w.busy = true; openModal(bookWizard());
+    const r = await kakaoSearch(w.title, 'title');
+    w.busy = false;
+    if (r.ok){ w.candidates = r.docs; w.guessNote = r.docs.length ? '맞는 책을 골라주세요.' : ''; }
+    else { w.candidates = null; w.guessNote = KAKAO_MSG[r.reason] || '지금은 찾을 수 없어요.'; }
+    openModal(bookWizard());
+    return;
+  }
+  if (d.cand){
+    const w = S.view.wiz, c = (w.candidates||[])[+d.cand];
+    if (c){ w.title = c.title; w.author = c.author; w.coverUrl = c.coverUrl; w.publisher = c.publisher;
+      w.found = 'kakao'; w.candidates = null; w.guessNote = '이 책으로 할게요!'; }
+    openModal(bookWizard());
+    return;
+  }
+  if (t.id === 'wizToCover'){
+    const w = S.view.wiz;
+    w.title = ($('#wizTitle').value||'').trim();
+    w.author = ($('#wizAuthor').value||'').trim();
+    if (!w.title){ alert('책 제목을 적어주세요!'); return; }
+    w.step = 'cover'; openModal(bookWizard()); return;
+  }
+  if (t.id === 'wizSkipCover' || t.id === 'wizSave'){ await saveBook(); return; }
+  if (t.id === 'wizAddWord'){
+    const inp = $('#wizWord'); const v = (inp.value||'').trim();
+    if (v){ S.view.wiz.words.push(v); inp.value=''; openModal(bookWizard()); }
+    return;
+  }
+  if (t.id === 'wizDone'){
+    const w = S.view.wiz;
+    for (const term of (w.words||[])){
+      await Store.add('words', {
+        kidId:S.kidId, term, lang:/^[a-zA-Z\s'-]+$/.test(term)?'en':'ko',
+        meaning:'', fromBookId:w.savedId||'', box:1,
+        nextReviewAt:new Date().toISOString(), createdAt:new Date().toISOString()
+      });
+    }
+    closeModal(); S.tab = 'shelf'; render(); return;
+  }
+  if (d.book){ showBook(d.book); return; }
+
+  /* --- 단어 --- */
+  if (d.mode){ S.view.dictMode = d.mode; S.view.dictResult=null; render(); return; }
+  if (d.say){ speak(d.say, d.lang); return; }
+  if (t.id === 'micBtn'){
+    const mode = S.view.dictMode || 'ek';
+    listen(mode==='kk'?'ko':'en', txt => { S.view.dictQuery = txt; render(); doLookup(txt); });
+    return;
+  }
+  if (t.id === 'dictGo'){
+    const q = ($('#dictInput').value||'').trim();
+    if (q) doLookup(q);
+    return;
+  }
+  if (t.id === 'saveWord'){
+    const r = S.view.dictResult; if (!r) return;
+    await Store.add('words', {
+      kidId:S.kidId, term:r.term, lang:(S.view.dictMode==='kk')?'ko':'en',
+      meaning:r.meaning, example:r.example, emoji:r.emoji, box:1,
+      nextReviewAt:new Date(Date.now()+86400000).toISOString(), createdAt:new Date().toISOString()
+    });
+    S.view.dictResult = null; S.view.dictQuery=''; render();
+    return;
+  }
+  if (t.id === 'startReview'){ startReview(); return; }
+  if (t.id === 'revKnow' || t.id === 'revAgain'){
+    const st = S.view.review;
+    const w = st.queue[st.i];
+    if (w){
+      const box = t.id === 'revKnow' ? Math.min(5,(w.box||1)+1) : 1;
+      const days = [1,2,4,7,15][box-1];
+      await Store.update('words', w.id, { box, nextReviewAt:new Date(Date.now()+days*86400000).toISOString() });
+    }
+    st.i++; st.show = false;
+    if (st.i >= st.queue.length){ closeModal(); confetti(); }
+    else openModal(reviewSheet());
+    return;
+  }
+  if (t.id === 'revShow'){ S.view.review.show = true; openModal(reviewSheet()); return; }
+
+  /* --- 게임 --- */
+  if (t.id === 'askUnlock'){ await requestUnlock(); return; }
+  if (t.id === 'cancelReq'){
+    const mine = pendingRequests().find(r=>r.kidId===S.kidId);
+    if (mine) await Store.remove('requests', mine.id);
+    return;
+  }
+  if (t.id === 'pinHere'){
+    const mine = pendingRequests().find(r=>r.kidId===S.kidId);
+    S.view.pin=''; S.view.pinError=''; S.view.pinPurpose = mine ? 'approve:'+mine.id : 'unlock';
+    openModal(pinSheet('부모님, 열어주세요', '오늘 할 일을 모두 마쳤어요!'));
+    return;
+  }
+  if (d.approve){
+    S.view.pin=''; S.view.pinError=''; S.view.pinPurpose = 'approve:'+d.approve;
+    openModal(pinSheet('승인하시겠어요?', '부모님 비밀번호를 눌러주세요.'));
+    return;
+  }
+  if (d.deny){ denyRequest(d.deny); return; }
+  if (d.game === 'memory'){ startMemory(); return; }
+  if (d.game === 'stars'){ startStars(); return; }
+  if (d.game === 'match'){ startMatch(); return; }
+  if (d.mem){ memTap(+d.mem); return; }
+  if (d.ml){ matchTap('l', d.ml); return; }
+  if (d.mr){ matchTap('r', d.mr); return; }
+  if (t.id === 'quitGame'){ S.view.game = null; stopStars(); render(); return; }
+
+  /* --- 모달/PIN --- */
+  if (d.close){ closeModal(); return; }
+  if (d.pin){
+    S.view.pin = (S.view.pin||'') + d.pin;
+    S.view.pinError = '';
+    if (S.view.pin.length === 4) return checkPin();
+    openModal(pinSheet(pinTitle()));
+    return;
+  }
+  if (d.pinback){ S.view.pin = (S.view.pin||'').slice(0,-1); openModal(pinSheet(pinTitle())); return; }
+  if (d.pinclear){ S.view.pin = ''; openModal(pinSheet(pinTitle())); return; }
+
+  /* --- 부모 --- */
+  if (d.ptab){ S.view.parentTab = d.ptab; openModal(parentSheet()); return; }
+  if (d.addtodo){
+    const inp = document.querySelector(`[data-newtodo="${d.addtodo}"]`);
+    const v = (inp && inp.value||'').trim();
+    if (v){ await Store.add('todos', { kidId:d.addtodo, title:v, icon:'📌', repeatDays:[], createdBy:'parent', createdAt:new Date().toISOString() });
+      inp.value=''; openModal(parentSheet()); }
+    return;
+  }
+  if (d.parentdel){ await Store.update('todos', d.parentdel, { archived:true }); openModal(parentSheet()); return; }
+  if (d.kidav){ const [id,av] = d.kidav.split('|'); await Store.update('profiles', id, { avatar:av }); openModal(parentSheet()); return; }
+  if (d.kidcol){ const [id,ci] = d.kidcol.split('|'); await Store.update('profiles', id, { colorIdx:+ci }); openModal(parentSheet()); return; }
+  if (t.id === 'addKid'){
+    const n = prompt('새 친구 이름은?');
+    if (n && n.trim()){
+      const i = kids().length;
+      await Store.add('profiles', { name:n.trim(), avatar:AVATARS[i%AVATARS.length], colorIdx:i%KID_COLORS.length, stars:0, createdAt:new Date().toISOString() });
+      openModal(parentSheet());
+    }
+    return;
+  }
+  if (d.grant){ grantUnlock(d.grant); openModal(parentSheet()); return; }
+  if (d.relock){ relock(d.relock); openModal(parentSheet()); return; }
+  if (t.id === 'setPin'){
+    const p = prompt('새 비밀번호 4자리를 적어주세요');
+    if (p && /^\d{4}$/.test(p)){ await Store.saveSettings({ pin:p }); alert('바뀌었어요!'); }
+    else if (p) alert('숫자 4자리로 적어주세요.');
+    return;
+  }
+  if (t.id === 'netTest'){ await netTest(); return; }
+  if (t.id === 'exportData'){ exportData(); return; }
+  if (t.id === 'seedSample'){
+    t.disabled = true; t.textContent = '넣는 중…';
+    await seedSample(); openModal(parentSheet()); return;
+  }
+  if (t.id === 'clearSample'){
+    if (!confirm('샘플로 넣은 책·낱말·할 일을 모두 지울까요? 아이가 직접 넣은 것은 그대로 있어요.')) return;
+    await clearSample(); openModal(parentSheet()); return;
+  }
+});
+
+/* 부모 설정 입력값 저장 */
+document.addEventListener('change', async (e) => {
+  const el = e.target;
+  if (el.id === 'setGameMin') await Store.saveSettings({ gameMinutes: clamp(+el.value||20, 5, 120) });
+  if (el.id === 'setGoal') await Store.saveSettings({ weeklyGoal: clamp(+el.value||20, 2, 200) });
+  if (el.id === 'setCats'){
+    const cats = el.value.split(',').map(s=>s.trim()).filter(Boolean);
+    if (cats.length) await Store.saveSettings({ cats });
+  }
+  if (el.id === 'setKakao') await Store.saveSettings({ kakaoKey: el.value.trim() });
+  if (el.dataset.kidname) await Store.update('profiles', el.dataset.kidname, { name: el.value.trim() || '이름' });
+  if (el.id === 'coverInput' && el.files && el.files[0]) await handleCover(el.files[0]);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  if (e.target.id === 'dictInput'){ e.preventDefault(); const q=(e.target.value||'').trim(); if (q) doLookup(q); }
+  if (e.target.id === 'wizWord'){ e.preventDefault(); const b=$('#wizAddWord'); if (b) b.click(); }
+});
+
+function pinTitle(){
+  const p = S.view.pinPurpose || '';
+  if (p === 'unlock') return '부모님, 열어주세요';
+  if (p.startsWith('approve:')) return '승인하시겠어요?';
+  return '부모님 화면';
+}
+function checkPin(){
+  if (S.view.pin === (S.settings.pin || '1234')){
+    const purpose = S.view.pinPurpose || '';
+    S.view.pin = '';
+    if (purpose.startsWith('approve:')){
+      approveRequest(purpose.slice(8)); closeModal(); confetti(); render();
+    } else if (purpose === 'unlock'){
+      grantUnlock(S.kidId); closeModal(); confetti(); render();
+    } else { S.view.parentTab = S.view.parentTab || 'todos'; openModal(parentSheet()); }
+  } else {
+    S.view.pin = ''; S.view.pinError = '비밀번호가 달라요';
+    openModal(pinSheet(pinTitle()));
+  }
+}
+
+/* ---------- 사전 실행 ---------- */
+async function doLookup(q){
+  S.view.dictQuery = q; S.view.dictBusy = true; S.view.dictError=''; S.view.dictResult=null;
+  render();
+  try {
+    const r = await lookupWord(q, S.view.dictMode || 'ek');
+    S.view.dictResult = r;
+  } catch(err){
+    S.view.dictError = (err && err.code === 'not_granted')
+      ? '사전을 쓰려면 화면에 뜬 “허용”을 눌러주세요.'
+      : (err && err.message) || '지금은 찾을 수 없어요. 조금 뒤에 다시 해볼까요?';
+  }
+  S.view.dictBusy = false;
+  render();
+}
+
+/* ---------- 복습 ---------- */
+function startReview(){
+  const due = S.data.words.filter(w => w.kidId===S.kidId && w.meaning &&
+    (!w.nextReviewAt || new Date(w.nextReviewAt) <= new Date())).slice(0,10);
+  if (!due.length) return;
+  S.view.review = { queue:due, i:0, show:false };
+  openModal(reviewSheet());
+}
+function reviewSheet(){
+  const st = S.view.review, w = st.queue[st.i];
+  if (!w) return '<h3>다 했어요!</h3>';
+  return `<h3>복습 ${st.i+1} / ${st.queue.length}</h3>
+    <div class="flash">
+      <div class="term">${esc(w.emoji||'')} ${esc(w.term)}</div>
+      ${st.show ? `<p style="font-size:19px;margin:0">${esc(w.meaning)}</p>
+        ${w.example?`<p class="muted" style="margin:0">“${esc(w.example)}”</p>`:''}` : ''}
+      <button class="btn ghost sm" data-say="${esc(w.term)}" data-lang="${w.lang==='ko'?'ko':'en'}">🔊 들어보기</button>
+    </div>
+    ${st.show
+      ? `<div class="row" style="gap:9px"><button class="btn ghost grow" id="revAgain">아직이요</button>
+         <button class="btn mint grow" id="revKnow">알아요!</button></div>`
+      : `<button class="btn wide" id="revShow">뜻 보기</button>`}`;
+}
+
+/* ---------- 책 저장 ---------- */
+async function handleCover(file){
+  const w = S.view.wiz;
+  w.coverPreview = URL.createObjectURL(file);
+  w.coverFile = file;
+  openModal(bookWizard());
+}
+async function saveBook(){
+  const w = S.view.wiz;
+  if (!w.title){ alert('책 제목을 적어주세요!'); return; }
+  w.uploading = !!w.coverFile;
+  openModal(bookWizard());
+
+  let coverAssetId = '';
+  if (w.coverFile && S.assets){
+    try { const r = await S.assets.upload(w.coverFile); coverAssetId = r.id; }
+    catch(e){ console.warn('cover upload failed', e); }
+  }
+  const id = await Store.add('books', {
+    kidId:S.kidId, isbn:w.isbn||'', title:w.title, author:w.author||'',
+    category:w.category||(S.settings.cats||DEFAULT_CATS)[0],
+    coverAssetId, coverUrl:w.coverUrl||'', stars:w.stars||3,
+    readAt:new Date().toISOString(),
+    source: w.found || 'manual'
+  });
+  S.freshBookId = id;
+  w.savedId = id;
+  w.uploading = false;
+  w.step = 'words';
+  openModal(bookWizard());
+  confetti();
+}
+function showBook(id){
+  const b = S.data.books.find(x=>x.id===id);
+  if (!b) return;
+  openModal(`<h3>${esc(b.title)}</h3>
+    ${b.coverAssetId ? `<img src="/_blob/${esc(b.coverAssetId)}" alt="" style="width:100%;max-width:230px;border-radius:var(--r-md);display:block;margin:0 auto 12px">` : ''}
+    <p class="muted" style="margin:0">${esc(b.author||'지은이 몰라요')} · ${esc(b.category)} · ${'⭐'.repeat(b.stars||1)}</p>
+    <p class="muted" style="margin:4px 0 14px">${new Date(b.readAt).toLocaleDateString('ko-KR')}에 읽었어요</p>
+    <button class="btn ghost wide" data-close="1">닫기</button>`);
+}
+
+/* ============================================================
+   샘플 데이터 — 처음 열었을 때 화면이 어떻게 차는지 보여주기 위한 예시.
+   전부 sample:true 로 표시해두고 부모님 화면에서 한 번에 지울 수 있다.
+   ============================================================ */
+const SAMPLE_TODOS = [
+  { title:'책 20분 읽기',   icon:'📖' },
+  { title:'수학 익힘책 1장', icon:'🔢' },
+  { title:'받아쓰기 연습',   icon:'✏️' },
+  { title:'줄넘기 50개',     icon:'🤸' }
+];
+const SAMPLE_BOOKS = [
+  ['구름빵','백희나','그림책'], ['강아지똥','권정생','그림책'],
+  ['알사탕','백희나','그림책'], ['책 먹는 여우','프란치스카 비어만','동화책'],
+  ['마당을 나온 암탉','황선미','동화책'],
+  ['Brown Bear, Brown Bear','Bill Martin Jr.','영어책'],
+  ['The Very Hungry Caterpillar','Eric Carle','영어책'],
+  ['why? 우리 몸','예림당','지식책'], ['신기한 스쿨버스','조애너 콜','지식책'],
+  ['흥부와 놀부','전래동화','동화책'], ['팥죽 할멈과 호랑이','백희나','그림책'],
+  ['수학 도둑','송도수','만화']
+];
+const SAMPLE_WORDS = [
+  ['rainbow','비 온 뒤 하늘에 뜨는 일곱 빛깔 다리','🌈','en'],
+  ['brave','무서워도 씩씩하게 하는 마음','🦁','en'],
+  ['whisper','아주 작은 소리로 소곤소곤 말하기','🤫','en'],
+  ['giggle','참다가 터지는 작은 웃음','😆','en'],
+  ['한가롭다','바쁘지 않고 마음이 여유로워요','🌿','ko'],
+  ['소복소복','눈이 조용히 쌓이는 모양','❄️','ko']
+];
+
+async function seedSample(){
+  const ks = kids();
+  if (!ks.length) return;
+  if (S.settings.sampleLoaded) return;          // 두 번 넣어 겹치지 않도록
+  const now = Date.now();
+
+  for (const k of ks){
+    for (const t of SAMPLE_TODOS){
+      await Store.add('todos', { kidId:k.id, title:t.title, icon:t.icon, repeatDays:[],
+        createdBy:'parent', sample:true, createdAt:new Date().toISOString() });
+    }
+  }
+  SAMPLE_BOOKS.forEach((b, i) => {
+    const k = ks[i % ks.length];
+    Store.add('books', { kidId:k.id, isbn:'', title:b[0], author:b[1], category:b[2],
+      coverAssetId:'', coverUrl:'', stars:1 + (i % 3), sample:true,
+      readAt:new Date(now - i * 26 * 3600000).toISOString(), source:'manual' });
+  });
+  SAMPLE_WORDS.forEach((w, i) => {
+    const k = ks[i % ks.length];
+    Store.add('words', { kidId:k.id, term:w[0], meaning:w[1], emoji:w[2], lang:w[3],
+      example:'', box:1 + (i % 3), sample:true,
+      nextReviewAt:new Date(now + 86400000).toISOString(),
+      createdAt:new Date(now - i * 7200000).toISOString() });
+  });
+  // 어제까지의 할 일을 몇 개 해둔 것으로 — 주간 스트립이 비어 보이지 않게
+  for (const k of ks){
+    const mine = S.data.todos.filter(x => x.kidId === k.id && x.sample);
+    for (let back = 1; back <= 3; back++){
+      const d = new Date(); d.setDate(d.getDate() - back);
+      mine.forEach(t => Store.add('sessions', {
+        kidId:k.id, todoId:t.id, date:todayKey(d), durationSec:600 + back * 120, done:true, sample:true
+      }));
+    }
+  }
+  await Store.saveSettings({ sampleLoaded:true });
+}
+
+async function clearSample(){
+  for (const coll of ['todos','books','words','sessions']){
+    for (const r of S.data[coll].filter(x => x.sample)) await Store.remove(coll, r.id);
+  }
+  await Store.saveSettings({ sampleLoaded:false });
+}
+
+/* ---------- 연결 테스트 / 내보내기 ---------- */
+async function netTest(){
+  const box = $('#netResult');
+  box.innerHTML = '<p class="muted">확인 중…</p>';
+  const targets = [
+    ['카카오 책 검색','https://dapi.kakao.com/v3/search/book?target=isbn&query=9788934972464'],
+    ['국립중앙도서관','https://seoji.nl.go.kr/landingPage/SearchApi.do?cert_key=TEST&result_style=json&page_no=1&page_size=1&isbn=9788934972464'],
+    ['날씨(Open-Meteo)','https://api.open-meteo.com/v1/forecast?latitude=37.57&longitude=126.98&current=weather_code']
+  ];
+  const out = [];
+  for (const [name,url] of targets){
+    try { const r = await fetch(url); out.push(`✅ ${name} — 연결됨 (HTTP ${r.status})`); }
+    catch(e){ out.push(`🚫 ${name} — 차단됨`); }
+  }
+  box.innerHTML = `<div class="banner info"><span>🌐</span><span>${out.map(esc).join('<br>')}<br>
+    <b>모두 차단됨이면</b> 카카오 키를 넣어도 소용없어요. 사진 찍기로 등록하면 됩니다.</span></div>`;
+}
+function exportData(){
+  const dump = JSON.stringify({ exportedAt:new Date().toISOString(), settings:S.settings, data:S.data }, null, 2);
+  $('#exportBox').innerHTML = `<p class="muted" style="margin:8px 0 4px">아래 글자를 모두 복사해서 안전한 곳에 보관하세요.</p>
+    <textarea class="field" style="min-height:150px;font-size:12px" readonly>${esc(dump)}</textarea>`;
+  const ta = $('#exportBox textarea');
+  if (ta){ ta.focus(); ta.select(); }
+  if (S.downloads){
+    S.downloads.save({ filename:`별빛책탑-백업-${todayKey()}.json`, data:dump }).catch(()=>{});
+  }
+}
+
+/* ============================================================
+   타이머 틱 (1초마다 화면의 숫자만 갱신 — 전체 재렌더 안 함)
+   ============================================================ */
+setInterval(() => {
+  if (S.running){
+    const el = document.querySelector(`[data-live="${S.running.todoId}"]`);
+    if (el) el.textContent = fmtClock((Date.now()-S.running.startedAt)/1000);
+    const tt = document.getElementById('todayTime');
+    if (tt) tt.textContent = fmtDur(todaySeconds(S.kidId));
+  }
+  const un = S.kidId && activeUnlock(S.kidId);
+  const left = document.getElementById('unlockLeft');
+  if (left && un) left.textContent = fmtClock((new Date(un.expiresAt).getTime()-Date.now())/1000);
+
+  // 부모님이 다른 기기에서 승인해 주면 여기서 알아채고 축하해 준다
+  if (un && S.celebrated !== un.id){ S.celebrated = un.id; confetti(); render(); }
+  if (!un) S.celebrated = null;
+
+  if (S.tab === 'games' && S.kidId && !un && S.view.game){
+    S.view.game = null; stopStars(); render();     // 시간이 끝나면 자동으로 잠김
+  }
+}, 1000);
+
+/* ============================================================
+   시작
+   ============================================================ */
+function start(){
+  const saved = lsGet('byeolbit.kid');
+  if (saved) S.kidId = saved;
+  render();
+  connect().then(() => {
+    // 위치를 이미 알려준 적이 있으면 오늘 날씨를 조용히 채운다 (실패해도 아무 일 없음)
+    if (!todayWeather() && S.settings.geo) autoWeather(false);
+  });
+}
+try {
+  if (window.claude && window.claude.hot && window.claude.hot.snapshot){
+    window.claude.hot.snapshot(() => ({ tab:S.tab, kidId:S.kidId }));
+  }
+  if (window.claude && window.claude.hot && window.claude.hot.ready){
+    window.claude.hot.ready((d) => { if (d){ if (d.tab) S.tab=d.tab; if (d.kidId) S.kidId=d.kidId; } start(); });
+  } else start();
+} catch(e){ start(); }
+</script>
