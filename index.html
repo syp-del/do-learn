@@ -1,4 +1,4 @@
-<title>Do-Learn</title>
+<title>Do-Learn Do-Learn</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap">
@@ -52,7 +52,8 @@
     background:var(--cream);position:sticky;top:0;z-index:20;
     border-bottom:1px solid var(--blush);
   }
-  .topbar h1{font-family:var(--display);font-size:26px;margin:0;letter-spacing:-.01em;}
+  .topbar h1{font-family:var(--display);font-size:clamp(19px,5.2vw,26px);margin:0;
+    letter-spacing:-.01em;white-space:nowrap;}
   .whoami{display:flex;align-items:center;gap:8px;background:var(--surface);
     border:2px solid var(--blush);border-radius:999px;padding:5px 13px 5px 6px;box-shadow:var(--shadow);min-height:44px;}
   .avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:19px;flex:none;}
@@ -138,10 +139,14 @@
   .tower{display:flex;flex-direction:column;justify-content:flex-end;min-width:0;}
   .tower .spines{display:flex;flex-direction:column-reverse;gap:3px;min-height:76px;justify-content:flex-start;}
   .spine{
-    border-radius:5px 7px 7px 5px;display:flex;align-items:center;padding:0 10px;
-    font-size:13px;color:#4A3036;cursor:pointer;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    border-radius:5px 7px 7px 5px;display:flex;align-items:center;justify-content:center;
+    padding:0 9px;color:#4A3036;cursor:pointer;overflow:hidden;
     box-shadow:inset 3px 0 0 rgba(255,255,255,.75), inset 0 -3px 0 rgba(90,50,60,.10);
+  }
+  /* 제목은 가운데 정렬. 길면 글자 크기를 줄여 책등 안에 딱 맞춘다(fitSpines) */
+  .spine .t{
+    display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    text-align:center;font-size:13px;line-height:1.2;letter-spacing:-.01em;
   }
   .spine.fresh{animation:drop .55s cubic-bezier(.3,1.5,.5,1);}
   @keyframes drop{from{transform:translateY(-52px);opacity:0}to{transform:none;opacity:1}}
@@ -289,7 +294,7 @@
 <div id="app">
   <div class="topbar">
     <div class="stack-t">
-      <h1>Do-Learn</h1>
+      <h1>Do-Learn Do-Learn</h1>
       <button class="datechip" id="dateChip"></button>
     </div>
     <button class="whoami" id="whoami" hidden></button>
@@ -302,7 +307,7 @@
 <script>
 "use strict";
 /* ============================================================
-   Do-Learn — 쌍둥이 자매를 위한 읽기·낱말·할 일 앱
+   Do-Learn Do-Learn — 쌍둥이 자매를 위한 읽기·낱말·할 일 앱
    단일 HTML. 데이터는 Artifact의 db 기능에 저장되고,
    db를 쓸 수 없는 환경에서는 메모리로 동작한다(경고 배너 표시).
    ============================================================ */
@@ -416,6 +421,26 @@ function hueFor(str){
   let h = 0; for (let i=0;i<String(str).length;i++) h = (h*31 + str.charCodeAt(i)) % 360;
   return h;
 }
+/* 책등 제목을 가운데에 두고, 길면 글자를 줄여 책등 폭 안에 정확히 맞춘다.
+   13px에서 시작해 0.5px씩 줄이고, 9px보다 작아지면 멈추고 말줄임표로 넘긴다. */
+function fitSpines(){
+  document.querySelectorAll('.spine .t').forEach(el => {
+    const avail = el.parentElement.clientWidth - 18;   // 좌우 패딩 9px씩
+    if (avail <= 0) return;
+    let size = 13;
+    el.style.fontSize = size + 'px';
+    while (size > 9 && el.scrollWidth > avail){
+      size -= 0.5;
+      el.style.fontSize = size + 'px';
+    }
+  });
+}
+let fitTimer = 0;
+addEventListener('resize', () => {
+  clearTimeout(fitTimer);
+  fitTimer = setTimeout(() => { if (S.tab === 'shelf') fitSpines(); }, 120);
+});
+
 const SPINE_COLORS = ['#FFC2CE','#FFD6A5','#BFE7D2','#CBDDF7','#E4D2F3','#FFE79C','#F7C4DC','#AEE0DA'];
 function spineColor(id){ return SPINE_COLORS[hueFor(id) % SPINE_COLORS.length]; }
 function spineHeight(id){ return 28 + (hueFor(id + 'h') % 4) * 4; }   // 책마다 두께가 다르게
@@ -593,6 +618,8 @@ function draw(){
 
   const views = { today:viewToday, shelf:viewShelf, words:viewWords, versus:viewVersus, games:viewGames };
   screen.innerHTML = `<div class="wrap stack">${storageBanner()}${others.map(askCard).join('')}${(views[S.tab]||viewToday)()}</div>`;
+
+  if (S.tab === 'shelf') requestAnimationFrame(fitSpines);
 }
 
 function storageBanner(){
@@ -765,7 +792,7 @@ function viewShelf(){
       const ribbon = (nth % 10 === 0) ? `<div class="ribbon" title="${nth}권째!"></div>` : '';
       return `<div class="spine ${b.id===S.freshBookId?'fresh':''}" data-book="${b.id}"
         style="background:${spineColor(b.id)};height:${spineHeight(b.id)}px"
-        >${esc(b.title||'제목 없는 책')}</div>${ribbon}`;
+        ><span class="t">${esc(b.title||'제목 없는 책')}</span></div>${ribbon}`;
     }).join('');
     return `<div class="tower">
       <div class="spines">${spines || '<div class="ghostbox">여기에 쌓아요</div>'}</div>
