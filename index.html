@@ -326,11 +326,6 @@
   .pb-text b{font-family:var(--display);font-size:21px;}
   .pb-text small{font-size:13px;color:var(--cocoa-soft);}
   .pb-go{font-family:var(--display);font-size:30px;color:var(--berry-deep);line-height:1;}
-  /* 처음 방문 화면의 시연용 둘러보기 — 부모님 관리 버튼과 같은 자리·모양, 민트색 */
-  .parentbtn.demo{border-color:var(--mint);}
-  .parentbtn.demo .pb-lock{background:var(--mint-soft);}
-  .parentbtn.demo .pb-go{color:var(--mint-deep);}
-  .banner.demo{align-items:center;}
 
   /* ---------- (이전) 홈 하단 부모님 관리 ---------- */
   .parentpanel{width:100%;max-width:620px;display:flex;align-items:center;gap:13px;flex-wrap:wrap;
@@ -652,7 +647,6 @@ function todayWeather(){
 /* ---------- 상태 ---------- */
 const S = {
   sb:null, familyId:null,
-  demo:false, demoClosed:false,   // 시연용 둘러보기 (#demo) — 읽기만 하고 저장하지 않는다
   db:null, sample:null, assets:null, downloads:null,
   capsResolved:false, persistent:false,
   data:Object.fromEntries(COLLS.map(c=>[c,[]])),
@@ -837,7 +831,6 @@ const Store = {
     const id = uid();
     S.data[coll].push({id, ...data});
     render();
-    if (S.demo) return id;            // 둘러보기: 이 화면에서만 바뀌고 저장하지 않는다
     if (S.sb){
       try { await S.sb.from('items').insert({ id, family_id:S.familyId, coll, data }); }
       catch(e){ warnWrite(e); }
@@ -850,7 +843,6 @@ const Store = {
     const rec = S.data[coll].find(r=>r.id===id);
     if (rec) Object.assign(rec, patch);
     render();
-    if (S.demo) return;
     if (S.sb){
       const { id:_drop, ...data } = rec || patch;
       try { await S.sb.from('items').update({ data, updated_at:new Date().toISOString() }).eq('id', id); }
@@ -862,7 +854,6 @@ const Store = {
   async remove(coll, id){
     S.data[coll] = S.data[coll].filter(r=>r.id!==id);
     render();
-    if (S.demo) return;
     if (S.sb){
       try { await S.sb.from('items').delete().eq('id', id); } catch(e){ warnWrite(e); }
     } else if (S.db){
@@ -872,7 +863,6 @@ const Store = {
   async saveSettings(patch){
     Object.assign(S.settings, patch);
     render();
-    if (S.demo) return;
     if (S.sb){
       try { await S.sb.from('settings')
         .upsert({ family_id:S.familyId, data:S.settings, updated_at:new Date().toISOString() }); }
@@ -886,7 +876,7 @@ const Store = {
 /* 수파베이스에서 전체를 한 번 읽어 화면 상태를 갈아끼운다.
    실시간 구독 대신 5초 폴링 — 코드가 단순하고 RLS 헤더 방식과도 잘 맞는다. */
 async function sbPull(){
-  if (!S.sb || S.demo) return;
+  if (!S.sb) return;
   try {
     const [items, st] = await Promise.all([
       S.sb.from('items').select('id,coll,data'),
@@ -923,25 +913,6 @@ function warnWrite(e){
   render();
 }
 
-/* 시연용 둘러보기 — 서버가 열어둔 가족의 기록을 한 번 읽어온다(demo_snapshot, 읽기 전용).
-   가족 ID는 받지 않으므로 이 화면에서는 저장할 방법이 없다. 닫혀 있으면 안내만 보인다. */
-async function demoPull(){
-  try {
-    const { data, error } = await S.sb.rpc('demo_snapshot');
-    if (error) throw error;
-    if (!data){ S.demoClosed = true; return; }
-    const next = Object.fromEntries(COLLS.map(c=>[c,[]]));
-    for (const row of (data.items||[])){
-      if (!next[row.coll]) next[row.coll] = [];
-      next[row.coll].push({ id:row.id, ...(row.data||{}) });
-    }
-    S.data = next;
-    S.settings = { ...S.settings, ...(data.settings||{}) };
-    if (!Array.isArray(S.settings.cats) || !S.settings.cats.length) S.settings.cats = DEFAULT_CATS.slice();
-    S.persistent = true;             // 저장 경고 대신 둘러보기 안내를 띄운다
-  } catch(e){ console.warn('둘러보기 불러오기 실패', e); S.demoClosed = true; }
-}
-
 /* ---------- 기능(capability) 연결 ---------- */
 async function connect(){
   // 1순위: 수파베이스 (버셀 등 일반 웹에서 연 경우)
@@ -951,7 +922,6 @@ async function connect(){
         auth: { persistSession:false },
         global: { headers: { 'x-family-id': S.familyId } }
       });
-      if (S.demo){ await demoPull(); S.capsResolved = true; render(); return; }
       await sbPull();
       S.capsResolved = true;
       setInterval(() => { if (document.visibilityState === 'visible') sbPull(); }, 5000);
@@ -1103,12 +1073,6 @@ function draw(){
   $('#dateChip').innerHTML = `${esc(dateLabel())} <span style="font-size:15px">${w ? w.icon : '＋'}</span>`;
   $('#dateChip').setAttribute('aria-label', w ? `오늘 날씨 ${w.label}, 눌러서 바꾸기` : '오늘 날씨 고르기');
 
-  // 시연용 둘러보기: 불러오는 중이거나 닫혀 있으면 안내만
-  if (S.demo && (!S.capsResolved || S.demoClosed || !S.data.profiles.length)){
-    tabs.hidden = true; who.hidden = true; home.hidden = true;
-    screen.innerHTML = viewDemoWait();
-    return;
-  }
   // 아직 아무 프로필도 없음 → 첫 설정
   if (!S.data.profiles.length){
     tabs.hidden = true; who.hidden = true; home.hidden = true;
@@ -1145,7 +1109,6 @@ function draw(){
 }
 
 function storageBanner(){
-  if (S.demo) return demoBanner();
   if (!S.capsResolved) return '';
   if (S.persistent) return '';
   return `<div class="banner warn"><span>⚠️</span><span><b>기록이 저장되지 않아요.</b>
@@ -1178,29 +1141,6 @@ function viewSetup(){
       <p class="muted" style="margin:6px 0 0">여기서 새로 만들지 마세요. 쓰던 기기의
         <b>🔒 부모님 관리 → 설정 → 우리 가족 QR</b>을 이 기기 카메라로 찍으면 같은 기록으로 이어져요.</p>
     </div>
-  </div>
-  ${S.sb ? `<div class="parentbar">
-    <button class="parentbtn demo" id="openDemo" aria-label="둘러보기 — 시연용, 이서와 이현이 화면 구경하기">
-      <span class="pb-lock">👀</span>
-      <span class="pb-text"><b>둘러보기</b><small>시연용 · 이서·이현이 화면을 구경해요</small></span>
-      <span class="pb-go">›</span>
-    </button>
-  </div>` : ''}</div>`;
-}
-
-/* 시연용 둘러보기 안내 — 맨 위에 늘 붙어서 저장되지 않는다는 걸 알린다 */
-function demoBanner(){
-  return `<div class="banner info demo"><span>👀</span>
-    <span class="grow"><b>시연용 둘러보기예요.</b> 눌러보고 바꿔봐도 저장되지 않아요.</span>
-    <button class="btn ghost sm" id="exitDemo">나가기</button></div>`;
-}
-function viewDemoWait(){
-  const done = S.capsResolved;
-  return `<div class="gatebg">${decorLayer()}<div class="wrap gate">
-    <div style="font-size:52px">${done ? '🙈' : '👀'}</div>
-    <h2 class="sec" style="margin:0">${done ? '지금은 둘러볼 수 없어요' : '둘러볼 화면을 불러오고 있어요…'}</h2>
-    ${done ? `<p class="muted" style="text-align:center;max-width:380px;margin:0">시연용 둘러보기가 닫혀 있어요.</p>
-      <button class="btn wide" id="exitDemo" style="max-width:380px">처음 화면으로</button>` : ''}
   </div></div>`;
 }
 
@@ -1209,7 +1149,6 @@ function viewGate(){
   const pend = pendingRequests();
 
   return `<div class="gatebg">${decorLayer()}<div class="wrap gate">
-    ${S.demo ? `<div style="width:100%;max-width:620px">${demoBanner()}</div>` : ''}
     ${pend.length ? `<div style="width:100%;max-width:620px" class="stack">${pend.map(askCard).join('')}</div>` : ''}
 
     <div class="hero">
@@ -1592,9 +1531,6 @@ function viewVersus(){
    ============================================================ */
 function viewGames(){
   const un = activeUnlock(S.kidId);
-  // 둘러보기에서는 승인 없이 이 화면에서만 열어볼 수 있다(저장되지 않음)
-  const demoUnlockBtn = S.demo
-    ? `<button class="btn mint wide" id="demoUnlock" style="margin-top:9px">👀 시연용으로 열어보기</button>` : '';
   if (!un){
     const mine = pendingRequests().find(r => r.kidId === S.kidId);
     if (mine){
@@ -1605,7 +1541,6 @@ function viewGames(){
         <div class="waiting"><i></i><i></i><i></i></div>
         <button class="btn wide" id="pinHere">부모님이 옆에 계세요</button>
         <button class="btn ghost wide sm" id="cancelReq" style="margin-top:9px">요청 취소</button>
-        ${demoUnlockBtn}
       </div>`;
     }
     const list = todosFor(S.kidId), left = list.length - doneCount(S.kidId, todayKey());
@@ -1617,7 +1552,6 @@ function viewGames(){
         ? '부모님 휴대폰으로 “승인해 주세요” 알림을 보내요.'
         : (list.length ? `오늘 할 일이 ${left}개 남았어요.` : '오늘 할 일부터 정해볼까요?')}</p>
       <button class="btn wide" id="askUnlock" ${ready?'':'disabled'}>🔔 부모님께 승인 받기</button>
-      ${demoUnlockBtn}
     </div>`;
   }
 
@@ -1936,10 +1870,6 @@ async function tgSendTest(afterLink){
 
 /* ---------- PIN ---------- */
 function pinSheet(title, note){
-  // 둘러보기에서는 비밀번호가 필요한 곳(부모님 관리·승인)을 열지 않는다
-  if (S.demo) return `<h3>🔒 부모님만 열 수 있어요</h3>
-    <p class="muted" style="margin:0 0 14px">시연용 둘러보기에서는 부모님 관리와 승인을 열지 않아요.</p>
-    <button class="btn wide" data-close="1">알겠어요</button>`;
   const v = S.view.pin || '';
   return `<h3>${esc(title)}</h3>
     <p class="muted" style="margin:0 0 6px">${esc(note||'부모님만 아는 4자리 숫자예요.')}</p>
@@ -3331,8 +3261,8 @@ async function requestUnlock(){
     kidId:k.id, kidName:k.name, status:'pending',
     minutes, createdAt:new Date().toISOString()
   });
-  // 부모님 텔레그램으로 알림 (서버에 봇 설정이 없으면 조용히 넘어간다). 둘러보기에서는 보내지 않는다.
-  if (!window.claude && !S.demo){
+  // 부모님 텔레그램으로 알림 (서버에 봇 설정이 없으면 조용히 넘어간다)
+  if (!window.claude){
     fetch('/api/notify', {
       method:'POST', headers:{ 'content-type':'application/json' },
       body: JSON.stringify({ kidName:k.name, minutes, familyId:S.familyId,
@@ -3375,15 +3305,6 @@ document.addEventListener('click', async (e) => {
     '[data-weather],[data-cand],button');
   if (!t) return;
   const d = t.dataset;
-
-  /* --- 시연용 둘러보기 --- */
-  if (t.id === 'openDemo'){ history.replaceState(null, '', location.pathname + '#demo'); location.reload(); return; }
-  if (t.id === 'exitDemo'){ history.replaceState(null, '', location.pathname); location.reload(); return; }
-  if (t.id === 'demoUnlock'){
-    const mine = pendingRequests().find(r=>r.kidId===S.kidId);
-    if (mine) approveRequest(mine.id); else grantUnlock(S.kidId);
-    return;
-  }
 
   /* --- 첫 설정 --- */
   if (t.id === 'setupGo'){
@@ -3944,8 +3865,6 @@ async function handleCover(file){
 }
 /* 표지 사진 올리기 — 버셀은 수파베이스 저장소, claude.ai는 Artifact 저장소 */
 async function uploadCover(file){
-  // 둘러보기: 올리지 않고 이 화면에서만 보여준다
-  if (S.demo) return { coverUrl:URL.createObjectURL(file), coverAssetId:'' };
   if (S.sb){
     try {
       const ext = (file.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
@@ -3963,7 +3882,6 @@ async function uploadCover(file){
 }
 /* 우리 저장소에 올린 표지면 지운다 (알라딘 표지 주소는 건드리지 않는다) */
 async function removeCoverFile(b){
-  if (S.demo) return;                 // 둘러보기에서 지운 책은 진짜 표지 파일을 건드리지 않는다
   try {
     const m = S.sb && b.coverUrl && b.coverUrl.match(/\/storage\/v1\/object\/public\/covers\/(.+)$/);
     if (m) await S.sb.storage.from('covers').remove([decodeURIComponent(m[1])]);
@@ -4175,9 +4093,7 @@ setInterval(() => {
    시작
    ============================================================ */
 function start(){
-  // 주소가 #demo 이면 시연용 둘러보기. 이 기기의 가족 ID는 건드리지 않고 한 번 쓰고 버릴 ID를 쓴다.
-  S.demo = new URLSearchParams(location.hash.slice(1)).has('demo') && location.protocol.startsWith('http');
-  S.familyId = S.demo ? uid() : resolveFamilyId();
+  S.familyId = resolveFamilyId();
   // 앱을 열면 항상 메인 홈(시작 화면)부터. 누가 공부할지는 매번 고른다.
   S.kidId = null;
   render();
