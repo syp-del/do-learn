@@ -3,6 +3,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
 
 <style>
   :root{
@@ -312,6 +313,13 @@
    db를 쓸 수 없는 환경에서는 메모리로 동작한다(경고 배너 표시).
    ============================================================ */
 
+/* ---------- 수파베이스 ----------
+   가족마다 UUID 하나(familyId)를 갖는다. 그 UUID를 아는 사람만 데이터를 본다.
+   supabase-js 에 x-family-id 헤더를 실어 보내고 서버의 RLS가 그 헤더로 행을 거른다.
+   아래 키는 공개용(publishable) 키라 노출돼도 헤더 없이는 아무것도 읽지 못한다. */
+const SB_URL = 'https://xirclohwurvtschwrtxw.supabase.co';
+const SB_KEY = 'sb_publishable_97VPBM0syPSyG2r1S6ScMg_azkVXgdN';
+
 const COLLS = ['profiles','books','words','todos','sessions','unlocks','dict','requests'];
 const DEFAULT_CATS = ['그림책','동화책','영어책','지식책','만화','시'];
 const KID_COLORS = [
@@ -369,6 +377,7 @@ function todayWeather(){
 
 /* ---------- 상태 ---------- */
 const S = {
+  sb:null, familyId:null,
   db:null, sample:null, assets:null, downloads:null,
   capsResolved:false, persistent:false,
   data:Object.fromEntries(COLLS.map(c=>[c,[]])),
@@ -382,7 +391,14 @@ const S = {
 
 /* ---------- 유틸 ---------- */
 const $ = s => document.querySelector(s);
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+function uid(){
+  try { if (crypto && crypto.randomUUID) return crypto.randomUUID(); } catch(e){}
+  // 구형 브라우저용 UUID v4 대체
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random()*16|0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const todayKey = (d=new Date()) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const clamp = (n,a,b) => Math.max(a, Math.min(b, n));
@@ -448,31 +464,98 @@ function spineHeight(id){ return 28 + (hueFor(id + 'h') % 4) * 4; }   // 책마�
 /* ============================================================
    저장 계층 — db가 있으면 db, 없으면 메모리
    ============================================================ */
+/* 가족 ID — 주소(#f=...)에 있으면 그걸 쓰고, 없으면 이 기기에 저장된 걸,
+   그것도 없으면 새로 만든다. 주소를 아는 사람만 같은 기록을 본다. */
+function resolveFamilyId(){
+  const fromUrl = new URLSearchParams(location.hash.slice(1)).get('f')
+               || new URLSearchParams(location.search).get('f');
+  const re = /^[0-9a-f-]{36}$/i;
+  let id = (fromUrl && re.test(fromUrl)) ? fromUrl : null;
+  if (!id){ const saved = lsGet('dolearn.family'); if (saved && re.test(saved)) id = saved; }
+  if (!id) id = uid();
+  lsSet('dolearn.family', id);
+  if (location.protocol.startsWith('http') && !fromUrl){
+    try { history.replaceState(null, '', `${location.pathname}#f=${id}`); } catch(e){}
+  }
+  return id;
+}
+function familyLink(){
+  return location.protocol.startsWith('http')
+    ? `${location.origin}${location.pathname}#f=${S.familyId}`
+    : `(주소는 인터넷에 올린 뒤에 생겨요) #f=${S.familyId}`;
+}
+
 const Store = {
   async add(coll, data){
     const id = uid();
     S.data[coll].push({id, ...data});
     render();
-    if (S.db){ try { await S.db.collection(coll).doc(id).set(data); } catch(e){ warnWrite(e); } }
+    if (S.sb){
+      try { await S.sb.from('items').insert({ id, family_id:S.familyId, coll, data }); }
+      catch(e){ warnWrite(e); }
+    } else if (S.db){
+      try { await S.db.collection(coll).doc(id).set(data); } catch(e){ warnWrite(e); }
+    }
     return id;
   },
   async update(coll, id, patch){
     const rec = S.data[coll].find(r=>r.id===id);
     if (rec) Object.assign(rec, patch);
     render();
-    if (S.db){ try { await S.db.collection(coll).doc(id).update(patch); } catch(e){ warnWrite(e); } }
+    if (S.sb){
+      const { id:_drop, ...data } = rec || patch;
+      try { await S.sb.from('items').update({ data, updated_at:new Date().toISOString() }).eq('id', id); }
+      catch(e){ warnWrite(e); }
+    } else if (S.db){
+      try { await S.db.collection(coll).doc(id).update(patch); } catch(e){ warnWrite(e); }
+    }
   },
   async remove(coll, id){
     S.data[coll] = S.data[coll].filter(r=>r.id!==id);
     render();
-    if (S.db){ try { await S.db.collection(coll).doc(id).delete(); } catch(e){ warnWrite(e); } }
+    if (S.sb){
+      try { await S.sb.from('items').delete().eq('id', id); } catch(e){ warnWrite(e); }
+    } else if (S.db){
+      try { await S.db.collection(coll).doc(id).delete(); } catch(e){ warnWrite(e); }
+    }
   },
   async saveSettings(patch){
     Object.assign(S.settings, patch);
     render();
-    if (S.db){ try { await S.db.doc('settings/app').set({...S.settings}); } catch(e){ warnWrite(e); } }
+    if (S.sb){
+      try { await S.sb.from('settings')
+        .upsert({ family_id:S.familyId, data:S.settings, updated_at:new Date().toISOString() }); }
+      catch(e){ warnWrite(e); }
+    } else if (S.db){
+      try { await S.db.doc('settings/app').set({...S.settings}); } catch(e){ warnWrite(e); }
+    }
   }
 };
+
+/* 수파베이스에서 전체를 한 번 읽어 화면 상태를 갈아끼운다.
+   실시간 구독 대신 5초 폴링 — 코드가 단순하고 RLS 헤더 방식과도 잘 맞는다. */
+async function sbPull(){
+  if (!S.sb) return;
+  try {
+    const [items, st] = await Promise.all([
+      S.sb.from('items').select('id,coll,data'),
+      S.sb.from('settings').select('data').eq('family_id', S.familyId).maybeSingle()
+    ]);
+    if (items.error) throw items.error;
+    const next = Object.fromEntries(COLLS.map(c=>[c,[]]));
+    for (const row of (items.data||[])){
+      if (!next[row.coll]) next[row.coll] = [];
+      next[row.coll].push({ id:row.id, ...(row.data||{}) });
+    }
+    S.data = next;
+    if (st && st.data && st.data.data){
+      S.settings = { ...S.settings, ...st.data.data };
+      if (!Array.isArray(S.settings.cats) || !S.settings.cats.length) S.settings.cats = DEFAULT_CATS.slice();
+    }
+    S.persistent = true;
+    render();
+  } catch(e){ warnWrite(e); }
+}
 let writeWarned = false;
 function warnWrite(e){
   if (writeWarned) return;
@@ -484,6 +567,25 @@ function warnWrite(e){
 
 /* ---------- 기능(capability) 연결 ---------- */
 async function connect(){
+  // 1순위: 수파베이스 (버셀 등 일반 웹에서 연 경우)
+  if (!window.claude && window.supabase && location.protocol.startsWith('http')){
+    try {
+      S.sb = window.supabase.createClient(SB_URL, SB_KEY, {
+        auth: { persistSession:false },
+        global: { headers: { 'x-family-id': S.familyId } }
+      });
+      await sbPull();
+      S.capsResolved = true;
+      setInterval(() => { if (document.visibilityState === 'visible') sbPull(); }, 5000);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') sbPull();
+      });
+      render();
+      return;
+    } catch(e){ S.sb = null; console.warn('supabase 연결 실패', e); }
+  }
+
+  // 2순위: claude.ai Artifact 기능
   const c = window.claude;
   if (!c || typeof c.use !== 'function'){ S.capsResolved = true; render(); return; }
   const grab = async n => { try { return await c.use(n); } catch(e){ return null; } };
@@ -626,7 +728,8 @@ function storageBanner(){
   if (!S.capsResolved) return '';
   if (S.persistent) return '';
   return `<div class="banner warn"><span>⚠️</span><span><b>기록이 저장되지 않아요.</b>
-    이 화면을 닫으면 오늘 넣은 내용이 사라집니다. claude.ai에 로그인한 상태로 열어주세요.</span></div>`;
+    이 화면을 닫으면 오늘 넣은 내용이 사라집니다. 인터넷 연결을 확인하거나,
+    앱 주소(http로 시작하는 주소)로 열어주세요.</span></div>`;
 }
 
 /* ============================================================
@@ -1221,6 +1324,13 @@ function parentSheet(){
         <input class="field" id="setKakao" value="${esc(S.settings.kakaoKey||'')}" placeholder="없어도 앱은 잘 돌아가요">
         <p class="muted" style="margin:5px 0 0">키를 넣으면 바코드만 찍어도 제목·표지를 자동으로 가져와요.
           먼저 아래 연결 테스트가 통과해야 합니다.</p></div>
+      <div>
+        <div class="muted">우리 가족 주소 — 다른 기기에서 이 주소로 열면 기록이 이어집니다</div>
+        <textarea class="field" id="familyLink" readonly style="min-height:70px;font-size:12px"
+          >${esc(familyLink())}</textarea>
+        <p class="muted" style="margin:5px 0 0;font-size:13px">
+          이 주소를 아는 사람만 우리 기록을 볼 수 있어요. 아무에게나 알려주지 마세요.</p>
+      </div>
       <button class="btn ghost wide" id="setPin">비밀번호 바꾸기</button>
       <button class="btn ghost wide" id="netTest">🌐 연결 테스트</button>
       <div id="netResult"></div>
@@ -1271,9 +1381,24 @@ async function lookupWord(term, mode){
   const cached = S.data.dict.find(d => d.key === key);
   if (cached) return cached.value;
 
-  if (!S.sample) throw new Error('지금은 사전을 쓸 수 없어요. 잠시 뒤 다시 열어보세요.');
-
   const m = DICT_MODES[mode] || DICT_MODES.ek;
+
+  // 웹(버셀)에서는 서버 함수가 Claude API를 대신 부른다 — 키가 브라우저에 노출되지 않는다.
+  if (!S.sample){
+    const res = await fetch('/api/dict', {
+      method:'POST', headers:{ 'content-type':'application/json' },
+      body: JSON.stringify({ term, mode })
+    }).catch(() => null);
+    if (!res) throw new Error('사전에 연결하지 못했어요. 인터넷을 확인해 주세요.');
+    const out = await res.json().catch(() => null);
+    if (!res.ok || !out || out.error){
+      throw new Error((out && out.message) || '지금은 사전을 쓸 수 없어요.');
+    }
+    const val = normalizeDict(out, term);
+    Store.add('dict', { key, value: val, createdAt:new Date().toISOString() });
+    return val;
+  }
+
   const prompt = `너는 초등학교 1학년 아이에게 낱말을 알려주는 다정한 선생님이야.
 낱말: "${term}"
 사전 종류: ${m.label}. ${m.instruct}
@@ -1288,7 +1413,13 @@ async function lookupWord(term, mode){
 - 그런 낱말을 모르면 meaning에 "잘 모르겠어요"라고만 써.`;
 
   const out = await S.sample.json(prompt, { modelTier:'quick', cache:true });
-  const val = {
+  const val = normalizeDict(out, term);
+  Store.add('dict', { key, value: val, createdAt:new Date().toISOString() });
+  return val;
+}
+
+function normalizeDict(out, term){
+  return {
     term: (out && out.term) || term,
     reading: (out && out.reading) || '',
     meaning: (out && out.meaning) || '',
@@ -1296,8 +1427,6 @@ async function lookupWord(term, mode){
     exampleKo: (out && out.exampleKo) || '',
     emoji: (out && out.emoji) || '📖'
   };
-  Store.add('dict', { key, value: val, createdAt:new Date().toISOString() });
-  return val;
 }
 
 async function guessBook(isbn){
@@ -1321,6 +1450,23 @@ category는 다음 중 하나: ${(S.settings.cats||DEFAULT_CATS).join(', ')}`;
 const KAKAO_URL = 'https://dapi.kakao.com/v3/search/book';
 
 async function kakaoSearch(query, target){
+  // 웹(버셀)에서는 서버 함수가 알라딘 → 카카오 순으로 찾아준다. 키는 서버에만 있다.
+  if (!window.claude){
+    try {
+      const q = target === 'isbn' ? `isbn=${encodeURIComponent(query)}` : `title=${encodeURIComponent(query)}`;
+      const r = await fetch(`/api/book?${q}`);
+      if (!r.ok) return { ok:false, reason:'http' };
+      const j = await r.json();
+      const docs = (j.docs || []).map(d => ({
+        title:d.title || '', author:d.author || '', publisher:d.publisher || '',
+        coverUrl:d.cover || '', isbn:d.isbn || ''
+      }));
+      if (!docs.length && !j.provider) return { ok:false, reason:'nokey' };
+      return { ok:true, docs };
+    } catch(e){ return { ok:false, reason:'blocked' }; }
+  }
+
+  // Artifact에서 열었을 때는 브라우저가 직접 카카오를 부른다(CSP에 막힐 수 있음).
   const key = (S.settings.kakaoKey||'').trim();
   if (!key) return { ok:false, reason:'nokey' };
   try {
@@ -2078,10 +2224,21 @@ async function saveBook(){
   w.uploading = !!w.coverFile;
   openModal(bookWizard());
 
-  let coverAssetId = '';
-  if (w.coverFile && S.assets){
-    try { const r = await S.assets.upload(w.coverFile); coverAssetId = r.id; }
-    catch(e){ console.warn('cover upload failed', e); }
+  let coverAssetId = '', coverUrl = w.coverUrl || '';
+  if (w.coverFile){
+    if (S.sb){
+      try {
+        const ext = (w.coverFile.type.split('/')[1] || 'jpg').replace('jpeg','jpg');
+        const path = `${S.familyId}/${uid()}.${ext}`;
+        const up = await S.sb.storage.from('covers')
+          .upload(path, w.coverFile, { contentType:w.coverFile.type, upsert:false });
+        if (up.error) throw up.error;
+        coverUrl = S.sb.storage.from('covers').getPublicUrl(path).data.publicUrl;
+      } catch(e){ console.warn('표지 올리기 실패', e); }
+    } else if (S.assets){
+      try { const r = await S.assets.upload(w.coverFile); coverAssetId = r.id; }
+      catch(e){ console.warn('표지 올리기 실패', e); }
+    }
   }
   const id = await Store.add('books', {
     kidId:S.kidId, isbn:w.isbn||'', title:w.title, author:w.author||'',
@@ -2236,6 +2393,7 @@ setInterval(() => {
    시작
    ============================================================ */
 function start(){
+  S.familyId = resolveFamilyId();
   const saved = lsGet('dolearn.kid');
   if (saved) S.kidId = saved;
   render();

@@ -1,0 +1,7 @@
+{
+  "name": "do-learn",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "쌍둥이 자매를 위한 읽기·낱말·할 일 앱"
+}

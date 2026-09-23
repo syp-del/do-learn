@@ -1,41 +1,91 @@
 # Do-Learn Do-Learn
 
-초등학교 1학년 쌍둥이 자매를 위한 읽기·낱말·할 일 앱. 단일 HTML 파일(`index.html`)이며
-claude.ai Artifact로 게시해 https 주소로 연다. 빌드 도구도 서버도 없다.
+초등학교 1학년 쌍둥이 자매를 위한 읽기·낱말·할 일 앱.
+
+- **앱**: 단일 HTML 파일 `index.html` (빌드 도구 없음)
+- **배포**: Vercel 정적 호스팅 + 서버리스 함수 두 개
+- **데이터**: Supabase (Postgres + Storage)
 
 ---
 
-## 왜 Artifact인가
+## 구조
 
-태블릿 카메라(`getUserMedia`)는 **https 또는 localhost에서만** 동작한다. `file://`로 열거나
-PC 로컬 서버에 `http://192.168.x.x`로 접속하면 브라우저가 카메라를 차단한다.
-Artifact 게시는 https 주소를 주고, 동시에 다음을 준다.
+```
+index.html      앱 전체 (HTML/CSS/JS 한 파일)
+api/dict.js     사전 — Claude API를 서버에서 대신 호출
+api/book.js     책 찾기 — 알라딘 → 카카오 순으로 서버에서 조회
+package.json    type: module (Vercel 함수가 ESM)
+```
 
-| 기능 | 쓰임 |
+앱은 열린 환경을 스스로 알아본다.
+
+| 어디서 열렸나 | 저장 | 사전 | 책 찾기 |
+|---|---|---|---|
+| Vercel(일반 웹) | Supabase | `/api/dict` | `/api/book` |
+| claude.ai Artifact | Artifact `db` | Claude `sample` | 브라우저에서 카카오 직접 |
+| 그 외(파일 열기 등) | 메모리(경고 배너) | 불가 | 수동 입력 |
+
+---
+
+## 배포하기
+
+### 1. Vercel에 연결
+1. https://vercel.com/new 접속
+2. `syp-del/do-learn` 저장소를 **Import**
+3. Framework Preset은 **Other**, 빌드 설정은 건드리지 않는다 (빌드 과정이 없다)
+4. **Deploy**
+
+이후 `main`에 푸시할 때마다 자동 배포된다.
+
+### 2. 환경변수 (Vercel → Settings → Environment Variables)
+
+| 이름 | 쓰임 | 없으면 |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | 사전 | 사전 탭에서 "아직 준비되지 않았어요" 안내 |
+| `ALADIN_TTB_KEY` | 책 정보·표지 (1순위) | 카카오로 넘어감 |
+| `KAKAO_REST_KEY` | 책 정보·표지 (2순위) | 제목 직접 입력 |
+
+**하나도 없어도 앱은 완전히 돌아간다.** 책은 바코드로 ISBN을 읽고 표지를 직접 찍어 등록하면 되고,
+단어는 직접 뜻을 적어 담을 수 있다.
+
+키 받는 곳
+- Claude API: https://console.anthropic.com → API Keys
+- 알라딘 TTB: https://www.aladin.co.kr/ttb/wblog_manage.aspx (회원가입 후 신청)
+- 카카오 REST: https://developers.kakao.com → 내 애플리케이션 → 앱 키
+
+### 3. Supabase
+프로젝트 `do-learn` (서울 리전)에 이미 스키마가 들어가 있다. 추가 설정은 없다.
+`index.html` 상단의 `SB_URL`, `SB_KEY`가 그 프로젝트를 가리킨다.
+
+---
+
+## 데이터가 보호되는 방식
+
+가족마다 UUID 하나(`familyId`)를 갖는다. 주소 끝에 `#f=<UUID>` 로 붙고, 이 기기에도 저장된다.
+
+- 앱은 모든 요청에 `x-family-id` 헤더를 실어 보낸다.
+- Postgres RLS가 그 헤더와 `family_id`가 일치하는 행만 돌려준다.
+- 공개 키(`SB_KEY`)만 알고 헤더가 없으면 **읽기는 빈 결과, 쓰기는 401**이다.
+
+즉 **주소를 아는 사람만** 기록을 본다. 다른 기기에서 이어 쓰려면
+부모님 화면 → 설정 → `우리 가족 주소`를 복사해 그 주소로 열면 된다.
+아무에게나 알려주면 안 되는 주소다.
+
+표지 사진은 `covers` 버킷에 `<familyId>/<랜덤>.jpg` 경로로 올라간다.
+버킷은 공개지만 경로를 모르면 찾을 수 없다.
+
+### 테이블
+
+| 테이블 | 내용 |
 |---|---|
-| `db` | 모든 기록의 원본. 두 패드와 부모님 폰이 실시간으로 같은 내용을 본다 |
-| `sample` | 사전 뜻풀이와 ISBN 책 추정을 Claude에게 직접 묻는다 (API 키 불필요) |
-| `assets` | 아이가 찍은 표지 사진 저장 |
-| `downloads` | 기록 백업 파일 내려받기 |
+| `items` | 앱의 모든 기록. `coll`(books/words/todos/sessions/unlocks/requests/profiles/dict) + `data` jsonb |
+| `settings` | 가족별 설정 한 줄 (PIN, 게임 시간, 카테고리, 날씨 등) |
 
-**대가**: Artifact의 CSP가 외부 호스트로의 `fetch`를 차단할 수 있다. 그래서 외부 API에
-의존하는 기능(카카오 책 검색, 날씨)은 전부 **실패해도 앱이 멀쩡히 돌아가도록** 만들었다.
-부모님 화면 → 설정 → **연결 테스트**로 차단 여부를 직접 확인할 수 있다.
+기록을 jsonb 한 칸에 담아 앱이 쓰는 객체 모양을 그대로 저장한다.
+필드를 늘려도 마이그레이션이 필요 없다.
 
----
-
-## 패드에 올리는 법
-
-1. 패드 브라우저에서 앱 주소를 연다.
-2. **같은 Claude 계정으로 로그인**한다. 두 패드와 부모님 폰이 같은 계정이어야
-   기록이 합쳐지고 승인 알림이 오간다.
-3. 공유 메뉴 → **홈 화면에 추가**.
-4. 처음 열면 두 아이 이름을 묻고, 예시 데이터를 넣을지 물어본다.
-   부모님 비밀번호는 **1234**로 시작하니 설정에서 바로 바꾸는 걸 권한다.
-
-### 아이가 다른 화면으로 못 나가게 잠그기
-- **iPad**: 설정 → 손쉬운 사용 → 가이드 접근. 앱을 연 뒤 측면 버튼 3번.
-- **Android**: 설정 → 보안 → 앱 고정.
+동기화는 실시간 구독 대신 **5초 폴링**이다(화면이 보일 때만). 승인 알림에는 충분하고,
+RLS 헤더 방식과 충돌하지 않는다.
 
 ---
 
