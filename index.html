@@ -968,7 +968,9 @@ function render(opts){
   const keep = !!(opts && opts.keepInputs);
   if (renderQueued){ renderKeep = renderKeep && keep; return; }
   renderQueued = true; renderKeep = keep;
-  requestAnimationFrame(() => {
+  // 숨겨진 탭(뒤에서 열린 알림 링크 등)에서는 requestAnimationFrame이 멈추므로 setTimeout으로 그린다
+  const schedule = document.hidden ? (fn => setTimeout(fn, 0)) : requestAnimationFrame;
+  schedule(() => {
     renderQueued = false;
     const root = $('#screen');
     const snap = renderKeep ? snapshotInputs(root) : null;
