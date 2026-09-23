@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 
 <style>
   :root{
@@ -264,6 +265,25 @@
     .stk.keyring{height:calc(var(--s) * .832) !important;}
     .stk.wide{display:none;}
   }
+
+  /* ---------- 홈 하단 부모님 관리 ---------- */
+  .parentpanel{width:100%;max-width:620px;display:flex;align-items:center;gap:13px;flex-wrap:wrap;
+    background:rgba(255,255,255,.92);border:2px dashed var(--blush);border-radius:22px;
+    padding:14px 16px;margin-top:6px;}
+  .pp-lock{width:48px;height:48px;border-radius:50%;background:var(--blush);display:grid;place-items:center;
+    font-size:22px;flex:none;}
+  .pp-title{font-family:var(--display);font-size:21px;font-weight:700;line-height:1.2;}
+  .pp-sub{font-size:13px;color:var(--cocoa-soft);}
+  @media (max-width:430px){ .parentpanel .btn{width:100%;} }
+
+  /* 알림 연결 단계 */
+  .tgstep{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--blush);}
+  .tgstep:first-of-type{border-top:0;}
+  .tgnum{flex:none;width:30px;height:30px;border-radius:50%;background:var(--berry);color:#fff;
+    font-family:var(--display);font-weight:700;display:grid;place-items:center;}
+  .qrbox{width:180px;max-width:100%;margin:10px auto 0;background:#fff;border-radius:14px;padding:8px;
+    border:2px solid var(--blush);}
+  .qrbox svg{display:block;width:100%;height:auto;}
 
   /* ---------- 다꾸 메모지 — 오늘의 응원 ---------- */
   .memo{position:relative;width:100%;max-width:440px;margin-top:-4px;
@@ -950,6 +970,11 @@ function viewSetup(){
       <button class="btn wide" id="setupGo">시작하기</button>
       <p class="muted" style="text-align:center;margin:0">부모님 비밀번호는 <b>1234</b>로 시작해요.</p>
     </div>
+    <div class="card" style="width:100%;max-width:380px;background:var(--mint-soft)">
+      <b>이미 다른 기기에서 쓰고 있나요?</b>
+      <p class="muted" style="margin:6px 0 0">여기서 새로 만들지 마세요. 쓰던 기기의
+        <b>🔒 부모님 관리 → 설정 → 우리 가족 QR</b>을 이 기기 카메라로 찍으면 같은 기록으로 이어져요.</p>
+    </div>
   </div></div>`;
 }
 
@@ -993,8 +1018,14 @@ function viewGate(){
       <div class="muted" style="font-size:12px;margin-top:6px">한 명 더 같이 해요</div>
     </button>` : ''}</div>
 
-    <button class="btn ghost sm" id="openParent">👩‍🦰 부모님 화면${
-      pend.length ? `<span class="dot-badge">${pend.length}</span>` : ''}</button>
+    <section class="parentpanel" aria-label="부모님 관리">
+      <div class="pp-lock">🔒</div>
+      <div class="grow">
+        <div class="pp-title">부모님 관리${pend.length ? `<span class="dot-badge">${pend.length}</span>` : ''}</div>
+        <div class="pp-sub">할 일 · 아이 · 게임 승인 · 텔레그램 알림 · 설정</div>
+      </div>
+      <button class="btn" id="openParent">비밀번호로 열기</button>
+    </section>
   </div></div>`;
 }
 
@@ -1550,6 +1581,123 @@ function bookWizard(){
   return '';
 }
 
+/* ---------- QR ---------- */
+function qrSvg(text){
+  try {
+    if (!window.qrcode || !text) return '';
+    const q = window.qrcode(0, 'M');
+    q.addData(text); q.make();
+    return q.createSvgTag({ cellSize:4, margin:2, scalable:true, alt:'QR 코드' });
+  } catch(e){ return ''; }
+}
+
+/* ---------- 부모님 관리 → 알림 (텔레그램) ----------
+   흐름: QR을 폰으로 찍거나 버튼 → 텔레그램에서 봇 열림 → 시작(START) → 여기서 '연결 확인'
+   서버가 "/start <가족ID>" 메시지를 찾아 대화방 번호를 돌려주면 가족 설정에 저장한다. */
+function notifyTab(){
+  if (window.claude){
+    return `<div class="card"><p class="muted" style="margin:0">텔레그램 알림은 버셀 주소
+      (do-learn-syp4.vercel.app)로 열었을 때만 쓸 수 있어요.</p></div>`;
+  }
+  const tg = S.view.tg;
+  if (!tg){ setTimeout(tgRefresh, 0); return `<div class="card"><p class="muted" style="margin:0">알림 연결 상태를 확인하는 중…</p></div>`; }
+  if (tg.loading) return `<div class="card"><p class="muted" style="margin:0">알림 연결 상태를 확인하는 중…</p></div>`;
+  if (tg.error) return `<div class="card"><p style="margin:0 0 10px">${esc(tg.error)}</p>
+    <button class="btn ghost wide" id="tgCheck">다시 확인</button></div>`;
+
+  const d = tg.data || {};
+  if (!d.ok){
+    return `<div class="card">
+      <h3 class="sub">텔레그램 알림</h3>
+      <p style="margin:0 0 10px">${esc(d.message || '지금은 확인할 수 없어요.')}</p>
+      <button class="btn ghost wide" id="tgCheck">다시 확인</button></div>`;
+  }
+
+  const linked = S.settings.telegram && S.settings.telegram.chatId;
+  if (linked){
+    return `<div class="card" style="background:var(--mint-soft)">
+      <h3 class="sub">✅ 텔레그램과 연결됐어요</h3>
+      <p style="margin:0">아이가 게임을 요청하면
+        <b>${esc(S.settings.telegram.name || '부모님')}</b> 님 텔레그램(@${esc(d.bot.username)})으로 알려드려요.</p>
+      <div class="stack" style="margin-top:12px;gap:9px">
+        <button class="btn wide" id="tgTest">📨 테스트 메시지 보내기</button>
+        <button class="btn ghost wide sm" id="tgUnlink">연결 끊기</button>
+      </div>
+    </div>`;
+  }
+
+  const qr = qrSvg(d.link);
+  return `<div class="card">
+    <h3 class="sub">텔레그램 알림 연결</h3>
+    <p class="muted" style="margin:0 0 12px">아이가 게임을 요청하면 부모님 폰 텔레그램으로 알림이 가요.</p>
+
+    <div class="tgstep"><span class="tgnum">1</span><div class="grow">
+      <b>봇에게 말 걸기</b>
+      <p style="margin:4px 0 0">폰 카메라로 아래 QR을 찍으면 텔레그램이 열려요.
+        이 기기에 텔레그램이 있으면 버튼을 눌러도 돼요.</p>
+      ${qr ? `<div class="qrbox">${qr}</div>` : ''}
+      <a class="btn wide" href="${esc(d.link)}" target="_blank" rel="noopener" style="text-decoration:none;margin-top:8px">
+        텔레그램에서 @${esc(d.bot.username)} 열기</a>
+    </div></div>
+
+    <div class="tgstep"><span class="tgnum">2</span><div class="grow">
+      <b>텔레그램에서 <u>시작</u>(START) 누르기</b>
+      <p style="margin:4px 0 0">화면 아래 파란 <b>시작</b> 버튼을 누르세요. 봇이 대답하지 않아도 괜찮아요.</p>
+    </div></div>
+
+    <div class="tgstep"><span class="tgnum">3</span><div class="grow">
+      <b>여기로 돌아와서 연결 확인</b>
+      <button class="btn mint wide" id="tgCheck" style="margin-top:8px">연결 확인</button>
+      ${tg.checkedEmpty ? `<p class="muted" style="margin:8px 0 0">아직 시작(START) 메시지가 안 보여요.
+        텔레그램에서 시작을 누른 뒤 다시 확인해 주세요.</p>` : ''}
+    </div></div>
+
+    ${(d.candidates||[]).length ? `<div style="margin-top:12px">
+      <p class="muted" style="margin:0 0 6px">QR 없이 봇에게 직접 말을 거셨나요? 부모님 계정을 고르세요.</p>
+      ${d.candidates.map(c => `<button class="btn ghost wide sm" data-tglink="${esc(c.id)}|${esc(c.name)}"
+        style="margin-top:6px">${esc(c.name || '이름 없음')} 계정으로 연결</button>`).join('')}
+    </div>` : ''}
+  </div>`;
+}
+
+async function tgRefresh(userAsked){
+  S.view.tg = { ...(S.view.tg || {}), loading:true };
+  if (S.view.parentTab === 'notify') openModal(parentSheet());
+  let next;
+  try {
+    const r = await fetch(`/api/telegram-link?familyId=${encodeURIComponent(S.familyId)}`);
+    const j = await r.json();
+    next = { loading:false, data:j };
+    if (j.ok && j.chat){
+      const cur = S.settings.telegram;
+      if (!cur || String(cur.chatId) !== String(j.chat.id)){
+        await Store.saveSettings({ telegram:{ chatId:String(j.chat.id), name:j.chat.name || '', linkedAt:new Date().toISOString() } });
+        tgSendTest(true);
+      }
+    } else if (j.ok && userAsked){
+      next.checkedEmpty = true;
+    }
+  } catch(e){
+    next = { loading:false, error:'알림 연결 상태를 불러오지 못했어요. 인터넷을 확인해 주세요.' };
+  }
+  S.view.tg = next;
+  if (S.view.parentTab === 'notify' && $('#modalRoot .sheet')) openModal(parentSheet());
+}
+
+async function tgSendTest(afterLink){
+  const chatId = S.settings.telegram && S.settings.telegram.chatId;
+  if (!chatId) return;
+  try {
+    const r = await fetch('/api/telegram-link', {
+      method:'POST', headers:{ 'content-type':'application/json' },
+      body: JSON.stringify({ action:'test', chatId })
+    });
+    const j = await r.json();
+    toast(j.ok ? (afterLink ? '연결됐어요! 텔레그램을 확인해 보세요 📨' : '텔레그램으로 보냈어요 📨')
+               : (j.message || '보내지 못했어요'));
+  } catch(e){ toast('보내지 못했어요. 인터넷을 확인해 주세요'); }
+}
+
 /* ---------- PIN ---------- */
 function pinSheet(title, note){
   const v = S.view.pin || '';
@@ -1644,8 +1792,14 @@ function parentSheet(){
         <p class="muted" style="margin:5px 0 0">키를 넣으면 바코드만 찍어도 제목·표지를 자동으로 가져와요.
           먼저 아래 연결 테스트가 통과해야 합니다.</p></div>
       <div>
-        <div class="muted">우리 가족 주소 — 다른 기기에서 이 주소로 열면 기록이 이어집니다</div>
-        <textarea class="field" id="familyLink" readonly style="min-height:70px;font-size:12px"
+        <div class="muted">우리 가족 QR — 다른 기기(부모님 폰 등) 카메라로 찍으면 같은 기록으로 열려요</div>
+        ${location.protocol.startsWith('http') && qrSvg(familyLink())
+          ? `<div class="qrbox">${qrSvg(familyLink())}</div>` : ''}
+        <div class="row" style="gap:8px;margin-top:8px">
+          <button class="btn ghost sm grow" id="shareFamily">공유하기</button>
+          <button class="btn ghost sm grow" id="copyFamily">주소 복사</button>
+        </div>
+        <textarea class="field" id="familyLink" readonly style="min-height:60px;font-size:12px;margin-top:8px"
           >${esc(familyLink())}</textarea>
         <p class="muted" style="margin:5px 0 0;font-size:13px">
           이 주소를 아는 사람만 우리 기록을 볼 수 있어요. 아무에게나 알려주지 마세요.</p>
@@ -1660,6 +1814,9 @@ function parentSheet(){
       <button class="btn ghost wide" id="exportData">💾 전체 기록 내보내기</button>
       <div id="exportBox"></div>
     </div>`;
+  }
+  if (t === 'notify'){
+    body = notifyTab();
   }
   if (t === 'unlock'){
     const pend = pendingRequests();
@@ -1680,7 +1837,7 @@ function parentSheet(){
 
   return `<h3>부모님 화면</h3>
     <div class="chips" style="margin:8px 0 14px">
-      ${tabBtn('todos','할 일')}${tabBtn('kids','아이')}${tabBtn('unlock','게임 승인' +
+      ${tabBtn('todos','할 일')}${tabBtn('kids','아이')}${tabBtn('notify','알림')}${tabBtn('unlock','게임 승인' +
       (pendingRequests().length ? `<span class="dot-badge">${pendingRequests().length}</span>` : ''))}${tabBtn('settings','설정')}
     </div>
     ${body}`;
@@ -2175,7 +2332,8 @@ async function requestUnlock(){
   if (!window.claude){
     fetch('/api/notify', {
       method:'POST', headers:{ 'content-type':'application/json' },
-      body: JSON.stringify({ kidName:k.name, minutes, familyId:S.familyId })
+      body: JSON.stringify({ kidName:k.name, minutes, familyId:S.familyId,
+        chatId:(S.settings.telegram && S.settings.telegram.chatId) || '' })
     }).catch(()=>{});
   }
 }
@@ -2210,7 +2368,7 @@ document.addEventListener('click', async (e) => {
     '[data-book],[data-mode],[data-say],[data-game],[data-mem],[data-ml],[data-mr],[data-cat],[data-stars],'+
     '[data-close],[data-pin],[data-pinclear],[data-pinback],[data-ptab],[data-addtodo],[data-parentdel],'+
     '[data-kidav],[data-kidcol],[data-grant],[data-relock],[data-approve],[data-deny],'+
-    '[data-nday],[data-tday],'+
+    '[data-nday],[data-tday],[data-tglink],'+
     '[data-weather],[data-cand],button');
   if (!t) return;
   const d = t.dataset;
@@ -2435,7 +2593,11 @@ document.addEventListener('click', async (e) => {
   if (d.pinclear){ S.view.pin = ''; openModal(pinSheet(pinTitle())); return; }
 
   /* --- 부모 --- */
-  if (d.ptab){ S.view.parentTab = d.ptab; openModal(parentSheet()); return; }
+  if (d.ptab){
+    S.view.parentTab = d.ptab;
+    if (d.ptab === 'notify') S.view.tg = null;   // 알림 탭을 열 때마다 연결 상태를 새로 확인
+    openModal(parentSheet()); return;
+  }
   if (d.addtodo){
     const inp = document.querySelector(`[data-newtodo="${d.addtodo}"]`);
     const v = (inp && inp.value||'').trim();
@@ -2507,6 +2669,41 @@ document.addEventListener('click', async (e) => {
     });
     return;
   }
+  /* --- 텔레그램 알림 --- */
+  if (t.id === 'tgCheck'){ await tgRefresh(true); return; }
+  if (t.id === 'tgTest'){ await tgSendTest(false); return; }
+  if (t.id === 'tgUnlink'){
+    askConfirm({
+      title:'텔레그램 연결을 끊을까요?', danger:true, okLabel:'끊기',
+      note:'끊으면 아이가 게임을 요청해도 알림이 가지 않아요. 언제든 다시 연결할 수 있어요.',
+      onOk: async () => {
+        await Store.saveSettings({ telegram:null });
+        S.view.tg = null; S.view.parentTab = 'notify';
+        openModal(parentSheet()); toast('연결을 끊었어요');
+      }
+    });
+    return;
+  }
+  if (d.tglink){
+    const [id, ...rest] = d.tglink.split('|');
+    await Store.saveSettings({ telegram:{ chatId:String(id), name:rest.join('|'), linkedAt:new Date().toISOString() } });
+    openModal(parentSheet());
+    tgSendTest(true);
+    return;
+  }
+
+  /* --- 가족 주소 공유 --- */
+  if (t.id === 'shareFamily' || t.id === 'copyFamily'){
+    const link = familyLink();
+    if (t.id === 'shareFamily' && navigator.share){
+      try { await navigator.share({ title:'Do-Learn Do-Learn', text:'우리 가족 Do-Learn 주소', url:link }); return; }
+      catch(e){ if (e && e.name === 'AbortError') return; }
+    }
+    try { await navigator.clipboard.writeText(link); toast('주소를 복사했어요'); }
+    catch(e){ const ta = $('#familyLink'); if (ta){ ta.focus(); ta.select(); } toast('주소를 길게 눌러 복사해 주세요'); }
+    return;
+  }
+
   if (t.id === 'netTest'){ await netTest(); return; }
   if (t.id === 'exportData'){ exportData(); return; }
   if (t.id === 'seedSample'){

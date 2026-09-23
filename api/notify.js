@@ -10,12 +10,13 @@ export default async function handler(req, res) {
   // 붙여넣을 때 흔히 딸려오는 공백·따옴표·"bot" 접두어를 걷어낸다
   const token = String(process.env.TELEGRAM_BOT_TOKEN || '').trim()
     .replace(/^["']|["']$/g, '').replace(/^bot(?=\d)/, '');
-  const chatId = String(process.env.TELEGRAM_CHAT_ID || '').trim();
+  const { kidName, minutes, familyId, chatId: bodyChat } = req.body || {};
+  // 앱의 '부모님 관리 → 알림'에서 연결한 대화방이 1순위, 환경변수 TELEGRAM_CHAT_ID는 예비
+  const fromBody = /^-?\d{4,20}$/.test(String(bodyChat || '')) ? String(bodyChat) : '';
+  const chatId = fromBody || String(process.env.TELEGRAM_CHAT_ID || '').trim();
   if (!token || !chatId) {
     return res.status(200).json({ sent: false, reason: 'not_configured' });
   }
-
-  const { kidName, minutes, familyId } = req.body || {};
   const name = String(kidName || '아이').slice(0, 20);
   const mins = Number(minutes) || 20;
 
