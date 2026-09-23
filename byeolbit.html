@@ -318,6 +318,9 @@ const KID_COLORS = [
 const AVATARS = ['🐰','🐱','🦊','🐻','🐨','🦄','🐧','🐣'];
 const DAYNAMES = ['일','월','화','수','목','금','토'];
 
+// 기본 위치 — 경기도 화성시 동탄 (동탄역 부근). 위치 권한을 묻지 않고 바로 이 좌표로 채운다.
+const DEFAULT_GEO = { lat:37.2013, lon:127.0973, name:'화성시 동탄' };
+
 const WEATHERS = [
   { icon:'☀️', label:'맑음' }, { icon:'🌤', label:'구름 조금' }, { icon:'☁️', label:'흐림' },
   { icon:'🌧', label:'비' },  { icon:'⛈', label:'천둥비' },    { icon:'❄️', label:'눈' },
@@ -1324,14 +1327,15 @@ const KAKAO_MSG = {
    날씨 — 자동으로 가져오고, 안 되면 탭해서 고른다
    ============================================================ */
 function weatherSheet(){
-  const cur = todayWeather();
+  const cur = todayWeather(), g = currentGeo();
   return `<h3>오늘 날씨는 어때요?</h3>
-    <p class="muted" style="margin:0 0 12px">창밖을 보고 골라주세요.</p>
+    <p class="muted" style="margin:0 0 12px">
+      지금은 <b>${esc(g.name || '정한 곳')}</b> 날씨로 맞춰져 있어요. 창밖을 보고 다르면 직접 골라주세요.</p>
     <div class="weatherpick">${WEATHERS.map((w,i)=>
       `<button data-weather="${i}" aria-pressed="${cur && cur.icon===w.icon}">
         ${w.icon}<span>${w.label}</span></button>`).join('')}</div>
-    <button class="btn ghost wide" id="autoWeather" style="margin-top:14px">📍 자동으로 가져오기</button>
-    <p class="muted" style="margin:7px 0 0;font-size:13px">위치를 한 번 알려주면 다음부터는 저절로 채워져요.</p>`;
+    <button class="btn ghost wide" id="autoWeather" style="margin-top:14px">🔄 ${esc(g.name||'')} 날씨 다시 받기</button>
+    <button class="btn ghost wide sm" id="hereWeather" style="margin-top:8px">📍 지금 있는 곳으로 바꾸기</button>`;
 }
 function setWeather(icon, label){
   Store.saveSettings({ weather:{ date:todayKey(), icon, label } });
@@ -1356,23 +1360,28 @@ async function fetchWeatherAt(lat, lon){
   if (code == null) throw new Error('shape');
   return wmoToWeather(code);
 }
-async function autoWeather(interactive){
+function currentGeo(){
   const g = S.settings.geo;
-  try {
-    let lat, lon;
-    if (g && typeof g.lat === 'number'){ lat = g.lat; lon = g.lon; }
-    else {
-      if (!interactive || !navigator.geolocation) return false;
+  return (g && typeof g.lat === 'number') ? g : DEFAULT_GEO;
+}
+/* interactive=true 면 "지금 있는 곳"으로 바꾸려고 위치를 한 번 물어본다.
+   거절하거나 실패해도 기본 좌표(동탄)로 계속 진행한다. */
+async function autoWeather(interactive){
+  let geo = currentGeo();
+  if (interactive && navigator.geolocation){
+    try {
       const pos = await new Promise((res, rej) =>
         navigator.geolocation.getCurrentPosition(res, rej, { timeout:8000, maximumAge:600000 }));
-      lat = pos.coords.latitude; lon = pos.coords.longitude;
-      await Store.saveSettings({ geo:{ lat, lon } });
-    }
-    const w = await fetchWeatherAt(lat, lon);
-    await Store.saveSettings({ weather:{ date:todayKey(), icon:w.icon, label:w.label } });
+      geo = { lat:pos.coords.latitude, lon:pos.coords.longitude, name:'지금 있는 곳' };
+      await Store.saveSettings({ geo });
+    } catch(e){ /* 거절 → 동탄 기본값 그대로 */ }
+  }
+  try {
+    const w = await fetchWeatherAt(geo.lat, geo.lon);
+    await Store.saveSettings({ weather:{ date:todayKey(), icon:w.icon, label:w.label, place:geo.name||'' } });
     return true;
   } catch(e){
-    if (interactive) alert('날씨를 자동으로 가져오지 못했어요. 아래에서 직접 골라주세요.');
+    if (interactive) alert('날씨를 가져오지 못했어요. 아래에서 직접 골라주세요.');
     return false;
   }
 }
@@ -1724,8 +1733,9 @@ document.addEventListener('click', async (e) => {
     const w = WEATHERS[+d.weather];
     setWeather(w.icon, w.label); closeModal(); return;
   }
-  if (t.id === 'autoWeather'){
-    const ok = await autoWeather(true);
+  if (t.id === 'autoWeather' || t.id === 'hereWeather'){
+    t.disabled = true; t.textContent = '가져오는 중…';
+    const ok = await autoWeather(t.id === 'hereWeather');
     if (ok) closeModal(); else openModal(weatherSheet());
     return;
   }
@@ -2203,8 +2213,9 @@ function start(){
   if (saved) S.kidId = saved;
   render();
   connect().then(() => {
-    // 위치를 이미 알려준 적이 있으면 오늘 날씨를 조용히 채운다 (실패해도 아무 일 없음)
-    if (!todayWeather() && S.settings.geo) autoWeather(false);
+    // 오늘 날씨를 조용히 채운다. 기본은 화성시 동탄이라 위치 권한을 묻지 않는다.
+    // 막히거나 실패하면 아무 일도 일어나지 않고 아이가 직접 고르면 된다.
+    if (!todayWeather()) autoWeather(false);
   });
 }
 try {
