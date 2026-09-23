@@ -1,6 +1,12 @@
 /* 사전 — Claude API를 서버에서 대신 부른다.
    브라우저에 키를 두지 않으려고 이 함수를 둔다.
-   필요한 환경변수: ANTHROPIC_API_KEY  (버셀 → Settings → Environment Variables) */
+   필요한 환경변수: ANTHROPIC_API_KEY (또는 CLAUDE_API_KEY)  (버셀 → Settings → Environment Variables) */
+
+// 키는 여러 이름으로 넣을 수 있게 한다. 붙여넣을 때 딸려오는 앞뒤 공백·따옴표도 걷어낸다.
+function claudeKey() {
+  const raw = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_KEY || '';
+  return String(raw).trim().replace(/^["']|["']$/g, '');
+}
 
 const MODES = {
   ek: { label: '영한', rule: '영어 단어를 한국어로 풀이한다. meaning과 exampleKo는 한국어로, example은 아주 쉬운 영어 한 문장으로 쓴다.' },
@@ -12,7 +18,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'method_not_allowed', message: 'POST로 보내주세요.' });
   }
-  const key = process.env.ANTHROPIC_API_KEY;
+  const key = claudeKey();
   if (!key) {
     return res.status(503).json({
       error: 'no_key',

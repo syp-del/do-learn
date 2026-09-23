@@ -41,7 +41,7 @@ package.json    type: module (Vercel 함수가 ESM)
 
 | 이름 | 쓰임 | 없으면 |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | 사전 | 사전 탭에서 "아직 준비되지 않았어요" 안내 |
+| `ANTHROPIC_API_KEY` (또는 `CLAUDE_API_KEY`) | 사전 | 사전 탭에서 "아직 준비되지 않았어요" 안내 |
 | `ALADIN_TTB_KEY` (또는 `ALADDIN_API_KEY`) | 책 정보·표지·종류 (1순위) | 카카오로 넘어감 |
 | `KAKAO_REST_KEY` | 책 정보·표지 (2순위) | 제목 직접 입력 |
 | `TELEGRAM_BOT_TOKEN` | 승인 요청 알림 | 부모님이 앱을 열어야 카드가 보임 |
@@ -88,6 +88,30 @@ package.json    type: module (Vercel 함수가 ESM)
 
 동기화는 실시간 구독 대신 **5초 폴링**이다(화면이 보일 때만). 승인 알림에는 충분하고,
 RLS 헤더 방식과 충돌하지 않는다.
+
+---
+
+## 시연용 둘러보기
+
+처음 방문 화면 맨 아래 **👀 둘러보기** 버튼(또는 주소 끝에 `#demo`)으로 들어가면
+열어둔 가족의 화면을 **읽기 전용**으로 구경한다. 수업 시연처럼 가족 주소를 줄 수 없을 때 쓴다.
+
+- 앱은 `demo_snapshot()` (수파베이스 RPC)으로 기록을 한 번 받아온다. 가족 ID·비밀번호·카카오 키는 오지 않는다.
+- 둘러보기에서 체크하거나 추가한 것은 그 화면에서만 바뀌고 저장되지 않는다. 텔레그램 알림·표지 올리기도 하지 않는다.
+- 부모님 관리와 승인(비밀번호가 필요한 곳)은 열리지 않는다. 게임은 `시연용으로 열어보기`로 그 화면에서만 연다.
+
+열고 닫기는 `demo_open` 표 한 줄이다. 수파베이스 → SQL Editor 에서:
+
+```sql
+-- 열기 (until 이 지나면 저절로 닫힌다)
+insert into demo_open (family_id, until)
+select family_id, '2026-09-30 23:59:59+09' from items
+where coll = 'profiles' and data->>'name' in ('이서', '이현') group by family_id
+on conflict (family_id) do update set until = excluded.until;
+
+-- 바로 닫기
+delete from demo_open;
+```
 
 ---
 
