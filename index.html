@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap">
-<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.12.1/dist/quagga.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 
@@ -253,7 +253,15 @@
   }
   .sheet h3{font-family:var(--display);font-size:25px;margin:0 0 4px;}
   .sheet .close{position:absolute;right:14px;top:10px;}
-  #video{width:100%;border-radius:var(--r-md);background:#000;aspect-ratio:4/3;object-fit:cover;}
+  .scanview{position:relative;width:100%;aspect-ratio:4/3;max-width:100%;border-radius:var(--r-md);
+    overflow:hidden;background:#2b2226;}
+  .scanview video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .scanview canvas{display:none;}               /* Quagga가 그리는 판독 보조 화면은 숨긴다 */
+  .scanframe{position:absolute;left:12%;right:12%;top:30%;bottom:30%;z-index:2;
+    border:3px solid rgba(255,255,255,.95);border-radius:14px;box-shadow:0 0 0 999px rgba(43,34,38,.35);}
+  .scanframe i{position:absolute;left:6%;right:6%;top:50%;height:3px;border-radius:2px;
+    background:var(--berry);box-shadow:0 0 10px var(--berry);animation:scanline 1.6s ease-in-out infinite;}
+  @keyframes scanline{0%,100%{transform:translateY(-26px)}50%{transform:translateY(26px)}}
 
   .pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:290px;margin:0 auto;}
   .pinpad button{min-height:60px;border-radius:var(--r-md);background:var(--surface);
@@ -353,13 +361,13 @@
 
   /* 인사 카드를 붙여둔 마스킹테이프 */
   .hero{position:relative;}
-  .hero::before,.hero::after{content:'';position:absolute;top:-12px;width:92px;height:26px;z-index:2;
+  .hero::before,.hero::after{content:'';position:absolute;top:-11px;width:74px;height:22px;z-index:2;
     border-radius:3px;opacity:.88;box-shadow:0 2px 4px rgba(150,100,110,.12);}
-  .hero::before{left:22px;transform:rotate(-8deg);
+  .hero::before{left:16px;transform:rotate(-8deg);
     background:repeating-linear-gradient(45deg,#FFC2CE 0 8px,#FFE3EA 8px 16px);}
-  .hero::after{right:22px;transform:rotate(7deg);
+  .hero::after{right:16px;transform:rotate(7deg);
     background:repeating-linear-gradient(-45deg,#BFE7D2 0 8px,#E2F7EF 8px 16px);}
-  .hero{width:100%;max-width:620px;text-align:center;}
+  .hero{width:100%;max-width:440px;text-align:center;}
   .hero .sky{
     border-radius:26px;padding:16px 18px 14px;position:relative;overflow:hidden;
     background:linear-gradient(170deg,#FFE9F0 0%,#FFF4E8 55%,#E9F8F1 100%);
@@ -1576,7 +1584,7 @@ function bookWizard(){
   if (w.step === 'scan'){
     return `<h3>책 등록하기</h3>
       <p class="muted" style="margin:0 0 10px">책 뒤쪽 바코드를 네모 안에 맞춰주세요.</p>
-      <video id="video" playsinline muted></video>
+      <div id="scanView" class="scanview"><div class="scanframe"><i></i></div></div>
       <p class="muted" id="scanMsg" style="text-align:center;margin:9px 0">${esc(w.msg||'카메라를 켜는 중…')}</p>
       <div class="stack">
         <button class="btn ghost wide" id="wizManual">바코드 없이 직접 적을래요</button>
@@ -1612,15 +1620,18 @@ function bookWizard(){
       </div>`;
   }
   if (w.step === 'cover'){
-    return `<h3>표지를 찍어요</h3>
-      <p class="muted" style="margin:0 0 10px">책 표지를 사진으로 찍으면 책장에 예쁘게 남아요.</p>
-      ${w.coverPreview ? `<img src="${esc(w.coverPreview)}" alt="찍은 표지"
-        style="width:100%;border-radius:var(--r-md);margin-bottom:10px">` : ''}
+    const shown = w.coverPreview || w.coverUrl;
+    return `<h3>${w.coverUrl && !w.coverPreview ? '표지를 찾았어요!' : '표지를 찍어요'}</h3>
+      <p class="muted" style="margin:0 0 10px">${w.coverUrl && !w.coverPreview
+        ? '이 표지로 책장에 쌓을까요? 직접 찍고 싶으면 사진을 찍어도 돼요.'
+        : '책 표지를 사진으로 찍으면 책장에 예쁘게 남아요.'}</p>
+      ${shown ? `<img src="${esc(shown)}" alt="책 표지"
+        style="display:block;max-width:220px;width:100%;margin:0 auto 12px;border-radius:var(--r-md);box-shadow:var(--shadow)">` : ''}
       <div class="stack">
         <input type="file" accept="image/*" capture="environment" id="coverInput" class="field">
         ${w.uploading ? `<p class="muted" style="text-align:center">사진을 올리는 중…</p>` : ''}
         <button class="btn wide" id="wizSave">책장에 쌓기 📚</button>
-        <button class="btn ghost wide" id="wizSkipCover">표지 없이 등록할래요</button>
+        ${w.coverUrl ? '' : `<button class="btn ghost wide" id="wizSkipCover">표지 없이 등록할래요</button>`}
       </div>`;
   }
   if (w.step === 'words'){
@@ -1980,7 +1991,7 @@ category는 다음 중 하나: ${(S.settings.cats||DEFAULT_CATS).join(', ')}`;
    키는 부모님 화면 → 설정에서 넣는다(코드에 박아두지 않는다).       */
 const KAKAO_URL = 'https://dapi.kakao.com/v3/search/book';
 
-async function kakaoSearch(query, target){
+async function bookSearch(query, target){
   // 웹(버셀)에서는 서버 함수가 알라딘 → 카카오 순으로 찾아준다. 키는 서버에만 있다.
   if (!window.claude){
     try {
@@ -1990,10 +2001,10 @@ async function kakaoSearch(query, target){
       const j = await r.json();
       const docs = (j.docs || []).map(d => ({
         title:d.title || '', author:d.author || '', publisher:d.publisher || '',
-        coverUrl:d.cover || '', isbn:d.isbn || ''
+        coverUrl:d.cover || '', isbn:d.isbn || '', category:catFromShop(d.category || '')
       }));
-      if (!docs.length && !j.provider) return { ok:false, reason:'nokey' };
-      return { ok:true, docs };
+      if (!docs.length && !j.provider && (j.tried || []).length && /열쇠/.test(j.message || '')) return { ok:false, reason:'nokey' };
+      return { ok:true, docs, provider:j.provider || '' };
     } catch(e){ return { ok:false, reason:'blocked' }; }
   }
 
@@ -2019,13 +2030,27 @@ async function kakaoSearch(query, target){
     return { ok:false, reason:'blocked' };   // CSP 또는 네트워크 차단
   }
 }
-const KAKAO_MSG = {
-  nokey:   '카카오 키가 없어서 자동으로 못 찾았어요. 제목을 적어주세요.',
-  badkey:  '카카오 키가 맞지 않아요. 부모님 화면 → 설정에서 확인해 주세요.',
-  quota:   '오늘 카카오 검색을 너무 많이 했어요. 제목을 적어주세요.',
-  http:    '카카오에서 답을 못 받았어요. 제목을 적어주세요.',
-  blocked: '이 앱에서는 카카오에 연결할 수 없어요(차단됨). 제목을 적어주세요.'
+const BOOK_MSG = {
+  nokey:   '책 찾기가 아직 준비되지 않았어요. 제목을 적어주세요.',
+  badkey:  '책 찾기 열쇠가 맞지 않아요. 부모님께 말씀해 주세요.',
+  quota:   '오늘 책 찾기를 너무 많이 했어요. 제목을 적어주세요.',
+  http:    '책 정보를 받아오지 못했어요. 제목을 적어주세요.',
+  blocked: '책 찾기에 연결하지 못했어요. 제목을 적어주세요.'
 };
+/* 서점 분류(예: 국내도서>어린이>그림책)를 우리 책장 종류로 */
+function catFromShop(path){
+  const cats = S.settings.cats && S.settings.cats.length ? S.settings.cats : DEFAULT_CATS;
+  const has = c => cats.includes(c) ? c : '';
+  const s = String(path || '');
+  if (!s) return '';
+  if (/외국도서|영어|English|원서|외국어/i.test(s)) return has('영어책');   // 영어 그림책·만화도 영어책으로
+  if (/만화|코믹|학습만화/.test(s)) return has('만화');
+  if (/그림책/.test(s)) return has('그림책');
+  if (/동시|동요|>시(>|$)|시집/.test(s)) return has('시');
+  if (/과학|지식|학습|사회|역사|수학|자연|인물|위인|백과/.test(s)) return has('지식책');
+  if (/동화|명작|소설|옛이야기|전래/.test(s)) return has('동화책');
+  return '';
+}
 
 /* ============================================================
    날씨 — 자동으로 가져오고, 안 되면 탭해서 고른다
@@ -2132,58 +2157,105 @@ function listen(lang, onResult){
 /* ============================================================
    바코드 스캐너
    ============================================================ */
-let scanState = { stream:null, reader:null, raf:0, stopped:false };
+/* 바코드 스캐너
+   - 안드로이드 크롬처럼 브라우저가 바코드를 직접 읽을 수 있으면 그걸 쓴다(빠르고 정확).
+   - 아이패드 사파리처럼 못 읽으면 Quagga2로 읽는다. 둥둥 도서관에서 이 기기로 잘 되던 설정
+     (후면 카메라 1280×720, EAN 판독기)을 그대로 쓴다.
+   - 책 바코드는 978/979로 시작하는 ISBN-13뿐이라 그것만 받고, 끝자리 검증 숫자를 확인한다.
+     Quagga는 가끔 한 자리를 잘못 읽으므로 같은 번호가 두 번 연달아 나와야 받는다. */
+let scanState = { stream:null, raf:0, stopped:false, quagga:false, last:'', hits:0 };
+
+function validIsbn13(code){
+  if (!/^97[89]\d{10}$/.test(code)) return false;
+  let sum = 0;
+  for (let i = 0; i < 12; i++) sum += (+code[i]) * (i % 2 ? 3 : 1);
+  return (10 - sum % 10) % 10 === +code[12];
+}
+function acceptScan(raw, needed){
+  if (scanState.stopped) return;
+  const code = String(raw || '').replace(/\D/g, '');
+  if (!validIsbn13(code)) return;
+  if (code === scanState.last) scanState.hits++;
+  else { scanState.last = code; scanState.hits = 1; }
+  if (scanState.hits >= needed) onIsbn(code);
+}
+function onQuagga(data){
+  const c = data && data.codeResult && data.codeResult.code;
+  if (c) acceptScan(c, 2);
+}
 
 async function startScanner(){
-  const w = S.view.wiz;
-  scanState.stopped = false;
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: 'environment' }, width:{ideal:1280}, height:{ideal:960} }, audio:false
-    });
-    scanState.stream = stream;
-    const v = document.getElementById('video');
-    if (!v){ stopScanner(); return; }
-    v.srcObject = stream;
-    await v.play().catch(()=>{});
-    setScanMsg('바코드를 비춰주세요');
+  scanState = { stream:null, raf:0, stopped:false, quagga:false, last:'', hits:0 };
+  const box = document.getElementById('scanView');
+  if (!box) return;
 
-    if ('BarcodeDetector' in window){
-      const det = new window.BarcodeDetector({ formats:['ean_13','ean_8','isbn'] });
+  let native = false;
+  if ('BarcodeDetector' in window){
+    try { native = (await window.BarcodeDetector.getSupportedFormats()).includes('ean_13'); } catch(e){}
+  }
+
+  if (native){
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video:{ facingMode:{ ideal:'environment' }, width:{ ideal:1280 }, height:{ ideal:720 } }, audio:false
+      });
+      if (scanState.stopped){ stream.getTracks().forEach(t => t.stop()); return; }
+      scanState.stream = stream;
+      const v = document.createElement('video');
+      v.setAttribute('playsinline', ''); v.muted = true; v.srcObject = stream;
+      box.prepend(v);
+      await v.play().catch(()=>{});
+      setScanMsg('바코드를 네모 안에 비춰주세요');
+      const det = new window.BarcodeDetector({ formats:['ean_13'] });
       const tick = async () => {
         if (scanState.stopped) return;
         try {
           const codes = await det.detect(v);
-          if (codes && codes.length){ onIsbn(codes[0].rawValue); return; }
+          for (const c of codes || []) acceptScan(c.rawValue, 1);
         } catch(e){}
-        scanState.raf = requestAnimationFrame(tick);
+        if (!scanState.stopped) scanState.raf = requestAnimationFrame(tick);
       };
       scanState.raf = requestAnimationFrame(tick);
-      return;
+    } catch(err){
+      setScanMsg('카메라를 켤 수 없어요. 아래에서 직접 적어주세요.');
     }
-    if (window.ZXing && window.ZXing.BrowserMultiFormatReader){
-      const reader = new window.ZXing.BrowserMultiFormatReader();
-      scanState.reader = reader;
-      reader.decodeFromVideoElement(v, (result) => {
-        if (result && !scanState.stopped) onIsbn(result.getText());
-      }).catch(()=>{});
-      return;
-    }
-    setScanMsg('이 기기에서는 바코드를 못 읽어요. 아래에서 직접 적어주세요.');
-  } catch(err){
-    setScanMsg('카메라를 켤 수 없어요. 아래에서 직접 적어주세요.');
+    return;
   }
+
+  if (window.Quagga){
+    window.Quagga.init({
+      inputStream:{
+        name:'Live', type:'LiveStream', target:box,
+        constraints:{ facingMode:'environment', width:1280, height:720 }
+      },
+      locate:true,
+      decoder:{ readers:['ean_reader'] }
+    }, (err) => {
+      if (err){ setScanMsg('카메라를 켤 수 없어요. 아래에서 직접 적어주세요.'); return; }
+      if (scanState.stopped){ try { window.Quagga.stop(); } catch(e){} return; }   // 켜지는 사이 창을 닫은 경우
+      window.Quagga.onDetected(onQuagga);
+      window.Quagga.start();
+      scanState.quagga = true;
+      setScanMsg('바코드를 네모 안에 비춰주세요');
+    });
+    return;
+  }
+
+  setScanMsg('이 기기에서는 바코드를 못 읽어요. 아래에서 직접 적어주세요.');
 }
 function setScanMsg(msg){
-  S.view.wiz.msg = msg;
+  if (S.view.wiz) S.view.wiz.msg = msg;
   const el = document.getElementById('scanMsg');
   if (el) el.textContent = msg;
 }
 function stopScanner(){
   scanState.stopped = true;
   if (scanState.raf) cancelAnimationFrame(scanState.raf);
-  if (scanState.reader){ try{ scanState.reader.reset(); }catch(e){} scanState.reader = null; }
-  if (scanState.stream){ scanState.stream.getTracks().forEach(t=>{ try{t.stop();}catch(e){} }); scanState.stream = null; }
+  if (window.Quagga){
+    try { window.Quagga.offDetected(onQuagga); } catch(e){}
+    if (scanState.quagga){ try { window.Quagga.stop(); } catch(e){} scanState.quagga = false; }
+  }
+  if (scanState.stream){ scanState.stream.getTracks().forEach(t => { try { t.stop(); } catch(e){} }); scanState.stream = null; }
 }
 
 async function onIsbn(raw){
@@ -2193,13 +2265,14 @@ async function onIsbn(raw){
   w.isbn = isbn; w.step = 'info'; w.busy = true;
   openModal(bookWizard());
 
-  // 1순위: 카카오 책 검색
-  const k = await kakaoSearch(isbn, 'isbn');
+  // 1순위: 서점 책 정보 (알라딘 → 카카오)
+  const k = await bookSearch(isbn, 'isbn');
   if (k.ok && k.docs.length){
     const d = k.docs[0];
     w.title = d.title; w.author = d.author; w.coverUrl = d.coverUrl; w.publisher = d.publisher;
-    w.found = 'kakao';
-    w.guessNote = '카카오에서 책을 찾았어요! 맞는지 봐주세요.';
+    if (d.category) w.category = d.category;
+    w.found = k.provider || 'shop';
+    w.guessNote = '책을 찾았어요! 맞는지 봐주세요.';
   } else {
     // 2순위: Claude에게 물어보기
     const g = await guessBook(isbn);
@@ -2211,7 +2284,7 @@ async function onIsbn(raw){
     } else {
       w.found = 'manual';
       w.guessNote = k.ok ? '그 바코드로는 책을 못 찾았어요. 표지를 보고 적어줄래요?'
-                         : (KAKAO_MSG[k.reason] || '책 이름을 못 찾았어요.');
+                         : (BOOK_MSG[k.reason] || '책 이름을 못 찾았어요.');
     }
   }
   w.busy = false;
@@ -2532,17 +2605,18 @@ document.addEventListener('click', async (e) => {
     w.title = ($('#wizTitle').value||'').trim();
     if (!w.title){ toast('먼저 제목을 조금 적어주세요'); return; }
     w.busy = true; openModal(bookWizard());
-    const r = await kakaoSearch(w.title, 'title');
+    const r = await bookSearch(w.title, 'title');
     w.busy = false;
     if (r.ok){ w.candidates = r.docs; w.guessNote = r.docs.length ? '맞는 책을 골라주세요.' : ''; }
-    else { w.candidates = null; w.guessNote = KAKAO_MSG[r.reason] || '지금은 찾을 수 없어요.'; }
+    else { w.candidates = null; w.guessNote = BOOK_MSG[r.reason] || '지금은 찾을 수 없어요.'; }
     openModal(bookWizard());
     return;
   }
   if (d.cand){
     const w = S.view.wiz, c = (w.candidates||[])[+d.cand];
     if (c){ w.title = c.title; w.author = c.author; w.coverUrl = c.coverUrl; w.publisher = c.publisher;
-      w.found = 'kakao'; w.candidates = null; w.guessNote = '이 책으로 할게요!'; }
+      if (c.category) w.category = c.category;
+      w.found = 'shop'; w.candidates = null; w.guessNote = '이 책으로 할게요!'; }
     openModal(bookWizard());
     return;
   }
@@ -2974,7 +3048,8 @@ function showBook(id){
   const b = S.data.books.find(x=>x.id===id);
   if (!b) return;
   openModal(`<h3>${esc(b.title)}</h3>
-    ${b.coverAssetId ? `<img src="/_blob/${esc(b.coverAssetId)}" alt="" style="width:100%;max-width:230px;border-radius:var(--r-md);display:block;margin:0 auto 12px">` : ''}
+    ${(b.coverAssetId || b.coverUrl) ? `<img src="${b.coverAssetId ? '/_blob/' + esc(b.coverAssetId) : esc(b.coverUrl)}" alt=""
+      style="width:100%;max-width:230px;border-radius:var(--r-md);display:block;margin:0 auto 12px">` : ''}
     <p class="muted" style="margin:0">${esc(b.author||'지은이 몰라요')} · ${esc(b.category)} · ${'⭐'.repeat(b.stars||1)}</p>
     <p class="muted" style="margin:4px 0 14px">${new Date(b.readAt).toLocaleDateString('ko-KR')}에 읽었어요</p>
     <button class="btn ghost wide" data-close="1">닫기</button>`);

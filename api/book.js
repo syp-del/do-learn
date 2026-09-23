@@ -14,15 +14,19 @@ async function fromAladin(isbn, title) {
 
   const r = await fetch(url);
   if (!r.ok) return null;
-  const j = await r.json().catch(() => null);
+  // 알라딘 output=js 는 가끔 JSON에 없는 \' 이스케이프나 끝의 ; 가 붙는다
+  const text = (await r.text()).trim().replace(/;\s*$/, '').replace(/\\'/g, "'");
+  let j = null;
+  try { j = JSON.parse(text); } catch (e) { console.error('aladin parse failed', text.slice(0, 120)); return null; }
   if (!j || !Array.isArray(j.item) || !j.item.length) return null;
 
   return j.item.map(it => ({
     title: it.title || '',
-    author: it.author || '',
+    author: (it.author || '').replace(/\s*\((지은이|글|그림|옮긴이|엮은이)[^)]*\)/g, '').trim(),
     publisher: it.publisher || '',
     cover: it.cover || '',
     isbn: it.isbn13 || it.isbn || '',
+    category: it.categoryName || '',        // 예: 국내도서>어린이>그림책
     source: 'aladin'
   }));
 }
