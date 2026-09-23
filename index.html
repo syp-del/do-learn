@@ -939,7 +939,7 @@ function storageBanner(){
    화면: 첫 설정 / 프로필 선택
    ============================================================ */
 function viewSetup(){
-  return `<div class="wrap gate">
+  return `<div class="gatebg">${decorLayer()}<div class="wrap gate">
     <div style="font-size:52px">🌸</div>
     <h2 class="sec" style="margin:0">처음 오셨네요!</h2>
     <p class="muted" style="text-align:center;max-width:380px;margin:0">
@@ -950,7 +950,7 @@ function viewSetup(){
       <button class="btn wide" id="setupGo">시작하기</button>
       <p class="muted" style="text-align:center;margin:0">부모님 비밀번호는 <b>1234</b>로 시작해요.</p>
     </div>
-  </div>`;
+  </div></div>`;
 }
 
 function viewGate(){
