@@ -1,6 +1,6 @@
-# 별빛 책탑
+# Do-Learn
 
-초등학교 1학년 자매를 위한 읽기·낱말·할 일 앱. 단일 HTML 파일(`byeolbit.html`)이며
+초등학교 1학년 쌍둥이 자매를 위한 읽기·낱말·할 일 앱. 단일 HTML 파일(`index.html`)이며
 claude.ai Artifact로 게시해 https 주소로 연다. 빌드 도구도 서버도 없다.
 
 ---

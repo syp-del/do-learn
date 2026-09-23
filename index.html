@@ -1,4 +1,4 @@
-<title>별빛 책탑</title>
+<title>Do-Learn</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap">
@@ -289,7 +289,7 @@
 <div id="app">
   <div class="topbar">
     <div class="stack-t">
-      <h1>별빛 책탑</h1>
+      <h1>Do-Learn</h1>
       <button class="datechip" id="dateChip"></button>
     </div>
     <button class="whoami" id="whoami" hidden></button>
@@ -302,7 +302,7 @@
 <script>
 "use strict";
 /* ============================================================
-   별빛 책탑 — 초등 1학년 자매를 위한 읽기·낱말·할 일 앱
+   Do-Learn — 쌍둥이 자매를 위한 읽기·낱말·할 일 앱
    단일 HTML. 데이터는 Artifact의 db 기능에 저장되고,
    db를 쓸 수 없는 환경에서는 메모리로 동작한다(경고 배너 표시).
    ============================================================ */
@@ -1741,7 +1741,7 @@ document.addEventListener('click', async (e) => {
   }
 
   /* --- 프로필 --- */
-  if (d.pick){ S.kidId = d.pick; lsSet('byeolbit.kid', d.pick); S.tab='today'; render(); return; }
+  if (d.pick){ S.kidId = d.pick; lsSet('dolearn.kid', d.pick); S.tab='today'; render(); return; }
   if (t.id === 'whoami'){ S.kidId = null; S.view.game=null; stopStars(); render(); return; }
   if (t.id === 'openParent'){ S.view.pin=''; S.view.pinError=''; S.view.pinPurpose='parent'; openModal(pinSheet('부모님 화면')); return; }
 
@@ -2178,7 +2178,7 @@ function exportData(){
   const ta = $('#exportBox textarea');
   if (ta){ ta.focus(); ta.select(); }
   if (S.downloads){
-    S.downloads.save({ filename:`별빛책탑-백업-${todayKey()}.json`, data:dump }).catch(()=>{});
+    S.downloads.save({ filename:`Do-Learn-백업-${todayKey()}.json`, data:dump }).catch(()=>{});
   }
 }
 
@@ -2209,7 +2209,7 @@ setInterval(() => {
    시작
    ============================================================ */
 function start(){
-  const saved = lsGet('byeolbit.kid');
+  const saved = lsGet('dolearn.kid');
   if (saved) S.kidId = saved;
   render();
   connect().then(() => {
