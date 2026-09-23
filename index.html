@@ -78,8 +78,8 @@
   .topbar.home .logo{font-size:clamp(34px,8.4vw,54px);
     text-shadow:2px 2px 0 #fff,-2px 2px 0 #fff,2px -2px 0 #fff,-2px -2px 0 #fff,
                 0 5px 10px rgba(214,150,166,.30);}
-  .topbar.home .logo-sub{display:block;font-family:var(--display);font-size:15px;
-    letter-spacing:.42em;color:var(--cocoa-soft);margin:2px 0 0 .42em;}
+  .topbar.home .logo-sub{display:block;font-family:var(--display);font-size:16px;
+    letter-spacing:.14em;color:var(--cocoa-soft);margin:3px 0 0 .14em;white-space:nowrap;}
   .topbar.home .datechip{display:none;}      /* 홈에서는 인사 카드에 날짜·날씨가 이미 있다 */
   @media (max-width:430px){
     .whoami b{display:none;}                /* 좁은 화면에서는 아바타만 — 제목이 가운데에 남도록 */
@@ -361,7 +361,7 @@
     background:repeating-linear-gradient(-45deg,#BFE7D2 0 8px,#E2F7EF 8px 16px);}
   .hero{width:100%;max-width:620px;text-align:center;}
   .hero .sky{
-    border-radius:30px;padding:26px 20px 24px;position:relative;overflow:hidden;
+    border-radius:26px;padding:16px 18px 14px;position:relative;overflow:hidden;
     background:linear-gradient(170deg,#FFE9F0 0%,#FFF4E8 55%,#E9F8F1 100%);
     box-shadow:var(--shadow-lift);
   }
@@ -369,13 +369,13 @@
     content:'';position:absolute;inset:auto -30px -60px -30px;height:120px;border-radius:50%;
     background:rgba(255,255,255,.55);
   }
-  .hero .datewrap{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;}
-  .hero .dateline{font-family:var(--display);font-size:22px;color:var(--cocoa);}
+  .hero .datewrap{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;}
+  .hero .dateline{font-family:var(--display);font-size:16px;color:var(--cocoa);}
   .wbtn{border-radius:999px;background:rgba(255,255,255,.8);border:2px solid rgba(255,255,255,.9);
-    padding:3px 13px 3px 9px;font-family:var(--display);font-size:19px;min-height:40px;display:inline-flex;align-items:center;gap:5px;}
-  .hero .greet{position:relative;z-index:1;font-family:var(--display);font-size:38px;line-height:1.2;margin:12px 0 4px;}
+    padding:2px 11px 2px 8px;font-family:var(--display);font-size:15px;min-height:32px;display:inline-flex;align-items:center;gap:4px;}
+  .hero .greet{position:relative;z-index:1;font-family:var(--display);font-size:24px;line-height:1.2;margin:6px 0 2px;}
   .hero .cheer{position:relative;z-index:1;font-size:16px;color:#7B5760;margin:0;}
-  .hero .doodle{position:relative;z-index:1;font-size:38px;margin-top:8px;}
+  .hero .doodle{position:relative;z-index:1;font-size:24px;margin-top:4px;}
 
   .kidpick{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
   .kidcard{width:168px;border-radius:26px;background:var(--surface);box-shadow:var(--shadow-lift);
@@ -470,7 +470,7 @@
   <div class="topbar" id="topbar">
     <div class="stack-t">
       <h1 class="logo"><span class="t1">Do-Learn</span> <span class="t2">Do-Learn</span></h1>
-      <div class="logo-sub" aria-hidden="true">두런두런</div>
+      <div class="logo-sub">이서&amp;이현 두런두런</div>
       <button class="datechip" id="dateChip"></button>
     </div>
     <div class="row tb-right" style="gap:8px">
