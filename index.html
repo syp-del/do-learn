@@ -821,6 +821,13 @@ async function sbPull(){
       S.sb.from('settings').select('data').eq('family_id', S.familyId).maybeSingle()
     ]);
     if (items.error) throw items.error;
+    // 바뀐 게 없으면 화면을 다시 그리지 않는다.
+    // 매번 다시 그리면 입력칸이 새로 만들어져 쓰던 글자가 5초마다 지워진다(첫 화면의 아이 이름 등).
+    const rows = (items.data || []).slice().sort((a, b) => a.id < b.id ? -1 : 1);
+    const sig = JSON.stringify(rows) + '|' + JSON.stringify((st && st.data && st.data.data) || null);
+    const firstLoad = !S.persistent;
+    if (sig === S.lastPullSig && !firstLoad) return;
+    S.lastPullSig = sig;
     const next = Object.fromEntries(COLLS.map(c=>[c,[]]));
     for (const row of (items.data||[])){
       if (!next[row.coll]) next[row.coll] = [];
@@ -832,7 +839,7 @@ async function sbPull(){
       if (!Array.isArray(S.settings.cats) || !S.settings.cats.length) S.settings.cats = DEFAULT_CATS.slice();
     }
     S.persistent = true;
-    render();
+    render({ keepInputs:true });      // 다른 기기에서 바뀐 걸 반영하되, 쓰던 글자는 지킨다
   } catch(e){ warnWrite(e); }
 }
 let writeWarned = false;
@@ -880,7 +887,7 @@ async function connect(){
       try {
         db.collection(coll).onSnapshot(snap => {
           S.data[coll] = snap.docs.map(d => ({ id:d.id, ...(d.data()||{}) }));
-          render();
+          render({ keepInputs:true });
         }, err => { console.warn('snapshot', coll, err); });
       } catch(e){ console.warn('subscribe failed', coll, e); }
     }
@@ -891,7 +898,7 @@ async function connect(){
           S.settings = {...S.settings, ...d};
           if (!Array.isArray(S.settings.cats) || !S.settings.cats.length) S.settings.cats = DEFAULT_CATS.slice();
         }
-        render();
+        render({ keepInputs:true });
       });
     } catch(e){}
   }
@@ -954,11 +961,43 @@ function weekStats(kidId){
 /* ============================================================
    렌더 진입점
    ============================================================ */
-let renderQueued = false;
-function render(){
-  if (renderQueued) return;
-  renderQueued = true;
-  requestAnimationFrame(() => { renderQueued = false; draw(); });
+let renderQueued = false, renderKeep = true;
+/* opts.keepInputs — 다른 기기에서 온 변경으로 다시 그릴 때, 화면의 입력칸에 쓰던 글자와 커서를 지킨다.
+   사용자가 직접 한 동작(저장 뒤 칸 비우기 등)으로 그릴 때는 지키지 않는다. */
+function render(opts){
+  const keep = !!(opts && opts.keepInputs);
+  if (renderQueued){ renderKeep = renderKeep && keep; return; }
+  renderQueued = true; renderKeep = keep;
+  requestAnimationFrame(() => {
+    renderQueued = false;
+    const root = $('#screen');
+    const snap = renderKeep ? snapshotInputs(root) : null;
+    draw();
+    if (snap) restoreInputs(root, snap);
+  });
+}
+function snapshotInputs(root){
+  const vals = {};
+  root.querySelectorAll('input[id], textarea[id]').forEach(el => {
+    if (el.type !== 'file' && el.type !== 'checkbox') vals[el.id] = el.value;
+  });
+  const a = document.activeElement;
+  const focus = (a && root.contains(a) && a.id)
+    ? { id:a.id, s:a.selectionStart, e:a.selectionEnd } : null;
+  return { vals, focus };
+}
+function restoreInputs(root, snap){
+  for (const id in snap.vals){
+    const el = document.getElementById(id);
+    if (el && root.contains(el) && el.value !== snap.vals[id]) el.value = snap.vals[id];
+  }
+  if (snap.focus){
+    const el = document.getElementById(snap.focus.id);
+    if (el && root.contains(el)){
+      el.focus({ preventScroll:true });
+      try { el.setSelectionRange(snap.focus.s, snap.focus.e); } catch(e){}
+    }
+  }
 }
 
 function draw(){
