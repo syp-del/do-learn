@@ -12,7 +12,7 @@
 
 ```
 index.html      앱 전체 (HTML/CSS/JS 한 파일)
-api/dict.js     사전 — Claude API를 서버에서 대신 호출 (GET 이면 연결 확인 페이지)
+api/dict.js     사전 — Gemini(무료) 또는 Claude를 서버에서 대신 호출 (GET 이면 연결 확인 페이지)
 api/book.js     책 찾기 — 알라딘 → 카카오 순으로 서버에서 조회
 package.json    type: module (Vercel 함수가 ESM), 의존성은 @anthropic-ai/sdk 하나
 ```
@@ -41,7 +41,9 @@ package.json    type: module (Vercel 함수가 ESM), 의존성은 @anthropic-ai/
 
 | 이름 | 쓰임 | 없으면 |
 |---|---|---|
-| `ANTHROPIC_API_KEY` (또는 `CLAUDE_API_KEY`) | 사전 | 사전 탭에서 "아직 준비되지 않았어요" 안내 |
+| `GEMINI_API_KEY` | 사전 (1순위, 무료) | Claude 키가 있으면 Claude, 둘 다 없으면 "아직 준비되지 않았어요" 안내 |
+| `ANTHROPIC_API_KEY` (또는 `CLAUDE_API_KEY`) | 사전 (2순위, 유료 크레딧) | 〃 |
+| `GEMINI_MODEL` | 사전 모델 바꾸기 (선택) | `gemini-3.5-flash-lite` |
 | `ALADIN_TTB_KEY` (또는 `ALADDIN_API_KEY`) | 책 정보·표지·종류 (1순위) | 카카오로 넘어감 |
 | `KAKAO_REST_KEY` | 책 정보·표지 (2순위) | 제목 직접 입력 |
 | `TELEGRAM_BOT_TOKEN` | 승인 요청 알림 | 부모님이 앱을 열어야 카드가 보임 |
@@ -51,6 +53,7 @@ package.json    type: module (Vercel 함수가 ESM), 의존성은 @anthropic-ai/
 단어는 직접 뜻을 적어 담을 수 있다.
 
 키 받는 곳
+- Gemini API (무료): https://aistudio.google.com/apikey → Create API key
 - Claude API: https://console.anthropic.com → API Keys
 - 알라딘 TTB: https://www.aladin.co.kr/ttb/wblog_manage.aspx (회원가입 후 신청)
 - 카카오 REST: https://developers.kakao.com → 내 애플리케이션 → 앱 키
@@ -74,7 +77,9 @@ package.json    type: module (Vercel 함수가 ESM), 의존성은 @anthropic-ai/
 아무에게나 알려주면 안 되는 주소다.
 
 표지 사진은 `covers` 버킷에 `<familyId>/<랜덤>.jpg` 경로로 올라간다.
-버킷은 공개지만 경로를 모르면 찾을 수 없다.
+버킷은 공개라 표지 주소로는 누구나 볼 수 있지만, 목록 보기·올리기·지우기는
+`x-family-id` 헤더의 가족 폴더 안에서만 된다(storage 정책 `covers_read_own` / `covers_write_own` / `covers_delete_own`).
+그래서 버킷 목록으로 다른 가족의 폴더 이름(가족 ID)을 알아낼 수 없다.
 
 ### 테이블
 
@@ -91,17 +96,20 @@ RLS 헤더 방식과 충돌하지 않는다.
 
 ---
 
-## 사전 연결 (Claude)
+## 사전 연결 (Gemini / Claude)
 
-단어 탭의 사전은 `api/dict.js`가 Claude(Haiku 4.5)에게 낱말 뜻을 물어 온다.
+단어 탭의 사전은 `api/dict.js`가 AI에게 낱말 뜻을 물어 온다.
+`GEMINI_API_KEY`가 있으면 Gemini(`gemini-3.5-flash-lite`, 무료 등급 — 찾은 낱말이 구글 서비스 개선에 쓰일 수 있다),
+없고 Claude 키가 있으면 Claude(Haiku 4.5)를 쓴다.
 설정은 **https://<배포 주소>/api/dict** 페이지가 단계별로 안내하고,
 키가 보이는지와 실제로 찾아지는지(`?test=1`)를 확인해 준다.
 
-1. https://console.anthropic.com → API Keys → Create Key (`sk-ant-`로 시작), Billing에서 크레딧 충전
-2. 버셀 환경변수 `ANTHROPIC_API_KEY`에 붙여넣기 → Redeploy
+1. https://aistudio.google.com/apikey → Create API key (`AIza`로 시작, 결제 정보 필요 없음)
+2. 버셀 환경변수 `GEMINI_API_KEY`에 붙여넣기 → Redeploy
 3. 확인 페이지에서 **시험해 보기**
 
-키가 틀리면 "사전 열쇠가 맞지 않아요", 크레딧이 없으면 "사전 이용권이 다 됐어요"가 아이 화면에 뜬다.
+키가 틀리면 "사전 열쇠가 맞지 않아요", 무료 사용량을 넘으면 "사전이 조금 바빠요",
+(Claude) 크레딧이 없으면 "사전 이용권이 다 됐어요"가 아이 화면에 뜬다.
 
 ---
 
