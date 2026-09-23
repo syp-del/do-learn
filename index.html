@@ -55,6 +55,12 @@
   }
   .topbar h1{font-family:var(--display);font-size:clamp(19px,5.2vw,26px);margin:0;
     letter-spacing:-.01em;white-space:nowrap;}
+  .homebtn{width:48px;height:48px;border-radius:50%;background:var(--surface);
+    border:2px solid var(--blush);box-shadow:var(--shadow);font-size:22px;
+    display:grid;place-items:center;flex:none;transition:transform .12s;}
+  .homebtn:active{transform:scale(.9);}
+  .kidcard.addkid{border:3px dashed var(--blush);box-shadow:none;background:transparent;}
+  .kidcard.addkid .av{font-family:var(--display);font-size:38px;color:var(--cocoa-soft);}
   .whoami{display:flex;align-items:center;gap:8px;background:var(--surface);
     border:2px solid var(--blush);border-radius:999px;padding:5px 13px 5px 6px;box-shadow:var(--shadow);min-height:44px;}
   .avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:19px;flex:none;}
@@ -310,7 +316,10 @@
       <h1>Do-Learn Do-Learn</h1>
       <button class="datechip" id="dateChip"></button>
     </div>
-    <button class="whoami" id="whoami" hidden></button>
+    <div class="row" style="gap:8px">
+      <button class="homebtn" id="homeBtn" hidden aria-label="시작 화면으로">🏠</button>
+      <button class="whoami" id="whoami" hidden></button>
+    </div>
   </div>
   <div class="screen" id="screen"></div>
   <nav class="tabs" id="tabs" hidden></nav>
@@ -695,7 +704,7 @@ function render(){
 }
 
 function draw(){
-  const screen = $('#screen'), tabs = $('#tabs'), who = $('#whoami');
+  const screen = $('#screen'), tabs = $('#tabs'), who = $('#whoami'), home = $('#homeBtn');
 
   const w = todayWeather();
   $('#dateChip').innerHTML = `${esc(dateLabel())} <span style="font-size:15px">${w ? w.icon : '＋'}</span>`;
@@ -703,19 +712,19 @@ function draw(){
 
   // 아직 아무 프로필도 없음 → 첫 설정
   if (!S.data.profiles.length){
-    tabs.hidden = true; who.hidden = true;
+    tabs.hidden = true; who.hidden = true; home.hidden = true;
     screen.innerHTML = viewSetup();
     return;
   }
   // 프로필 미선택 → 시작 화면
   if (!S.kidId || !curKid()){
-    tabs.hidden = true; who.hidden = true;
+    tabs.hidden = true; who.hidden = true; home.hidden = true;
     screen.innerHTML = viewGate();
     return;
   }
 
   const k = curKid(), col = kidColor(k);
-  who.hidden = false;
+  who.hidden = false; home.hidden = false;
   who.innerHTML = `<span class="avatar" style="background:${col.bg}">${esc(k.avatar||'🐰')}</span><b>${esc(k.name)}</b>`;
 
   tabs.hidden = false;
@@ -794,7 +803,12 @@ function viewGate(){
         <div class="muted" style="font-size:12px;margin-top:4px">
           ${list.length ? (pct>=100 ? '오늘 할 일 끝! 🎉' : `할 일 ${done}/${list.length}`) : '할 일이 없어요'}</div>
       </button>`;
-    }).join('')}</div>
+    }).join('')}
+    ${kids().length < 2 ? `<button class="kidcard addkid" id="addKidHere">
+      <span class="av" style="background:var(--blush)">＋</span>
+      <div class="nm">친구 추가</div>
+      <div class="muted" style="font-size:12px;margin-top:6px">한 명 더 같이 해요</div>
+    </button>` : ''}</div>
 
     <button class="btn ghost sm" id="openParent">👩‍🦰 부모님 화면${
       pend.length ? `<span class="dot-badge">${pend.length}</span>` : ''}</button>
@@ -1972,11 +1986,13 @@ document.addEventListener('click', async (e) => {
 
   /* --- 첫 설정 --- */
   if (t.id === 'setupGo'){
-    const n1 = ($('#setup1').value||'').trim() || '첫째';
+    const n1 = ($('#setup1').value||'').trim();
     const n2 = ($('#setup2').value||'').trim();
+    if (!n1){ toast('첫째 이름을 적어주세요'); $('#setup1').focus(); return; }
+    if (!n2){ toast('둘째 이름도 적어주세요'); $('#setup2').focus(); return; }
     const now = new Date().toISOString();
     await Store.add('profiles', { name:n1, avatar:AVATARS[0], colorIdx:0, stars:0, createdAt:now });
-    if (n2) await Store.add('profiles', { name:n2, avatar:AVATARS[1], colorIdx:1, stars:0, createdAt:new Date(Date.now()+1).toISOString() });
+    await Store.add('profiles', { name:n2, avatar:AVATARS[1], colorIdx:1, stars:0, createdAt:new Date(Date.now()+1).toISOString() });
     askConfirm({
       title:'예시를 넣어볼까요?', okLabel:'넣어주세요',
       note:'책·낱말·할 일 예시를 채워 화면이 어떻게 보이는지 보여드려요. 부모님 화면에서 언제든 지울 수 있어요.',
@@ -2000,7 +2016,14 @@ document.addEventListener('click', async (e) => {
 
   /* --- 프로필 --- */
   if (d.pick){ S.kidId = d.pick; lsSet('dolearn.kid', d.pick); S.tab='today'; render(); return; }
-  if (t.id === 'whoami'){ S.kidId = null; S.view.game=null; stopStars(); render(); return; }
+  if (t.id === 'whoami' || t.id === 'homeBtn'){
+    S.kidId = null; S.view.game = null; stopStars(); render(); return;
+  }
+  if (t.id === 'addKidHere'){
+    S.view.pin=''; S.view.pinError=''; S.view.pinPurpose='parent'; S.view.parentTab='kids';
+    openModal(pinSheet('부모님, 친구를 추가할까요?'));
+    return;
+  }
   if (t.id === 'openParent'){ S.view.pin=''; S.view.pinError=''; S.view.pinPurpose='parent'; openModal(pinSheet('부모님 화면')); return; }
 
   /* --- 탭 --- */
