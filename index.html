@@ -266,7 +266,23 @@
     .stk.wide{display:none;}
   }
 
-  /* ---------- 홈 하단 부모님 관리 ---------- */
+  /* ---------- 홈 화면 아래에 늘 붙어 있는 부모님 관리 버튼 ---------- */
+  .gatebg{padding-bottom:96px;}                 /* 버튼에 가려지지 않게 */
+  .parentbar{position:fixed;left:0;right:0;bottom:0;z-index:25;display:flex;justify-content:center;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
+    background:linear-gradient(to top, rgba(255,249,245,.98) 62%, rgba(255,249,245,0));}
+  .parentbtn{width:100%;max-width:440px;min-height:62px;display:flex;align-items:center;gap:12px;
+    background:var(--surface);border:3px solid var(--berry);border-radius:999px;
+    padding:8px 18px 8px 9px;box-shadow:var(--shadow-lift);text-align:left;transition:transform .12s;}
+  .parentbtn:active{transform:scale(.97);}
+  .pb-lock{width:44px;height:44px;border-radius:50%;background:var(--berry-soft);
+    display:grid;place-items:center;font-size:21px;flex:none;}
+  .pb-text{flex:1;display:flex;flex-direction:column;line-height:1.25;}
+  .pb-text b{font-family:var(--display);font-size:21px;}
+  .pb-text small{font-size:13px;color:var(--cocoa-soft);}
+  .pb-go{font-family:var(--display);font-size:30px;color:var(--berry-deep);line-height:1;}
+
+  /* ---------- (이전) 홈 하단 부모님 관리 ---------- */
   .parentpanel{width:100%;max-width:620px;display:flex;align-items:center;gap:13px;flex-wrap:wrap;
     background:rgba(255,255,255,.92);border:2px dashed var(--blush);border-radius:22px;
     padding:14px 16px;margin-top:6px;}
@@ -967,8 +983,13 @@ function viewSetup(){
     <div class="card stack" style="width:100%;max-width:380px">
       <input class="field" id="setup1" placeholder="첫째 이름" maxlength="10">
       <input class="field" id="setup2" placeholder="둘째 이름" maxlength="10">
+      <div>
+        <input class="field" id="setupPin" type="password" inputmode="numeric" pattern="[0-9]*"
+          maxlength="4" autocomplete="off" placeholder="부모님 비밀번호 정하기 (숫자 4자리)">
+        <p class="muted" style="margin:6px 2px 0;font-size:13px">
+          게임 승인과 부모님 관리에 써요. 아이들이 보지 않을 때 정해주세요.</p>
+      </div>
       <button class="btn wide" id="setupGo">시작하기</button>
-      <p class="muted" style="text-align:center;margin:0">부모님 비밀번호는 <b>1234</b>로 시작해요.</p>
     </div>
     <div class="card" style="width:100%;max-width:380px;background:var(--mint-soft)">
       <b>이미 다른 기기에서 쓰고 있나요?</b>
@@ -1018,14 +1039,14 @@ function viewGate(){
       <div class="muted" style="font-size:12px;margin-top:6px">한 명 더 같이 해요</div>
     </button>` : ''}</div>
 
-    <section class="parentpanel" aria-label="부모님 관리">
-      <div class="pp-lock">🔒</div>
-      <div class="grow">
-        <div class="pp-title">부모님 관리${pend.length ? `<span class="dot-badge">${pend.length}</span>` : ''}</div>
-        <div class="pp-sub">할 일 · 아이 · 게임 승인 · 텔레그램 알림 · 설정</div>
-      </div>
-      <button class="btn" id="openParent">비밀번호로 열기</button>
-    </section>
+  </div>
+  <div class="parentbar">
+    <button class="parentbtn" id="openParent" aria-label="부모님 관리 — 비밀번호로 열기">
+      <span class="pb-lock">🔒</span>
+      <span class="pb-text"><b>부모님 관리</b><small>비밀번호를 눌러야 들어가요</small></span>
+      ${pend.length ? `<span class="dot-badge">${pend.length}</span>` : ''}
+      <span class="pb-go">›</span>
+    </button>
   </div></div>`;
 }
 
@@ -2377,8 +2398,11 @@ document.addEventListener('click', async (e) => {
   if (t.id === 'setupGo'){
     const n1 = ($('#setup1').value||'').trim();
     const n2 = ($('#setup2').value||'').trim();
+    const pin = ($('#setupPin').value||'').trim();
     if (!n1){ toast('첫째 이름을 적어주세요'); $('#setup1').focus(); return; }
     if (!n2){ toast('둘째 이름도 적어주세요'); $('#setup2').focus(); return; }
+    if (!/^\d{4}$/.test(pin)){ toast('부모님 비밀번호를 숫자 4자리로 정해주세요'); $('#setupPin').focus(); return; }
+    await Store.saveSettings({ pin, pinSet:true });
     const now = new Date().toISOString();
     await Store.add('profiles', { name:n1, avatar:AVATARS[0], colorIdx:0, stars:0, createdAt:now });
     await Store.add('profiles', { name:n2, avatar:AVATARS[1], colorIdx:1, stars:0, createdAt:new Date(Date.now()+1).toISOString() });
@@ -2658,15 +2682,24 @@ document.addEventListener('click', async (e) => {
   if (d.grant){ grantUnlock(d.grant); openModal(parentSheet()); return; }
   if (d.relock){ relock(d.relock); openModal(parentSheet()); return; }
   if (t.id === 'setPin'){
-    askText({
-      title:'새 비밀번호', note:'숫자 네 자리로 적어주세요.', placeholder:'예: 2580', okLabel:'바꾸기',
-      onOk: async (p) => {
-        if (!/^\d{4}$/.test(p)){ toast('숫자 네 자리로 적어주세요'); return; }
-        await Store.saveSettings({ pin:p });
-        openModal(parentSheet());
-        toast('비밀번호를 바꿨어요');
-      }
-    });
+    S.view.pinNext = 'parent';
+    openModal(pinSetSheet());
+    setTimeout(() => { const i = $('#newPin1'); if (i) i.focus(); }, 60);
+    return;
+  }
+  if (t.id === 'savePin'){
+    const a = ($('#newPin1').value||'').trim(), b = ($('#newPin2').value||'').trim();
+    const msg = $('#newPinMsg');
+    const say = s => { if (msg){ msg.textContent = s; msg.style.color = 'var(--berry-deep)'; } };
+    if (!/^\d{4}$/.test(a)){ say('숫자 4자리로 적어주세요.'); $('#newPin1').focus(); return; }
+    if (a === '1234'){ say('처음 비밀번호와 같아요. 다른 숫자로 정해주세요.'); $('#newPin1').focus(); return; }
+    if (a !== b){ say('두 번 적은 숫자가 달라요. 다시 확인해 주세요.'); $('#newPin2').focus(); return; }
+    await Store.saveSettings({ pin:a, pinSet:true });
+    const next = S.view.pinNext || 'parent';
+    S.view.pinNext = null;
+    toast('새 비밀번호를 정했어요');
+    if (next === 'parent'){ S.view.parentTab = S.view.parentTab || 'settings'; openModal(parentSheet()); }
+    else continueAfterPin(next);
     return;
   }
   /* --- 텔레그램 알림 --- */
@@ -2758,6 +2791,9 @@ document.addEventListener('keydown', (e) => {
   if (e.target.id === 'dictInput'){ e.preventDefault(); const q=(e.target.value||'').trim(); if (q) doLookup(q); }
   if (e.target.id === 'wizWord'){ e.preventDefault(); const b=$('#wizAddWord'); if (b) b.click(); }
   if (e.target.id === 'askInput'){ e.preventDefault(); const b=$('#askOk'); if (b) b.click(); }
+  if (e.target.id === 'newPin1'){ e.preventDefault(); const n=$('#newPin2'); if (n) n.focus(); }
+  if (e.target.id === 'newPin2'){ e.preventDefault(); const b=$('#savePin'); if (b) b.click(); }
+  if (e.target.id === 'setupPin'){ e.preventDefault(); const b=$('#setupGo'); if (b) b.click(); }
   if (e.target.dataset && e.target.dataset.newtodo){
     e.preventDefault();
     const b = document.querySelector(`[data-addtodo="${e.target.dataset.newtodo}"]`);
@@ -2771,10 +2807,41 @@ function pinTitle(){
   if (p.startsWith('approve:')) return '승인하시겠어요?';
   return '부모님 화면';
 }
+/* 처음 비밀번호(아무도 정하지 않은 상태)로 들어왔으면, 새 비밀번호를 정해야 넘어간다.
+   처음 비밀번호는 누구나 알 수 있으니 그대로 쓰게 두지 않는다. */
+function needsNewPin(){
+  return !S.settings.pinSet && String(S.settings.pin || '1234') === '1234';
+}
+function pinSetSheet(note){
+  return `<h3>새 비밀번호 정하기</h3>
+    <p class="muted" style="margin:0 0 12px">${esc(note || '아이들이 모르는 숫자 4자리로 정해주세요.')}</p>
+    <input class="field" id="newPin1" type="password" inputmode="numeric" pattern="[0-9]*"
+      maxlength="4" autocomplete="off" placeholder="새 비밀번호 (숫자 4자리)">
+    <input class="field" id="newPin2" type="password" inputmode="numeric" pattern="[0-9]*"
+      maxlength="4" autocomplete="off" placeholder="한 번 더 입력" style="margin-top:8px">
+    <p class="muted" id="newPinMsg" style="margin:8px 2px 0;min-height:20px"></p>
+    <button class="btn wide" id="savePin" style="margin-top:6px">저장하고 계속</button>`;
+}
+function continueAfterPin(purpose){
+  if (purpose.startsWith('approve:')){
+    approveRequest(purpose.slice(8)); closeModal(); confetti(); render();
+  } else if (purpose === 'unlock'){
+    grantUnlock(S.kidId); closeModal(); confetti(); render();
+  } else {
+    S.view.parentTab = S.view.parentTab || 'todos'; openModal(parentSheet());
+  }
+}
+
 function checkPin(){
-  if (S.view.pin === (S.settings.pin || '1234')){
+  if (S.view.pin === String(S.settings.pin || '1234')){
     const purpose = S.view.pinPurpose || '';
     S.view.pin = '';
+    if (needsNewPin()){
+      S.view.pinNext = purpose;
+      openModal(pinSetSheet('처음 비밀번호는 누구나 알 수 있어요. 아이들이 모르는 숫자로 바꿔야 들어갈 수 있어요.'));
+      setTimeout(() => { const i = $('#newPin1'); if (i) i.focus(); }, 60);
+      return;
+    }
     if (purpose.startsWith('approve:')){
       approveRequest(purpose.slice(8)); closeModal(); confetti(); render();
     } else if (purpose === 'unlock'){
