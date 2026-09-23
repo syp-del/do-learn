@@ -7,8 +7,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'method_not_allowed' });
   }
 
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  // 붙여넣을 때 흔히 딸려오는 공백·따옴표·"bot" 접두어를 걷어낸다
+  const token = String(process.env.TELEGRAM_BOT_TOKEN || '').trim()
+    .replace(/^["']|["']$/g, '').replace(/^bot(?=\d)/, '');
+  const chatId = String(process.env.TELEGRAM_CHAT_ID || '').trim();
   if (!token || !chatId) {
     return res.status(200).json({ sent: false, reason: 'not_configured' });
   }
@@ -25,8 +27,10 @@ export default async function handler(req, res) {
   const jong = last >= 0xAC00 && last <= 0xD7A3 && (last - 0xAC00) % 28 > 0;
   const subject = `${name}${jong ? '이가' : '가'}`;
 
+  // Markdown은 이름에 _ * 같은 글자가 있으면 텔레그램이 메시지를 거부한다. HTML로 보내고 이스케이프한다.
+  const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   const text =
-    `🔔 *${subject} 게임을 하고 싶대요!*\n` +
+    `🔔 <b>${esc(subject)} 게임을 하고 싶대요!</b>\n` +
     `오늘 할 일을 모두 마쳤어요.\n` +
     `요청한 시간: ${mins}분\n\n` +
     `아래 버튼을 눌러 앱에서 승인해 주세요.`;
@@ -38,7 +42,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         chat_id: chatId,
         text,
-        parse_mode: 'Markdown',
+        parse_mode: 'HTML',
         reply_markup: {
           inline_keyboard: [[{ text: `✅ 열어주러 가기 (${mins}분)`, url: link }]]
         }
