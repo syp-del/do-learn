@@ -279,6 +279,18 @@
   .datechip{font-size:13px;color:var(--cocoa-soft);display:inline-flex;align-items:center;gap:4px;
     background:none;padding:0;text-align:left;}
 
+  .toast{position:fixed;left:50%;transform:translateX(-50%);
+    bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:90;
+    background:var(--cocoa);color:#fff;padding:12px 20px;border-radius:999px;
+    font-size:15px;box-shadow:var(--shadow-lift);animation:up .24s ease;max-width:90vw;text-align:center;}
+
+  .daypick{display:flex;gap:5px;flex-wrap:wrap;}
+  .daypick button{width:40px;height:40px;border-radius:50%;border:2px solid var(--blush);
+    background:var(--surface);font-family:var(--display);font-size:17px;font-weight:700;
+    display:grid;place-items:center;padding:0;}
+  .daypick button[aria-pressed="true"]{background:var(--berry);border-color:var(--berry);color:#fff;}
+  .daypick .all{width:auto;padding:0 13px;border-radius:999px;font-size:16px;}
+
   .confetti{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden;}
   .confetti i{position:absolute;width:10px;height:14px;border-radius:2px;animation:fall 1.7s linear forwards;}
   @keyframes fall{to{transform:translateY(105vh) rotate(640deg);opacity:0}}
@@ -823,18 +835,19 @@ function viewToday(){
       <small>${DAYNAMES[d.getDay()]}</small></div>`;
   }).join('');
 
+  const pct = list.length ? done/list.length*100 : 0;
   return `
   <div class="card">
-    <div class="row">
+    <div class="row" style="align-items:flex-end">
       <div class="grow">
-        <div class="muted">오늘 공부한 시간</div>
-        <div class="big" style="color:${col.ink}" id="todayTime">${fmtDur(todaySeconds(S.kidId))}</div>
-      </div>
-      <div style="text-align:right">
-        <div class="muted">할 일</div>
+        <div class="muted">오늘 할 일</div>
         <div class="big" style="color:${col.ink}">${done}<span style="font-size:24px">/${list.length}</span></div>
       </div>
+      <div class="muted" style="text-align:right">${
+        all ? '다 했어요! 🎉' : (list.length ? `${list.length-done}개 남았어요` : '오늘은 쉬는 날')}</div>
     </div>
+    <div class="gauge" style="margin-top:10px;height:16px">
+      <span style="width:${pct}%;background:${col.bar}"></span></div>
   </div>
 
   <div class="card">
@@ -1182,6 +1195,38 @@ function gameBody(g){
 /* ============================================================
    모달
    ============================================================ */
+/* 샌드박스 안에서는 브라우저 기본 prompt/confirm/alert 가 막힌다.
+   그래서 앱 안에서 쓰는 입력창·확인창·알림을 직접 만든다. */
+function toast(msg){
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2600);
+}
+function askText({ title, note, placeholder, value, okLabel, onOk }){
+  S.view.askCb = onOk;
+  openModal(`<h3>${esc(title)}</h3>
+    ${note ? `<p class="muted" style="margin:0 0 10px">${esc(note)}</p>` : ''}
+    <input class="field" id="askInput" placeholder="${esc(placeholder||'')}"
+      value="${esc(value||'')}" enterkeyhint="done">
+    <div class="row" style="gap:9px;margin-top:12px">
+      <button class="btn ghost grow" data-close="1">그만두기</button>
+      <button class="btn grow" id="askOk">${esc(okLabel||'좋아요')}</button>
+    </div>`);
+  setTimeout(() => { const i = $('#askInput'); if (i) i.focus(); }, 60);
+}
+function askConfirm({ title, note, okLabel, danger, onOk }){
+  S.view.confirmCb = onOk;
+  openModal(`<h3>${esc(title)}</h3>
+    ${note ? `<p class="muted" style="margin:0 0 12px">${esc(note)}</p>` : ''}
+    <div class="row" style="gap:9px">
+      <button class="btn ghost grow" data-close="1">아니요</button>
+      <button class="btn grow" id="confirmOk" style="${danger?'background:var(--berry-deep)':''}"
+        >${esc(okLabel||'네')}</button>
+    </div>`);
+}
+
 function openModal(html){
   $('#modalRoot').innerHTML = `<div class="modal" id="modal"><div class="sheet" style="position:relative">
     <button class="close btn ghost sm" data-close="1" aria-label="닫기">✕</button>${html}</div></div>`;
@@ -1280,19 +1325,38 @@ function parentSheet(){
 
   let body = '';
   if (t === 'todos'){
+    const newDays = S.view.newTodoDays || (S.view.newTodoDays = {});
     body = ks.map(k=>{
       const list = S.data.todos.filter(x=>x.kidId===k.id && !x.archived);
+      const picked = newDays[k.id] || [];
       return `<div class="card" style="margin-bottom:12px">
         <h3 class="sub">${esc(k.name)}의 할 일</h3>
-        ${list.length ? list.map(x=>`<div class="todo">
-          <div class="grow"><div class="name">${esc(x.icon||'')} ${esc(x.title)}</div>
-            <div class="muted">${(!x.repeatDays||!x.repeatDays.length)?'매일':x.repeatDays.map(d=>DAYNAMES[d]).join('·')}
-              ${x.createdBy==='kid'?' · 아이가 추가':''}</div></div>
-          <button class="btn ghost sm" data-parentdel="${x.id}">🗑</button>
+        ${list.length ? list.map(x=>`<div style="padding:11px 0;border-bottom:1px solid var(--blush)">
+          <div class="row">
+            <div class="grow"><div class="name">${esc(x.icon||'')} ${esc(x.title)}</div>
+              <div class="muted">${x.createdBy==='kid'?'아이가 추가한 할 일':'부모님이 정한 할 일'}</div></div>
+            <button class="btn ghost sm" data-parentdel="${x.id}" aria-label="지우기">🗑</button>
+          </div>
+          <div class="daypick" style="margin-top:8px">
+            <button class="all" data-tday="${x.id}|all"
+              aria-pressed="${!x.repeatDays || !x.repeatDays.length}">매일</button>
+            ${DAYNAMES.map((n,i)=>`<button data-tday="${x.id}|${i}"
+              aria-pressed="${!!(x.repeatDays && x.repeatDays.includes(i))}">${n}</button>`).join('')}
+          </div>
         </div>`).join('') : '<p class="muted">아직 없어요.</p>'}
-        <div class="row" style="gap:8px;margin-top:10px">
-          <input class="field grow" data-newtodo="${k.id}" placeholder="할 일 적기 (예: 책 20분 읽기)">
-          <button class="btn sm" data-addtodo="${k.id}">추가</button>
+
+        <div style="margin-top:14px">
+          <div class="muted" style="margin-bottom:6px">새 할 일 — 무슨 요일에 할까요?</div>
+          <div class="daypick" style="margin-bottom:9px">
+            <button class="all" data-nday="${k.id}|all" aria-pressed="${!picked.length}">매일</button>
+            ${DAYNAMES.map((n,i)=>`<button data-nday="${k.id}|${i}"
+              aria-pressed="${picked.includes(i)}">${n}</button>`).join('')}
+          </div>
+          <div class="row" style="gap:8px">
+            <input class="field grow" data-newtodo="${k.id}" placeholder="할 일 적기 (예: 책 20분 읽기)"
+              value="${esc((S.view.newTodoText||{})[k.id] || '')}">
+            <button class="btn sm" data-addtodo="${k.id}">추가</button>
+          </div>
         </div>
       </div>`;
     }).join('');
@@ -1554,7 +1618,7 @@ async function autoWeather(interactive){
     await Store.saveSettings({ weather:{ date:todayKey(), icon:w.icon, label:w.label, place:geo.name||'' } });
     return true;
   } catch(e){
-    if (interactive) alert('날씨를 가져오지 못했어요. 아래에서 직접 골라주세요.');
+    if (interactive) toast('날씨를 가져오지 못했어요. 직접 골라주세요');
     return false;
   }
 }
@@ -1883,6 +1947,7 @@ document.addEventListener('click', async (e) => {
     '[data-book],[data-mode],[data-say],[data-game],[data-mem],[data-ml],[data-mr],[data-cat],[data-stars],'+
     '[data-close],[data-pin],[data-pinclear],[data-pinback],[data-ptab],[data-addtodo],[data-parentdel],'+
     '[data-kidav],[data-kidcol],[data-grant],[data-relock],[data-approve],[data-deny],'+
+    '[data-nday],[data-tday],'+
     '[data-weather],[data-cand],button');
   if (!t) return;
   const d = t.dataset;
@@ -1894,9 +1959,11 @@ document.addEventListener('click', async (e) => {
     const now = new Date().toISOString();
     await Store.add('profiles', { name:n1, avatar:AVATARS[0], colorIdx:0, stars:0, createdAt:now });
     if (n2) await Store.add('profiles', { name:n2, avatar:AVATARS[1], colorIdx:1, stars:0, createdAt:new Date(Date.now()+1).toISOString() });
-    if (confirm('예시 책과 낱말, 할 일을 넣어서 어떻게 보이는지 보여드릴까요?\n(부모님 화면에서 언제든 지울 수 있어요)')){
-      await seedSample();
-    }
+    askConfirm({
+      title:'예시를 넣어볼까요?', okLabel:'넣어주세요',
+      note:'책·낱말·할 일 예시를 채워 화면이 어떻게 보이는지 보여드려요. 부모님 화면에서 언제든 지울 수 있어요.',
+      onOk: async () => { await seedSample(); toast('예시를 넣었어요'); }
+    });
     return;
   }
 
@@ -1942,9 +2009,14 @@ document.addEventListener('click', async (e) => {
   }
   if (d.deltodo){ await Store.update('todos', d.deltodo, { archived:true }); return; }
   if (t.id === 'addTodo'){
-    const title = prompt('무슨 일을 할까요?');
-    if (title && title.trim()) await Store.add('todos', {
-      kidId:S.kidId, title:title.trim(), icon:'✨', repeatDays:[], createdBy:'kid', createdAt:new Date().toISOString()
+    askText({
+      title:'무슨 일을 할까요?', note:'내가 하고 싶은 일을 적어요.',
+      placeholder:'예: 그림 그리기', okLabel:'넣기',
+      onOk: async (v) => {
+        await Store.add('todos', { kidId:S.kidId, title:v, icon:'✨', repeatDays:[],
+          createdBy:'kid', createdAt:new Date().toISOString() });
+        toast('할 일을 넣었어요');
+      }
     });
     return;
   }
@@ -1969,7 +2041,7 @@ document.addEventListener('click', async (e) => {
   if (t.id === 'wizSearchTitle'){
     const w = S.view.wiz;
     w.title = ($('#wizTitle').value||'').trim();
-    if (!w.title){ alert('먼저 제목을 조금 적어주세요!'); return; }
+    if (!w.title){ toast('먼저 제목을 조금 적어주세요'); return; }
     w.busy = true; openModal(bookWizard());
     const r = await kakaoSearch(w.title, 'title');
     w.busy = false;
@@ -1989,7 +2061,7 @@ document.addEventListener('click', async (e) => {
     const w = S.view.wiz;
     w.title = ($('#wizTitle').value||'').trim();
     w.author = ($('#wizAuthor').value||'').trim();
-    if (!w.title){ alert('책 제목을 적어주세요!'); return; }
+    if (!w.title){ toast('책 제목을 적어주세요'); return; }
     w.step = 'cover'; openModal(bookWizard()); return;
   }
   if (t.id === 'wizSkipCover' || t.id === 'wizSave'){ await saveBook(); return; }
@@ -2094,28 +2166,72 @@ document.addEventListener('click', async (e) => {
   if (d.addtodo){
     const inp = document.querySelector(`[data-newtodo="${d.addtodo}"]`);
     const v = (inp && inp.value||'').trim();
-    if (v){ await Store.add('todos', { kidId:d.addtodo, title:v, icon:'📌', repeatDays:[], createdBy:'parent', createdAt:new Date().toISOString() });
-      inp.value=''; openModal(parentSheet()); }
+    if (!v){ toast('할 일을 적어주세요'); if (inp) inp.focus(); return; }
+    const days = (S.view.newTodoDays||{})[d.addtodo] || [];
+    await Store.add('todos', { kidId:d.addtodo, title:v, icon:'📌',
+      repeatDays:days.slice().sort(), createdBy:'parent', createdAt:new Date().toISOString() });
+    if (S.view.newTodoDays) S.view.newTodoDays[d.addtodo] = [];
+    if (S.view.newTodoText) S.view.newTodoText[d.addtodo] = '';
+    openModal(parentSheet());
+    toast('할 일을 넣었어요');
+    return;
+  }
+  // 새 할 일의 요일 고르기
+  if (d.nday){
+    const [kidId, which] = d.nday.split('|');
+    S.view.newTodoDays = S.view.newTodoDays || {};
+    S.view.newTodoText = S.view.newTodoText || {};
+    const inp = document.querySelector(`[data-newtodo="${kidId}"]`);
+    if (inp) S.view.newTodoText[kidId] = inp.value;      // 다시 그려도 적던 글자가 남게
+    const cur = S.view.newTodoDays[kidId] || [];
+    if (which === 'all') S.view.newTodoDays[kidId] = [];
+    else {
+      const n = +which;
+      S.view.newTodoDays[kidId] = cur.includes(n) ? cur.filter(x=>x!==n) : cur.concat(n).sort();
+    }
+    openModal(parentSheet());
+    return;
+  }
+  // 이미 있는 할 일의 요일 바꾸기
+  if (d.tday){
+    const [todoId, which] = d.tday.split('|');
+    const todo = S.data.todos.find(x=>x.id===todoId);
+    if (!todo) return;
+    const cur = Array.isArray(todo.repeatDays) ? todo.repeatDays : [];
+    let next;
+    if (which === 'all') next = [];
+    else { const n = +which; next = cur.includes(n) ? cur.filter(x=>x!==n) : cur.concat(n).sort(); }
+    await Store.update('todos', todoId, { repeatDays: next });
+    openModal(parentSheet());
     return;
   }
   if (d.parentdel){ await Store.update('todos', d.parentdel, { archived:true }); openModal(parentSheet()); return; }
   if (d.kidav){ const [id,av] = d.kidav.split('|'); await Store.update('profiles', id, { avatar:av }); openModal(parentSheet()); return; }
   if (d.kidcol){ const [id,ci] = d.kidcol.split('|'); await Store.update('profiles', id, { colorIdx:+ci }); openModal(parentSheet()); return; }
   if (t.id === 'addKid'){
-    const n = prompt('새 친구 이름은?');
-    if (n && n.trim()){
-      const i = kids().length;
-      await Store.add('profiles', { name:n.trim(), avatar:AVATARS[i%AVATARS.length], colorIdx:i%KID_COLORS.length, stars:0, createdAt:new Date().toISOString() });
-      openModal(parentSheet());
-    }
+    askText({
+      title:'새 친구 이름은?', placeholder:'이름', okLabel:'추가',
+      onOk: async (n) => {
+        const i = kids().length;
+        await Store.add('profiles', { name:n, avatar:AVATARS[i%AVATARS.length],
+          colorIdx:i%KID_COLORS.length, stars:0, createdAt:new Date().toISOString() });
+        openModal(parentSheet());
+      }
+    });
     return;
   }
   if (d.grant){ grantUnlock(d.grant); openModal(parentSheet()); return; }
   if (d.relock){ relock(d.relock); openModal(parentSheet()); return; }
   if (t.id === 'setPin'){
-    const p = prompt('새 비밀번호 4자리를 적어주세요');
-    if (p && /^\d{4}$/.test(p)){ await Store.saveSettings({ pin:p }); alert('바뀌었어요!'); }
-    else if (p) alert('숫자 4자리로 적어주세요.');
+    askText({
+      title:'새 비밀번호', note:'숫자 네 자리로 적어주세요.', placeholder:'예: 2580', okLabel:'바꾸기',
+      onOk: async (p) => {
+        if (!/^\d{4}$/.test(p)){ toast('숫자 네 자리로 적어주세요'); return; }
+        await Store.saveSettings({ pin:p });
+        openModal(parentSheet());
+        toast('비밀번호를 바꿨어요');
+      }
+    });
     return;
   }
   if (t.id === 'netTest'){ await netTest(); return; }
@@ -2125,8 +2241,26 @@ document.addEventListener('click', async (e) => {
     await seedSample(); openModal(parentSheet()); return;
   }
   if (t.id === 'clearSample'){
-    if (!confirm('샘플로 넣은 책·낱말·할 일을 모두 지울까요? 아이가 직접 넣은 것은 그대로 있어요.')) return;
-    await clearSample(); openModal(parentSheet()); return;
+    askConfirm({
+      title:'샘플 데이터를 지울까요?', danger:true, okLabel:'지우기',
+      note:'예시로 넣은 책·낱말·할 일만 지웁니다. 아이가 직접 넣은 기록은 그대로 있어요.',
+      onOk: async () => { await clearSample(); openModal(parentSheet()); toast('샘플을 지웠어요'); }
+    });
+    return;
+  }
+  if (t.id === 'askOk'){
+    const v = ($('#askInput').value||'').trim();
+    if (!v){ toast('내용을 적어주세요'); return; }
+    const cb = S.view.askCb; S.view.askCb = null;
+    closeModal();
+    if (cb) await cb(v);
+    return;
+  }
+  if (t.id === 'confirmOk'){
+    const cb = S.view.confirmCb; S.view.confirmCb = null;
+    closeModal();
+    if (cb) await cb();
+    return;
   }
 });
 
@@ -2148,6 +2282,12 @@ document.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter') return;
   if (e.target.id === 'dictInput'){ e.preventDefault(); const q=(e.target.value||'').trim(); if (q) doLookup(q); }
   if (e.target.id === 'wizWord'){ e.preventDefault(); const b=$('#wizAddWord'); if (b) b.click(); }
+  if (e.target.id === 'askInput'){ e.preventDefault(); const b=$('#askOk'); if (b) b.click(); }
+  if (e.target.dataset && e.target.dataset.newtodo){
+    e.preventDefault();
+    const b = document.querySelector(`[data-addtodo="${e.target.dataset.newtodo}"]`);
+    if (b) b.click();
+  }
 });
 
 function pinTitle(){
@@ -2220,7 +2360,7 @@ async function handleCover(file){
 }
 async function saveBook(){
   const w = S.view.wiz;
-  if (!w.title){ alert('책 제목을 적어주세요!'); return; }
+  if (!w.title){ toast('책 제목을 적어주세요'); return; }
   w.uploading = !!w.coverFile;
   openModal(bookWizard());
 
