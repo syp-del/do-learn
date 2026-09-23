@@ -249,8 +249,18 @@
   /* 패드처럼 넓은 화면에서는 아래 시트가 아니라 한가운데 카드로 */
   @media (min-width:700px){
     .modal{align-items:center;padding:24px;}
-    .sheet{border-radius:26px;max-height:84vh;padding:22px 22px 22px;}
+    .sheet{border-radius:24px;max-width:500px;max-height:78vh;padding:18px 18px 18px;}
   }
+  /* 창 안은 한 단계 촘촘하게 — 부모님 관리처럼 내용이 많은 창이 덜 커 보이도록 */
+  .sheet h3{font-size:22px;}
+  .sheet .card{padding:13px 14px;border-radius:18px;box-shadow:0 3px 10px rgba(214,150,166,.12);}
+  .sheet .sub{font-size:18px;}
+  .sheet .chip{min-height:38px;font-size:16px;padding:0 12px;}
+  .sheet .field{min-height:46px;font-size:16px;}
+  .sheet .btn{min-height:46px;font-size:18px;}
+  .sheet .btn.sm{min-height:38px;font-size:16px;}
+  .sheet .daypick button{width:36px;height:36px;font-size:15px;}
+  .sheet .pinpad button{min-height:54px;}
   .sheet h3{font-family:var(--display);font-size:25px;margin:0 0 4px;}
   .sheet .close{position:absolute;right:14px;top:10px;}
   .scanview{position:relative;width:100%;aspect-ratio:4/3;max-width:100%;border-radius:var(--r-md);
@@ -419,6 +429,52 @@
   .datechip{justify-content:center;}
   .datechip{font-size:13px;color:var(--cocoa-soft);display:inline-flex;align-items:center;gap:4px;
     background:none;padding:0;text-align:left;}
+
+  /* ---------- 🎯 반짝 새총 (전체 화면) ---------- */
+  .newtag{font-size:12px;font-family:var(--body);font-weight:700;color:#fff;background:var(--berry);
+    border-radius:999px;padding:1px 8px;margin-left:4px;}
+  .sling{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;gap:8px;
+    background:#1b1733;color:#FFF1F4;
+    padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(10px + env(safe-area-inset-bottom,0px));
+    touch-action:none;user-select:none;-webkit-user-select:none;}
+  .sl-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .sl-title{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2;}
+  .sl-title b{font-family:var(--display);font-size:21px;}
+  .sl-title span{font-size:13px;color:#cdbfe0;}
+  .sl-score{font-family:var(--display);font-size:22px;display:flex;align-items:baseline;gap:6px;}
+  .sl-score small{font-family:var(--body);font-size:12px;color:#cdbfe0;}
+  .sl-time{font-family:var(--display);font-size:18px;color:#FFE79C;font-variant-numeric:tabular-nums;}
+  .sl-btn{min-height:40px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.12);
+    border:1.5px solid rgba(255,255,255,.22);color:#fff;font-family:var(--display);font-size:16px;font-weight:700;}
+  .sl-btn:active{transform:scale(.95);}
+  .sl-btn[disabled]{opacity:.5;}
+  .sl-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:space-between;
+    background:rgba(255,255,255,.07);border-radius:16px;padding:7px 9px;}
+  .sl-ammo{display:flex;gap:5px;}
+  .sl-ammo i{width:15px;height:15px;border-radius:50%;background:rgba(255,255,255,.14);display:block;}
+  .sl-ammo i.on{background:#FFD98E;box-shadow:0 0 8px #FFE79C;}
+  .sl-weapons{display:flex;gap:5px;flex-wrap:wrap;}
+  .sl-w{min-height:38px;padding:0 10px;border-radius:999px;background:transparent;color:#e7dcf3;
+    border:1.5px solid rgba(255,255,255,.18);font-size:14px;font-weight:700;}
+  .sl-w[aria-pressed="true"]{background:#FF8FA8;border-color:#FF8FA8;color:#fff;}
+  .sl-tools{display:flex;gap:6px;}
+  .sl-coach{font-size:14px;color:#FFE3EA;text-align:center;min-height:20px;}
+  .sl-stage{flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;}
+  #slCanvas{display:block;border-radius:18px;box-shadow:0 12px 30px rgba(0,0,0,.35);touch-action:none;}
+  .sl-cam{position:absolute;top:8px;right:8px;width:150px;background:rgba(20,16,40,.85);border-radius:12px;
+    padding:5px;border:1.5px solid rgba(255,255,255,.2);}
+  .sl-cam canvas{width:100%;height:auto;display:block;border-radius:8px;background:#000;}
+  .sl-cam span{display:block;font-size:11px;text-align:center;margin-top:3px;color:#FFE3EA;}
+  .sl-card{position:absolute;inset:0;margin:auto;width:min(340px,90%);height:fit-content;
+    background:var(--cream);color:var(--cocoa);border-radius:24px;padding:20px;text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,.4);animation:cp-in .45s cubic-bezier(.2,1.6,.4,1) both;}
+  .sl-card h3{font-family:var(--display);font-size:28px;margin:4px 0;}
+  .sl-card p{margin:0 0 14px;font-size:15px;}
+  @media (max-width:600px){
+    .sl-weapons{order:3;width:100%;justify-content:center;}
+    .sl-w{font-size:13px;padding:0 8px;}
+    .sl-title b{font-size:18px;}
+  }
 
   /* ---------- 할 일 완료 응원 팝업 ---------- */
   .cheer-pop{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;
@@ -1508,6 +1564,7 @@ function viewGames(){
       <button class="btn wide ghost" data-game="memory" style="justify-content:flex-start">🐰 같은 그림 찾기</button>
       <button class="btn wide ghost" data-game="stars" style="justify-content:flex-start">⭐ 별똥별 받기</button>
       <button class="btn wide ghost" data-game="match" style="justify-content:flex-start">🫧 단어 짝 맞추기 <span class="muted" style="font-size:14px">별 2배!</span></button>
+      <button class="btn wide ghost" data-game="sling" style="justify-content:flex-start">🎯 반짝 새총 <span class="newtag">NEW</span></button>
     </div>
   </div>`}`;
 }
@@ -2484,6 +2541,603 @@ function confetti(){
 }
 
 /* ============================================================
+   🎯 반짝 새총 — 전체 화면 게임
+   찾아주신 새총 게임 코드를 이 앱에 맞게 옮겼다.
+   - 부모님 승인으로 열린 게임 시간 안에서만 열리고, 시간이 끝나면 저절로 닫힌다
+   - 패드에서는 손가락으로 주머니를 잡고 당겼다 놓는다
+   - "✋ 손으로"를 누를 때만 앞 카메라로 손 제스처를 켠다(엄지+검지 집게로 당기고, 펴면 발사)
+   - 원래 코드에서 고친 것: 클리어 보너스를 점수에 더한다 / 한 번 부딪힌 것을 여러 번 세지 않는다
+   ============================================================ */
+const SLING_LEVELS = [
+  { name:'별빛 들판', gravity:0.32, wind:0, ammo:5,
+    targets:[
+      { type:'crystal',  x:620, y:440, r:24, hp:1, pts:100 },
+      { type:'crystal',  x:740, y:440, r:24, hp:1, pts:100 },
+      { type:'crystal',  x:680, y:340, r:24, hp:1, pts:150 },
+      { type:'bonus',    x:860, y:280, r:28, hp:1, pts:500 }
+    ],
+    blocks:[
+      { type:'ice', x:680, y:440, w:30, h:70, hp:1 },
+      { type:'ice', x:680, y:370, w:90, h:20, hp:1 }
+    ] },
+  { name:'사탕 성벽', gravity:0.34, wind:-0.02, ammo:5,
+    targets:[
+      { type:'boom',   x:670, y:440, r:24, hp:1, pts:250 },
+      { type:'crystal',x:780, y:440, r:24, hp:1, pts:100 },
+      { type:'heavy',  x:860, y:430, r:26, hp:2, pts:300 },
+      { type:'bonus',  x:860, y:220, r:28, hp:1, pts:500 }
+    ],
+    blocks:[
+      { type:'stone', x:610, y:420, w:32, h:110, hp:2 },
+      { type:'stone', x:730, y:420, w:32, h:110, hp:2 },
+      { type:'stone', x:670, y:360, w:150, h:24, hp:2 }
+    ] },
+  { name:'무지개 미로', gravity:0.30, wind:0.03, ammo:4,
+    targets:[
+      { type:'crystal',x:660, y:460, r:24, hp:1, pts:100 },
+      { type:'boom',   x:760, y:460, r:24, hp:1, pts:250 },
+      { type:'heavy',  x:880, y:450, r:26, hp:2, pts:300 },
+      { type:'bonus',  x:680, y:200, r:28, hp:1, pts:500 }
+    ],
+    blocks:[
+      { type:'steel', x:570, y:360, w:26, h:160, hp:999 },
+      { type:'ice',   x:710, y:430, w:30, h:80, hp:1 },
+      { type:'stone', x:820, y:420, w:32, h:100, hp:2 }
+    ] }
+];
+const SLING_W = 1000, SLING_H = 600, SLING_GROUND = 530, SLING_PULL = 140;
+const SLING_ANCHOR = { x:170, y:430 };
+const SLING_WEAPONS = {
+  STANDARD:{ label:'🔵 기본 별',    color:'#FFD98E', glow:'#FFE79C' },
+  TWIN:    { label:'🟣 쌍둥이 별',  color:'#9BE0C8', glow:'#B3A6EE' },
+  BOMB:    { label:'🟠 쿵 폭탄',    color:'#FFB36B', glow:'#FFD98E' },
+  PIERCE:  { label:'🔴 슝 레이저',  color:'#FF8FA8', glow:'#E85C7C' }
+};
+const SLING_TARGET_COLOR = { crystal:'#9BE0C8', heavy:'#B3A6EE', boom:'#FFB36B', bonus:'#FFD98E' };
+const SLING_BLOCK_COLOR = {
+  ice:  { fill:'rgba(203,221,247,.55)', line:'#CBDDF7' },
+  stone:{ fill:'#8e7f9f', line:'#b3a6c9' },
+  steel:{ fill:'#5d5a6e', line:'#9b98ad' }
+};
+
+let sling = null;
+
+/* ---------- 효과음 (Web Audio로 만든다, 파일 없음) ---------- */
+function slingSound(){
+  const s = { ctx:null, on:true, osc:null, gain:null };
+  const ready = () => {
+    if (!s.ctx){ const A = window.AudioContext || window.webkitAudioContext; if (A) s.ctx = new A(); }
+    if (s.ctx && s.ctx.state === 'suspended') s.ctx.resume();
+    return s.on && s.ctx;
+  };
+  const beep = (f1, f2, dur, vol, type) => {
+    if (!ready()) return;
+    const t = s.ctx.currentTime, o = s.ctx.createOscillator(), g = s.ctx.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(g); g.connect(s.ctx.destination); o.start(t); o.stop(t + dur + 0.01);
+  };
+  s.pinch   = () => beep(540, 880, 0.08, 0.18);
+  s.release = () => { s.stop(); beep(650, 140, 0.16, 0.3); };
+  s.hit     = kind => beep(kind === 'bonus' ? 1200 : kind === 'boom' ? 160 : 880, (kind === 'bonus' ? 1200 : 880) * 1.4, 0.22, 0.26);
+  s.win     = () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep(f, f, 0.3, 0.18), i * 120));
+  s.stretch = k => {
+    if (!s.on || k <= 0.05){ s.stop(); return; }
+    if (!ready()) return;
+    const t = s.ctx.currentTime, f = 180 + k * 400;
+    if (!s.osc){
+      s.osc = s.ctx.createOscillator(); s.gain = s.ctx.createGain(); s.osc.type = 'triangle';
+      s.osc.frequency.setValueAtTime(f, t);
+      s.gain.gain.setValueAtTime(0.01, t); s.gain.gain.linearRampToValueAtTime(0.1, t + 0.05);
+      s.osc.connect(s.gain); s.gain.connect(s.ctx.destination); s.osc.start(t);
+    } else s.osc.frequency.setTargetAtTime(f, t, 0.03);
+  };
+  s.stop = () => {
+    if (s.osc && s.gain && s.ctx){
+      const o = s.osc;
+      s.gain.gain.linearRampToValueAtTime(0.001, s.ctx.currentTime + 0.04);
+      setTimeout(() => { try { o.stop(); o.disconnect(); } catch(e){} }, 50);
+    }
+    s.osc = null; s.gain = null;
+  };
+  s.close = () => { s.stop(); try { s.ctx && s.ctx.close(); } catch(e){} };
+  return s;
+}
+
+/* ---------- 열기 / 닫기 ---------- */
+function openSling(){
+  if (sling) return;
+  const k = curKid();
+  const layer = document.createElement('div');
+  layer.className = 'sling'; layer.id = 'slingLayer';
+  layer.innerHTML = `
+    <div class="sl-top">
+      <div class="sl-title"><b id="slStage">1단계</b><span id="slLeft"></span></div>
+      <div class="sl-score">⭐ <b id="slScore">0</b><small>최고 <span id="slBest">${(k && k.slingBest) || 0}</span></small></div>
+      <div class="sl-time" id="slTime"></div>
+      <button class="sl-btn" id="slExit" aria-label="게임 나가기">✕ 나가기</button>
+    </div>
+    <div class="sl-bar">
+      <div class="sl-ammo" id="slAmmo" aria-label="남은 별"></div>
+      <div class="sl-weapons">${Object.entries(SLING_WEAPONS).map(([id, w]) =>
+        `<button class="sl-w" data-slw="${id}" aria-pressed="${id === 'STANDARD'}">${w.label}</button>`).join('')}</div>
+      <div class="sl-tools">
+        <button class="sl-btn" id="slRestart" aria-label="이 단계 다시">🔄</button>
+        <button class="sl-btn" id="slSound" aria-label="소리 켜고 끄기">🔊</button>
+        <button class="sl-btn" id="slHand">✋ 손으로</button>
+      </div>
+    </div>
+    <div class="sl-coach" id="slCoach"></div>
+    <div class="sl-stage" id="slStageBox">
+      <canvas id="slCanvas"></canvas>
+      <div class="sl-cam" id="slCam" hidden>
+        <canvas id="slCamCanvas" width="160" height="120"></canvas>
+        <span id="slCamBadge">손을 비춰주세요 🖐️</span>
+      </div>
+      <div class="sl-card" id="slClear" hidden>
+        <div style="font-size:44px">🎉</div>
+        <h3>단계 통과!</h3>
+        <p><span id="slClearScore"></span></p>
+        <div class="row" style="gap:8px">
+          <button class="btn ghost grow" id="slReplay">다시 하기</button>
+          <button class="btn grow" id="slNext">다음 단계 ›</button>
+        </div>
+      </div>
+      <div class="sl-card" id="slFail" hidden>
+        <div style="font-size:44px">😮</div>
+        <h3>별을 다 썼어요!</h3>
+        <p>각도를 바꿔서 다시 해볼까요?</p>
+        <button class="btn wide" id="slRetry">다시 도전</button>
+      </div>
+    </div>`;
+  document.body.appendChild(layer);
+
+  const canvas = layer.querySelector('#slCanvas');
+  sling = {
+    kidId:S.kidId,                                   // 이 아이의 승인 시간으로 연 게임
+    layer, canvas, ctx:canvas.getContext('2d'), alive:true, raf:0,
+    level:0, score:0, best:(k && k.slingBest) || 0, ammo:0, weapon:'STANDARD',
+    targets:[], blocks:[], shots:[], sparks:[], texts:[], shake:0,
+    pouch:{ ...SLING_ANCHOR }, aiming:null, cleared:false, failAt:0, failed:false,
+    sky:Array.from({ length:80 }, () => ({ x:Math.random()*SLING_W, y:Math.random()*SLING_GROUND,
+      r:Math.random()*1.8 + .6, a:Math.random()*.6 + .3, v:Math.random()*.18 + .04,
+      c:['#FFFFFF','#FFE3EA','#E2F7EF','#FFF1D6'][Math.floor(Math.random()*4)] })),
+    sound:slingSound(), hand:null
+  };
+
+  slingFit();
+  sling.onResize = () => slingFit();
+  addEventListener('resize', sling.onResize);
+  slingBindPointer(canvas);
+  layer.addEventListener('click', slingClick);
+  slingLoad(0);
+  slingTimer();
+  sling.raf = requestAnimationFrame(slingLoop);
+}
+
+function closeSling(msg){
+  if (!sling) return;
+  const s = sling; sling = null;
+  s.alive = false;
+  cancelAnimationFrame(s.raf);
+  removeEventListener('resize', s.onResize);
+  s.sound.close();
+  slingStopHand(s);
+  s.layer.remove();
+  if (S.view.game === 'sling') S.view.game = null;
+  render();
+  if (msg) toast(msg);
+}
+
+/* 캔버스를 5:3 비율로 화면에 꽉 차게 (레티나에서도 선명하게) */
+function slingFit(){
+  if (!sling) return;
+  const box = sling.layer.querySelector('#slStageBox');
+  const bw = box.clientWidth, bh = box.clientHeight;
+  const scale = Math.max(0.2, Math.min(bw / SLING_W, bh / SLING_H));
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  sling.canvas.style.width = Math.floor(SLING_W * scale) + 'px';
+  sling.canvas.style.height = Math.floor(SLING_H * scale) + 'px';
+  sling.canvas.width = Math.round(SLING_W * dpr); sling.canvas.height = Math.round(SLING_H * dpr);
+  sling.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function slingLoad(idx){
+  const s = sling, L = SLING_LEVELS[idx % SLING_LEVELS.length];
+  s.level = idx; s.ammo = L.ammo; s.pouch = { ...SLING_ANCHOR }; s.aiming = null;
+  s.shots = []; s.sparks = []; s.texts = []; s.cleared = false; s.failAt = 0; s.failed = false;
+  s.targets = L.targets.map(t => ({ ...t, max:t.hp, dead:false, cool:0 }));
+  s.blocks  = L.blocks.map(b => ({ ...b, max:b.hp, dead:false, cool:0 }));
+  s.layer.querySelector('#slStage').textContent = `${idx + 1}단계 · ${L.name}`;
+  s.layer.querySelector('#slClear').hidden = true;
+  s.layer.querySelector('#slFail').hidden = true;
+  slingCoach(idx === 0 ? '주머니를 손가락으로 꾹 잡고, 뒤로 당겼다가 놓아요!'
+    : L.wind ? `바람이 ${L.wind > 0 ? '앞으로' : '뒤로'} 불어요. 조금 더 세게 당겨봐요!` : '모든 과녁을 맞히면 통과예요!');
+  slingHud();
+}
+function slingCoach(msg){ const el = sling && sling.layer.querySelector('#slCoach'); if (el) el.textContent = msg; }
+function slingHud(){
+  const s = sling; if (!s) return;
+  const L = SLING_LEVELS[s.level % SLING_LEVELS.length];
+  const left = s.targets.filter(t => !t.dead).length;
+  s.layer.querySelector('#slScore').textContent = s.score.toLocaleString();
+  s.layer.querySelector('#slBest').textContent = Math.max(s.best, s.score).toLocaleString();
+  s.layer.querySelector('#slLeft').textContent = `남은 과녁 ${left}`;
+  s.layer.querySelector('#slAmmo').innerHTML = Array.from({ length:L.ammo }, (_, i) =>
+    `<i class="${i < s.ammo ? 'on' : ''}"></i>`).join('');
+}
+function slingTimer(){
+  if (!sling) return;
+  const un = sling.kidId && activeUnlock(sling.kidId);
+  const el = sling.layer.querySelector('#slTime');
+  if (el) el.textContent = un ? `⏱ ${fmtClock((new Date(un.expiresAt).getTime() - Date.now())/1000)}` : '';
+}
+
+/* ---------- 버튼 ---------- */
+function slingClick(e){
+  const b = e.target.closest('button'); if (!b || !sling) return;
+  const s = sling;
+  if (b.id === 'slExit'){ closeSling(); return; }
+  if (b.id === 'slRestart' || b.id === 'slReplay' || b.id === 'slRetry'){ slingLoad(s.level); return; }
+  if (b.id === 'slNext'){ slingLoad(s.level + 1); return; }
+  if (b.id === 'slSound'){ s.sound.on = !s.sound.on; if (!s.sound.on) s.sound.stop(); b.textContent = s.sound.on ? '🔊' : '🔇'; return; }
+  if (b.id === 'slHand'){ s.hand ? slingStopHand(s, true) : slingStartHand(); return; }
+  if (b.dataset.slw){
+    s.weapon = b.dataset.slw;
+    s.layer.querySelectorAll('[data-slw]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  }
+}
+
+/* ---------- 손가락으로 당기기 ---------- */
+function slingPoint(canvas, e){
+  const r = canvas.getBoundingClientRect();
+  return { x:(e.clientX - r.left) * (SLING_W / r.width), y:(e.clientY - r.top) * (SLING_H / r.height) };
+}
+function slingAimTo(x, y){
+  const s = sling, dx = x - SLING_ANCHOR.x, dy = y - SLING_ANCHOR.y, d = Math.hypot(dx, dy);
+  if (d > SLING_PULL){ s.pouch.x = SLING_ANCHOR.x + dx / d * SLING_PULL; s.pouch.y = SLING_ANCHOR.y + dy / d * SLING_PULL; }
+  else { s.pouch.x = x; s.pouch.y = y; }
+  s.sound.stretch(Math.min(d, SLING_PULL) / SLING_PULL);
+}
+function slingBindPointer(canvas){
+  canvas.addEventListener('pointerdown', e => {
+    const s = sling; if (!s || s.cleared || s.ammo <= 0) return;
+    const p = slingPoint(canvas, e);
+    // 주머니 근처, 새총 근처, 또는 화면 왼쪽 1/3 어디든 잡을 수 있게 넉넉하게
+    if (Math.hypot(p.x - s.pouch.x, p.y - s.pouch.y) < 90 || Math.hypot(p.x - SLING_ANCHOR.x, p.y - SLING_ANCHOR.y) < 120 || p.x < 360){
+      s.aiming = 'touch'; s.sound.pinch();
+      try { canvas.setPointerCapture(e.pointerId); } catch(err){}
+      slingAimTo(p.x, p.y);
+      e.preventDefault();
+    }
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (!sling || sling.aiming !== 'touch') return;
+    const p = slingPoint(canvas, e); slingAimTo(p.x, p.y); e.preventDefault();
+  });
+  const up = () => { if (sling && sling.aiming === 'touch') slingFire(); };
+  canvas.addEventListener('pointerup', up);
+  canvas.addEventListener('pointercancel', up);
+}
+
+function slingFire(){
+  const s = sling;
+  const dx = SLING_ANCHOR.x - s.pouch.x, dy = SLING_ANCHOR.y - s.pouch.y, d = Math.hypot(dx, dy);
+  s.aiming = null;
+  if (d < 18 || s.ammo <= 0){ s.pouch = { ...SLING_ANCHOR }; s.sound.stop(); return; }
+  const pw = Math.min(d, SLING_PULL) * 0.23, ang = Math.atan2(dy, dx);
+  const vx = Math.cos(ang) * pw, vy = Math.sin(ang) * pw;
+  const W = SLING_WEAPONS[s.weapon];
+  s.sound.release();
+  s.ammo--; slingHud();
+  const shot = (o) => ({ x:s.pouch.x, y:s.pouch.y, vx, vy, r:14, kind:s.weapon, color:W.color, glow:W.glow, trail:[], on:true, ...o });
+  if (s.weapon === 'TWIN'){
+    s.shots.push(shot({ y:s.pouch.y - 10, vy:vy - 1.2, r:12, color:'#9BE0C8' }),
+                 shot({ y:s.pouch.y + 10, vy:vy + 1.2, r:12, color:'#B3A6EE' }));
+  } else if (s.weapon === 'BOMB'){
+    s.shots.push(shot({ r:18 }));
+  } else if (s.weapon === 'PIERCE'){
+    s.shots.push(shot({ vx:vx * 1.25, vy:vy * 1.25, r:13 }));
+  } else s.shots.push(shot({}));
+  s.pouch = { ...SLING_ANCHOR };
+  if (s.ammo === 1) slingCoach('마지막 별이에요. 잘 조준해요!');
+}
+
+function slingPoints(pts, x, y){
+  const s = sling;
+  s.score += pts;
+  s.texts.push({ t:`+${pts}`, x, y, a:1 });
+  slingHud();
+}
+function slingBurst(x, y, color, n){
+  for (let i = 0; i < n; i++){
+    const a = Math.random() * Math.PI * 2, v = Math.random() * 6 + 2;
+    sling.sparks.push({ x, y, vx:Math.cos(a)*v, vy:Math.sin(a)*v, c:color, r:Math.random()*3 + 2, a:1, d:Math.random()*.03 + .02 });
+  }
+}
+
+/* ---------- 그리기 도우미 ---------- */
+function slingFace(ctx, x, y, r, happy){
+  ctx.fillStyle = '#4A3036';
+  ctx.beginPath(); ctx.arc(x - r*.32, y - r*.12, r*.11, 0, Math.PI*2); ctx.arc(x + r*.32, y - r*.12, r*.11, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,143,168,.65)';
+  ctx.beginPath(); ctx.ellipse(x - r*.52, y + r*.16, r*.16, r*.1, 0, 0, Math.PI*2); ctx.ellipse(x + r*.52, y + r*.16, r*.16, r*.1, 0, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#4A3036'; ctx.lineWidth = Math.max(1.6, r*.08); ctx.lineCap = 'round';
+  ctx.beginPath();
+  if (happy) ctx.arc(x, y + r*.08, r*.22, .15*Math.PI, .85*Math.PI);
+  else { ctx.moveTo(x - r*.18, y + r*.3); ctx.lineTo(x + r*.18, y + r*.3); }
+  ctx.stroke();
+}
+
+/* ---------- 60fps 게임 루프 ---------- */
+function slingLoop(){
+  const s = sling; if (!s || !s.alive) return;
+  const ctx = s.ctx, L = SLING_LEVELS[s.level % SLING_LEVELS.length], G = SLING_GROUND, A = SLING_ANCHOR;
+  const now = performance.now();
+
+  ctx.save();
+  if (s.shake > 0){ ctx.translate((Math.random() - .5) * s.shake, (Math.random() - .5) * s.shake); s.shake = Math.max(0, s.shake - .6); }
+
+  // 밤하늘
+  const bg = ctx.createLinearGradient(0, 0, 0, SLING_H);
+  bg.addColorStop(0, '#221d3f'); bg.addColorStop(1, '#3a2d58');
+  ctx.fillStyle = bg; ctx.fillRect(-20, -20, SLING_W + 40, SLING_H + 40);
+  for (const st of s.sky){
+    st.x -= st.v; if (st.x < 0) st.x = SLING_W;
+    ctx.globalAlpha = st.a * (.75 + .25 * Math.sin(now * .002 + st.y));
+    ctx.fillStyle = st.c; ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // 땅
+  ctx.fillStyle = '#2d2448'; ctx.fillRect(-20, G, SLING_W + 40, SLING_H - G + 20);
+  ctx.strokeStyle = 'rgba(155,224,200,.55)'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(0, G); ctx.lineTo(SLING_W, G); ctx.stroke();
+
+  // 새총
+  const fl = { x:A.x - 24, y:A.y - 50 }, fr = { x:A.x + 24, y:A.y - 45 };
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#8a6a55'; ctx.lineWidth = 13; ctx.beginPath(); ctx.moveTo(A.x, G); ctx.lineTo(A.x, A.y); ctx.stroke();
+  ctx.strokeStyle = '#a47e63'; ctx.lineWidth = 10; ctx.beginPath();
+  ctx.moveTo(A.x, A.y); ctx.lineTo(fl.x, fl.y); ctx.moveTo(A.x, A.y); ctx.lineTo(fr.x, fr.y); ctx.stroke();
+  ctx.strokeStyle = '#FF8FA8'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(fl.x, fl.y); ctx.lineTo(s.pouch.x - 8, s.pouch.y); ctx.stroke();
+
+  // 날아갈 길 미리 보기
+  if (s.aiming){
+    const dx = A.x - s.pouch.x, dy = A.y - s.pouch.y, d = Math.hypot(dx, dy);
+    if (d > 18){
+      const pw = Math.min(d, SLING_PULL) * 0.23, ang = Math.atan2(dy, dx);
+      let vx = Math.cos(ang) * pw * (s.weapon === 'PIERCE' ? 1.25 : 1), vy = Math.sin(ang) * pw * (s.weapon === 'PIERCE' ? 1.25 : 1);
+      let x = s.pouch.x, y = s.pouch.y;
+      for (let i = 0; i < 36; i++){
+        vx += L.wind; vy += L.gravity; x += vx; y += vy;
+        if (y > G || x > SLING_W) break;
+        const k = 1 - i / 36;
+        ctx.globalAlpha = k * .8; ctx.fillStyle = '#FFE3EA';
+        ctx.beginPath(); ctx.arc(x, y, Math.max(1.5, 4.5 * k), 0, Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // 주머니 속 별
+  if (s.ammo > 0 || s.aiming){
+    const W = SLING_WEAPONS[s.weapon];
+    ctx.save(); ctx.shadowColor = W.glow; ctx.shadowBlur = 12;
+    drawStar(ctx, s.pouch.x, s.pouch.y, 15, W.color, '#6B4A52'); ctx.restore();
+  }
+  ctx.strokeStyle = '#FF8FA8'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(fr.x, fr.y); ctx.lineTo(s.pouch.x + 8, s.pouch.y); ctx.stroke();
+  ctx.fillStyle = '#6B4A52'; ctx.strokeStyle = '#FFE3EA'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.ellipse(s.pouch.x, s.pouch.y + 13, 12, 6, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+  // 벽돌
+  for (const b of s.blocks){
+    if (b.dead) continue;
+    if (b.cool > 0) b.cool--;
+    const c = SLING_BLOCK_COLOR[b.type];
+    ctx.fillStyle = c.fill; ctx.strokeStyle = c.line; ctx.lineWidth = 2.5;
+    const x = b.x - b.w/2, y = b.y - b.h/2;
+    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, b.w, b.h, 6) : ctx.rect(x, y, b.w, b.h); ctx.fill(); ctx.stroke();
+    if (b.type !== 'steel' && b.hp < b.max){ ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(x + b.w*.2, y + b.h*.3); ctx.lineTo(x + b.w*.6, y + b.h*.55); ctx.lineTo(x + b.w*.4, y + b.h*.8); ctx.stroke(); }
+  }
+
+  // 과녁 (얼굴 있는 동그라미)
+  for (const t of s.targets){
+    if (t.dead) continue;
+    if (t.cool > 0) t.cool--;
+    const r = t.r + Math.sin(now * .005 + t.x) * 2;
+    ctx.save();
+    ctx.shadowColor = SLING_TARGET_COLOR[t.type]; ctx.shadowBlur = 16;
+    ctx.fillStyle = t.type === 'heavy' && t.hp === 1 ? '#FFC2CE' : SLING_TARGET_COLOR[t.type];
+    if (t.type === 'bonus') drawStar(ctx, t.x, t.y, r * 1.15, '#FFD98E', '#6B4A52');
+    else { ctx.beginPath(); ctx.arc(t.x, t.y, r, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0; ctx.strokeStyle = '#6B4A52'; ctx.lineWidth = 2.5; ctx.stroke(); }
+    ctx.restore();
+    slingFace(ctx, t.x, t.y + (t.type === 'bonus' ? 2 : 0), r * (t.type === 'bonus' ? .8 : 1), true);
+    if (t.type === 'boom'){ ctx.fillStyle = '#6B4A52'; ctx.font = `bold ${Math.round(r*.7)}px sans-serif`; ctx.textAlign = 'center'; ctx.fillText('💥', t.x, t.y - r - 4); }
+  }
+
+  // 날아가는 별
+  for (const p of s.shots){
+    p.trail.unshift({ x:p.x, y:p.y }); if (p.trail.length > 14) p.trail.pop();
+    p.vx += L.wind; p.vy += L.gravity; p.x += p.vx; p.y += p.vy;
+    p.trail.forEach((q, i) => { const k = 1 - i / p.trail.length;
+      ctx.globalAlpha = k * .45; ctx.fillStyle = p.glow; ctx.beginPath(); ctx.arc(q.x, q.y, Math.max(1, p.r * k), 0, Math.PI*2); ctx.fill(); });
+    ctx.globalAlpha = 1;
+    ctx.save(); ctx.shadowColor = p.glow; ctx.shadowBlur = 14;
+    if (p.kind === 'BOMB'){ ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill(); }
+    else drawStar(ctx, p.x, p.y, p.r * 1.15, p.color, '#6B4A52');
+    ctx.restore();
+
+    if (p.y + p.r >= G){
+      p.y = G - p.r; p.vy = -p.vy * .45; p.vx *= .7;
+      slingBurst(p.x, G, '#9BE0C8', 5);
+      if (Math.abs(p.vx) < .6 && Math.abs(p.vy) < .8) p.on = false;
+    }
+    for (const b of s.blocks){
+      if (b.dead || !p.on || b.cool > 0) continue;
+      const cx = Math.max(b.x - b.w/2, Math.min(p.x, b.x + b.w/2)), cy = Math.max(b.y - b.h/2, Math.min(p.y, b.y + b.h/2));
+      if (Math.hypot(p.x - cx, p.y - cy) < p.r){
+        b.cool = 8;                                      // 한 번 부딪힌 것을 여러 번 세지 않도록
+        s.sound.hit('block'); s.shake = Math.min(s.shake + 4, 10);
+        if (p.kind !== 'PIERCE'){ if (Math.abs(p.x - cx) > Math.abs(p.y - cy)) p.vx = -p.vx * .65; else p.vy = -p.vy * .65; }
+        if (b.type !== 'steel'){
+          b.hp -= p.kind === 'BOMB' ? 3 : 1; slingBurst(cx, cy, '#CBDDF7', 10);
+          if (b.hp <= 0){ b.dead = true; slingPoints(50, b.x, b.y); }
+        }
+      }
+    }
+    for (const t of s.targets){
+      if (t.dead || !p.on || t.cool > 0) continue;
+      if (Math.hypot(p.x - t.x, p.y - t.y) < p.r + t.r){
+        t.cool = 8;
+        s.sound.hit(t.type); s.shake = Math.min(s.shake + 8, 16);
+        t.hp -= p.kind === 'BOMB' ? 3 : 1;
+        if (t.hp <= 0){
+          t.dead = true; slingPoints(t.pts, t.x, t.y); slingBurst(t.x, t.y, SLING_TARGET_COLOR[t.type], 24);
+          if (t.type === 'boom'){
+            for (const n of s.targets){
+              if (!n.dead && Math.hypot(n.x - t.x, n.y - t.y) < 140){ n.dead = true; slingPoints(n.pts * 2, n.x, n.y); slingBurst(n.x, n.y, '#FFB36B', 18); }
+            }
+          }
+        }
+        if (p.kind === 'BOMB'){ p.on = false; slingBurst(p.x, p.y, '#FFB36B', 32); }
+        else if (p.kind !== 'PIERCE'){ p.vx = -p.vx * .4; p.vy = -p.vy * .4; }
+      }
+    }
+    if (p.x < -100 || p.x > SLING_W + 100 || p.y > SLING_H + 50) p.on = false;
+  }
+  s.shots = s.shots.filter(p => p.on);
+
+  // 불꽃·점수 글자
+  for (let i = s.sparks.length - 1; i >= 0; i--){
+    const q = s.sparks[i]; q.x += q.vx; q.y += q.vy; q.vy += .12; q.a -= q.d;
+    if (q.a <= 0){ s.sparks.splice(i, 1); continue; }
+    ctx.globalAlpha = q.a; ctx.fillStyle = q.c; ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  ctx.textAlign = 'center';
+  for (let i = s.texts.length - 1; i >= 0; i--){
+    const f = s.texts[i]; f.y -= 1.2; f.a -= .02;
+    if (f.a <= 0){ s.texts.splice(i, 1); continue; }
+    ctx.globalAlpha = f.a; ctx.fillStyle = '#FFE79C'; ctx.font = "bold 20px 'Gaegu', sans-serif"; ctx.fillText(f.t, f.x, f.y);
+  }
+  ctx.globalAlpha = 1;
+
+  // 손 제스처 조준점
+  if (s.hand && s.hand.present){
+    ctx.strokeStyle = s.hand.pinch ? '#FFD98E' : 'rgba(255,227,234,.8)'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(s.hand.x * SLING_W, s.hand.y * SLING_H, s.hand.pinch ? 17 : 12, 0, Math.PI*2); ctx.stroke();
+  }
+  ctx.restore();
+
+  // 통과 / 실패
+  const left = s.targets.filter(t => !t.dead).length;
+  if (!s.cleared && left === 0){
+    s.cleared = true; s.aiming = null;
+    const bonus = s.ammo * 300;
+    s.score += bonus;                                    // 원래 코드는 보너스를 보여만 주고 더하지 않았다
+    s.sound.win(); confetti();
+    s.layer.querySelector('#slClearScore').textContent = `점수 ${s.score.toLocaleString()} · 남은 별 보너스 +${bonus.toLocaleString()} · ⭐ 3개 받았어요`;
+    s.layer.querySelector('#slClear').hidden = false;
+    const who = kid(s.kidId);
+    if (who){
+      const patch = { stars:(who.stars || 0) + 3 };
+      if (s.score > s.best){ s.best = s.score; patch.slingBest = s.score; }
+      Store.update('profiles', who.id, patch);
+    }
+    slingHud();
+  } else if (!s.cleared && !s.failed && s.ammo <= 0 && s.shots.length === 0 && left > 0){
+    if (!s.failAt) s.failAt = now + 800;
+    else if (now >= s.failAt){ s.failed = true; s.layer.querySelector('#slFail').hidden = false; }
+  }
+
+  s.raf = requestAnimationFrame(slingLoop);
+}
+
+/* ---------- ✋ 손 제스처 (필요할 때만 불러온다) ---------- */
+const MP_HANDS = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
+const MP_CAMERA = 'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1675466862/camera_utils.js';
+function loadScriptOnce(src){
+  return new Promise((ok, bad) => {
+    if (document.querySelector(`script[src="${src}"]`)) return ok();
+    const el = document.createElement('script'); el.src = src; el.crossOrigin = 'anonymous';
+    el.onload = () => ok(); el.onerror = () => bad(new Error('load ' + src));
+    document.head.appendChild(el);
+  });
+}
+async function slingStartHand(){
+  const s = sling; if (!s) return;
+  const btn = s.layer.querySelector('#slHand'), cam = s.layer.querySelector('#slCam'), badge = s.layer.querySelector('#slCamBadge');
+  btn.disabled = true; btn.textContent = '준비 중…';
+  try {
+    await loadScriptOnce(MP_CAMERA);
+    await loadScriptOnce(MP_HANDS + 'hands.js');
+    if (!sling || sling !== s) return;
+    const video = document.createElement('video');
+    video.setAttribute('playsinline', ''); video.muted = true;
+    const hands = new window.Hands({ locateFile: f => MP_HANDS + f });
+    hands.setOptions({ maxNumHands:1, modelComplexity:0, minDetectionConfidence:.6, minTrackingConfidence:.6 });
+    const camCtx = s.layer.querySelector('#slCamCanvas').getContext('2d');
+    s.hand = { present:false, pinch:false, x:.5, y:.5, hands, camera:null, video };
+    hands.onResults(res => {
+      if (!sling || !s.hand) return;
+      camCtx.save(); camCtx.translate(160, 0); camCtx.scale(-1, 1);
+      camCtx.drawImage(video, 0, 0, 160, 120); camCtx.restore();
+      const lm = res.multiHandLandmarks && res.multiHandLandmarks[0];
+      if (!lm){
+        s.hand.present = false; badge.textContent = '손을 비춰주세요 🖐️';
+        if (s.aiming === 'hand') slingFire();
+        return;
+      }
+      const th = lm[4], ix = lm[8];
+      const pinch = Math.hypot(th.x - ix.x, th.y - ix.y) < 0.085;
+      const px = 1 - (th.x + ix.x) / 2, py = (th.y + ix.y) / 2;        // 거울처럼 좌우를 뒤집는다
+      s.hand.present = true; s.hand.pinch = pinch;
+      s.hand.x = s.hand.x * .4 + px * .6; s.hand.y = s.hand.y * .4 + py * .6;
+      badge.textContent = pinch ? '잡았어요! 당겨요 🏹' : '엄지와 검지를 모아요 🤏';
+      const hx = s.hand.x * SLING_W, hy = s.hand.y * SLING_H;
+      if (pinch){
+        if (!s.aiming && !s.cleared && s.ammo > 0 && (Math.hypot(hx - SLING_ANCHOR.x, hy - SLING_ANCHOR.y) < 220 || hx < 360)){
+          s.aiming = 'hand'; s.sound.pinch();
+        }
+        if (s.aiming === 'hand') slingAimTo(hx, hy);
+      } else if (s.aiming === 'hand') slingFire();
+    });
+    const camera = new window.Camera(video, {
+      onFrame: async () => { if (sling === s && s.hand) await hands.send({ image:video }); },
+      width:640, height:480, facingMode:'user'
+    });
+    s.hand.camera = camera;
+    await camera.start();
+    cam.hidden = false;
+    btn.disabled = false; btn.textContent = '✋ 끄기';
+    slingCoach('엄지와 검지를 붙여 새총을 잡고, 뒤로 당긴 뒤 손을 쫙 펴면 날아가요!');
+  } catch(err){
+    console.warn('hand tracking', err);
+    slingStopHand(s);
+    if (sling === s){
+      btn.disabled = false; btn.textContent = '✋ 손으로';
+      toast('카메라를 켤 수 없어요. 손가락으로 해볼까요?');
+    }
+  }
+}
+function slingStopHand(s, byUser){
+  if (!s || !s.hand) return;
+  const h = s.hand; s.hand = null;
+  try { h.camera && h.camera.stop(); } catch(e){}
+  try { h.video && h.video.srcObject && h.video.srcObject.getTracks().forEach(t => t.stop()); } catch(e){}
+  try { h.hands && h.hands.close(); } catch(e){}
+  if (s.aiming === 'hand'){ s.aiming = null; s.pouch = { ...SLING_ANCHOR }; }
+  if (byUser && s.layer){
+    s.layer.querySelector('#slCam').hidden = true;
+    s.layer.querySelector('#slHand').textContent = '✋ 손으로';
+    slingCoach('손가락으로 주머니를 당겨요!');
+  }
+}
+
+/* ============================================================
    잠금 해제
    ============================================================ */
 /* 아이가 요청을 올린다 → db를 통해 부모님 기기(같은 계정으로 연 모든 화면)에 몇 초 안에 뜬다.
@@ -2537,7 +3191,7 @@ document.addEventListener('click', async (e) => {
     '[data-book],[data-mode],[data-say],[data-game],[data-mem],[data-ml],[data-mr],[data-cat],[data-stars],'+
     '[data-close],[data-pin],[data-pinclear],[data-pinback],[data-ptab],[data-addtodo],[data-parentdel],'+
     '[data-kidav],[data-kidcol],[data-grant],[data-relock],[data-approve],[data-deny],'+
-    '[data-nday],[data-tday],[data-tglink],'+
+    '[data-nday],[data-tday],[data-tglink],[data-bookedit],[data-bookdel],[data-bookshow],[data-becat],[data-bestar],'+
     '[data-weather],[data-cand],button');
   if (!t) return;
   const d = t.dataset;
@@ -2686,6 +3340,49 @@ document.addEventListener('click', async (e) => {
     closeModal(); S.tab = 'shelf'; render(); return;
   }
   if (d.book){ showBook(d.book); return; }
+  if (d.bookshow){ S.view.bookEdit = null; showBook(d.bookshow); return; }
+  if (d.bookedit){
+    const b = S.data.books.find(x => x.id === d.bookedit); if (!b) return;
+    S.view.bookEdit = { id:b.id, title:b.title || '', author:b.author || '', category:b.category,
+      stars:b.stars || 3, coverUrl:b.coverUrl || '', coverAssetId:b.coverAssetId || '', coverFile:null, coverPreview:'' };
+    openModal(bookEditSheet());
+    return;
+  }
+  if (d.becat){ keepBookEditTyping(); S.view.bookEdit.category = d.becat; openModal(bookEditSheet()); return; }
+  if (d.bestar){ keepBookEditTyping(); S.view.bookEdit.stars = +d.bestar; openModal(bookEditSheet()); return; }
+  if (t.id === 'beSave'){
+    keepBookEditTyping();
+    const e = S.view.bookEdit, b = S.data.books.find(x => x.id === e.id);
+    if (!b){ closeModal(); return; }
+    if (!e.title.trim()){ toast('책 제목을 적어주세요'); $('#beTitle').focus(); return; }
+    e.saving = true; openModal(bookEditSheet());
+    const patch = { title:e.title.trim(), author:e.author.trim(), category:e.category, stars:e.stars };
+    if (e.coverFile){
+      const up = await uploadCover(e.coverFile);
+      if (up){
+        await removeCoverFile(b);                     // 예전에 찍은 사진은 지운다
+        patch.coverUrl = up.coverUrl; patch.coverAssetId = up.coverAssetId;
+      }
+    }
+    await Store.update('books', e.id, patch);
+    S.view.bookEdit = null;
+    toast('책을 고쳤어요');
+    showBook(b.id);
+    return;
+  }
+  if (d.bookdel){
+    const b = S.data.books.find(x => x.id === d.bookdel); if (!b) return;
+    askConfirm({
+      title:`「${b.title}」 책을 지울까요?`, danger:true, okLabel:'지우기',
+      note:'책장에서 사라지고 되돌릴 수 없어요. 이 책에서 담은 낱말은 단어 가방에 그대로 남아요.',
+      onOk: async () => {
+        await removeCoverFile(b);
+        await Store.remove('books', b.id);
+        toast('책을 지웠어요');
+      }
+    });
+    return;
+  }
 
   /* --- 단어 --- */
   if (d.mode){ S.view.dictMode = d.mode; S.view.dictResult=null; render(); return; }
@@ -2748,6 +3445,7 @@ document.addEventListener('click', async (e) => {
   if (d.game === 'memory'){ startMemory(); return; }
   if (d.game === 'stars'){ startStars(); return; }
   if (d.game === 'match'){ startMatch(); return; }
+  if (d.game === 'sling'){ S.view.game = 'sling'; openSling(); return; }
   if (d.mem){ memTap(+d.mem); return; }
   if (d.ml){ matchTap('l', d.ml); return; }
   if (d.mr){ matchTap('r', d.mr); return; }
@@ -2933,6 +3631,12 @@ document.addEventListener('change', async (e) => {
   }
   if (el.dataset.kidname) await Store.update('profiles', el.dataset.kidname, { name: el.value.trim() || '이름' });
   if (el.id === 'coverInput' && el.files && el.files[0]) await handleCover(el.files[0]);
+  if (el.id === 'beCover' && el.files && el.files[0] && S.view.bookEdit){
+    keepBookEditTyping();
+    S.view.bookEdit.coverFile = el.files[0];
+    S.view.bookEdit.coverPreview = URL.createObjectURL(el.files[0]);
+    openModal(bookEditSheet());
+  }
 });
 
 document.addEventListener('keydown', (e) => {
@@ -3049,6 +3753,32 @@ async function handleCover(file){
   w.coverFile = file;
   openModal(bookWizard());
 }
+/* 표지 사진 올리기 — 버셀은 수파베이스 저장소, claude.ai는 Artifact 저장소 */
+async function uploadCover(file){
+  if (S.sb){
+    try {
+      const ext = (file.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+      const path = `${S.familyId}/${uid()}.${ext}`;
+      const up = await S.sb.storage.from('covers').upload(path, file, { contentType:file.type, upsert:false });
+      if (up.error) throw up.error;
+      return { coverUrl:S.sb.storage.from('covers').getPublicUrl(path).data.publicUrl, coverAssetId:'' };
+    } catch(e){ console.warn('표지 올리기 실패', e); toast('사진을 올리지 못했어요'); return null; }
+  }
+  if (S.assets){
+    try { const r = await S.assets.upload(file); return { coverUrl:'', coverAssetId:r.id }; }
+    catch(e){ console.warn('표지 올리기 실패', e); toast('사진을 올리지 못했어요'); return null; }
+  }
+  return null;
+}
+/* 우리 저장소에 올린 표지면 지운다 (알라딘 표지 주소는 건드리지 않는다) */
+async function removeCoverFile(b){
+  try {
+    const m = S.sb && b.coverUrl && b.coverUrl.match(/\/storage\/v1\/object\/public\/covers\/(.+)$/);
+    if (m) await S.sb.storage.from('covers').remove([decodeURIComponent(m[1])]);
+    if (!S.sb && S.assets && b.coverAssetId) await S.assets.delete(b.coverAssetId);
+  } catch(e){ console.warn('표지 파일 지우기 실패', e); }
+}
+
 async function saveBook(){
   const w = S.view.wiz;
   if (!w.title){ toast('책 제목을 적어주세요'); return; }
@@ -3057,24 +3787,14 @@ async function saveBook(){
 
   let coverAssetId = '', coverUrl = w.coverUrl || '';
   if (w.coverFile){
-    if (S.sb){
-      try {
-        const ext = (w.coverFile.type.split('/')[1] || 'jpg').replace('jpeg','jpg');
-        const path = `${S.familyId}/${uid()}.${ext}`;
-        const up = await S.sb.storage.from('covers')
-          .upload(path, w.coverFile, { contentType:w.coverFile.type, upsert:false });
-        if (up.error) throw up.error;
-        coverUrl = S.sb.storage.from('covers').getPublicUrl(path).data.publicUrl;
-      } catch(e){ console.warn('표지 올리기 실패', e); }
-    } else if (S.assets){
-      try { const r = await S.assets.upload(w.coverFile); coverAssetId = r.id; }
-      catch(e){ console.warn('표지 올리기 실패', e); }
-    }
+    const up = await uploadCover(w.coverFile);
+    if (up){ coverUrl = up.coverUrl || coverUrl; coverAssetId = up.coverAssetId || ''; }
   }
   const id = await Store.add('books', {
     kidId:S.kidId, isbn:w.isbn||'', title:w.title, author:w.author||'',
     category:w.category||(S.settings.cats||DEFAULT_CATS)[0],
-    coverAssetId, coverUrl:w.coverUrl||'', stars:w.stars||3,
+    // 직접 찍은 사진이 있으면 그 주소를 저장한다(예전에는 올린 사진 대신 w.coverUrl을 넣어 사진이 사라졌다)
+    coverAssetId, coverUrl, stars:w.stars||3,
     readAt:new Date().toISOString(),
     source: w.found || 'manual'
   });
@@ -3093,7 +3813,40 @@ function showBook(id){
       style="width:100%;max-width:230px;border-radius:var(--r-md);display:block;margin:0 auto 12px">` : ''}
     <p class="muted" style="margin:0">${esc(b.author||'지은이 몰라요')} · ${esc(b.category)} · ${'⭐'.repeat(b.stars||1)}</p>
     <p class="muted" style="margin:4px 0 14px">${new Date(b.readAt).toLocaleDateString('ko-KR')}에 읽었어요</p>
-    <button class="btn ghost wide" data-close="1">닫기</button>`);
+    <div class="row" style="gap:8px;margin-bottom:8px">
+      <button class="btn ghost grow sm" data-bookedit="${b.id}">✏️ 고치기</button>
+      <button class="btn ghost grow sm" data-bookdel="${b.id}">🗑 지우기</button>
+    </div>
+    <button class="btn wide sm" data-close="1">닫기</button>`);
+}
+
+/* 등록한 책 고치기 — 제목·지은이·종류·별점·표지 */
+function bookEditSheet(){
+  const e = S.view.bookEdit, cats = S.settings.cats && S.settings.cats.length ? S.settings.cats : DEFAULT_CATS;
+  const cover = e.coverPreview || e.coverUrl || (e.coverAssetId ? '/_blob/' + e.coverAssetId : '');
+  return `<h3>책 고치기</h3>
+    <div class="stack" style="gap:10px;margin-top:8px">
+      <input class="field" id="beTitle" placeholder="책 제목" value="${esc(e.title)}">
+      <input class="field" id="beAuthor" placeholder="지은이 (몰라도 괜찮아요)" value="${esc(e.author)}">
+      <div><div class="muted" style="margin-bottom:6px">어떤 종류예요?</div>
+        <div class="chips">${cats.map(c => `<button class="chip" data-becat="${esc(c)}" aria-pressed="${e.category === c}">${esc(c)}</button>`).join('')}</div></div>
+      <div><div class="muted" style="margin-bottom:6px">재미있었나요?</div>
+        <div class="chips">${[1,2,3].map(n => `<button class="chip" data-bestar="${n}" aria-pressed="${e.stars === n}">${'⭐'.repeat(n)}</button>`).join('')}</div></div>
+      <div><div class="muted" style="margin-bottom:6px">표지</div>
+        ${cover ? `<img src="${esc(cover)}" alt="표지" style="display:block;max-width:150px;width:100%;margin:0 auto 8px;border-radius:var(--r-md);box-shadow:var(--shadow)">` : ''}
+        <input type="file" accept="image/*" capture="environment" id="beCover" class="field"></div>
+      ${e.saving ? '<p class="muted" style="text-align:center;margin:0">저장하는 중…</p>' : ''}
+      <div class="row" style="gap:8px">
+        <button class="btn ghost grow" data-bookshow="${e.id}">그만두기</button>
+        <button class="btn grow" id="beSave" ${e.saving ? 'disabled' : ''}>저장</button>
+      </div>
+    </div>`;
+}
+function keepBookEditTyping(){
+  const e = S.view.bookEdit; if (!e) return;
+  const t = $('#beTitle'), a = $('#beAuthor');
+  if (t) e.title = t.value;
+  if (a) e.author = a.value;
 }
 
 /* ============================================================
@@ -3211,6 +3964,11 @@ setInterval(() => {
   const un = S.kidId && activeUnlock(S.kidId);
   const left = document.getElementById('unlockLeft');
   if (left && un) left.textContent = fmtClock((new Date(un.expiresAt).getTime()-Date.now())/1000);
+
+  if (sling){
+    if (!activeUnlock(sling.kidId)) closeSling('게임 시간이 끝났어요. 내일 또 해요! 👋');
+    else slingTimer();
+  }
 
   // 부모님이 다른 기기에서 승인해 주면 여기서 알아채고 축하해 준다
   if (un && S.celebrated !== un.id){ S.celebrated = un.id; confetti(); render(); }
