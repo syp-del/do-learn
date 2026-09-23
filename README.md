@@ -12,9 +12,9 @@
 
 ```
 index.html      앱 전체 (HTML/CSS/JS 한 파일)
-api/dict.js     사전 — Claude API를 서버에서 대신 호출
+api/dict.js     사전 — Claude API를 서버에서 대신 호출 (GET 이면 연결 확인 페이지)
 api/book.js     책 찾기 — 알라딘 → 카카오 순으로 서버에서 조회
-package.json    type: module (Vercel 함수가 ESM)
+package.json    type: module (Vercel 함수가 ESM), 의존성은 @anthropic-ai/sdk 하나
 ```
 
 앱은 열린 환경을 스스로 알아본다.
@@ -88,6 +88,20 @@ package.json    type: module (Vercel 함수가 ESM)
 
 동기화는 실시간 구독 대신 **5초 폴링**이다(화면이 보일 때만). 승인 알림에는 충분하고,
 RLS 헤더 방식과 충돌하지 않는다.
+
+---
+
+## 사전 연결 (Claude)
+
+단어 탭의 사전은 `api/dict.js`가 Claude(Haiku 4.5)에게 낱말 뜻을 물어 온다.
+설정은 **https://<배포 주소>/api/dict** 페이지가 단계별로 안내하고,
+키가 보이는지와 실제로 찾아지는지(`?test=1`)를 확인해 준다.
+
+1. https://console.anthropic.com → API Keys → Create Key (`sk-ant-`로 시작), Billing에서 크레딧 충전
+2. 버셀 환경변수 `ANTHROPIC_API_KEY`에 붙여넣기 → Redeploy
+3. 확인 페이지에서 **시험해 보기**
+
+키가 틀리면 "사전 열쇠가 맞지 않아요", 크레딧이 없으면 "사전 이용권이 다 됐어요"가 아이 화면에 뜬다.
 
 ---
 
