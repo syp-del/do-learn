@@ -1,10 +1,17 @@
 /* 책 찾기 — 서버에서 알라딘과 카카오를 차례로 물어본다.
    알라딘은 CORS 헤더를 보내지 않아 브라우저에서 직접 부를 수 없다. 그래서 여기서 대신 부른다.
-   환경변수(둘 다 선택): ALADIN_TTB_KEY, KAKAO_REST_KEY
+   환경변수(둘 다 선택): ALADIN_TTB_KEY (또는 ALADDIN_API_KEY), KAKAO_REST_KEY
    GET /api/book?isbn=9788934972464   또는   GET /api/book?title=구름빵 */
 
+// 알라딘 키는 여러 이름으로 넣을 수 있게 한다 — 둥둥 도서관에서 쓰던 ALADDIN_API_KEY 도 그대로 받는다.
+// 붙여넣을 때 딸려오는 앞뒤 공백·따옴표도 걷어낸다.
+function aladinKey() {
+  const raw = process.env.ALADIN_TTB_KEY || process.env.ALADDIN_API_KEY || process.env.ALADIN_API_KEY || '';
+  return String(raw).trim().replace(/^["']|["']$/g, '');
+}
+
 async function fromAladin(isbn, title) {
-  const key = process.env.ALADIN_TTB_KEY;
+  const key = aladinKey();
   if (!key) return null;
 
   const base = isbn
@@ -76,7 +83,7 @@ export default async function handler(req, res) {
     }
   }
 
-  const anyKey = process.env.ALADIN_TTB_KEY || process.env.KAKAO_REST_KEY;
+  const anyKey = aladinKey() || process.env.KAKAO_REST_KEY;
   return res.status(200).json({
     docs: [],
     provider: null,

@@ -42,7 +42,7 @@ package.json    type: module (Vercel 함수가 ESM)
 | 이름 | 쓰임 | 없으면 |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | 사전 | 사전 탭에서 "아직 준비되지 않았어요" 안내 |
-| `ALADIN_TTB_KEY` | 책 정보·표지 (1순위) | 카카오로 넘어감 |
+| `ALADIN_TTB_KEY` (또는 `ALADDIN_API_KEY`) | 책 정보·표지·종류 (1순위) | 카카오로 넘어감 |
 | `KAKAO_REST_KEY` | 책 정보·표지 (2순위) | 제목 직접 입력 |
 | `TELEGRAM_BOT_TOKEN` | 승인 요청 알림 | 부모님이 앱을 열어야 카드가 보임 |
 | `TELEGRAM_CHAT_ID` | 알림 받을 대화방 | 〃 |
