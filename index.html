@@ -1486,6 +1486,7 @@ function viewShelf(){
   }).join('');
 
   const withCovers = mine.filter(b=>b.coverAssetId || b.coverUrl).slice().reverse();
+  const arCard = arShelfCard(curKid(), mine);
 
   return `
   <div class="card">
@@ -1498,6 +1499,8 @@ function viewShelf(){
     </div>
     <div class="towers">${towers}</div>
   </div>
+
+  ${arCard}
 
   ${withCovers.length ? `<div class="card">
     <h3 class="sub">표지 모음</h3>
@@ -1776,12 +1779,20 @@ function viewGames(){
       <button class="btn wide ghost" data-game="memory" style="justify-content:flex-start">🐰 같은 그림 찾기</button>
       <button class="btn wide ghost" data-game="stars" style="justify-content:flex-start">⭐ 별똥별 받기</button>
       <button class="btn wide ghost" data-game="match" style="justify-content:flex-start">🫧 단어 짝 맞추기 <span class="muted" style="font-size:14px">별 2배!</span></button>
-      <button class="btn wide ghost" data-game="sling" style="justify-content:flex-start">🎯 반짝 새총 <span class="newtag">NEW</span></button>
+      <button class="btn wide ghost" data-game="sling" style="justify-content:flex-start">🎯 반짝 새총</button>
+      <div class="muted" style="margin:6px 2px 0;font-size:14px">🧠 생각 놀이 — 생각하는 힘이 쑥쑥!</div>
+      <button class="btn wide ghost" data-game="stack" style="justify-content:flex-start">🧱 쌓기나무 탐험대 <span class="newtag">NEW</span></button>
+      <button class="btn wide ghost" data-game="pizza" style="justify-content:flex-start">🍕 피자 가게 <span class="newtag">NEW</span></button>
+      <button class="btn wide ghost" data-game="oneline" style="justify-content:flex-start">✏️ 한붓그리기 <span class="newtag">NEW</span></button>
+      <button class="btn wide ghost" data-game="pattern" style="justify-content:flex-start">🔍 패턴 탐정 <span class="newtag">NEW</span></button>
     </div>
   </div>`}`;
 }
 
 function gameBody(g){
+  if (g === 'stack' && S.view.stk) return stackBody();
+  if (g === 'pizza' && S.view.pz) return pizzaBody();
+  if (g === 'pattern' && S.view.pt) return patternBody();
   if (g === 'memory'){
     const st = S.view.mem;
     return `<div class="card">
@@ -1909,6 +1920,7 @@ function bookWizard(){
       <div class="stack">
         <input class="field" id="wizTitle" placeholder="책 제목" value="${esc(w.title||'')}">
         <input class="field" id="wizAuthor" placeholder="지은이 (몰라도 괜찮아요)" value="${esc(w.author||'')}">
+        <input class="field" id="wizAr" inputmode="decimal" placeholder="📘 AR 지수 (영어책이면, 예: 2.6 — 몰라도 괜찮아요)" value="${esc(w.ar||'')}">
         <button class="btn ghost wide sm" id="wizSearchTitle">🔍 제목으로 책 찾기</button>
         ${w.candidates ? `<div class="stack" style="gap:7px">
           ${w.candidates.length ? w.candidates.map((c,i)=>`
@@ -2147,6 +2159,9 @@ function parentSheet(){
       <div class="chips">${KID_COLORS.map((c,ci)=>
         `<button class="chip" data-kidcol="${k.id}|${ci}" aria-pressed="${(k.colorIdx||0)===ci}"
           style="background:${c.bg};border-color:${c.bar}">${ci===(k.colorIdx||0)?'✓':'  '}</button>`).join('')}</div>
+      <div class="row" style="gap:8px;margin-top:10px"><span class="muted" style="white-space:nowrap">📘 최근 AR 점수</span>
+        <input class="field" data-kidar="${k.id}" inputmode="decimal" placeholder="예: 2.5" value="${esc(k.arScore || '')}" style="max-width:110px">
+        ${k.arAt ? `<span class="muted" style="font-size:12px">${esc(String(k.arAt).slice(0, 10))}</span>` : ''}</div>
       <button class="btn ghost sm" data-parentkudo="${k.id}" style="margin-top:10px">😇 착한 일 칭찬하기 (착한왕 스티커 +1)</button>
       <div class="muted" style="margin:12px 0 5px">성향 — 뚜뚜가 ${esc(k.name)}에게 맞춰 말하고 도전을 골라줘요</div>
       ${(() => { const st = kidStyle(k); return ['compete','pace','strengths'].map(f => `<div class="chips" style="margin-bottom:7px">${
@@ -4507,10 +4522,10 @@ function ttMetrics(m){
 }
 async function ttMicStart(){
   const t = TT; if (!t || t.step !== 'speak') return;
+  const it0 = ttItem(); if (!it0){ ttFinish(); return; }   // 남은 문장이 없으면 수업을 마친다
   hush(); playStop();
   t.step = 'rec'; ttMood('listen'); ttLayer();
   try {
-    const it0 = ttItem();
     await recStart({
       maxSec: it0.type === 'chain' ? 40 : 15,
       silenceMs: (it0.type !== 'new' || t.stage >= 3) ? 2300 : 1400,
@@ -4575,6 +4590,7 @@ async function ttReview(blob){
   ttTalk(t.say + (fb.tip ? ' ' + fb.tip : ''));
 }
 function ttSelfDone(){                   // 녹음을 못 할 때 — 말해 봤다고 스스로 알려준다
+  if (!TT || !ttItem()) return;
   const t = TT, s = ttItemSentence(ttItem());
   const fb = { stars:2, praise:'소리 내어 말해 봤구나! 멋져!', tip:(s.tricky[0] && s.tricky[0].tipKo) || '', words:[], heard:'', local:null, source:'self' };
   t.fb = fb; t.clip = null; ttApply(2);
@@ -4610,6 +4626,7 @@ function ttRetry(){
 /* ---------- 수업 화면 ---------- */
 function ttLessonView(){
   const t = TT;
+  if (t.step !== 'intro' && t.step !== 'done' && !ttItem()) t.step = 'done';   // 문장이 없으면 마침 화면으로
   let card = '';
   if (t.step === 'intro') card = ttIntroCard();
   else if (t.step === 'meaning' || t.step === 'listen') card = ttLearnCard();
@@ -5328,6 +5345,415 @@ async function ttParentClick(t, d){
 }
 
 /* ============================================================
+   🎈 생각 놀이 4가지 — 놀이 방식만 참고해 이 앱 그림체로 새로 만들었다
+   🧱 쌓기나무 탐험대(공간 감각) · 🍕 피자 가게(분수) · ✏️ 한붓그리기(길 찾기) · 🔍 패턴 탐정(규칙 찾기)
+   틀려도 괜찮아 — 다시 해볼 수 있고, 맞히면 별을 받는다. 단계는 아이마다 기억한다(profile.play).
+   ============================================================ */
+const PLAY_COL = ['#FF8FA8', '#9BE0C8', '#FFD98E', '#B3A6EE', '#9DBBEA'];
+const PLAY_SOFT = ['#FFE3EA', '#E2F7EF', '#FFF1D6', '#EAE6FB', '#E3EDFB'];
+const PLAY_MID = ['#FFC2CE', '#BFE7D2', '#FFE79C', '#D5CCF5', '#CBDDF7'];
+function playLevel(game){ const k = curKid(); return Math.max(1, ((k && k.play) || {})[game] || 1); }
+function playLevelUp(game){
+  const k = curKid(); if (!k) return;
+  const play = { ...(k.play || {}) }; play[game] = (play[game] || 1) + 1;
+  Store.update('profiles', k.id, { play });
+}
+function playRand(n){ return Math.floor(Math.random() * n); }
+function playShuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = playRand(i + 1); const x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+const PLAY_OK = ['딩동댕! 정답이에요!', '우와, 척척박사!', '최고예요! 너무 잘하고 있어요!', '멋져요! 생각하는 힘이 쑥쑥!'];
+const PLAY_TRY = ['괜찮아요! 틀려도 괜찮아, 다시 생각해 볼까?', '거의 다 왔어요! 한 번 더 해볼까?', '좋은 생각이었어요! 다른 것도 골라볼까?'];
+const playPick = l => l[playRand(l.length)];
+
+/* ---------- 🧱 쌓기나무 탐험대 ----------
+   높이 지도 H[y][x] (y 0=뒤 → 앞, x 0=왼쪽 → 오른쪽)로 쌓는다. 공중에 뜬 나무는 없다.
+   묻는 것: 모두 몇 개(한 줄) · 위에서 본 모양 · 앞에서 본 모양 · 옆(오른쪽)에서 본 모양 */
+function stkMake(lv){
+  const types = lv <= 2 ? ['count'] : lv <= 4 ? ['count', 'top'] : lv <= 6 ? ['top', 'front'] : ['count', 'top', 'front', 'side'];
+  const type = types[playRand(types.length)];
+  let W, D, maxH;
+  if (type === 'count'){ W = 2 + Math.min(2, Math.floor(lv / 3)); D = 1; maxH = lv <= 2 ? 2 : 3; }
+  else { W = lv <= 6 ? 2 + playRand(2) : 3; D = lv <= 6 ? 2 : 2 + playRand(2); maxH = lv <= 6 ? 2 : 3; }
+  let H;
+  for (let guard = 0; guard < 50; guard++){
+    H = Array.from({ length:D }, () => Array.from({ length:W }, () => playRand(maxH + 1)));
+    // 앞쪽 대각선 기둥이 더 높으면 뒤 기둥이 통째로 가려질 수 있어서 낮춘다
+    for (let y = 0; y + 1 < D; y++) for (let x = 0; x + 1 < W; x++) if (H[y + 1][x + 1] > H[y][x]) H[y + 1][x + 1] = H[y][x];
+    const total = H.flat().reduce((s, v) => s + v, 0);
+    if (type === 'count' ? (total >= 3 && H[0].every(v => v > 0)) : (total >= 3 && H.flat().filter(v => v > 0).length >= 3)) break;
+  }
+  const total = H.flat().reduce((s, v) => s + v, 0);
+  let ans, options, ask;
+  if (type === 'count'){
+    ask = '쌓기나무는 모두 몇 개일까요?';
+    ans = String(total);
+    const set = new Set([total]); while (set.size < 4){ const d = total + playShuffle([-2, -1, 1, 2, 3])[0]; if (d > 0) set.add(d); }
+    options = playShuffle([...set]).map(v => ({ t:String(v), ok:v === total }));
+  } else {
+    const view = stkView(H, type), key = v => v.map(r => r.join('')).join('/');
+    ask = { top:'위에서 보면 어떤 모양일까요?', front:'앞에서 보면 어떤 모양일까요? 👀', side:'오른쪽 옆에서 보면 어떤 모양일까요? 👀' }[type];
+    const outs = [view], seen = new Set([key(view)]);
+    const cands = [stkFlip(view), stkShift(view), stkToggle(view), stkToggle(stkFlip(view)), stkToggle(view), stkToggle(view)];
+    for (const c of cands){ if (outs.length >= 3) break; if (!seen.has(key(c)) && c.flat().some(Boolean)){ seen.add(key(c)); outs.push(c); } }
+    while (outs.length < 3){ const c = stkToggle(outs[outs.length - 1]); if (!seen.has(key(c))){ seen.add(key(c)); outs.push(c); } }
+    options = playShuffle(outs.map((v, i) => ({ grid:v, ok:i === 0 })));
+    ans = key(view);
+  }
+  return { type, H, ask, options, total };
+}
+// 보이는 모양 — 1 은 칠한 칸. 위: D×W, 앞: 높이×W, 옆: 높이×D (왼쪽이 앞)
+function stkView(H, type){
+  const D = H.length, W = H[0].length, maxH = Math.max(1, ...H.flat());
+  if (type === 'top') return H.map(r => r.map(v => v > 0 ? 1 : 0));
+  if (type === 'front'){
+    const col = Array.from({ length:W }, (_, x) => Math.max(...H.map(r => r[x])));
+    return Array.from({ length:maxH }, (_, z) => col.map(h => h >= maxH - z ? 1 : 0));
+  }
+  const row = Array.from({ length:D }, (_, y) => Math.max(...H[y])).reverse();
+  return Array.from({ length:maxH }, (_, z) => row.map(h => h >= maxH - z ? 1 : 0));
+}
+const stkFlip = g => g.map(r => r.slice().reverse());
+const stkShift = g => g.map(r => r.slice(1).concat(r[0]));
+function stkToggle(g){ const c = g.map(r => r.slice()); const y = playRand(c.length), x = playRand(c[0].length); c[y][x] = c[y][x] ? 0 : 1; return c; }
+/* 입체 그림 (등각 투영) — 먼 것부터 그린다 */
+function stkSvg(H, eye){
+  const D = H.length, W = H[0].length, a = 26, b = 15, c = 30;
+  const P = (X, Y, Z) => [(X - Y) * a, (X + Y) * b - Z * c];
+  const cubes = [];
+  for (let y = 0; y < D; y++) for (let x = 0; x < W; x++) for (let z = 0; z < H[y][x]; z++) cubes.push([x, y, z]);
+  cubes.sort((p, q) => (p[0] + p[1]) - (q[0] + q[1]) || p[2] - q[2]);
+  const pts = []; cubes.forEach(([x, y, z]) => { pts.push(P(x, y + 1, z), P(x + 1, y, z), P(x + 1, y + 1, z), P(x, y, z + 1)); });
+  pts.push(P(0, D, 0), P(W, 0, 0), P(W, D, 0));
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  const minX = Math.min(...xs) - 28, maxX = Math.max(...xs) + 28, minY = Math.min(...ys) - 12, maxY = Math.max(...ys) + 24;
+  const poly = (list, fill) => `<polygon points="${list.map(p => p.join(',')).join(' ')}" fill="${fill}" stroke="#6B4A52" stroke-width="1.6" stroke-linejoin="round"/>`;
+  const body = cubes.map(([x, y, z]) => {
+    const ci = (x + y * 2) % PLAY_COL.length;
+    return poly([P(x, y, z + 1), P(x + 1, y, z + 1), P(x + 1, y + 1, z + 1), P(x, y + 1, z + 1)], PLAY_SOFT[ci])
+      + poly([P(x + 1, y, z), P(x + 1, y + 1, z), P(x + 1, y + 1, z + 1), P(x + 1, y, z + 1)], PLAY_COL[ci])
+      + poly([P(x, y + 1, z), P(x + 1, y + 1, z), P(x + 1, y + 1, z + 1), P(x, y + 1, z + 1)], PLAY_MID[ci]);
+  }).join('');
+  let mark = '';
+  if (eye === 'front'){ const p = P(W / 2, D + 0.9, 0); mark = `<text x="${p[0] - 14}" y="${p[1] + 18}" font-size="20">👀</text>`; }
+  if (eye === 'side'){ const p = P(W + 0.9, D / 2, 0); mark = `<text x="${p[0] + 2}" y="${p[1] + 18}" font-size="20">👀</text>`; }
+  if (eye === 'top'){ const p = P(0, 0, Math.max(...H.flat()) + 0.6); mark = `<text x="${p[0] - 10}" y="${p[1] - 2}" font-size="20">👀</text>`; }
+  return `<svg viewBox="${minX} ${minY - (eye === 'top' ? 22 : 0)} ${maxX - minX} ${maxY - minY + 22 + (eye === 'top' ? 22 : 0)}" style="width:100%;max-width:280px;height:auto;display:block;margin:0 auto" aria-label="쌓기나무">${body}${mark}</svg>`;
+}
+function stkGridSvg(g){
+  const s = 20, h = g.length, w = g[0].length;
+  return `<svg viewBox="-2 -2 ${w * s + 4} ${h * s + 4}" style="width:${Math.min(120, w * 30)}px;height:auto">${g.map((r, y) => r.map((v, x) =>
+    `<rect x="${x * s}" y="${y * s}" width="${s - 2}" height="${s - 2}" rx="4" fill="${v ? '#FF8FA8' : '#FFFFFF'}" stroke="${v ? '#6B4A52' : '#F3DDE2'}" stroke-width="1.5"/>`).join('')).join('')}</svg>`;
+}
+function startStack(){ S.view.game = 'stack'; S.view.stk = { lv:playLevel('stack'), q:stkMake(playLevel('stack')), pick:null, answered:false, streak:0 }; render(); }
+function stackBody(){
+  const st = S.view.stk, q = st.q;
+  const opt = (o, i) => {
+    let css = '';
+    if (st.answered){ if (o.ok) css = 'background:var(--mint-soft);border-color:var(--mint-deep)'; else if (st.pick === i) css = 'background:var(--berry-soft);border-color:var(--berry)'; }
+    return `<button class="matchbtn" data-stk="${i}" style="${css};display:grid;place-items:center;min-height:${o.grid ? 96 : 60}px;font-family:var(--display);font-size:28px" ${st.answered ? 'disabled' : ''}>${o.grid ? stkGridSvg(o.grid) : esc(o.t)}</button>`;
+  };
+  const ok = st.answered && q.options[st.pick] && q.options[st.pick].ok;
+  return `<div class="card">
+    <div class="row" style="margin-bottom:6px"><h3 class="sub grow" style="margin:0">🧱 쌓기나무 탐험대</h3><span class="muted">${st.lv}단계 · 연속 ${st.streak}</span></div>
+    <div style="background:#FFFDF6;border:2px solid var(--blush);border-radius:18px;padding:10px">${stkSvg(q.H, q.type === 'count' ? '' : q.type)}</div>
+    <p style="text-align:center;font-family:var(--display);font-size:22px;margin:10px 0">${esc(q.ask)}</p>
+    <div style="display:grid;grid-template-columns:repeat(${q.options.length > 3 ? 2 : 3},1fr);gap:9px">${q.options.map(opt).join('')}</div>
+    ${st.answered ? `<div class="banner ${ok ? 'info' : 'warn'}" style="margin-top:12px"><span>${ok ? '🎉' : '🤗'}</span><span>${esc(ok ? playPick(PLAY_OK)
+      : (q.type === 'count' ? `괜찮아요! 모두 ${q.total}개예요. 아래에 숨은 나무도 세어 봐요!` : '괜찮아요! 초록색 모양이 정답이에요. 👀 쪽에서 본다고 상상해 봐요!'))}</span></div>
+      <button class="btn wide" id="stkNext" style="margin-top:10px">다음 문제 ▶</button>` : ''}
+  </div>`;
+}
+function stackTap(i){
+  const st = S.view.stk; if (!st || st.answered) return;
+  st.pick = i; st.answered = true;
+  if (st.q.options[i].ok){ st.streak++; ttChime(); awardStars(1); if (st.streak % 3 === 0){ st.lv++; playLevelUp('stack'); toast(`${st.lv}단계로 올라갔어요! 🧱`); } }
+  else st.streak = 0;
+  render();
+}
+
+/* ---------- 🍕 피자 가게 ----------
+   손님 주문대로 조각을 골라 배달한다. 뒤 단계는 같은 양 찾기(1/2 = 2/4)도 나온다. */
+const PZ_GUESTS = [['🐰','토끼'], ['🐻','곰돌이'], ['🐱','야옹이'], ['🐧','펭귄'], ['🦊','여우'], ['🐨','코알라']];
+function pzMake(lv){
+  const g = PZ_GUESTS[playRand(PZ_GUESTS.length)];
+  let den, cut;
+  if (lv <= 1){ den = 2; cut = 2; }
+  else if (lv <= 3){ den = [2, 4][playRand(2)]; cut = den; }
+  else if (lv <= 5){ den = [3, 4, 6][playRand(3)]; cut = den; }
+  else if (lv <= 7){ den = [4, 6, 8][playRand(3)]; cut = den; }
+  else { den = [2, 3, 4][playRand(3)]; cut = den * 2; }            // 같은 양 찾기
+  const num = 1 + playRand(den - 1 || 1);
+  return { guest:g, den, num, cut, need:num * cut / den, equiv:cut !== den };
+}
+function startPizza(){ S.view.game = 'pizza'; S.view.pz = { lv:playLevel('pizza'), q:pzMake(playLevel('pizza')), sel:[], done:false, coins:0, msg:'' }; render(); }
+function pzSvg(q, sel){
+  const R = 100, cx = 120, cy = 120, n = q.cut;
+  const pt = (ang, r) => [cx + r * Math.cos(ang), cy + r * Math.sin(ang)];
+  let out = `<circle cx="${cx}" cy="${cy}" r="${R + 8}" fill="#F3DDE2" opacity="0.6"/>`;
+  for (let i = 0; i < n; i++){
+    const a0 = -Math.PI / 2 + i * 2 * Math.PI / n, a1 = a0 + 2 * Math.PI / n, mid = (a0 + a1) / 2;
+    const on = sel.includes(i), lift = on ? 10 : 0, dx = lift * Math.cos(mid), dy = lift * Math.sin(mid);
+    const [x0, y0] = pt(a0, R), [x1, y1] = pt(a1, R);
+    const large = (a1 - a0) > Math.PI ? 1 : 0;
+    const path = n === 1 ? `M ${cx - R} ${cy} a ${R} ${R} 0 1 0 ${2 * R} 0 a ${R} ${R} 0 1 0 ${-2 * R} 0`
+      : `M ${cx} ${cy} L ${x0} ${y0} A ${R} ${R} 0 ${large} 1 ${x1} ${y1} Z`;
+    const tops = [0.35, 0.65].map((f, j) => { const [px, py] = pt(mid + (j ? 0.18 : -0.18) * (6 / n), R * f); return `<circle cx="${px}" cy="${py}" r="7" fill="#E85C7C" stroke="#6B4A52" stroke-width="1.2"/>`; }).join('');
+    out += `<g data-pz="${i}" transform="translate(${dx} ${dy})" style="cursor:pointer">
+      <path d="${path}" fill="${on ? '#FFE79C' : '#FFD98E'}" stroke="#D99A2B" stroke-width="7" stroke-linejoin="round"/>
+      <path d="${path}" fill="none" stroke="#6B4A52" stroke-width="2" stroke-linejoin="round"/>${tops}
+      ${on ? `<circle cx="${pt(mid, R * 0.5)[0]}" cy="${pt(mid, R * 0.5)[1]}" r="13" fill="#FFFFFF" stroke="#3FA687" stroke-width="3"/><text x="${pt(mid, R * 0.5)[0]}" y="${pt(mid, R * 0.5)[1] + 6}" text-anchor="middle" font-size="16" fill="#3FA687" font-weight="700">✓</text>` : ''}
+    </g>`;
+  }
+  return `<svg viewBox="0 0 240 240" style="width:100%;max-width:260px;height:auto;display:block;margin:0 auto;touch-action:manipulation" aria-label="피자 ${n}조각">${out}</svg>`;
+}
+function pizzaBody(){
+  const st = S.view.pz, q = st.q;
+  const frac = `<span style="display:inline-flex;flex-direction:column;align-items:center;line-height:1;font-family:var(--display);font-size:30px;vertical-align:middle;margin:0 4px">
+    <span>${q.num}</span><span style="border-top:3px solid var(--cocoa);width:30px;margin:2px 0"></span><span>${q.den}</span></span>`;
+  const say = st.lv <= 2 && !q.equiv ? `피자를 ${q.den}조각 중에 <b>${q.num}조각</b> 주세요!` : `피자의 ${frac} 주세요!`;
+  return `<div class="card">
+    <div class="row" style="margin-bottom:6px"><h3 class="sub grow" style="margin:0">🍕 피자 가게</h3><span class="muted">${st.lv}단계 · 🪙 ${st.coins}</span></div>
+    <div class="row" style="gap:10px;margin-bottom:8px"><span style="font-size:44px">${q.guest[0]}</span>
+      <div class="tt-bubble" style="margin:0;font-size:20px">${say}${q.equiv ? '<div class="muted" style="font-size:14px">피자가 더 작게 잘려 있어요. 같은 양이 되려면?</div>' : ''}</div></div>
+    ${pzSvg(q, st.sel)}
+    <p class="muted" style="text-align:center;margin:6px 0">조각을 눌러 골라요 · 고른 조각 ${st.sel.length} / ${q.cut}</p>
+    ${st.msg ? `<div class="banner ${st.done ? 'info' : 'warn'}"><span>${st.done ? '😋' : '🤗'}</span><span>${esc(st.msg)}</span></div>` : ''}
+    <div class="row" style="gap:8px;margin-top:10px">${st.done
+      ? '<button class="btn wide" id="pzNext">다음 손님 ▶</button>'
+      : '<button class="btn ghost grow" id="pzReset">🔄 다시 고르기</button><button class="btn grow" id="pzGo">🛵 배달하기</button>'}</div>
+  </div>`;
+}
+function pizzaTap(i){ const st = S.view.pz; if (!st || st.done) return; st.sel = st.sel.includes(i) ? st.sel.filter(x => x !== i) : st.sel.concat(i); st.msg = ''; render(); }
+function pizzaGo(){
+  const st = S.view.pz, q = st.q, n = st.sel.length;
+  if (n === q.need){
+    st.done = true; st.coins++; ttChime(); awardStars(1);
+    st.msg = `${q.guest[1]}: 맛있다! 고마워요! ${q.equiv ? `${q.num}/${q.den}은 ${q.need}/${q.cut}와 같은 양이에요!` : ''}`;
+    if (st.coins % 3 === 0){ st.lv++; playLevelUp('pizza'); toast(`${st.lv}단계 가게로 커졌어요! 🍕`); }
+  } else st.msg = `괜찮아요! ${n < q.need ? '조금 부족해요' : '조금 많아요'}. ${q.need}조각이 필요해요. 다시 골라볼까?`;
+  render();
+}
+
+/* ---------- 🔍 패턴 탐정 ----------
+   모양·색·크기·방향·개수의 규칙을 찾아 ? 자리에 올 것을 고른다. */
+const PT_SHAPES = ['circle', 'square', 'triangle', 'star', 'heart'];
+const PT_NAMES = { circle:'동그라미', square:'네모', triangle:'세모', star:'별', heart:'하트' };
+const PT_COLN = ['분홍', '민트', '노랑', '보라', '하늘'];
+function ptItem(o){ return { shape:'circle', col:0, size:1, rot:0, cnt:1, ...o }; }
+function ptSvg(it, big){
+  const s = big ? 54 : 42, r = [0.62, 0.8, 1][it.size] * s / 2, c = s / 2, f = PLAY_COL[it.col], st = '#6B4A52';
+  const one = (cx, cy, rr) => {
+    if (it.shape === 'circle') return `<circle cx="${cx}" cy="${cy}" r="${rr}" fill="${f}" stroke="${st}" stroke-width="2"/>`;
+    if (it.shape === 'square') return `<rect x="${cx - rr * 0.88}" y="${cy - rr * 0.88}" width="${rr * 1.76}" height="${rr * 1.76}" rx="${rr * 0.25}" fill="${f}" stroke="${st}" stroke-width="2"/>`;
+    if (it.shape === 'triangle') return `<polygon points="${cx},${cy - rr} ${cx + rr * 0.95},${cy + rr * 0.75} ${cx - rr * 0.95},${cy + rr * 0.75}" fill="${f}" stroke="${st}" stroke-width="2" stroke-linejoin="round"/>`;
+    if (it.shape === 'star'){ let p = ''; for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, q = i % 2 ? rr * 0.45 : rr; p += `${cx + q * Math.cos(a)},${cy + q * Math.sin(a)} `; } return `<polygon points="${p}" fill="${f}" stroke="${st}" stroke-width="2" stroke-linejoin="round"/>`; }
+    return `<path d="M ${cx} ${cy + rr * 0.8} C ${cx - rr * 1.3} ${cy - rr * 0.1} ${cx - rr * 0.5} ${cy - rr * 1.1} ${cx} ${cy - rr * 0.35} C ${cx + rr * 0.5} ${cy - rr * 1.1} ${cx + rr * 1.3} ${cy - rr * 0.1} ${cx} ${cy + rr * 0.8} Z" fill="${f}" stroke="${st}" stroke-width="2" stroke-linejoin="round"/>`;
+  };
+  let body = '';
+  if (it.cnt > 1){ const rr = r * 0.5, pos = [[0.3, 0.3], [0.7, 0.3], [0.3, 0.7], [0.7, 0.7], [0.5, 0.5]].slice(0, it.cnt); body = pos.map(([x, y]) => one(x * s, y * s, rr)).join(''); }
+  else body = `<g transform="rotate(${it.rot} ${c} ${c})">${one(c, c, r)}</g>`;
+  return `<svg viewBox="0 0 ${s} ${s}" width="${s}" height="${s}" aria-hidden="true">${body}</svg>`;
+}
+const ptKey = it => [it.shape, it.col, it.size, it.rot, it.cnt].join('|');
+function ptMake(lv){
+  const rules = lv <= 1 ? ['ab-col'] : lv <= 2 ? ['ab-col', 'ab-shape'] : lv <= 3 ? ['aab', 'abb'] : lv <= 4 ? ['abc'] : lv <= 5 ? ['size'] : lv <= 6 ? ['rot'] : lv <= 7 ? ['count'] : ['two', 'abc', 'size', 'rot', 'count', 'aab'];
+  const rule = rules[playRand(rules.length)];
+  const sh = playShuffle(PT_SHAPES), co = playShuffle([0, 1, 2, 3, 4]);
+  let unit, desc;
+  if (rule === 'ab-col'){ unit = [ptItem({ shape:sh[0], col:co[0] }), ptItem({ shape:sh[0], col:co[1] })]; desc = `${PT_COLN[co[0]]} → ${PT_COLN[co[1]]}이 번갈아 나와요!`; }
+  else if (rule === 'ab-shape'){ unit = [ptItem({ shape:sh[0], col:co[0] }), ptItem({ shape:sh[1], col:co[0] })]; desc = `${PT_NAMES[sh[0]]} → ${PT_NAMES[sh[1]]}가 번갈아 나와요!`; }
+  else if (rule === 'aab'){ const a = ptItem({ shape:sh[0], col:co[0] }), b = ptItem({ shape:sh[1], col:co[1] }); unit = [a, a, b]; desc = `${PT_NAMES[sh[0]]} 두 번, ${PT_NAMES[sh[1]]} 한 번씩!`; }
+  else if (rule === 'abb'){ const a = ptItem({ shape:sh[0], col:co[0] }), b = ptItem({ shape:sh[1], col:co[1] }); unit = [a, b, b]; desc = `${PT_NAMES[sh[0]]} 한 번, ${PT_NAMES[sh[1]]} 두 번씩!`; }
+  else if (rule === 'abc'){ unit = [0, 1, 2].map(i => ptItem({ shape:sh[i], col:co[i] })); desc = `${PT_NAMES[sh[0]]} → ${PT_NAMES[sh[1]]} → ${PT_NAMES[sh[2]]} 차례대로!`; }
+  else if (rule === 'size'){ unit = [0, 1, 2].map(i => ptItem({ shape:sh[0], col:co[0], size:i })); desc = '작은 것 → 중간 → 큰 것 차례대로 커져요!'; }
+  else if (rule === 'rot'){ unit = [0, 90, 180, 270].map(r => ptItem({ shape:'triangle', col:co[0], rot:r })); desc = '세모가 시계 방향으로 한 번씩 돌아가요!'; }
+  else if (rule === 'count'){ unit = null; desc = '하나씩 늘어나요!'; }
+  else { const s2 = [ptItem({ shape:sh[0], col:co[0] }), ptItem({ shape:sh[1], col:co[1] }), ptItem({ shape:sh[0], col:co[2] }), ptItem({ shape:sh[1], col:co[0] }), ptItem({ shape:sh[0], col:co[1] }), ptItem({ shape:sh[1], col:co[2] })]; unit = s2; desc = '모양은 번갈아, 색깔은 세 가지가 차례대로 바뀌어요!'; }
+  let seq;
+  if (rule === 'count'){ const base = ptItem({ shape:sh[0], col:co[0] }); seq = [1, 2, 3, 4, 5].map(n => ({ ...base, cnt:n })); }
+  else { const len = unit.length >= 4 ? unit.length + 2 : 6; seq = Array.from({ length:len }, (_, i) => unit[i % unit.length]); }
+  const hole = lv >= 9 && seq.length >= 5 && playRand(3) === 0 ? 2 + playRand(seq.length - 3) : seq.length - 1;
+  const ans = seq[hole];
+  const opts = [ans], seen = new Set([ptKey(ans)]);
+  const variants = [{ col:(ans.col + 1) % 5 }, { shape:sh.find(x => x !== ans.shape) }, { size:(ans.size + 1) % 3 }, { rot:(ans.rot + 90) % 360 }, { cnt:Math.max(1, ans.cnt + (ans.cnt >= 5 ? -1 : 1)) }]
+    .map(v => ({ ...ans, ...v })).concat(seq.filter(x => ptKey(x) !== ptKey(ans)));
+  for (const v of playShuffle(variants)){ if (opts.length >= (kidStyle(curKid()).pace === 'careful' ? 4 : 3)) break; if (!seen.has(ptKey(v))){ seen.add(ptKey(v)); opts.push(v); } }
+  return { seq, hole, desc, options:playShuffle(opts.map(o => ({ it:o, ok:ptKey(o) === ptKey(ans) }))) };
+}
+function startPattern(){ S.view.game = 'pattern'; S.view.pt = { lv:playLevel('pattern'), q:ptMake(playLevel('pattern')), pick:null, answered:false, streak:0 }; render(); }
+function patternBody(){
+  const st = S.view.pt, q = st.q, ok = st.answered && q.options[st.pick] && q.options[st.pick].ok;
+  const cells = q.seq.map((it, i) => i === q.hole
+    ? (st.answered ? `<span style="border-radius:12px;background:var(--mint-soft);padding:2px">${ptSvg(q.options.find(o => o.ok).it)}</span>`
+       : `<span style="width:42px;height:42px;border-radius:12px;border:3px dashed var(--berry);display:grid;place-items:center;font-family:var(--display);font-size:26px;color:var(--berry-deep)">?</span>`)
+    : ptSvg(it)).join('');
+  return `<div class="card">
+    <div class="row" style="margin-bottom:6px"><h3 class="sub grow" style="margin:0">🔍 패턴 탐정</h3><span class="muted">${st.lv}단계 · 연속 ${st.streak}</span></div>
+    <p class="muted" style="margin:0 0 8px">규칙을 찾아서 <b>?</b> 자리에 올 것을 골라요!</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;align-items:center;background:#FFFDF6;border:2px solid var(--blush);border-radius:18px;padding:12px">${cells}</div>
+    <div style="display:grid;grid-template-columns:repeat(${q.options.length},1fr);gap:9px;margin-top:12px">${q.options.map((o, i) => {
+      let css = '';
+      if (st.answered){ if (o.ok) css = 'background:var(--mint-soft);border-color:var(--mint-deep)'; else if (st.pick === i) css = 'background:var(--berry-soft);border-color:var(--berry)'; }
+      return `<button class="matchbtn" data-pt="${i}" style="${css};display:grid;place-items:center;min-height:76px" ${st.answered ? 'disabled' : ''}>${ptSvg(o.it, true)}</button>`;
+    }).join('')}</div>
+    ${st.answered ? `<div class="banner ${ok ? 'info' : 'warn'}" style="margin-top:12px"><span>${ok ? '🕵️' : '🤗'}</span><span>${esc((ok ? playPick(PLAY_OK) : '괜찮아요! 탐정은 다시 살펴보면 돼요.') + ' 규칙: ' + q.desc)}</span></div>
+      <button class="btn wide" id="ptNext" style="margin-top:10px">다음 사건 ▶</button>` : ''}
+  </div>`;
+}
+function patternTap(i){
+  const st = S.view.pt; if (!st || st.answered) return;
+  st.pick = i; st.answered = true;
+  if (st.q.options[i].ok){ st.streak++; ttChime(); awardStars(1); if (st.streak % 3 === 0){ st.lv++; playLevelUp('pattern'); toast(`${st.lv}단계 탐정이 되었어요! 🔍`); } }
+  else st.streak = 0;
+  render();
+}
+
+/* ---------- ✏️ 한붓그리기 — 손가락을 떼지 않고 모든 칸을 한 번씩 ----------
+   정답 길을 먼저 만들고(무작위 + 막다른 곳을 피하는 규칙), 길이 지나지 않은 칸은 돌로 막는다. 그래서 언제나 풀 수 있다.
+   5초 동기화에 지워지지 않도록 화면 위 층에서 한다. */
+let OL = null;
+function olMake(lv){
+  const n = lv <= 2 ? 3 : lv <= 5 ? 4 : lv <= 9 ? 5 : 6;
+  const cover = lv <= 2 ? 1 : lv <= 5 ? 0.8 : 0.75;
+  const total = n * n, id = (x, y) => y * n + x, nb = c => { const x = c % n, y = Math.floor(c / n), out = []; if (x > 0) out.push(c - 1); if (x < n - 1) out.push(c + 1); if (y > 0) out.push(c - n); if (y < n - 1) out.push(c + n); return out; };
+  let best = null;
+  for (let t = 0; t < 120; t++){
+    const start = playRand(total), path = [start], used = new Set([start]);
+    for (;;){
+      const cur = path[path.length - 1], next = playShuffle(nb(cur).filter(c => !used.has(c)));
+      if (!next.length) break;
+      next.sort((p, q) => nb(p).filter(c => !used.has(c)).length - nb(q).filter(c => !used.has(c)).length);
+      const pick = Math.random() < 0.8 ? next[0] : next[playRand(next.length)];
+      path.push(pick); used.add(pick);
+    }
+    if (!best || path.length > best.length) best = path;
+    if (path.length >= Math.ceil(total * cover) && (cover < 1 || path.length === total)) { best = path; break; }
+  }
+  const open = new Set(best), walls = new Set(); for (let c = 0; c < total; c++) if (!open.has(c)) walls.add(c);
+  return { n, sol:best, walls, start:best[0] };
+}
+function openOneline(){
+  if (OL) return;
+  const lv = playLevel('oneline'), g = olMake(lv);
+  OL = { lv, ...g, path:[g.start], hint:-1, done:false, kidId:S.kidId };
+  const el = document.createElement('div');
+  el.className = 'ttl'; el.id = 'olLayer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', '한붓그리기');
+  document.body.appendChild(el);
+  OL.el = el; olDraw();
+}
+function closeOneline(msg){ if (!OL) return; OL.el.remove(); OL = null; if (S.view.game === 'oneline') S.view.game = null; render(); if (msg) toast(msg); }
+function olDraw(){
+  const o = OL, n = o.n, s = 60, pad = 8, W = n * s + pad * 2;
+  const cxy = c => [pad + (c % n) * s + s / 2, pad + Math.floor(c / n) * s + s / 2];
+  const on = new Set(o.path);
+  let cells = '';
+  for (let c = 0; c < n * n; c++){
+    const x = pad + (c % n) * s, y = pad + Math.floor(c / n) * s;
+    if (o.walls.has(c)) cells += `<rect x="${x + 4}" y="${y + 4}" width="${s - 8}" height="${s - 8}" rx="12" fill="#E4D2F3" opacity="0.55"/><text x="${x + s / 2}" y="${y + s / 2 + 8}" text-anchor="middle" font-size="22">🪨</text>`;
+    else cells += `<rect x="${x + 4}" y="${y + 4}" width="${s - 8}" height="${s - 8}" rx="12" fill="${on.has(c) ? '#FFE3EA' : '#FFFFFF'}" stroke="${c === o.hint ? '#3FA687' : '#F3DDE2'}" stroke-width="${c === o.hint ? 4 : 2.5}"/>`;
+  }
+  const line = o.path.map(cxy).map(p => p.join(',')).join(' ');
+  const end = cxy(o.path[o.path.length - 1]), st = cxy(o.start);
+  const left = n * n - o.walls.size - o.path.length;
+  o.el.innerHTML = `<div class="ttl-top">
+      <button class="ttl-x" id="olExit" aria-label="그만하기">✕</button>
+      <div class="ttl-dots"><span class="ttl-chip" style="background:var(--berry-soft);color:var(--berry-deep)">✏️ 한붓그리기 · ${o.lv}단계</span></div>
+    </div>
+    <div class="ttl-body">
+      <div class="tt-card stack" style="text-align:center">
+        <p style="margin:0;font-family:var(--display);font-size:21px">${o.done ? '다 지나갔어요! 최고예요! 🎉' : '🐣에서 시작! 손가락을 떼지 않고 모든 칸을 한 번씩 지나가요'}</p>
+        <svg id="olSvg" viewBox="0 0 ${W} ${W}" style="width:100%;max-width:420px;height:auto;margin:0 auto;display:block;touch-action:none;user-select:none;-webkit-user-select:none">
+          ${cells}
+          <polyline points="${line}" fill="none" stroke="#FF8FA8" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+          <text x="${st[0]}" y="${st[1] + 9}" text-anchor="middle" font-size="26">🐣</text>
+          ${o.path.length > 1 ? `<circle cx="${end[0]}" cy="${end[1]}" r="11" fill="#E85C7C" stroke="#fff" stroke-width="3"/>` : ''}
+        </svg>
+        <p class="muted" style="margin:0">${o.done ? '생각하는 힘이 쑥쑥 자랐어요!' : `남은 칸 ${left}개 · 되돌아가고 싶으면 방금 지나온 칸으로 가요`}</p>
+        <div class="tt-foot">${o.done
+          ? '<button class="btn wide" id="olNext">다음 단계 ▶</button>'
+          : '<button class="btn ghost sm" id="olUndo">↩ 한 칸 되돌리기</button><button class="btn ghost sm" id="olReset">🔄 처음부터</button><button class="btn ghost sm" id="olHint">💡 힌트</button>'}</div>
+      </div>
+    </div>`;
+  olBind();
+}
+function olCellAt(ev){
+  const svg = document.getElementById('olSvg'); if (!svg || !OL) return -1;
+  const r = svg.getBoundingClientRect(), n = OL.n, s = 60, pad = 8, W = n * s + pad * 2;
+  const x = (ev.clientX - r.left) * W / r.width - pad, y = (ev.clientY - r.top) * W / r.height - pad;
+  if (x < 0 || y < 0 || x >= n * s || y >= n * s) return -1;
+  const cx = Math.floor(x / s), cy = Math.floor(y / s);
+  const fx = x - cx * s, fy = y - cy * s;
+  if (fx < 8 || fy < 8 || fx > s - 8 || fy > s - 8) return -1;           // 칸 가장자리는 무시 — 대각선으로 새지 않게
+  return cy * n + cx;
+}
+function olBind(){
+  const svg = document.getElementById('olSvg'); if (!svg) return;
+  const adj = (a, b) => { const n = OL.n; return (Math.abs(a - b) === 1 && Math.floor(a / n) === Math.floor(b / n)) || Math.abs(a - b) === n; };
+  const step = c => {
+    const o = OL; if (!o || o.done || c < 0 || o.walls.has(c)) return;
+    const end = o.path[o.path.length - 1];
+    if (o.path.length >= 2 && c === o.path[o.path.length - 2]){ o.path.pop(); o.hint = -1; olDraw(); return; }
+    if (c !== end && adj(c, end) && !o.path.includes(c)){
+      o.path.push(c); o.hint = -1;
+      if (o.path.length === o.n * o.n - o.walls.size){ o.done = true; ttChime(); confetti(); awardStars(2); playLevelUp('oneline'); }
+      olDraw();
+    }
+  };
+  svg.addEventListener('pointerdown', ev => {
+    const c = olCellAt(ev); if (!OL || OL.done) return;
+    if (c === OL.path[OL.path.length - 1] || c === OL.start){ OL.dragging = true; if (c === OL.start && OL.path.length > 1 && c !== OL.path[OL.path.length - 1]){ OL.path = [OL.start]; olDraw(); } try { svg.setPointerCapture(ev.pointerId); } catch(e){} }
+    else step(c);
+  });
+  svg.addEventListener('pointermove', ev => { if (OL && OL.dragging) step(olCellAt(ev)); });
+  const up = () => { if (OL) OL.dragging = false; };
+  svg.addEventListener('pointerup', up); svg.addEventListener('pointercancel', up);
+}
+function olClick(t){
+  const o = OL; if (!o) return false;
+  if (t.id === 'olExit'){ closeOneline(); return true; }
+  if (t.id === 'olUndo'){ if (o.path.length > 1) o.path.pop(); o.hint = -1; olDraw(); return true; }
+  if (t.id === 'olReset'){ o.path = [o.start]; o.hint = -1; olDraw(); return true; }
+  if (t.id === 'olHint'){
+    const k = o.path.length, prefix = o.path.every((c, i) => c === o.sol[i]);
+    if (prefix){ o.hint = o.sol[k]; olDraw(); }
+    else { toast('다른 길로 가 보는 중이네요! 🔄 처음부터 하면 힌트를 줄게요'); }
+    return true;
+  }
+  if (t.id === 'olNext'){ const lv = playLevel('oneline'), g = olMake(lv); Object.assign(o, { lv, ...g, path:[g.start], hint:-1, done:false }); olDraw(); return true; }
+  return false;
+}
+
+/* ---------- 📘 AR 지수 — 영어책 난이도 (Renaissance ATOS) ----------
+   아이의 최근 AR(STAR) 점수와 비교해 술술 책 · 딱 맞는 책 · 도전 책으로 보여준다. 모두 칭찬하는 말로. */
+function arParse(v){
+  const m = String(v || '').replace(',', '.').match(/(\d{1,2}(?:\.\d)?)/);
+  if (!m) return null;
+  const n = Math.round(parseFloat(m[1]) * 10) / 10;
+  return n > 0 && n <= 13 ? n : null;
+}
+function arBand(ar, score){
+  if (!ar || !score) return null;
+  const d = ar - score;
+  if (d < -0.5) return { ico:'😊', label:'술술 책', note:'자신 있게 술술 읽는 책' };
+  if (d <= 0.7) return { ico:'👍', label:'딱 맞는 책', note:'지금 실력에 딱 맞아요' };
+  return { ico:'📈', label:'도전 책', note:'한 걸음 위로 도전하는 멋진 책' };
+}
+function arShelfCard(kidObj, books){
+  const withAr = books.filter(b => b.ar);
+  const score = kidObj && kidObj.arScore;
+  if (!withAr.length && !score) return '';
+  const avg = withAr.length ? Math.round(withAr.reduce((s, b) => s + b.ar, 0) / withAr.length * 10) / 10 : null;
+  const bands = { '술술 책':0, '딱 맞는 책':0, '도전 책':0 };
+  withAr.forEach(b => { const x = arBand(b.ar, score); if (x) bands[x.label]++; });
+  return `<div class="card" style="background:linear-gradient(170deg,#FFFFFF,#E3EDFB)">
+    <h3 class="sub" style="margin:0 0 6px">📘 영어책 AR</h3>
+    <div class="muted" style="font-size:14px">${score ? `내 AR 점수 <b>${score}</b>` : 'AR 점수는 부모님 화면 → 아이에서 넣을 수 있어요'}${avg ? ` · 읽은 책 평균 AR <b>${avg}</b> (${withAr.length}권)` : ''}</div>
+    ${score && withAr.length ? `<div class="tt-mission" style="margin:8px 0 0">
+      <span class="ok">😊 술술 책 ${bands['술술 책']}권</span><span class="ok">👍 딱 맞는 책 ${bands['딱 맞는 책']}권</span><span class="ok">📈 도전 책 ${bands['도전 책']}권</span></div>
+      <p class="muted" style="margin:8px 0 0;font-size:13px">술술 책은 자신감을, 딱 맞는 책은 실력을, 도전 책은 용기를 키워줘요. 다 멋져요!</p>` : ''}
+  </div>`;
+}
+
+/* ============================================================
    이벤트 배선
    ============================================================ */
 document.addEventListener('click', async (e) => {
@@ -5336,7 +5762,7 @@ document.addEventListener('click', async (e) => {
     '[data-close],[data-pin],[data-pinclear],[data-pinback],[data-ptab],[data-addtodo],[data-parentdel],'+
     '[data-kidav],[data-kidcol],[data-grant],[data-relock],[data-approve],[data-deny],'+
     '[data-nday],[data-tday],[data-tglink],[data-bookedit],[data-bookdel],[data-bookshow],[data-becat],[data-bestar],'+
-    '[data-weather],[data-cand],[data-ttword],button');
+    '[data-weather],[data-cand],[data-ttword],[data-pz],button');
   if (!t) return;
   const d = t.dataset;
 
@@ -5385,6 +5811,8 @@ document.addEventListener('click', async (e) => {
   }
   if (t.id === 'openParent'){ S.view.pin=''; S.view.pinError=''; S.view.pinPurpose='parent'; openModal(pinSheet('부모님 화면')); return; }
 
+  /* --- ✏️ 한붓그리기 층 --- */
+  if (OL && OL.el.contains(t)){ olClick(t); return; }
   /* --- 🦜 뚜뚜 --- */
   if (TT && document.getElementById('ttLayer') && document.getElementById('ttLayer').contains(t)){
     await ttClick(t, d);
@@ -5468,8 +5896,8 @@ document.addEventListener('click', async (e) => {
     openModal(bookWizard());
     return;
   }
-  if (d.cat){ S.view.wiz.category = d.cat; openModal(bookWizard()); return; }
-  if (d.stars){ S.view.wiz.stars = +d.stars; openModal(bookWizard()); return; }
+  if (d.cat){ keepWizTyping(); S.view.wiz.category = d.cat; openModal(bookWizard()); return; }
+  if (d.stars){ keepWizTyping(); S.view.wiz.stars = +d.stars; openModal(bookWizard()); return; }
   if (t.id === 'wizSearchTitle'){
     const w = S.view.wiz;
     w.title = ($('#wizTitle').value||'').trim();
@@ -5494,6 +5922,7 @@ document.addEventListener('click', async (e) => {
     const w = S.view.wiz;
     w.title = ($('#wizTitle').value||'').trim();
     w.author = ($('#wizAuthor').value||'').trim();
+    w.ar = arParse(($('#wizAr') || {}).value);
     if (!w.title){ toast('책 제목을 적어줄래요? 📚'); return; }
     w.step = 'cover'; openModal(bookWizard()); return;
   }
@@ -5518,7 +5947,7 @@ document.addEventListener('click', async (e) => {
   if (d.bookshow){ S.view.bookEdit = null; showBook(d.bookshow); return; }
   if (d.bookedit){
     const b = S.data.books.find(x => x.id === d.bookedit); if (!b) return;
-    S.view.bookEdit = { id:b.id, title:b.title || '', author:b.author || '', category:b.category,
+    S.view.bookEdit = { id:b.id, title:b.title || '', author:b.author || '', ar:b.ar || '', category:b.category,
       stars:b.stars || 3, coverUrl:b.coverUrl || '', coverAssetId:b.coverAssetId || '', coverFile:null, coverPreview:'' };
     openModal(bookEditSheet());
     return;
@@ -5531,7 +5960,7 @@ document.addEventListener('click', async (e) => {
     if (!b){ closeModal(); return; }
     if (!e.title.trim()){ toast('책 제목을 적어줄래요? 📚'); $('#beTitle').focus(); return; }
     e.saving = true; openModal(bookEditSheet());
-    const patch = { title:e.title.trim(), author:e.author.trim(), category:e.category, stars:e.stars };
+    const patch = { title:e.title.trim(), author:e.author.trim(), category:e.category, stars:e.stars, ar:arParse(e.ar) };
     if (e.coverFile){
       const up = await uploadCover(e.coverFile);
       if (up){
@@ -5621,6 +6050,18 @@ document.addEventListener('click', async (e) => {
   if (d.game === 'stars'){ startStars(); return; }
   if (d.game === 'match'){ startMatch(); return; }
   if (d.game === 'sling'){ S.view.game = 'sling'; openSling(); return; }
+  if (d.game === 'stack'){ startStack(); return; }
+  if (d.game === 'pizza'){ startPizza(); return; }
+  if (d.game === 'pattern'){ startPattern(); return; }
+  if (d.game === 'oneline'){ S.view.game = 'oneline'; openOneline(); return; }
+  if (d.stk != null && d.stk !== ''){ stackTap(+d.stk); return; }
+  if (t.id === 'stkNext'){ const st = S.view.stk; if (st){ st.q = stkMake(st.lv); st.pick = null; st.answered = false; render(); } return; }
+  if (d.pz != null && d.pz !== ''){ pizzaTap(+d.pz); return; }
+  if (t.id === 'pzGo'){ pizzaGo(); return; }
+  if (t.id === 'pzReset'){ if (S.view.pz){ S.view.pz.sel = []; S.view.pz.msg = ''; render(); } return; }
+  if (t.id === 'pzNext'){ const st = S.view.pz; if (st){ st.q = pzMake(st.lv); st.sel = []; st.done = false; st.msg = ''; render(); } return; }
+  if (d.pt != null && d.pt !== ''){ patternTap(+d.pt); return; }
+  if (t.id === 'ptNext'){ const st = S.view.pt; if (st){ st.q = ptMake(st.lv); st.pick = null; st.answered = false; render(); } return; }
   if (d.mem){ memTap(+d.mem); return; }
   if (d.ml){ matchTap('l', d.ml); return; }
   if (d.mr){ matchTap('r', d.mr); return; }
@@ -5829,6 +6270,11 @@ document.addEventListener('change', async (e) => {
     toast(text ? '쪽지를 붙였어요 💌' : '쪽지를 뗐어요');
   }
   if (el.dataset.kidname) await Store.update('profiles', el.dataset.kidname, { name: el.value.trim() || '이름' });
+  if (el.dataset && el.dataset.kidar){
+    const v = arParse(el.value);
+    await Store.update('profiles', el.dataset.kidar, { arScore:v, arAt:v ? new Date().toISOString() : null });
+    toast(v ? `AR 점수 ${v}을 적었어요 📘` : 'AR 점수를 지웠어요');
+  }
   if (el.id === 'coverInput' && el.files && el.files[0]) await handleCover(el.files[0]);
   if (el.id === 'beCover' && el.files && el.files[0] && S.view.bookEdit){
     keepBookEditTyping();
@@ -6250,7 +6696,7 @@ async function saveBook(){
     kidId:S.kidId, isbn:w.isbn||'', title:w.title, author:w.author||'',
     category:w.category||(S.settings.cats||DEFAULT_CATS)[0],
     // 직접 찍은 사진이 있으면 그 주소를 저장한다(예전에는 올린 사진 대신 w.coverUrl을 넣어 사진이 사라졌다)
-    coverAssetId, coverUrl, stars:w.stars||3,
+    coverAssetId, coverUrl, stars:w.stars||3, ar:w.ar || null,
     readAt:new Date().toISOString(),
     source: w.found || 'manual'
   });
@@ -6268,6 +6714,7 @@ function showBook(id){
     ${(b.coverAssetId || b.coverUrl) ? `<img src="${b.coverAssetId ? '/_blob/' + esc(b.coverAssetId) : esc(b.coverUrl)}" alt=""
       style="width:100%;max-width:230px;border-radius:var(--r-md);display:block;margin:0 auto 12px">` : ''}
     <p class="muted" style="margin:0">${esc(b.author||'지은이 몰라요')} · ${esc(b.category)} · ${'⭐'.repeat(b.stars||1)}</p>
+    ${b.ar ? (() => { const bd = arBand(b.ar, (kid(b.kidId) || {}).arScore); return `<p style="margin:6px 0 0">📘 AR <b>${b.ar}</b>${bd ? ` · ${bd.ico} ${bd.label} — ${bd.note}` : ''}</p>`; })() : ''}
     <p class="muted" style="margin:4px 0 14px">${new Date(b.readAt).toLocaleDateString('ko-KR')}에 읽었어요</p>
     <div class="row" style="gap:8px;margin-bottom:8px">
       <button class="btn ghost grow sm" data-bookedit="${b.id}">✏️ 고치기</button>
@@ -6284,6 +6731,7 @@ function bookEditSheet(){
     <div class="stack" style="gap:10px;margin-top:8px">
       <input class="field" id="beTitle" placeholder="책 제목" value="${esc(e.title)}">
       <input class="field" id="beAuthor" placeholder="지은이 (몰라도 괜찮아요)" value="${esc(e.author)}">
+      <input class="field" id="beAr" inputmode="decimal" placeholder="📘 AR 지수 (영어책이면, 예: 2.6)" value="${esc(e.ar || '')}">
       <div><div class="muted" style="margin-bottom:6px">어떤 종류예요?</div>
         <div class="chips">${cats.map(c => `<button class="chip" data-becat="${esc(c)}" aria-pressed="${e.category === c}">${esc(c)}</button>`).join('')}</div></div>
       <div><div class="muted" style="margin-bottom:6px">재미있었나요?</div>
@@ -6300,9 +6748,15 @@ function bookEditSheet(){
 }
 function keepBookEditTyping(){
   const e = S.view.bookEdit; if (!e) return;
-  const t = $('#beTitle'), a = $('#beAuthor');
+  const t = $('#beTitle'), a = $('#beAuthor'), r = $('#beAr');
   if (t) e.title = t.value;
   if (a) e.author = a.value;
+  if (r) e.ar = r.value;
+}
+function keepWizTyping(){
+  const w = S.view.wiz; if (!w) return;
+  const t = $('#wizTitle'), a = $('#wizAuthor'), r = $('#wizAr');
+  if (t) w.title = t.value; if (a) w.author = a.value; if (r) w.ar = r.value;
 }
 
 /* ============================================================
@@ -6428,6 +6882,7 @@ setInterval(() => {
     if (!activeUnlock(sling.kidId)) slingTimeOver();
     else slingTimer();
   }
+  if (OL && !activeUnlock(OL.kidId)) closeOneline('놀이 시간이 끝났어요. 내일 또 해요! 👋');
 
   // 부모님이 다른 기기에서 승인해 주면 여기서 알아채고 축하해 준다
   if (un && S.celebrated !== un.id){ S.celebrated = un.id; confetti(); render(); }
