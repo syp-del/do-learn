@@ -5,11 +5,14 @@
      {task:'prep',   sentences:[...]}                         원고 문장마다 한국어 뜻·그림 힌트·강세·끝 억양·어려운 단어
      {task:'speech', sentence, audio(base64), mime, stage, …}  아이 녹음을 듣고 발음·유창성·높낮이 피드백 (Gemini만)
      {task:'tts',    text, voice, style}                      뚜뚜의 자연스러운 목소리 (Gemini 음성 합성)
+     {task:'ocr',    image(base64), mime}                     받아쓰기 급수표 사진 → 문장 (부모님이 찍은 학교 안내문)
+     {task:'wonder', q, guess}                                궁금해 노트 — 쉬운 설명 + 되묻는 질문 (부모님이 켰을 때만)
+     {task:'diary',  text}                                    그림일기 맞춤법 — 고칠 곳과 힌트만 (부모님이 켰을 때만)
    GET  /api/coach   연결 상태 (키 값은 보여주지 않는다)
 
    녹음은 기기에만 저장되고, 여기로는 분석할 몇 초짜리만 온다. 아이 이름은 보내지 않는다. */
 
-import { provider, askGeminiAny, askClaude, parseJson, explain, GeminiError, clean, geminiModels } from './_ai.js';
+import { provider, claudeProvider, askGeminiAny, askClaude, parseJson, explain, GeminiError, clean, geminiModels } from './_ai.js';
 
 // 앱(index.html)과 같은 공개용 키 — 가족이 실제로 있는지만 확인한다
 const SB_URL = 'https://xirclohwurvtschwrtxw.supabase.co';
@@ -56,6 +59,22 @@ const str = (v, max) => String(v == null ? '' : v).replace(/[\u0000-\u001f]/g, '
 const arr = (v, max) => (Array.isArray(v) ? v : []).slice(0, max);
 const lvl = v => { const n = Number(v); return (v == null || v === '' || !Number.isFinite(n)) ? 2 : Math.max(1, Math.min(3, Math.round(n))); };
 
+/* ---------- 글·사진 작업 — Gemini가 붐비거나 끊기면, Claude 키가 있을 때 Claude가 이어받는다 ---------- */
+async function askText(p, { system, text, image, schema, maxTokens, timeoutMs, temperature, json }) {
+  const claudeIn = { system, maxTokens, timeoutMs: (timeoutMs || 15000) + 10000, images: image ? [image] : [],
+    text: `${text}\n아래 모양의 JSON 하나만 출력해. 설명도 코드펜스도 쓰지 마.\n${json}` };
+  if (p.id === 'claude') return { text: await askClaude(p, claudeIn), model: p.model };
+  const parts = image ? [{ text }, { inlineData: { mimeType: image.mime, data: image.data } }] : [{ text }];
+  try {
+    return await askGeminiAny(p, { system, parts, schema, maxTokens, timeoutMs, temperature });
+  } catch (e) {
+    const c = claudeProvider();
+    if (!c) throw e;
+    console.warn('gemini failed, trying claude', e && (e.status || e.name));
+    return { text: await askClaude(c, claudeIn), model: c.model };
+  }
+}
+
 /* ============================================================
    prep — 원고 준비
    ============================================================ */
@@ -98,12 +117,8 @@ async function prep(p, body) {
   if (!sentences.length) return { status: 400, json: { error: 'bad_input', message: '원고 문장이 없어요.' } };
   const list = sentences.map((s, i) => `${i + 1}. ${s}`).join('\n');
   const user = `원고 문장:\n${list}\n\n문장 ${sentences.length}개 모두에 대해 JSON으로 답해.`;
-  let model = p.model;
-  const text = p.id === 'gemini'
-    ? await askGeminiAny(p, { system: PREP_SYSTEM, parts: [{ text: user }], schema: PREP_SCHEMA, maxTokens: 6144, timeoutMs: 14000, temperature: 0.4 })
-        .then(r => { model = r.model; return r.text; })
-    : await askClaude(p, { system: PREP_SYSTEM, maxTokens: 4096, timeoutMs: 25000,
-        text: `${user}\n아래 모양의 JSON 하나만 출력해. 설명도 코드펜스도 쓰지 마.\n{"items":[{"i":1,"ko":"","cue":"","stress":[""],"end":"fall","tricky":[{"word":"","tipKo":""}]}]}` });
+  const { text, model } = await askText(p, { system: PREP_SYSTEM, text: user, schema: PREP_SCHEMA, maxTokens: 6144, timeoutMs: 14000, temperature: 0.4,
+    json: '{"items":[{"i":1,"ko":"","cue":"","stress":[""],"end":"fall","tricky":[{"word":"","tipKo":""}]}]}' });
   const out = parseJson(text);
   const items = sentences.map((en, n) => {
     const it = arr(out.items, 200).find(x => Number(x && x.i) === n + 1) || arr(out.items, 200)[n] || {};
@@ -214,7 +229,9 @@ const TTS_STYLES = {
   ko: 'warm, bright and gentle, like a kind teacher talking to a 7-year-old child; clear and not too fast',
   en: 'clear, warm and friendly, like a kind English teacher reading to a 7-year-old child, with natural intonation',
   slow: 'very slowly and clearly, word by word, like a kind teacher reading to a young child',
-  speech: 'natural, bright and confident, like a cheerful child giving a speech, clear pronunciation'
+  speech: 'natural, bright and confident, like a cheerful child giving a speech, clear pronunciation',
+  dict: 'slowly and very clearly, like a kind Korean elementary school teacher reading a dictation sentence to 7-year-olds, with a short pause between words',
+  hello: 'warmly and naturally, like a friendly native speaker greeting a young child, with native pronunciation'
 };
 const TTS_MODELS = ['gemini-3.8-flash-tts', 'gemini-3.8-flash-lite-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-flash-preview-tts'];
 let ttsGood = null;                                   // 한 번 되는 모델을 찾으면 기억한다
@@ -292,6 +309,73 @@ async function tts(p, body) {
   throw last;
 }
 
+/* ============================================================
+   ocr — 받아쓰기 급수표 사진 읽기 (부모님이 찍은 학교 안내문)
+   ============================================================ */
+const OCR_SYSTEM = `사진은 한국 초등학교 받아쓰기 급수표(시험 문장 목록)야.
+사진 속 받아쓰기 문장을 번호 순서대로, 글자·띄어쓰기·문장 부호를 사진 그대로 옮겨 적어. 고치거나 다듬지 마.
+급수(예: 1급, 2급)가 여러 개면 급수마다 나눠. title 은 "3급"처럼 짧게, 알 수 없으면 빈 문자열.
+문장 번호(1. 2.), 날짜, 학교·반 이름, 안내 문구, 선생님 말씀은 빼고 받아쓰기 문장만 lines 에 넣어.
+글자가 흐리면 가장 그럴듯하게 적되, 사진에 없는 문장을 지어내지 마.`;
+const OCR_SCHEMA = {
+  type: 'OBJECT',
+  properties: { groups: { type: 'ARRAY', items: { type: 'OBJECT', properties: { title: { type: 'STRING' }, lines: { type: 'ARRAY', items: { type: 'STRING' } } }, required: ['title', 'lines'] } } },
+  required: ['groups']
+};
+async function ocr(p, body) {
+  const image = String(body.image || '');
+  const mime = ['image/jpeg', 'image/png', 'image/webp'].includes(body.mime) ? body.mime : 'image/jpeg';
+  if (!image || image.length > 4200000 || !/^[A-Za-z0-9+/=]+$/.test(image)) {
+    return { status: 400, json: { error: 'bad_input', message: '사진이 너무 크거나 비었어요. 다시 찍어 주세요.' } };
+  }
+  const { text } = await askText(p, { system: OCR_SYSTEM, text: '이 급수표의 받아쓰기 문장을 JSON으로 옮겨 적어.', image: { mime, data: image },
+    schema: OCR_SCHEMA, maxTokens: 4096, timeoutMs: 30000, temperature: 0.1, json: '{"groups":[{"title":"1급","lines":["문장"]}]}' });
+  const out = parseJson(text);
+  const groups = arr(out.groups, 20)
+    .map(g => ({ title: str(g && g.title, 20), lines: arr(g && g.lines, 40).map(l => str(l, 120)).filter(Boolean) }))
+    .filter(g => g.lines.length);
+  return { status: 200, json: { groups } };
+}
+
+/* ============================================================
+   wonder — 궁금해 노트 (아이가 먼저 생각한 답을 칭찬하고, 쉽게 알려 주고, 한 번 되묻는다)
+   ============================================================ */
+const WONDER_SYSTEM = `너는 7살 한국 아이의 "궁금해 노트"를 도와주는 다정한 AI 도우미야.
+아이가 궁금한 것과, 아이가 먼저 생각해 본 답을 줄게.
+- answer: 쉬운 한국어 "~해요"체로 2~3문장, 130자 안팎. 아이 생각에서 좋은 점을 먼저 짧게 칭찬하고, 사실을 정확하게 알려 줘.
+  확실하지 않은 건 "과학자들도 아직 연구하고 있어요"처럼 솔직하게 말해.
+- ask: 아이가 더 생각해 볼 수 있는 질문 하나 (30자 이내).
+무섭거나 어른과 이야기해야 하는 내용이면 answer 에 "엄마 아빠와 함께 알아봐요"라고만 해. 아이 이름을 부르지 마.`;
+const WONDER_SCHEMA = { type: 'OBJECT', properties: { answer: { type: 'STRING' }, ask: { type: 'STRING' } }, required: ['answer', 'ask'] };
+async function wonder(p, body) {
+  const q = str(body.q, 120), guess = str(body.guess, 160);
+  if (!q) return { status: 400, json: { error: 'bad_input', message: '궁금한 게 비었어요.' } };
+  const { text } = await askText(p, { system: WONDER_SYSTEM, text: `궁금한 것: ${q}\n아이가 먼저 생각한 답: ${guess || '(아직 없어요)'}`,
+    schema: WONDER_SCHEMA, maxTokens: 800, timeoutMs: 12000, temperature: 0.5, json: '{"answer":"","ask":""}' });
+  const out = parseJson(text);
+  return { status: 200, json: { answer: str(out.answer, 300), ask: str(out.ask, 80) } };
+}
+
+/* ============================================================
+   diary — 그림일기 맞춤법 (고쳐 쓰지 않고, 고칠 곳과 힌트만)
+   ============================================================ */
+const DIARY_SYSTEM = `너는 7살 한국 아이의 그림일기 맞춤법 도우미야. 글을 고쳐 쓰지 말고, 맞춤법이 틀린 낱말만 찾아.
+- spots: 틀린 낱말(아이가 쓴 그대로, 글에 있는 글자 그대로)과 hint(25자 이내). 정답을 바로 알려 주기보다 스스로 고칠 수 있게 힌트로.
+최대 5개. 띄어쓰기는 크게 틀린 것만. 틀린 곳이 없으면 빈 배열.`;
+const DIARY_SCHEMA = {
+  type: 'OBJECT',
+  properties: { spots: { type: 'ARRAY', items: { type: 'OBJECT', properties: { word: { type: 'STRING' }, hint: { type: 'STRING' } }, required: ['word', 'hint'] } } },
+  required: ['spots']
+};
+async function diary(p, body) {
+  const t = str(body.text, 600);
+  if (!t) return { status: 400, json: { error: 'bad_input', message: '일기가 비었어요.' } };
+  const { text } = await askText(p, { system: DIARY_SYSTEM, text: `아이의 그림일기:\n${t}`, schema: DIARY_SCHEMA, maxTokens: 800, timeoutMs: 12000, temperature: 0.2,
+    json: '{"spots":[{"word":"","hint":""}]}' });
+  const out = parseJson(text);
+  return { status: 200, json: { spots: arr(out.spots, 5).map(x => ({ word: str(x && x.word, 20), hint: str(x && x.hint, 60) })).filter(x => x.word && t.includes(x.word)) } };
+}
+
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     const p = provider(), pa = provider({ audio: true });
@@ -303,16 +387,17 @@ export default async function handler(req, res) {
 
   const body = req.body || {};
   const task = body.task;
-  if (!['prep', 'speech', 'tts'].includes(task)) return res.status(400).json({ error: 'bad_task', message: '무엇을 할지 모르겠어요.' });
+  if (!['prep', 'speech', 'tts', 'ocr', 'wonder', 'diary'].includes(task)) return res.status(400).json({ error: 'bad_task', message: '무엇을 할지 모르겠어요.' });
 
   const fam = String(req.headers['x-family-id'] || '');
   if (!(await familyOk(fam))) return res.status(403).json({ error: 'no_family', message: '우리 가족 주소로 열어주세요.' });
 
-  const p = provider({ audio: task !== 'prep' });
+  const p = provider({ audio: task === 'speech' || task === 'tts' });
   if (!p) return res.status(503).json({ error: 'no_key', message: KID_TT.no_key });
 
   try {
-    const r = task === 'prep' ? await prep(p, body) : (task === 'tts' ? await tts(p, body) : await speech(p, body));
+    const run = { prep, tts, speech, ocr, wonder, diary }[task];
+    const r = await run(p, body);
     res.setHeader('cache-control', 'no-store');
     return res.status(r.status).json(r.json);
   } catch (e) {

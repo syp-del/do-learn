@@ -54,7 +54,10 @@
 ## 구조
 
 - **`index.html`**: 앱 전체.
-  - 탭: 오늘 · 책장 · 단어장 · 스피치 · 배움기록 · 놀이
+  - 탭: 오늘 · 책장 · 단어장 · 받아쓰기 · 스피치 · 생각 · 세계 · 배움기록 · 놀이 (폰처럼 좁으면 탭 줄을 옆으로 민다)
+  - 새 기능 단추는 `data-act="이름"` + `data-arg`로 달고, 함수는 `ACTS.이름`에 둔다(클릭 처리 맨 앞에서 부른다).
+  - 창(모달) 안 입력칸은 `data-keep="키"`를 달면 칠 때마다 `kv(키)`에 담긴다 → 창을 다시 그려도 글자가 남는다(`kvField`).
+  - 동기화: 내가 쓰는 중(`SYNC`)에 받아 온 옛 기록은 버린다. 방금 쓴 답이 몇 초 동안 사라져 보이던 문제를 막는다.
   - 📒 배움기록: `weekStatsAt`(이번 주·지난주), `crownPlan`(반짝 왕관 나누기), 💌 칭찬 스티커(`kudos` 컬렉션)
   - 주요 구역: `Store`(저장), `sbPull`(5초 동기화, 1000줄씩 나눠 읽기), `view*()`(화면), 이벤트 배선
   - 🦜 뚜뚜 스피치 교실: `tt*` 함수와 `TT` 상태
@@ -67,15 +70,37 @@
     - 🔍 패턴 탐정 `pt*`: 색·모양·크기·회전·개수 규칙 찾기
     - 레벨은 `profile.play[게임]`에 저장한다(`playLevel`/`playLevelUp`). 3번 연속으로 맞히면 한 단계 오른다.
   - 📘 AR: `arParse`(글자에서 점수 읽기), `arBand`(술술·딱 맞는·도전), `arShelfCard`(책장 카드)
+  - ✏️ 받아쓰기: 급수표 `dlists`, 아이×급수표 진도 `dprog`(문장마다 `items[i].last`가 false면 🔁 오답 노트).
+    - 연습은 화면 위 층 `#dtLayer`(`DT`). 📝 공책에 쓰기(스스로 ⭕❌) · ⌨️ 패드에 쓰기(자동 채점) · 🎯 한 번만 듣고 쓰기(꼼꼼한 아이).
+    - `dtGrade`: 자모로 글자를 맞춰 보고 받침·모음·첫소리·띄어쓰기(∨ 띄어 써요, ⁀ 붙여 써요)·문장 부호로 나눈다. 낱말 수가 같으면 `koVariants`로 ‘소리 나는 대로’ 쓴 것도 알아챈다.
+    - 뚜뚜가 두 번 읽는다(`voice(…, {lang:'ko', rate:0.7})` → 자연스러운 목소리 말투 `dict`).
+    - 🔤 영어 철자(`sp*`, 컬렉션 `spell` 아이마다 한 줄): 글자 맞추기·듣고 쓰기·빈칸 채우기. 단어 가방 + 스피치 원고 단어(이름은 뺀다).
+    - 부모님 화면 → ✏️ 받아쓰기(`dictTab`): 한 줄에 한 문장, 번호는 저절로 빠진다. 📷 사진은 `coach` `ocr`로 읽어 칸에 채운다(부모님이 확인).
+  - 💭 생각: `think` 컬렉션 하나에 `type`으로 나눈다 — `q` 오늘의 질문(`TQ` 60개, 뚜뚜가 한 번 되묻고, 둘 다 답해야 서로 보인다) · `day` 하루 돌아보기 · `wonder` 궁금해 노트(내 생각 먼저) · `mission` 문제 해결 5단계 · `diary` 그림일기(`#dyLayer`, `KO_OOPS` 맞춤법 힌트).
+    - 🤝 이번 주 약속은 `goals`(아이×주 한 줄). 메뉴는 `GOAL_MENU` + 부모님이 넣은 `settings.goalExtra`. 책·받아쓰기 같은 건 저절로 센다.
+    - ⏱ 예상 시간: 할 일 ‘시작’ 때 몇 분 걸릴지 고르고(`estSheet`), 끝나면 비교한다(`sessions.est`/`estHit`).
+    - 📖 책 한 줄 느낌·주인공에게 한마디: `book.feel`, `book.toHero`.
+    - 🤖 AI 도우미(궁금해 노트 설명·일기 맞춤법)는 `settings.thinkAi === true`일 때만. 이름은 `ttMask`로 가려서 보낸다.
+  - 🌏 세계: d3-geo 지구본(`G`, `worldMount`/`globeDraw`). 캔버스 하나를 계속 다시 붙여 써서 5초 동기화에도 끊기지 않는다.
+    - 나라 이름 `WORLD_KO`(world-atlas 110m 번호 → ISO·한국어, Node의 CLDR로 만듦), 작은 나라는 `WORLD_SMALL`(핀).
+    - ⭐ 오늘의 나라 `WC` 42개국(인사말·수도·랜드마크·음식·사실 — 사실은 확인한 것만). 📖 알아봤어요 / 🔎 집 지구본에서 찾았어요(부모님 비밀번호, `pinPurpose 'globe:XX'`) → 컬렉션 `stamps`.
+    - ✈️ 여행 기록 `trips`(`kidIds` 여럿, 장소 핀 `PLACES`), ⭐ 가고 싶은 곳 `wishes`, 🛂 여권은 여행·찾기 도장을 모아 보여 준다. 가 본 곳은 아이 색 하나로 칠한다.
+    - 📷 사진(`photoSave`/`photoUrl`/`hydratePhotos`, `<img data-photo>`): 비공개 버킷 `memories`에 올린다. 폴더는 가족 ID의 SHA-256. 버킷이 없으면(`memories_ready()`가 없으면) 이 기기 IndexedDB `dolearn-photos`에만 둔다.
 - **`api/_ai.js`**: AI 공통 코드. `provider`, `askGemini`, `askClaude`, `explain`. 이름이 `_`로 시작해서 주소로 열리지 않는다.
 - **`api/dict.js`**: 사전. 모드는 `en` 영어(한국어 뜻 + 쉬운 영어 풀이), `kk` 한글.
-- **`api/coach.js`**: 뚜뚜. 가족 ID가 실제로 있는지 확인한 뒤에만 동작한다. `task`는 세 가지다.
+- **`api/coach.js`**: 뚜뚜. 가족 ID가 실제로 있는지 확인한 뒤에만 동작한다. `task`는 여섯 가지다.
   - `prep`: 원고 준비
-  - `speech`: 녹음 피드백
-  - `tts`: 자연스러운 목소리. `gemini-3.8-flash-tts`를 Interactions API로 부르고, 안 되면 예전 방식으로 넘어간다.
+  - `speech`: 녹음 피드백 (Gemini만 — Claude는 녹음을 못 듣는다)
+  - `tts`: 자연스러운 목소리. `gemini-3.8-flash-tts`를 Interactions API로 부르고, 안 되면 예전 방식으로 넘어간다. 말투 `ko`·`en`·`slow`·`speech`·`dict`(받아쓰기)·`hello`(그 나라 인사말).
+  - `ocr`: 받아쓰기 급수표 사진 → 문장 (급수가 여러 개면 나눠서)
+  - `wonder`: 궁금해 노트 — 아이 생각을 먼저 칭찬하고 쉽게 설명 + 되묻기
+  - `diary`: 그림일기 맞춤법 — 고칠 낱말과 힌트만
+  - 글·사진 작업(`prep`·`ocr`·`wonder`·`diary`)은 Gemini가 붐비면 `ANTHROPIC_API_KEY`가 있을 때 Claude가 이어받는다(`askText`).
 - **`api/book.js`, `notify.js`, `telegram-*.js`**: 책 찾기, 텔레그램 알림.
 - **데이터**: Supabase `items`(`coll` + `data` jsonb), `settings`.
   - 뚜뚜가 쓰는 컬렉션: `scripts`(원고), `speech`(아이×원고 진도 1줄).
+  - 새 컬렉션: `dlists`·`dprog`·`spell`(받아쓰기·철자), `think`·`goals`(생각), `trips`·`wishes`·`stamps`(세계).
+  - 사진 저장소: 비공개 버킷 `memories` + 정책 3개(select·insert·delete, 폴더 = `encode(digest(x-family-id,'sha256'),'hex')`) + `memories_ready()`.
   - 녹음과 뚜뚜 목소리는 기기의 IndexedDB `dolearn-audio`에만 둔다.
 
 ## 개발 환경 (이 Mac)
@@ -93,6 +118,7 @@
 - 파일은 `index.html` 하나, 빌드 없음, 주석은 한국어로 쓴다. `innerHTML`에 넣는 글자는 반드시 `esc()`를 거친다.
 - 옛 아이패드를 위해 `?.`, `??`, 정규식 lookbehind(`(?<=`)는 쓰지 않는다.
 - 새 컬렉션은 `COLLS`와 `clearSample`에 추가한다.
+- 한국어 조사는 받침에 맞춘다: 이름은 `subj`/`topic`/`callName`, 곳 이름은 `eunNeun`(파리는·서울은)·`eulReul`. "을(를)"처럼 쓰지 않는다.
 - 5초 동기화가 `#screen`을 다시 그린다. 그래서 녹음·캔버스·입력칸은 화면 위 층(`ttLayer`)이나 모달에 둔다.
 - `Store.update`는 서버에 레코드를 통째로 덮어쓴다. 진도처럼 큰 객체는 통째로 저장한다(`ttSaveProg`).
 - 아이패드는 소리를 **누른 순간에** 먼저 깨워야 한다. 수업이나 퀴즈를 여는 단추에서 `nvUnlock()`을 부른다.

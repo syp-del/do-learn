@@ -41,6 +41,11 @@ export function provider({ audio = false } = {}) {
   if (c) return { id: 'claude', label: 'Claude', model: CLAUDE_MODEL, ...c };
   return null;
 }
+// Claude 키가 따로 있으면 — Gemini가 붐빌 때 글·사진 작업을 넘겨받는다
+export function claudeProvider() {
+  const c = findKey(['ANTHROPIC_API_KEY', 'CLAUDE_API_KEY', 'ANTHROPIC_KEY'], /ANTHROPIC|CLAUDE/i, 'sk-ant-');
+  return c ? { id: 'claude', label: 'Claude', model: CLAUDE_MODEL, ...c } : null;
+}
 
 /* ---------- Gemini (REST generateContent) ---------- */
 export class GeminiError extends Error {
@@ -152,16 +157,20 @@ export async function askGeminiAny(p, input) {
   throw last || new Error('no model');
 }
 
-/* ---------- Claude (공식 SDK) — 글만 다룬다 ----------
-   input 이 글자면 예전(사전) 그대로, 객체면 { system, text, maxTokens, timeoutMs } */
+/* ---------- Claude (공식 SDK) — 글과 사진을 다룬다 (녹음은 못 듣는다) ----------
+   input 이 글자면 예전(사전) 그대로, 객체면 { system, text, images:[{mime, data(base64)}], maxTokens, timeoutMs } */
 export async function askClaude(p, input) {
   const rich = typeof input === 'object' && input !== null;
   const client = new Anthropic({ apiKey: p.key, maxRetries: 1, timeout: (rich && input.timeoutMs) || 15000 });
+  const imgs = rich && Array.isArray(input.images) ? input.images : [];
+  const content = !rich ? input : (imgs.length
+    ? [...imgs.map(i => ({ type: 'image', source: { type: 'base64', media_type: i.mime, data: i.data } })), { type: 'text', text: input.text }]
+    : input.text);
   const msg = await client.messages.create({
     model: p.model,
     max_tokens: rich ? (input.maxTokens || 1024) : 400,
     ...(rich && input.system ? { system: input.system } : {}),
-    messages: [{ role: 'user', content: rich ? input.text : input }]
+    messages: [{ role: 'user', content }]
   });
   return msg.content.filter(b => b.type === 'text').map(b => b.text).join('').trim();
 }

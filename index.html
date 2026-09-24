@@ -630,6 +630,100 @@
     .tt-bubble{font-size:19px;padding:10px 12px;}
     .tt-mic{width:98px;height:98px;font-size:40px;}
   }
+
+  /* ---------- 탭이 많을 때 — 좁은 화면(폰)에서는 옆으로 밀어서 본다. 아이패드에서는 한 줄에 다 보인다 ---------- */
+  nav.tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  nav.tabs::-webkit-scrollbar{display:none;}
+  nav.tabs button{min-width:0;white-space:nowrap;}
+  @media (max-width:640px){ nav.tabs button{flex:0 0 auto;min-width:64px;padding:6px 8px;} }
+
+  /* ---------- ✏️ 받아쓰기 ---------- */
+  .dt-list{margin:10px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:6px;}
+  .dt-list li{font-size:18px;}
+  .dt-list li .chip{min-height:34px;padding:0 9px;margin-right:6px;vertical-align:middle;}
+  .dt-ear{font-size:52px;line-height:1;margin:2px auto;transition:transform .2s;}
+  .dt-ear.on{animation:dt-ear 1s ease-in-out infinite;}
+  @keyframes dt-ear{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+  .dt-in{font-size:24px;min-height:62px;text-align:center;letter-spacing:.02em;}
+  .dt-cmp{display:grid;gap:4px;text-align:left;background:#FFFDF6;border:2px solid var(--blush);border-radius:18px;padding:12px 14px;}
+  .dt-line{font-size:clamp(21px,4.8vw,28px);font-weight:700;line-height:1.7;word-break:keep-all;white-space:pre-wrap;}
+  .dt-line.mine{color:var(--cocoa-soft);font-weight:600;}
+  .dt-bad{background:#FFE3B3;border-bottom:3px solid var(--butter-deep);border-radius:4px;color:var(--cocoa);}
+  .dt-miss{background:var(--berry-soft);color:var(--berry-deep);border-radius:4px;border-bottom:3px dotted var(--berry);}
+  .dt-sp{position:relative;display:inline-block;width:.7em;}
+  .dt-sp::after{content:'∨';position:absolute;left:50%;top:-.55em;transform:translateX(-50%);color:var(--berry-deep);font-size:.72em;font-weight:900;}
+  .dt-join{position:relative;display:inline-block;width:0;}
+  .dt-join::after{content:'⁀';position:absolute;left:-.1em;top:-.7em;color:var(--berry-deep);font-size:.9em;}
+  .dt-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--blush);}
+  .dt-row:last-of-type{border-bottom:0;}
+  .dt-row .chip{min-height:44px;font-size:22px;padding:0 12px;}
+  .dt-text{font-size:18px;font-weight:600;}
+
+  /* ---------- 🔤 영어 철자 ---------- */
+  .sp-word{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:14px 0 6px;}
+  .sp-slot{width:46px;height:56px;border-radius:12px;border:3px dashed var(--blush);background:var(--surface);
+    font-family:var(--display);font-size:32px;font-weight:700;display:grid;place-items:center;color:var(--cocoa);}
+  .sp-slot.on{border-style:solid;border-color:var(--berry);background:var(--berry-soft);}
+  .sp-slot.fixed{border:3px solid transparent;background:var(--mint-soft);color:#215a49;}
+  .sp-tiles{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px;}
+  .sp-tile{width:52px;height:56px;border-radius:14px;background:var(--butter);box-shadow:0 4px 0 rgba(185,130,40,.45);
+    font-family:var(--display);font-size:30px;font-weight:700;color:#5d3f0c;transition:transform .1s;}
+  .sp-tile:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(185,130,40,.45);}
+  .sp-tile[disabled]{opacity:.25;box-shadow:none;}
+  .sp-in{font-size:26px;text-align:center;margin-top:12px;min-height:60px;}
+  @media (max-width:430px){ .sp-slot{width:38px;height:50px;font-size:27px;} .sp-tile{width:46px;height:52px;font-size:27px;} }
+
+  /* ---------- 💭 생각 ---------- */
+  .th-q{font-family:var(--display);font-size:24px;line-height:1.3;margin:8px 0 10px;}
+  .th-ans{background:#FFFDF6;border:2px solid var(--blush);border-radius:16px;padding:10px 12px;font-size:16px;}
+  .th-ans b{font-family:var(--display);font-size:18px;margin-right:4px;}
+  .th-mood{flex-direction:column;min-height:64px;padding:4px 10px;font-size:28px;gap:0;}
+  .th-mood small{font-size:12px;font-family:var(--body);font-weight:600;color:var(--cocoa-soft);}
+  .th-goal{background:var(--surface);border-radius:16px;padding:10px 12px;}
+  .ms-steps{display:flex;gap:4px;flex-wrap:wrap;}
+  .ms-steps span{font-size:13px;border-radius:999px;padding:3px 9px;background:var(--blush);color:var(--cocoa-soft);}
+  .ms-steps span.on{background:var(--mint-soft);color:#215a49;}
+  .ms-steps span.now{background:var(--berry);color:#fff;font-weight:700;}
+  .dy-canvas{width:100%;height:auto;aspect-ratio:10/7;background:#fff;border-radius:16px;border:2px solid var(--blush);touch-action:none;display:block;}
+  .dy-tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center;}
+  .dy-color{width:36px;height:36px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--blush);font-size:16px;}
+  .dy-color[aria-pressed="true"]{box-shadow:0 0 0 3px var(--berry-deep);transform:scale(1.1);}
+  .dy-size{width:40px;height:40px;border-radius:50%;background:var(--surface);border:2px solid var(--blush);display:grid;place-items:center;}
+  .dy-size i{display:block;border-radius:50%;background:var(--cocoa);}
+  .dy-size[aria-pressed="true"]{border-color:var(--berry);background:var(--berry-soft);}
+  .dy-sep{width:8px;}
+  .dy-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:9px;margin-top:10px;}
+  .dy-item{display:flex;flex-direction:column;align-items:center;gap:3px;background:#FFFDF6;border:2px solid var(--blush);border-radius:14px;padding:6px;}
+  .dy-item img{width:100%;aspect-ratio:10/7;object-fit:cover;border-radius:9px;background:#fff;}
+  .dy-item small{font-size:12px;color:var(--cocoa-soft);}
+
+  /* ---------- 🌏 세계 ---------- */
+  .globe-slot{width:100%;max-width:520px;aspect-ratio:1;margin:10px auto 0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .globe{display:block;margin:0 auto;touch-action:none;border-radius:50%;filter:drop-shadow(0 10px 18px rgba(100,160,200,.28));}
+  .globe-legend{display:flex;gap:6px 12px;flex-wrap:wrap;justify-content:center;margin-top:10px;font-size:13px;color:var(--cocoa-soft);}
+  .globe-legend span{display:inline-flex;align-items:center;gap:4px;}
+  .globe-legend i{width:13px;height:13px;border-radius:4px;display:inline-block;border:1px solid rgba(0,0,0,.08);}
+  .w-today{display:flex;gap:14px;align-items:flex-start;margin-top:10px;}
+  .w-flag{font-size:64px;line-height:1;flex:none;}
+  @media (max-width:430px){ .w-flag{font-size:48px;} }
+  .pass{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:12px;}
+  .stamp{border:3px dashed var(--berry);border-radius:50%;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:6px;background:rgba(255,255,255,.7);color:var(--berry-deep);}
+  .stamp.found{border-color:#8E7BD6;color:#6A5AC0;}
+  .stamp .sf{font-size:30px;line-height:1;}
+  .stamp b{font-family:var(--display);font-size:15px;line-height:1.1;margin-top:2px;}
+  .stamp small{font-size:11px;}
+  .trip-row{display:flex;align-items:center;gap:10px;width:100%;background:#FFFDF6;border:2px solid var(--blush);border-radius:16px;padding:8px 10px;}
+  .trip-row img{width:56px;height:56px;object-fit:cover;border-radius:10px;flex:none;background:var(--blush);}
+  .trip-e{width:56px;height:56px;border-radius:10px;background:var(--blush);display:grid;place-items:center;font-size:30px;flex:none;}
+  .trip-photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+  .tp{position:relative;width:74px;height:74px;border-radius:12px;overflow:hidden;background:var(--blush);display:grid;place-items:center;}
+  .tp img{width:100%;height:100%;object-fit:cover;}
+  .tp button{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;background:rgba(74,48,54,.7);color:#fff;font-size:13px;}
+  .tp.add{border:2px dashed var(--berry);color:var(--berry-deep);font-size:30px;cursor:pointer;background:var(--surface);}
+  .trip-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;}
+  .trip-gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;background:var(--blush);}
+  .ph-miss{display:grid;place-items:center;width:100%;height:100%;min-height:56px;font-size:26px;background:var(--blush);border-radius:10px;}
 </style>
 
 </head>
@@ -668,7 +762,8 @@
 const SB_URL = 'https://xirclohwurvtschwrtxw.supabase.co';
 const SB_KEY = 'sb_publishable_97VPBM0syPSyG2r1S6ScMg_azkVXgdN';
 
-const COLLS = ['profiles','books','words','todos','sessions','unlocks','dict','requests','scripts','speech','kudos'];
+const COLLS = ['profiles','books','words','todos','sessions','unlocks','dict','requests','scripts','speech','kudos',
+  'dlists','dprog','spell','think','goals','trips','wishes','stamps'];
 const DEFAULT_CATS = ['그림책','동화책','영어책','지식책','만화','시'];
 const KID_COLORS = [
   {bg:'#FFE3EA', ink:'#E85C7C', bar:'#FF8FA8'},
@@ -817,7 +912,7 @@ const CHEER_LINES = [
 ];
 let lastCheer = -1;
 
-function cheerDone(){
+function cheerDone(extra){
   const k = curKid(); if (!k) return;
   const list = todosFor(S.kidId);
   const done = doneCount(S.kidId, todayKey());
@@ -830,7 +925,7 @@ function cheerDone(){
     cheerPopup({
       emoji:'🏆', finale:true,
       title:'오늘 할 일 모두 끝!',
-      sub:`${callName(k.name)}, 정말 대단해! 놀이를 열어달라고 해볼까?`,
+      sub:`${extra ? extra + ' · ' : ''}${callName(k.name)}, 정말 대단해! 놀이를 열어달라고 해볼까?`,
       dots
     });
     confetti();
@@ -843,7 +938,7 @@ function cheerDone(){
   const c = CHEER_LINES[i];
   cheerPopup({
     emoji:c.e, title:fill(c.t),
-    sub:`${fill(c.s)}${left > 0 ? ` · 이제 ${left}개 남았어요` : ''}`,
+    sub:`${extra ? extra + ' · ' : ''}${fill(c.s)}${left > 0 ? ` · 이제 ${left}개 남았어요` : ''}`,
     dots
   });
 }
@@ -926,13 +1021,17 @@ function familyLink(){
     : `(주소는 인터넷에 올린 뒤에 생겨요) #f=${S.familyId}`;
 }
 
+/* 내가 쓰는 중이면, 그 사이에 받아 온 옛 기록으로 화면을 되돌리지 않는다
+   (5초 동기화가 저장보다 먼저 읽으면, 방금 쓴 답이 몇 초 동안 사라져 보였다) */
+const SYNC = { gen:0, busy:0 };
+async function syncWrite(fn){ SYNC.gen++; SYNC.busy++; try { return await fn(); } finally { SYNC.busy--; SYNC.gen++; } }
 const Store = {
   async add(coll, data, presetId){
     const id = presetId || uid();
     S.data[coll].push({id, ...data});
     render();
     if (S.sb){
-      try { await S.sb.from('items').insert({ id, family_id:S.familyId, coll, data }); }
+      try { await syncWrite(() => S.sb.from('items').insert({ id, family_id:S.familyId, coll, data })); }
       catch(e){ warnWrite(e); }
     } else if (S.db){
       try { await S.db.collection(coll).doc(id).set(data); } catch(e){ warnWrite(e); }
@@ -945,7 +1044,7 @@ const Store = {
     render();
     if (S.sb){
       const { id:_drop, ...data } = rec || patch;
-      try { await S.sb.from('items').update({ data, updated_at:new Date().toISOString() }).eq('id', id); }
+      try { await syncWrite(() => S.sb.from('items').update({ data, updated_at:new Date().toISOString() }).eq('id', id)); }
       catch(e){ warnWrite(e); }
     } else if (S.db){
       try { await S.db.collection(coll).doc(id).update(patch); } catch(e){ warnWrite(e); }
@@ -955,7 +1054,7 @@ const Store = {
     S.data[coll] = S.data[coll].filter(r=>r.id!==id);
     render();
     if (S.sb){
-      try { await S.sb.from('items').delete().eq('id', id); } catch(e){ warnWrite(e); }
+      try { await syncWrite(() => S.sb.from('items').delete().eq('id', id)); } catch(e){ warnWrite(e); }
     } else if (S.db){
       try { await S.db.collection(coll).doc(id).delete(); } catch(e){ warnWrite(e); }
     }
@@ -964,8 +1063,8 @@ const Store = {
     Object.assign(S.settings, patch);
     render();
     if (S.sb){
-      try { await S.sb.from('settings')
-        .upsert({ family_id:S.familyId, data:S.settings, updated_at:new Date().toISOString() }); }
+      try { await syncWrite(() => S.sb.from('settings')
+        .upsert({ family_id:S.familyId, data:S.settings, updated_at:new Date().toISOString() })); }
       catch(e){ warnWrite(e); }
     } else if (S.db){
       try { await S.db.doc('settings/app').set({...S.settings}); } catch(e){ warnWrite(e); }
@@ -990,11 +1089,14 @@ async function sbAllItems(){
    실시간 구독 대신 5초 폴링 — 코드가 단순하고 RLS 헤더 방식과도 잘 맞는다. */
 async function sbPull(){
   if (!S.sb) return;
+  if (SYNC.busy && S.persistent) return;            // 쓰는 중이면 이번 차례는 건너뛴다
+  const gen0 = SYNC.gen;
   try {
     const [items, st] = await Promise.all([
       sbAllItems(),
       S.sb.from('settings').select('data').eq('family_id', S.familyId).maybeSingle()
     ]);
+    if (S.persistent && (SYNC.busy || SYNC.gen !== gen0)) return;   // 받아 오는 사이에 내가 쓴 게 있으면 이번 결과는 버린다
     // 바뀐 게 없으면 화면을 다시 그리지 않는다.
     // 매번 다시 그리면 입력칸이 새로 만들어져 쓰던 글자가 5초마다 지워진다(첫 화면의 아이 이름 등).
     const rows = (items.data || []).slice().sort((a, b) => a.id < b.id ? -1 : 1);
@@ -1137,7 +1239,15 @@ function weekStatsAt(kidId, back){
     for (const [dk, v] of Object.entries(p.days || {})) if (inWeek(new Date(dk + 'T12:00:00').getTime())) speech += (v.rec || 0);
   const kind = S.data.kudos.filter(x => x.to === kidId && inWeek(new Date(x.at || 0).getTime())).length;
   const mins = Math.round(secs / 60);
-  return { books, words, done, sched, rate: sched ? Math.round(done / sched * 100) : 0, speech, mins, effort: mins + speech, kind };
+  const dict = dWeekCount(kidId, back).n;                                       // 받아쓰기 문장 + 철자 단어
+  const mineThink = S.data.think.filter(x => x.kidId === kidId);
+  const think = mineThink.filter(x => inWeek(new Date(x.at || 0).getTime())).length;   // 질문·돌아보기·궁금해·미션·일기
+  const q = mineThink.filter(x => x.type === 'q' && inWeek(new Date(x.date + 'T12:00:00').getTime())).length;
+  const world = wWeekCount(kidId, back);
+  const kudoSent = S.data.kudos.filter(x => x.from === kidId && inWeek(new Date(x.at || 0).getTime())).length;
+  const estHits = S.data.sessions.filter(x => x.kidId === kidId && x.estHit && inWeek(new Date(x.date + 'T12:00:00').getTime())).length;
+  return { books, words, done, sched, rate: sched ? Math.round(done / sched * 100) : 0, speech, mins, effort: mins + speech + dict, kind,
+    dict, think, q, world, kudoSent, estHits };
 }
 function weekStats(kidId){ return weekStatsAt(kidId, 0); }
 
@@ -1213,20 +1323,26 @@ function draw(){
 
   tabs.hidden = false;
   const items = [
-    ['today','오늘','🌤'], ['shelf','책장','📚'], ['words','단어장','🫧'], ['speech','스피치','🦜'],
-    ['versus','배움기록','📒'], ['games','놀이','🎈']
+    ['today','오늘','🌤'], ['shelf','책장','📚'], ['words','단어장','🫧'], ['write','받아쓰기','✏️'], ['speech','스피치','🦜'],
+    ['think','생각','💭'], ['world','세계','🌏'], ['versus','배움기록','📒'], ['games','놀이','🎈']
   ];
   tabs.innerHTML = items.map(([id,label,ico]) =>
     `<button data-tab="${id}" aria-current="${S.tab===id}"><span class="ico">${ico}</span>${label}</button>`
   ).join('');
+  // 좁은 화면에서 탭 줄이 옆으로 밀릴 때 — 지금 탭이 가려져 있으면 보이게
+  const curTab = tabs.querySelector('[aria-current="true"]');
+  if (curTab && tabs.scrollWidth > tabs.clientWidth && (curTab.offsetLeft < tabs.scrollLeft || curTab.offsetLeft + curTab.offsetWidth > tabs.scrollLeft + tabs.clientWidth))
+    tabs.scrollLeft = Math.max(0, curTab.offsetLeft - (tabs.clientWidth - curTab.offsetWidth) / 2);
 
   // 다른 아이가 올린 승인 요청은 어느 화면에서든 보이게 한다 (부모님 폰에서 바로 승인)
   const others = pendingRequests().filter(r => r.kidId !== S.kidId);
 
-  const views = { today:viewToday, shelf:viewShelf, words:viewWords, speech:viewSpeech, versus:viewVersus, games:viewGames };
+  const views = { today:viewToday, shelf:viewShelf, words:viewWords, write:viewWrite, speech:viewSpeech, think:viewThink, world:viewWorld, versus:viewVersus, games:viewGames };
   screen.innerHTML = `<div class="wrap stack">${storageBanner()}${others.map(askCard).join('')}${(views[S.tab]||viewToday)()}</div>`;
 
   if (S.tab === 'shelf') requestAnimationFrame(fitSpines);
+  if (S.tab === 'world') worldMount();          // 지구본 캔버스는 하나를 계속 다시 붙여 쓴다
+  hydratePhotos(screen);
 }
 
 function storageBanner(){
@@ -1452,7 +1568,7 @@ function todoRow(t, key){
       ${secs ? `<div class="muted">${fmtDur(secs)} 했어요</div>` : ''}
     </div>
     ${running
-      ? `<span class="timer" data-live="${t.id}">${fmtClock((Date.now()-S.running.startedAt)/1000)}</span>
+      ? `${S.running.est ? `<span class="muted" style="font-size:12px;white-space:nowrap">예상 ${S.running.est}분</span>` : ''}<span class="timer" data-live="${t.id}">${fmtClock((Date.now()-S.running.startedAt)/1000)}</span>
          <button class="btn sm" data-stop="${t.id}">끝</button>`
       : (done ? '' : `<button class="btn ghost sm" data-start="${t.id}">시작</button>`)}
     ${t.createdBy === 'kid' ? `<button class="btn ghost sm" data-deltodo="${t.id}" aria-label="지우기">🗑</button>` : ''}
@@ -1607,7 +1723,7 @@ function viewWords(){
 /* 반짝 왕관 — 한 아이가 왕관을 다 가져가지 않으면서도, 정말 잘한 건 정직하게.
    실력 왕관(책·단어·성실·연습): 앞선 아이가 받는다. 비기면 둘 다.
      한 아이가 절반보다 많이 앞서면, 차이가 작은 것부터 '둘이 함께' 왕관이 된다(빼앗아 주지 않는다).
-   개인 왕관(노력·착한·성장): 형제끼리 겨루지 않고, 기준을 넘으면 둘 다 받는다. */
+   개인 왕관(노력·착한·생각·탐험·성장): 형제끼리 겨루지 않고, 기준을 넘으면 둘 다 받는다. */
 function crownPlan(sa, sb, pa, pb){
   const head = [
     { id:'books',  ico:'📚', title:'책왕',   va:sa.books,  vb:sb.books,  unit:'권' },
@@ -1615,6 +1731,7 @@ function crownPlan(sa, sb, pa, pb){
     { id:'rate',   ico:'⏰', title:'성실왕', va:sa.rate,   vb:sb.rate,   unit:'%' }
   ];
   if (S.data.scripts.length) head.push({ id:'speech', ico:'🦜', title:'연습왕', va:sa.speech, vb:sb.speech, unit:'번' });
+  if (S.data.dlists.length || sa.dict || sb.dict) head.push({ id:'dict', ico:'✏️', title:'받아쓰기왕', va:sa.dict || 0, vb:sb.dict || 0, unit:'개' });
   const out = { a:[], b:[], both:[] };
   const live = head.filter(c => c.va > 0 || c.vb > 0);
   live.filter(c => c.va === c.vb).forEach(c => out.both.push(c));
@@ -1626,11 +1743,13 @@ function crownPlan(sa, sb, pa, pb){
     mine.slice(cap).forEach(c => out.both.push(c));                  // 넘치는 건 함께
   }
   // 개인 왕관 — 둘 다 받을 수 있다
-  const grew = (s, p) => ['books', 'words', 'speech', 'mins', 'kind'].filter(k => (s[k] || 0) > (p[k] || 0)).length;
+  const grew = (s, p) => ['books', 'words', 'speech', 'mins', 'kind', 'dict', 'think', 'world'].filter(k => (s[k] || 0) > (p[k] || 0)).length;
   const mine = (s, p, who) => {
     const list = [];
     if (s.effort >= 20) list.push({ id:'effort', ico:'💪', title:'노력왕', unit:'점', ['v' + who]:s.effort });
     if (s.kind >= 1) list.push({ id:'kind', ico:'😇', title:'착한왕', unit:'개', ['v' + who]:s.kind });
+    if (s.think >= 3) list.push({ id:'think', ico:'💭', title:'생각왕', unit:'개', ['v' + who]:s.think });
+    if (s.world >= 2) list.push({ id:'world', ico:'🌏', title:'탐험왕', unit:'개', ['v' + who]:s.world });
     if (grew(s, p) >= 2) list.push({ id:'grow', ico:'🌱', title:'성장왕', unit:'' });
     return list;
   };
@@ -1671,7 +1790,7 @@ function viewVersus(){
         <div class="muted" style="font-size:13px">${c.id === 'grow' ? '지난주보다 늘었어요!' : `${who === 'a' ? c.va : c.vb}${c.unit}`}</div></div></div>`).join('')
     : `<div class="muted" style="text-align:center;padding:10px 4px">이번 주 첫 왕관을 받아볼까요?<br>할 수 있어요! 💪</div>`;
   const growth = (s, p) => {
-    const bits = [['📚', 'books', '권'], ['🫧', 'words', '개'], ['🦜', 'speech', '번'], ['⏱', 'mins', '분'], ['😇', 'kind', '개']]
+    const bits = [['📚', 'books', '권'], ['🫧', 'words', '개'], ['🦜', 'speech', '번'], ['✏️', 'dict', '개'], ['💭', 'think', '개'], ['🌏', 'world', '개'], ['⏱', 'mins', '분'], ['😇', 'kind', '개']]
       .filter(([, k]) => (s[k] || 0) > (p[k] || 0)).map(([ico, k, u]) => `${ico} +${s[k] - (p[k] || 0)}${u}`);
     return bits.length ? `지난주보다 ▲ ${bits.join(' · ')}` : '이번 주도 한 걸음씩! 오늘 하나만 더 해볼까요? 🌱';
   };
@@ -1694,12 +1813,15 @@ function viewVersus(){
     ${rowFor('할 일 %', sa.rate, sb.rate)}
     ${rowFor('공부 시간(분)', sa.mins, sb.mins)}
     ${S.data.scripts.length ? rowFor('뚜뚜 연습', sa.speech, sb.speech) : ''}
+    ${S.data.dlists.length ? rowFor('받아쓰기', sa.dict, sb.dict) : ''}
+    ${rowFor('생각 기록', sa.think, sb.think)}
+    ${rowFor('세계 탐험', sa.world, sb.world)}
     ${rowFor('칭찬 스티커', sa.kind, sb.kind)}
   </div>
 
   <div class="card">
     <h3 class="sub">이번 주 반짝 왕관 👑</h3>
-    <p class="muted" style="margin:0 0 10px">둘 다 빛난 곳이 있어요! 💪 노력왕 · 😇 착한왕 · 🌱 성장왕은 둘 다 받을 수 있어요.</p>
+    <p class="muted" style="margin:0 0 10px">둘 다 빛난 곳이 있어요! 💪 노력왕 · 😇 착한왕 · 💭 생각왕 · 🌏 탐험왕 · 🌱 성장왕은 둘 다 받을 수 있어요.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div class="stack" style="gap:7px"><div class="row" style="gap:6px"><span class="avatar" style="background:${ca.bg}">${esc(a.avatar)}</span><b>${esc(a.name)}</b></div>${crownList(cp.a, 'a')}</div>
       <div class="stack" style="gap:7px"><div class="row" style="gap:6px"><span class="avatar" style="background:${cb.bg}">${esc(b.avatar)}</span><b>${esc(b.name)}</b></div>${crownList(cp.b, 'b')}</div>
@@ -1727,11 +1849,10 @@ function viewVersus(){
 
   <div class="card" style="background:var(--mint-soft)">
     <h3 class="sub">둘이 함께 모으기</h3>
-    <p class="muted" style="margin:0 0 9px">이번 주 같이 ${goal}권을 읽으면 특별한 날이에요!</p>
-    <div class="gauge"><span style="width:${clamp(total/goal*100,0,100)}%"></span></div>
-    <div class="row" style="justify-content:space-between;margin-top:6px">
-      <span class="muted">${total}권</span><span class="muted">${goal}권</span>
-    </div>
+    <p class="muted" style="margin:0 0 4px">이번 주 같이 ${goal}권을 읽으면 특별한 날이에요! 둘이 힘을 합치면 뭐든 할 수 있어요 🤝</p>
+    ${[['📚', '같이 읽은 책', total, goal, '권']].concat(S.data.dlists.length ? [['✏️', '받아쓰기·철자', sa.dict + sb.dict, 40, '개']] : [], [['💭', '생각 기록', sa.think + sb.think, 10, '개']])
+      .map(([ico, label, v, g, u]) => `<div style="margin-top:9px"><div class="row" style="justify-content:space-between"><span>${ico} ${label}</span><span class="muted">${v}/${g}${u}${v >= g ? ' 🎉' : ''}</span></div>
+        <div class="gauge" style="height:18px;margin-top:4px"><span style="width:${clamp(v / g * 100, 0, 100)}%"></span></div></div>`).join('')}
   </div>`;
 }
 
@@ -1890,9 +2011,11 @@ function openModal(html){
     const y = open.scrollTop;
     open.innerHTML = inner;
     open.scrollTop = y;
+    hydratePhotos(open);
     return;
   }
   root.innerHTML = `<div class="modal" id="modal"><div class="sheet" style="position:relative">${inner}</div></div>`;
+  hydratePhotos(root);
 }
 function closeModal(){
   stopScanner();
@@ -2208,6 +2331,7 @@ function parentSheet(){
         ${S.settings.sampleLoaded ? '🧹 샘플 데이터 지우기' : '🎁 샘플 데이터 넣어보기'}</button>
       <p class="muted" style="margin:-4px 0 0;font-size:13px">
         예시 책·낱말·할 일을 채워 화면이 어떻게 보이는지 볼 수 있어요. 언제든 한 번에 지울 수 있습니다.</p>
+      <div class="muted" id="pbStatus" style="font-size:13px">📷 여행·그림일기 사진: ${PB.bucket === true ? '🔒 가족 사진 저장소에 저장돼요 (우리 가족만 볼 수 있어요)' : (PB.bucket === false ? '📱 지금은 사진을 찍은 기기에만 저장돼요' : '확인하는 중…')}</div>
       <button class="btn ghost wide" id="exportData">💾 전체 기록 내보내기</button>
       <div id="exportBox"></div>
     </div>`;
@@ -2217,6 +2341,12 @@ function parentSheet(){
   }
   if (t === 'speech'){
     body = speechTab();
+  }
+  if (t === 'dict'){
+    body = dictTab();
+  }
+  if (t === 'think'){
+    body = thinkTab();
   }
   if (t === 'unlock'){
     const pend = pendingRequests();
@@ -2235,9 +2365,10 @@ function parentSheet(){
     </div>`;
   }
 
+  if (t === 'settings' && PB.bucket == null) photoBucketOk().then(() => { const el = document.getElementById('pbStatus'); if (el) el.textContent = `📷 여행·그림일기 사진: ${PB.bucket ? '🔒 가족 사진 저장소에 저장돼요 (우리 가족만 볼 수 있어요)' : '📱 지금은 사진을 찍은 기기에만 저장돼요'}`; });
   return `<h3>부모님 화면</h3>
     <div class="chips" style="margin:8px 0 14px">
-      ${tabBtn('todos','할 일')}${tabBtn('speech','🦜 스피치')}${tabBtn('kids','아이')}${tabBtn('notify','알림')}${tabBtn('unlock','놀이 승인' +
+      ${tabBtn('todos','할 일')}${tabBtn('speech','🦜 스피치')}${tabBtn('dict','✏️ 받아쓰기')}${tabBtn('think','💭 생각')}${tabBtn('kids','아이')}${tabBtn('notify','알림')}${tabBtn('unlock','놀이 승인' +
       (pendingRequests().length ? `<span class="dot-badge">${pendingRequests().length}</span>` : ''))}${tabBtn('settings','설정')}
     </div>
     ${body}`;
@@ -2480,6 +2611,21 @@ function pickVoice(lang){
   for (const v of all){ const sc = voiceScore(v, lang); if (sc > bs){ bs = sc; best = v; } }
   return best;
 }
+/* 다른 나라 말 목소리 — 같은 지역(fr-FR)을 먼저, 없으면 같은 말(fr)로. 없으면 기기가 알아서 고른다 */
+function pickVoiceFor(L){
+  const want = String(L).toLowerCase().replace('_', '-'), base = want.split('-')[0];
+  let best = null, bs = -1;
+  for (const v of voiceList()){
+    if (NOVELTY_VOICE.test(v.name)) continue;
+    const vl = String(v.lang || '').toLowerCase().replace('_', '-');
+    let sc = vl === want ? 50 : (vl.split('-')[0] === base ? 30 : -1);
+    if (sc < 0) continue;
+    if (/premium|enhanced|natural|neural/i.test(v.name)) sc += 10;
+    if (v.localService) sc += 3;
+    if (sc > bs){ bs = sc; best = v; }
+  }
+  return best;
+}
 try { if (window.speechSynthesis){ speechSynthesis.getVoices(); speechSynthesis.addEventListener('voiceschanged', () => {}); } } catch(e){}
 
 /* 말하기 — 끝나면 풀리는 Promise. onword(글자 위치)로 읽는 단어에 불을 켤 수 있다.
@@ -2490,8 +2636,9 @@ function say(text, { lang='en', rate, onword, onstart } = {}){
     try {
       if (!window.speechSynthesis || !text){ done(false); return; }
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = lang === 'ko' ? 'ko-KR' : 'en-US';
-      const v = pickVoice(lang === 'ko' ? 'ko' : 'en'); if (v) u.voice = v;
+      const other = lang !== 'ko' && lang !== 'en' && /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(lang || '');   // 'fr-FR' 같은 다른 나라 말
+      u.lang = other ? lang : (lang === 'ko' ? 'ko-KR' : 'en-US');
+      const v = other ? pickVoiceFor(lang) : pickVoice(lang === 'ko' ? 'ko' : 'en'); if (v) u.voice = v;
       u.rate = rate || (lang === 'ko' ? 1.05 : 0.85);
       let fin = false, tm = 0;
       const end = ok => { if (fin) return; fin = true; clearTimeout(tm); if (SAY.u === u) SAY.u = null; done(ok); };
@@ -2581,10 +2728,11 @@ function nvPlay(text, { style = 'en', rate = 1, onstart, onprogress } = {}){
 function nvStop(){ const e = NV.curEnd; NV.cur = null; NV.curEnd = null; if (NV.el){ try { NV.el.pause(); } catch(x){} } if (e) e(true); }
 /* 뚜뚜 목소리 — 자연스러운 목소리를 먼저, 안 되면 기기 목소리.
    rate: 0.6 천천히 · 0.8 보통 · 1 대회 속도 (자연스러운 목소리는 말투로, 기기 목소리는 빠르기로) */
-async function voice(text, { lang = 'en', rate, onword, onprogress, onstart } = {}){
+async function voice(text, { lang = 'en', rate, onword, onprogress, onstart, style, nvRate } = {}){
   if (nvOn()){
-    const style = lang === 'ko' ? 'ko' : (rate && rate <= 0.65 ? 'slow' : (rate >= 1 ? 'speech' : 'en'));
-    if (await nvPlay(text, { style, onstart, onprogress })) return true;
+    // 한국어를 천천히(받아쓰기) 읽을 때는 'dict', 그 나라 인사말은 부르는 쪽이 style:'hello'
+    const st = style || (lang === 'ko' ? (rate && rate <= 0.75 ? 'dict' : 'ko') : (rate && rate <= 0.65 ? 'slow' : (rate >= 1 ? 'speech' : 'en')));
+    if (await nvPlay(text, { style:st, rate:nvRate || 1, onstart, onprogress })) return true;
   }
   return say(text, { lang, rate, onword, onstart });
 }
@@ -3793,13 +3941,16 @@ function slingLoop(){
 /* ---------- ✋ 손 제스처 (필요할 때만 불러온다) ---------- */
 const MP_HANDS = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
 const MP_CAMERA = 'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1675466862/camera_utils.js';
+const SCRIPT_P = {};
 function loadScriptOnce(src){
-  return new Promise((ok, bad) => {
-    if (document.querySelector(`script[src="${src}"]`)) return ok();
+  if (SCRIPT_P[src]) return SCRIPT_P[src];          // 불러오는 중에 또 부르면 같은 약속을 돌려준다
+  SCRIPT_P[src] = new Promise((ok, bad) => {
     const el = document.createElement('script'); el.src = src; el.crossOrigin = 'anonymous';
-    el.onload = () => ok(); el.onerror = () => bad(new Error('load ' + src));
+    el.onload = () => ok();
+    el.onerror = () => { delete SCRIPT_P[src]; el.remove(); bad(new Error('load ' + src)); };
     document.head.appendChild(el);
   });
+  return SCRIPT_P[src];
 }
 async function slingStartHand(){
   const s = sling; if (!s) return;
@@ -5754,6 +5905,2107 @@ function arShelfCard(kidObj, books){
 }
 
 /* ============================================================
+   ✏️ 받아쓰기 — 학교 급수표로 연습한다
+   뚜뚜가 천천히 두 번 읽어 주면 📝 공책에 쓰거나 ⌨️ 패드에 쓴다.
+   패드에 쓰면 글자·받침·띄어쓰기·문장 부호를 하나씩 봐 주고, 틀린 문장은 🔁 오답 노트로 모인다.
+   틀려도 괜찮아 — 다시 쓰면 오래 기억난다. 척척 빠른 아이는 "한 번만 더 읽어 볼까?"로 확인하는 습관을,
+   꼼꼼한 아이는 "한 번만 듣고 쓰기" 도전을 받는다.
+   ============================================================ */
+const ACTS = {};                  // data-act="이름" 단추가 부르는 함수 — 새 기능(받아쓰기·생각·세계)은 여기에 모은다
+const DT_SAMPLE = ['가방을 메고 학교에 가요.', '친구와 같이 놀이터에서 놀았어요.', '꽃밭에 나비가 날아와요.',
+  '맛있는 떡볶이를 먹었어요.', '손을 깨끗이 씻어요.', '하늘이 참 맑아요.', '책을 읽으면 기분이 좋아요.', '우리 집 강아지는 귀여워요.'];
+const DT_OK = ['딩동댕! 완벽해!', '우와, 받침까지 딱 맞았어!', '띄어쓰기도 완벽해!', '최고야! 받아쓰기 박사!', '또박또박 멋지게 썼어!'];
+const DT_TRY = ['괜찮아! 여기만 고치면 돼.', '거의 다 맞았어! 한 군데만 볼까?', '틀려도 괜찮아. 이렇게 배우는 거야!', '좋은 도전이었어! 같이 볼까?'];
+const DT_PUNCT = { '.':'마침표(.)', ',':'쉼표(,)', '?':'물음표(?)', '!':'느낌표(!)', '~':'물결표(~)' };
+const dtPick = a => a[Math.floor(Math.random() * a.length)];
+
+function dlistsFor(kidId){
+  return S.data.dlists.filter(l => !l.archived && Array.isArray(l.lines) && l.lines.length &&
+      (!Array.isArray(l.kidIds) || !l.kidIds.length || l.kidIds.includes(kidId)))
+    .sort((a, b) => (a.no || 0) - (b.no || 0) || String(a.createdAt || '').localeCompare(String(b.createdAt || '')));
+}
+function dprogOf(kidId, listId){ return S.data.dprog.find(p => p.kidId === kidId && p.listId === listId); }
+function dWrongIdx(kidId, l){
+  const p = dprogOf(kidId, l.id), it = (p && p.items) || {};
+  return l.lines.map((_, i) => i).filter(i => it[i] && it[i].last === false);
+}
+function dDaysTo(date){ return Math.round((new Date(date + 'T12:00:00') - new Date(todayKey() + 'T12:00:00')) / 86400000); }
+function dDateLabel(date){ const x = new Date(date + 'T12:00:00'); return `${x.getMonth() + 1}월 ${x.getDate()}일 (${DAYNAMES[x.getDay()]})`; }
+function dNextTest(kidId){
+  const t = todayKey();
+  return dlistsFor(kidId).filter(l => l.testDate && l.testDate >= t).sort((a, b) => a.testDate.localeCompare(b.testDate))[0] || null;
+}
+function dCurList(kidId){
+  const ls = dlistsFor(kidId); if (!ls.length) return null;
+  return ls.find(l => l.id === S.view.dtList) || dNextTest(kidId)
+    || ls.find(l => { const p = dprogOf(kidId, l.id); return !p || (p.best || 0) < 100; }) || ls[ls.length - 1];
+}
+function dStars(best){ return best >= 100 ? 3 : (best >= 70 ? 2 : (best > 0 ? 1 : 0)); }
+/* 이번 주에 쓴 받아쓰기 문장 수 (배움기록·약속에 쓴다) */
+function dWeekCount(kidId, back){
+  const s0 = weekStart(); s0.setDate(s0.getDate() - 7 * (back || 0));
+  const a = todayKey(s0), e = new Date(s0); e.setDate(e.getDate() + 7); const b = todayKey(e);
+  let n = 0, runs = 0;
+  for (const p of S.data.dprog.filter(x => x.kidId === kidId))
+    for (const [dk, v] of Object.entries(p.days || {})) if (dk >= a && dk < b){ n += v.n || 0; runs += v.runs || 0; }
+  for (const r of S.data.spell.filter(x => x.kidId === kidId))
+    for (const [dk, v] of Object.entries(r.days || {})) if (dk >= a && dk < b) n += v.n || 0;
+  return { n, runs };
+}
+
+/* ---------- 채점 — 글자마다 맞춰 보고, 받침·모음·띄어쓰기·문장 부호로 나눠 알려 준다 ---------- */
+function dtNorm(s){ return String(s || '').replace(/[\u200b\u00a0]/g, ' ').replace(/\s+/g, ' ').trim(); }
+function dtCost(a, b){
+  if (a === b) return 0;
+  if (a === ' ' || b === ' ') return 1;
+  const x = kjSplit(a), y = kjSplit(b);
+  if (x && y){ const d = (x[0] !== y[0] ? 1 : 0) + (x[1] !== y[1] ? 1 : 0) + (x[2] !== y[2] ? 1 : 0); return d === 1 ? 0.5 : (d === 2 ? 0.8 : 1); }
+  return 1;
+}
+function dtAlign(E, T){
+  const n = E.length, m = T.length, D = [];
+  for (let i = 0; i <= n; i++){ D.push(new Array(m + 1).fill(0)); D[i][0] = i; }
+  for (let j = 0; j <= m; j++) D[0][j] = j;
+  for (let i = 1; i <= n; i++) for (let j = 1; j <= m; j++)
+    D[i][j] = Math.min(D[i - 1][j] + 1, D[i][j - 1] + 1, D[i - 1][j - 1] + dtCost(E[i - 1], T[j - 1]));
+  const ops = []; let i = n, j = m;
+  const near = (a, b) => Math.abs(a - b) < 1e-6;
+  while (i > 0 || j > 0){
+    if (i > 0 && j > 0 && near(D[i][j], D[i - 1][j - 1] + dtCost(E[i - 1], T[j - 1]))){ ops.push([E[i - 1] === T[j - 1] ? 'eq' : 'sub', i - 1, j - 1]); i--; j--; }
+    else if (i > 0 && near(D[i][j], D[i - 1][j] + 1)){ ops.push(['del', i - 1, -1]); i--; }
+    else { ops.push(['ins', -1, j - 1]); j--; }
+  }
+  return ops.reverse();
+}
+function dtWhy(e, t){
+  const x = kjSplit(e), y = kjSplit(t);
+  if (!x || !y) return 'char';
+  if (x[0] === y[0] && x[1] === y[1]) return 'jong';
+  if (x[0] === y[0] && x[2] === y[2]) return 'vowel';
+  if (x[1] === y[1] && x[2] === y[2]) return 'cho';
+  return 'char';
+}
+function dtWordAt(E, i){               // i번째 글자가 들어 있는 낱말
+  let a = i, b = i;
+  while (a > 0 && E[a - 1] !== ' ') a--;
+  while (b < E.length - 1 && E[b + 1] !== ' ') b++;
+  return E.slice(a, b + 1).join('');
+}
+function dtGrade(expected, typed){
+  const E = [...dtNorm(expected)], T = [...dtNorm(typed)];
+  const ops = dtAlign(E, T);
+  const em = E.map(c => ({ c, st:'ok' })), tm = T.map(c => ({ c, st:'ok' }));
+  const errs = []; let lastE = -1;
+  for (const [op, i, j] of ops){
+    if (op === 'eq'){ lastE = i; continue; }
+    if (op === 'sub'){
+      lastE = i;
+      const kind = (DT_PUNCT[E[i]] || DT_PUNCT[T[j]]) ? 'punct' : dtWhy(E[i], T[j]);
+      em[i].st = 'bad'; tm[j].st = 'bad';
+      errs.push({ kind, i, j, e:E[i], t:T[j] });
+    } else if (op === 'del'){
+      lastE = i;
+      em[i].st = E[i] === ' ' ? 'sp' : 'miss';
+      errs.push({ kind:E[i] === ' ' ? 'space' : (DT_PUNCT[E[i]] ? 'punct' : 'miss'), i, e:E[i] });
+    } else {
+      tm[j].st = 'bad';
+      if (T[j] === ' ' && lastE >= 0) em[lastE].join = true;          // 여기는 붙여 써요
+      errs.push({ kind:T[j] === ' ' ? 'join' : 'extra', j, t:T[j], after:lastE });
+    }
+  }
+  // 낱말끼리 견주어 '소리 나는 대로' 쓴 건지 본다 (낱말 수가 같을 때)
+  const tips = [], seen = new Set(), wordsDone = new Set();
+  const ew = dtNorm(expected).split(' '), tw = dtNorm(typed).split(' ');
+  if (ew.length === tw.length) ew.forEach((w, n) => {
+    if (w === tw[n]) return;
+    const core = s => s.replace(/[.,!?~]/g, '');
+    const v = koVariants(core(w)).find(o => o.t === core(tw[n]));
+    if (!v) return;
+    wordsDone.add(n);
+    if (v.why === 'sound') tips.push(`‘${core(tw[n])}’처럼 소리 나도 ‘${core(w)}’라고 써요.`);
+    else if (v.why === 'batchim') tips.push(`받침을 한 번 더 봐요: ‘${core(w)}’`);
+    else if (v.why === 'vowel') tips.push(`‘${core(w)}’의 모음을 봐요. ㅐ와 ㅔ는 소리가 비슷해요!`);
+    else tips.push(`소리는 세게 나도 ‘${core(w)}’라고 써요.`);
+  });
+  const wordIdx = i => { let n = 0; for (let k = 0; k < i; k++) if (E[k] === ' ') n++; return n; };
+  for (const x of errs){
+    if (x.i != null && wordsDone.has(wordIdx(x.i)) && x.kind !== 'space' && x.kind !== 'punct') continue;
+    let tip = '';
+    if (x.kind === 'jong') tip = `받침이 헷갈렸어요: ‘${x.t}’ → ‘${x.e}’`;
+    else if (x.kind === 'vowel') tip = `모음이 헷갈렸어요: ‘${x.t}’ → ‘${x.e}’`;
+    else if (x.kind === 'cho') tip = `첫소리를 봐요: ‘${x.t}’ → ‘${x.e}’`;
+    else if (x.kind === 'char') tip = `‘${x.t}’ 자리에는 ‘${x.e}’를 써요`;
+    else if (x.kind === 'miss') tip = `빠진 글자가 있어요: ‘${x.e}’`;
+    else if (x.kind === 'extra') tip = `‘${x.t}’는 없어도 돼요`;
+    else if (x.kind === 'space'){
+      let a = x.i - 1; while (a > 0 && E[a - 1] !== ' ') a--;
+      let b = x.i + 1; while (b < E.length - 1 && E[b + 1] !== ' ') b++;
+      tip = `‘${E.slice(a, x.i).join('')} ${E.slice(x.i + 1, b + 1).join('')}’처럼 띄어 써요`;
+    }
+    else if (x.kind === 'join') tip = x.after >= 0 ? `‘${dtWordAt(E, x.after)}’는 붙여 써요` : '앞에 빈칸은 없어도 돼요';
+    else if (x.kind === 'punct') tip = DT_PUNCT[x.e] ? `${DT_PUNCT[x.e]}도 꼭 써요` : `‘${x.t}’는 없어도 돼요`;
+    if (tip && !seen.has(tip)){ seen.add(tip); tips.push(tip); }
+  }
+  const ok = errs.length === 0;
+  return { ok, stars:ok ? 3 : (errs.length <= 2 ? 2 : 1), em, tm, errs, tips:tips.slice(0, 3) };
+}
+function dtMarks(list, mine){
+  return list.map(x => {
+    const c = x.c === ' ' ? ' ' : esc(x.c);
+    if (x.st === 'bad') return `<span class="dt-bad">${c}</span>`;
+    if (x.st === 'miss') return `<span class="dt-miss">${c}</span>`;
+    if (x.st === 'sp') return `<span class="dt-sp" aria-label="띄어 써요"> </span>`;
+    return `<span>${c}</span>${!mine && x.join ? '<span class="dt-join" aria-label="붙여 써요"></span>' : ''}`;
+  }).join('');
+}
+
+/* ---------- 탭 화면 ---------- */
+function viewWrite(){
+  return `${dtCard()}${spCard()}`;
+}
+function dtCard(){
+  const k = curKid(), ls = dlistsFor(S.kidId);
+  if (!ls.length){
+    return `<div class="card empty"><div class="face">✏️</div>
+      <p>학교 받아쓰기 급수표를 부모님이 넣어 주시면<br>여기서 뚜뚜랑 연습할 수 있어요!</p>
+      <button class="btn ghost" data-act="dtSample">🎁 예시 문장으로 먼저 해볼래요</button></div>`;
+  }
+  const cur = dCurList(S.kidId), p = dprogOf(S.kidId, cur.id), wrong = dWrongIdx(S.kidId, cur), test = dNextTest(S.kidId);
+  const st = kidStyle(k), left = test ? dDaysTo(test.testDate) : null;
+  return `<div class="card" style="background:linear-gradient(170deg,#FFFFFF,#FFF4E8)">
+    <div class="row" style="flex-wrap:wrap"><h3 class="sub grow" style="margin:0">✏️ 받아쓰기</h3>
+      ${test ? `<span class="tt-stage" style="background:var(--butter);color:#6a4a10">📅 ${esc(test.title)} 시험 ${left === 0 ? '오늘! 할 수 있어요 💪' : `${left}일 남았어요`}</span>` : ''}</div>
+    <div class="chips" style="margin:10px 0">${ls.map(l => { const pp = dprogOf(S.kidId, l.id), s = dStars((pp && pp.best) || 0);
+      return `<button class="chip" data-act="dtPick" data-arg="${esc(l.id)}" aria-pressed="${l.id === cur.id}">${esc(l.title)}${s ? ' ' + '⭐'.repeat(s) : ''}</button>`; }).join('')}</div>
+    <div class="muted">${esc(cur.title)} · ${cur.lines.length}문장 · ${p && p.runs ? `최고 ${p.best || 0}점 · ${p.runs}번 연습했어요` : '첫 도전! 틀려도 괜찮아요'}</div>
+    ${cur.testDate ? `<div class="muted">시험 날: ${esc(dDateLabel(cur.testDate))}</div>` : ''}
+    ${st.pace === 'quick' ? '<div class="muted" style="margin-top:4px">🔍 쓰고 나서 한 번 더 읽어 보면 받아쓰기 박사!</div>' : ''}
+    <div class="tt-foot" style="margin-top:12px">
+      <button class="btn" data-act="dtGo" data-arg="type">⌨️ 패드에 쓰기</button>
+      <button class="btn mint" data-act="dtGo" data-arg="note">📝 공책에 쓰기</button>
+    </div>
+    ${st.pace === 'careful' ? '<button class="btn ghost wide sm" data-act="dtGo" data-arg="once" style="margin-top:9px">🎯 도전! 한 번만 듣고 쓰기</button>' : ''}
+    ${wrong.length ? `<button class="btn ghost wide" data-act="dtGo" data-arg="wrong" style="margin-top:9px">🔁 오답 노트 ${wrong.length}문장 — 다시 쓰면 쑥쑥!</button>` : ''}
+    <button class="btn ghost wide sm" data-act="dtPeek" style="margin-top:9px">${S.view.dtPeek ? '🙈 문장 가리기' : '📖 먼저 읽어 보기'}</button>
+    ${S.view.dtPeek ? `<ol class="dt-list">${cur.lines.map((s, i) => `<li><button class="chip" data-act="dtSay" data-arg="${esc(cur.id)}|${i}" aria-label="${i + 1}번 듣기">🔊</button><span>${esc(s)}</span></li>`).join('')}</ol>` : ''}
+  </div>`;
+}
+
+/* ---------- 받아쓰기 층 (화면 위에 따로 — 5초 동기화에 쓰던 글자가 지워지지 않게) ---------- */
+let DT = null;
+function dtOpen(kind){
+  if (DT || TT) return;
+  nvUnlock();
+  const k = curKid(), l = dCurList(S.kidId); if (!k || !l) return;
+  const wrongOnly = kind === 'wrong';
+  const q = wrongOnly ? dWrongIdx(k.id, l) : l.lines.map((_, i) => i);
+  if (!q.length) return;
+  const saved = dprogOf(k.id, l.id);
+  DT = { kidId:k.id, listId:l.id, title:l.title, lines:l.lines.slice(), mode:kind === 'note' ? 'note' : 'type', once:kind === 'once', wrongOnly,
+    q, qi:0, step:'intro', res:[], marks:{}, fb:null, retried:false, confirm:false, mood:'happy', say:'', typed:'',
+    prog:JSON.parse(JSON.stringify(saved || { kidId:k.id, listId:l.id, best:0, runs:0, items:{}, days:{} })), t0:Date.now() };
+  DT.say = wrongOnly ? `오답 노트 시간! ${callName(k.name)}, 다시 쓰면 오래오래 기억나.`
+    : DT.mode === 'note' ? `공책이랑 연필 준비됐지? 뚜뚜가 한 문장씩 두 번 읽어 줄게!`
+    : DT.once ? `도전! 이번엔 딱 한 번만 읽어 줄게. ${callName(k.name)}, 집중해 볼까?`
+    : `받아쓰기 시간이야! 뚜뚜가 천천히 두 번 읽어 줄게. 틀려도 괜찮아!`;
+  dtLayer(); dtTalk(DT.say); wakeOn();
+}
+function dtLayer(){
+  if (!DT) return;
+  let el = document.getElementById('dtLayer');
+  if (!el){
+    el = document.createElement('div');
+    el.className = 'ttl'; el.id = 'dtLayer';
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', '받아쓰기');
+    document.body.appendChild(el);
+  }
+  const inp = document.getElementById('dtIn');
+  if (inp) DT.typed = inp.value;                      // 다시 그려도 쓰던 글자는 그대로
+  el.innerHTML = dtView();
+  const n = document.getElementById('dtIn');
+  if (n){ n.value = DT.typed || ''; }
+}
+function dtClose(){
+  const was = DT; DT = null;
+  stopAudio(); wakeOff();
+  const el = document.getElementById('dtLayer'); if (el) el.remove();
+  render();
+  if (was && was.cheer) setTimeout(() => cheerPopup({ emoji:'✏️', title:'받아쓰기 끝!', sub:'끝까지 해낸 거 정말 멋져요!' }), 300);
+}
+function dtMouth(on){ const s = document.querySelector('#dtLayer .tt'); if (s) s.classList.toggle('talk', !!on); }
+function dtMood(m){ if (DT) DT.mood = m; const s = document.querySelector('#dtLayer .tt'); if (s) s.setAttribute('data-mood', m); }
+function dtTalk(text){
+  if (!DT) return Promise.resolve();
+  DT.say = text;
+  const b = document.getElementById('dtBubble'); if (b) b.textContent = text;
+  const me = DT;
+  return voice(text, { lang:'ko', onstart:() => { if (DT === me) dtMouth(true); } }).then(() => { if (DT === me) dtMouth(false); });
+}
+function dtEar(on){ const e = document.getElementById('dtEar'); if (e) e.classList.toggle('on', !!on); }
+/* 문장을 읽어 준다 — 두 번째는 조금 더 천천히 */
+async function dtRead(times){
+  const d = DT; if (!d) return;
+  const text = d.lines[d.q[d.qi]]; if (!text) return;
+  hush();
+  const n = times || (d.once ? 1 : 2);
+  d.reading = true; dtEar(true);
+  for (let r = 0; r < n; r++){
+    if (DT !== d) return;
+    await voice(text, { lang:'ko', rate:r ? 0.62 : 0.7, nvRate:r ? 0.9 : 1, onstart:() => { if (DT === d) dtMouth(true); } });
+    if (DT !== d) return;
+    dtMouth(false);
+    if (r < n - 1) await new Promise(ok => setTimeout(ok, 1100));
+  }
+  if (DT === d){ d.reading = false; dtEar(false); }
+}
+function dtView(){
+  const d = DT, last = d.qi >= d.q.length - 1;
+  const dots = d.q.map((_, i) => `<i class="${i < d.qi || d.step === 'done' || d.step === 'check' ? 'on' : (i === d.qi && d.step !== 'intro' ? 'now' : '')}"></i>`).join('');
+  const top = `<div class="ttl-top"><button class="ttl-x" data-act="dtExit" aria-label="그만하기">✕</button>
+    <div class="ttl-dots" aria-label="받아쓰기 순서">${dots}</div><span class="ttl-chip">✏️ ${esc(d.title)}</span></div>`;
+  const teach = `<div class="tt-teach">${ttSvg(d.mood)}<div class="tt-bubble" id="dtBubble" aria-live="polite">${esc(d.say || '')}</div></div>`;
+  let card = '';
+  if (d.askQuit){
+    card = `<div class="tt-card stack" style="text-align:center;border:3px solid var(--butter)">
+      <div style="font-size:40px">🤔</div><h3 class="sub" style="margin:0">받아쓰기를 그만할까요?</h3>
+      <p class="muted" style="margin:0">${d.mode === 'note' ? '공책 채점을 끝내야 이번 받아쓰기가 저장돼요. 괜찮아요, 언제든 다시 해도 돼요!' : '지금까지 쓴 건 다 저장했어요. 언제든 다시 와도 돼요!'}</p>
+      <div class="tt-foot"><button class="btn" data-act="dtQuitNo">계속할래</button><button class="btn ghost" data-act="dtQuitYes">그만할래</button></div></div>`;
+  } else if (d.step === 'intro'){
+    card = `<div class="tt-card stack" style="text-align:center">
+      <div style="font-size:44px">${d.mode === 'note' ? '📝' : '⌨️'}</div>
+      <h3 class="sub" style="margin:0">${esc(d.title)} · ${d.q.length}문장</h3>
+      <p class="muted" style="margin:0">${d.mode === 'note' ? '공책에 번호를 쓰고, 들은 대로 써 봐요. 다 쓰고 나서 같이 채점해요!'
+        : '들은 문장을 아래 칸에 써요. 받침·띄어쓰기·마침표까지 뚜뚜가 봐 줄게요.'}</p>
+      <button class="btn wide" data-act="dtBegin">시작하기 ▶</button></div>`;
+  } else if (d.step === 'item'){
+    const head = `<div class="row"><span class="tt-num">${d.qi + 1}번 문장</span><span class="grow"></span>
+      <span class="tt-stage">${d.once ? '🎯 한 번만 듣기' : '👂 두 번 읽어 줘요'}</span></div>
+      <div class="dt-ear" id="dtEar" aria-hidden="true">🔊</div>`;
+    const again = `<button class="btn ghost sm" data-act="dtAgain">${d.once ? '🔊 못 들었어요' : '🔊 한 번 더 듣기'}</button>`;
+    card = d.mode === 'note'
+      ? `<div class="tt-card stack" style="text-align:center">${head}
+          <p style="margin:0;font-size:18px">공책에 <b>${d.qi + 1}.</b> 을 쓰고 들은 대로 써 봐요</p>
+          <div class="tt-foot">${again}<button class="btn" data-act="dtNoteNext">${last ? '다 썼어요! 채점하기 ▶' : '다 썼어요 ▶'}</button></div></div>`
+      : `<div class="tt-card stack" style="text-align:center">${head}
+          <input class="field dt-in" id="dtIn" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+            enterkeyhint="done" placeholder="들은 문장을 써 봐요" aria-label="들은 문장 쓰기">
+          ${d.confirm ? `<div class="tt-tip"><span style="font-size:24px">🔍</span><div><b>한 번만 더 읽어 볼까?</b>받침이랑 띄어쓰기, 마침표까지 보면 완벽해요!</div></div>` : ''}
+          <div class="tt-foot">${again}<button class="btn" data-act="dtCheck">${d.confirm ? '✔ 확인했어요!' : '다 썼어요 ✔'}</button></div></div>`;
+  } else if (d.step === 'fb'){
+    const f = d.fb;
+    card = `<div class="tt-card stack" style="text-align:center">
+      <div class="tt-stars" aria-label="별 ${f.stars}개">${[1, 2, 3].map(i => `<span class="${i <= f.stars ? '' : 'off'}">⭐</span>`).join('')}</div>
+      <div style="font-family:var(--display);font-size:24px;line-height:1.25">${esc(f.praise)}</div>
+      <div class="dt-cmp">
+        <div class="muted">정답</div><div class="dt-line">${dtMarks(f.em)}</div>
+        ${f.ok ? '' : `<div class="muted">내가 쓴 것</div><div class="dt-line mine">${dtMarks(f.tm, true) || '<span class="muted">(비어 있어요)</span>'}</div>`}
+      </div>
+      ${f.tips.length ? `<div class="tt-tip"><span style="font-size:24px">💡</span><div><b>이렇게 쓰면 더 좋아요</b>${f.tips.map(esc).join('<br>')}</div></div>` : ''}
+      <div class="tt-foot">
+        ${!f.ok && !d.retried ? '<button class="btn ghost" data-act="dtRetry">✏️ 다시 써 보기</button>' : ''}
+        <button class="btn" data-act="dtNext">${last ? '다 했어요 🎉' : '다음 ▶'}</button>
+      </div></div>`;
+  } else if (d.step === 'check'){
+    const all = d.q.every(i => d.marks[i] != null);
+    card = `<div class="tt-card stack">
+      <h3 class="sub" style="margin:0;text-align:center">공책이랑 비교해 봐요 🔍</h3>
+      <p class="muted" style="margin:0;text-align:center">맞게 쓴 문장은 ⭕, 고칠 곳이 있으면 ❌를 눌러요.<br>받침·띄어쓰기·마침표까지 보면 최고!</p>
+      ${d.q.map(i => `<div class="dt-row"><span class="tt-num">${d.q.indexOf(i) + 1}</span><span class="grow dt-text">${esc(d.lines[i])}</span>
+        <button class="chip" data-act="dtMark" data-arg="${i}|1" aria-pressed="${d.marks[i] === 1}" aria-label="맞았어요">⭕</button>
+        <button class="chip" data-act="dtMark" data-arg="${i}|0" aria-pressed="${d.marks[i] === 0}" aria-label="고칠 곳이 있어요">❌</button></div>`).join('')}
+      <button class="btn wide" data-act="dtNoteDone" ${all ? '' : 'disabled'}>채점 끝!</button></div>`;
+  } else if (d.step === 'done'){
+    const ok = d.res.filter(r => r.ok).length, n = d.res.length, pct = n ? Math.round(ok / n * 100) : 0;
+    const k = kid(d.kidId), st = kidStyle(k), wrong = d.res.filter(r => !r.ok).length;
+    const beat = !d.wrongOnly && d.prevBest != null && pct > d.prevBest;
+    card = `<div class="tt-card stack" style="text-align:center">
+      <div style="font-size:54px">${pct === 100 ? '🏆' : '🌟'}</div>
+      <h3 class="sub" style="margin:0">받아쓰기 끝! 끝까지 해낸 거 멋져요</h3>
+      <div class="big" style="color:var(--berry-deep)">${ok}<span style="font-size:24px">/${n}</span></div>
+      ${d.wrongOnly ? '' : `<p style="margin:0;font-size:18px">${pct}점${beat ? (st.compete === 'high' ? ' · 기록 깼다! 🔥' : ' · 지난번보다 한 걸음 더! 🌱') : ''}</p>`}
+      <p class="muted" style="margin:0">${wrong ? '고칠 문장은 🔁 오답 노트에 담았어요. 내일 다시 쓰면 쑥쑥 늘어요!' : (pct === 100 ? '모두 맞았어요! 받아쓰기 박사 🎓' : '')}</p>
+      <div class="tt-foot"><button class="btn ghost" data-act="dtAgainAll">한 번 더</button><button class="btn" data-act="dtExit">끝내기</button></div></div>`;
+  }
+  return `${top}<div class="ttl-body">${teach}${card}</div>`;
+}
+/* 문장 하나를 마칠 때마다 진도에 쓴다 (한 번에 한 줄을 제자리에서 고친다) */
+function dtRecord(i, ok){
+  const d = DT, p = d.prog, now = Date.now(), dk = todayKey();
+  p.items = p.items || {}; p.days = p.days || {};
+  const it = p.items[i] || { ok:0, no:0 };
+  it[ok ? 'ok' : 'no']++; it.last = ok; it.at = now; p.items[i] = it;
+  const day = p.days[dk] || { n:0, ok:0 }; day.n++; if (ok) day.ok++; p.days[dk] = day;
+  d.res.push({ i, ok });
+  if (ok && d.mode === 'type') awardStars(1);
+  dtSave(p);
+}
+const DT_PID = {};
+async function dtSave(p){
+  const key = p.kidId + '|' + p.listId;
+  const { id:_x, ...data } = p;
+  const keys = Object.keys(data.days || {}).sort();
+  if (keys.length > 90) keys.slice(0, keys.length - 90).forEach(k => { delete data.days[k]; });   // 석 달 치만
+  const id = DT_PID[key] || (dprogOf(p.kidId, p.listId) || {}).id;
+  if (id){ DT_PID[key] = id; await Store.update('dprog', id, data); }
+  else { const nid = uid(); DT_PID[key] = nid; await Store.add('dprog', data, nid); }
+}
+function dtFinish(){
+  const d = DT, p = d.prog, n = d.res.length, ok = d.res.filter(r => r.ok).length;
+  d.prevBest = p.runs ? (p.best || 0) : null;
+  if (!d.wrongOnly && n === d.lines.length){ p.best = Math.max(p.best || 0, Math.round(ok / n * 100)); }
+  p.runs = (p.runs || 0) + 1;
+  p.last = { at:Date.now(), mode:d.mode, ok, n, wrongOnly:d.wrongOnly };
+  const dk = todayKey(), day = p.days[dk] || { n:0, ok:0 }; day.runs = (day.runs || 0) + 1; p.days[dk] = day;
+  dtSave(p);
+  awardStars(d.mode === 'note' ? 2 : 1);
+  d.step = 'done'; d.cheer = true; dtMood('cheer');
+  d.say = ok === n ? `우와! ${n}문장 모두 맞았어! 받아쓰기 박사야!` : `${n}문장 중에 ${ok}문장 맞았어! 끝까지 한 게 제일 멋져.`;
+  dtLayer(); dtTalk(d.say); confetti(); ttChime();
+}
+function dtNextItem(){
+  const d = DT;
+  d.fb = null; d.retried = false; d.confirm = false; d.typed = '';
+  d.qi++;
+  if (d.qi >= d.q.length){ if (d.mode === 'note'){ d.step = 'check'; d.say = '다 썼구나! 이제 공책이랑 비교해 볼까?'; dtMood('happy'); dtLayer(); dtTalk(d.say); } else dtFinish(); return; }
+  d.step = 'item'; d.say = `${d.qi + 1}번 문장이야. 잘 들어 봐!`; dtMood('listen');
+  dtLayer(); dtRead();
+}
+ACTS.dtGo = (arg) => { dtOpen(arg); };
+ACTS.dtPick = (arg) => { S.view.dtList = arg; S.view.dtPeek = false; render(); };
+ACTS.dtPeek = () => { S.view.dtPeek = !S.view.dtPeek; render(); };
+ACTS.dtSay = (arg) => { const [id, i] = String(arg).split('|'); const l = S.data.dlists.find(x => x.id === id); if (l && l.lines[+i]){ nvUnlock(); voice(l.lines[+i], { lang:'ko', rate:0.7 }); } };
+ACTS.dtSample = async () => {
+  const has = S.data.dlists.some(l => l.sample);
+  if (!has) await Store.add('dlists', { no:0, title:'예시', lines:DT_SAMPLE.slice(), kidIds:[], testDate:'', sample:true, createdAt:new Date().toISOString() });
+  toast('예시 문장을 넣었어요! 뚜뚜랑 해 볼까요? ✏️');
+};
+ACTS.dtBegin = () => { const d = DT; if (!d) return; d.step = 'item'; d.qi = 0; d.say = '1번 문장이야. 잘 들어 봐!'; dtMood('listen'); dtLayer(); dtRead(); };
+ACTS.dtAgain = () => { if (DT) dtRead(1); };
+ACTS.dtNoteNext = () => { if (DT){ hush(); dtNextItem(); } };
+ACTS.dtCheck = () => {
+  const d = DT; if (!d || d.step !== 'item') return;
+  const inp = document.getElementById('dtIn'), typed = inp ? inp.value : '';
+  if (!dtNorm(typed)){ toast('들은 문장을 써 볼까요? 틀려도 괜찮아요! ✏️'); if (inp) inp.focus(); return; }
+  if (kidStyle(kid(d.kidId)).pace === 'quick' && !d.confirm){ d.confirm = true; d.typed = typed; dtLayer(); return; }   // 한 번 더 확인하는 습관
+  hush();
+  const g = dtGrade(d.lines[d.q[d.qi]], typed);
+  g.praise = g.ok ? dtPick(DT_OK) : dtPick(DT_TRY);
+  d.fb = g; d.step = 'fb'; d.confirm = false;
+  if (!d.retried) dtRecord(d.q[d.qi], g.ok);             // 다시 쓰기는 연습 — 기록은 처음 쓴 것으로 (틀린 문장은 내일 오답 노트로)
+  if (g.ok){ ttChime(); dtMood('cheer'); } else dtMood('happy');
+  d.say = g.praise; dtLayer(); dtTalk(g.praise);
+};
+ACTS.dtRetry = () => {
+  const d = DT; if (!d) return;
+  d.retried = true; d.fb = null; d.typed = ''; d.step = 'item'; d.confirm = false;
+  d.say = '좋아! 한 번 더 써 보자. 할 수 있어!'; dtMood('listen'); dtLayer(); dtRead(1);
+};
+ACTS.dtNext = () => { if (DT) dtNextItem(); };
+ACTS.dtMark = (arg) => { const d = DT; if (!d) return; const [i, v] = String(arg).split('|'); d.marks[+i] = +v; dtLayer(); };
+ACTS.dtNoteDone = () => {
+  const d = DT; if (!d) return;
+  for (const i of d.q) dtRecord(i, d.marks[i] === 1);
+  dtFinish();
+};
+ACTS.dtAgainAll = () => {
+  const d = DT; if (!d) return;
+  const mode = d.wrongOnly ? 'wrong' : (d.once ? 'once' : d.mode);
+  const el = document.getElementById('dtLayer'); if (el) el.remove();
+  DT = null; S.view.dtList = d.listId;
+  const l = S.data.dlists.find(x => x.id === d.listId);
+  if (mode === 'wrong' && (!l || !dWrongIdx(d.kidId, l).length)){ wakeOff(); render(); toast('오답 노트를 모두 고쳤어요! 🎉'); return; }
+  dtOpen(mode);
+};
+ACTS.dtExit = () => {
+  const d = DT; if (!d) return;
+  if (d.step === 'intro' || d.step === 'done'){ dtClose(); return; }
+  hush(); d.askQuit = true; dtLayer();
+};
+ACTS.dtQuitNo = () => { if (DT){ DT.askQuit = false; dtLayer(); } };
+ACTS.dtQuitYes = () => { if (DT){ if (DT.res.length) DT.cheer = true; dtClose(); } };
+
+/* ---------- 🔤 영어 철자 놀이 — 단어 가방·스피치 원고의 단어로 ----------
+   🧩 글자 맞추기 · 🎧 듣고 쓰기 · ✏️ 빈칸 채우기. 맞히면 상자가 올라가고(1·2·4·7·14일 뒤 다시), 틀리면 내일 또. */
+const SP_DAYS = [0, 1, 2, 4, 7, 14, 30];
+function spRow(kidId){ return S.data.spell.find(r => r.kidId === kidId); }
+function spPool(kidId){
+  const seen = new Set(), out = [], mask = new Set(ttMaskWords().map(w => w.toLowerCase()));
+  const add = (w, ko, emoji, src) => {
+    const t = String(w || '').trim().toLowerCase();
+    if (!/^[a-z]{2,12}$/.test(t) || seen.has(t) || mask.has(t)) return;
+    seen.add(t); out.push({ w:t, ko:ko || '', emoji:emoji || '', src });
+  };
+  S.data.words.filter(x => x.kidId === kidId && x.lang !== 'ko').forEach(x => add(x.term, x.meaning, x.emoji, 'bag'));
+  const sc = ttScript(kidId);
+  if (sc) sc.sentences.forEach(s => {
+    const cap = new Set((String(s.en || '').match(/\b[A-Z][a-z]+/g) || []).slice(1).map(w => w.toLowerCase()));   // 문장 가운데 대문자 = 이름일 수 있다
+    (s.stress || []).concat((s.tricky || []).map(t => t.word)).forEach(w => { if (String(w).length >= 3 && !cap.has(String(w).toLowerCase())) add(w, '', s.cue, 'speech'); });
+  });
+  QZ_EN.forEach(([w, ko, e]) => add(w, ko, e, 'extra'));
+  return out;
+}
+function spDue(kidId){
+  const r = spRow(kidId), box = (r && r.w) || {}, now = Date.now();
+  const pool = spPool(kidId);
+  const due = pool.filter(x => { const b = box[x.w]; return !b || !b.next || b.next <= now; });
+  return { pool, due, box };
+}
+function spCard(){
+  const { pool, due } = spDue(S.kidId);
+  const mine = pool.filter(x => x.src !== 'extra').length;
+  return `<div class="card" style="background:linear-gradient(170deg,#FFFFFF,#E3EDFB)">
+    <div class="row"><div class="grow"><h3 class="sub" style="margin:0">🔤 영어 철자 놀이</h3>
+      <div class="muted" style="font-size:14px">${mine ? `내 단어 가방·스피치 원고의 단어 ${mine}개로 연습해요` : '단어 가방에 영어 단어를 담으면 그 단어로 연습해요'}${due.length ? ` · 오늘 ${Math.min(due.length, 8)}개` : ''}</div></div></div>
+    <div class="tt-foot" style="margin-top:12px">
+      <button class="btn ghost" data-act="spGo" data-arg="tiles">🧩 글자 맞추기</button>
+      <button class="btn ghost" data-act="spGo" data-arg="listen">🎧 듣고 쓰기</button>
+      <button class="btn ghost" data-act="spGo" data-arg="blank">✏️ 빈칸 채우기</button>
+    </div></div>`;
+}
+function spShuffle(a){ return qzShuffle(a); }
+function spMakeTiles(w, careful, hideIdx){
+  const need = hideIdx ? hideIdx.map(i => w[i]) : w.split('');
+  const extra = careful ? 2 : (w.length <= 4 ? 1 : 0), abc = 'abcdefghijklmnopqrstuvwxyz';
+  const tiles = need.slice();
+  for (let n = 0; n < extra; n++){ let c; do { c = abc[Math.floor(Math.random() * 26)]; } while (w.includes(c)); tiles.push(c); }
+  return spShuffle(tiles).map((ch, id) => ({ ch, id, used:false }));
+}
+function spStart(mode){
+  nvUnlock();
+  const k = curKid(); if (!k) return;
+  const { pool, due } = spDue(k.id);
+  if (!pool.length) return;
+  let list = spShuffle(due).slice(0, 8);
+  if (list.length < 5) list = list.concat(spShuffle(pool.filter(x => !list.includes(x))).slice(0, 6 - list.length));
+  S.view.sp = { mode, list, i:0, res:[], retry:new Set(), careful:kidStyle(k).pace === 'careful', quick:kidStyle(k).pace === 'quick' };
+  spSetup();
+  openModal(spSheet());
+  spSpeak();
+}
+function spSetup(){
+  const Z = S.view.sp, it = Z.list[Z.i], w = it.w;
+  Z.answered = false; Z.ok = null; Z.confirm = false; Z.slots = []; Z.draft = '';
+  if (Z.mode === 'blank'){
+    const n = Math.max(1, Math.min(w.length - 1, Math.round(w.length * (Z.careful ? 0.55 : 0.4))));
+    Z.hide = spShuffle(w.split('').map((_, i) => i).filter(i => i > 0 || w.length <= 3)).slice(0, n).sort((a, b) => a - b);
+    Z.tiles = spMakeTiles(w, Z.careful, Z.hide);
+  } else if (Z.mode === 'tiles'){ Z.hide = null; Z.tiles = spMakeTiles(w, Z.careful); }
+  else { Z.hide = null; Z.tiles = []; }
+}
+function spSpeak(){ const Z = S.view.sp; if (Z && Z.list[Z.i]) voice(Z.list[Z.i].w, { lang:'en', rate:0.8 }); }
+function spSheet(){
+  const Z = S.view.sp;
+  if (Z.done){
+    const ok = Z.res.filter(r => r.ok).length;
+    return `<div style="text-align:center">
+      <div style="font-size:52px">🔤</div><h3>철자 놀이 끝!</h3>
+      <div class="big" style="color:var(--berry-deep)">${ok}<span style="font-size:24px">/${Z.res.length}</span></div>
+      <p class="muted">${ok === Z.res.length ? '모두 맞았어요! 철자 박사! 🎓' : '틀린 단어는 내일 또 나와요. 자꾸 보면 손이 기억해요!'}</p>
+      <div class="row" style="gap:9px"><button class="btn ghost grow" data-act="spGo" data-arg="${Z.mode}">한 번 더</button><button class="btn grow" data-close="1">끝내기</button></div></div>`;
+  }
+  const it = Z.list[Z.i], w = it.w;
+  const title = { tiles:'🧩 글자 맞추기', listen:'🎧 듣고 쓰기', blank:'✏️ 빈칸 채우기' }[Z.mode];
+  let body = '';
+  if (Z.mode === 'listen'){
+    body = Z.answered ? '' : `<input class="field sp-in" id="spIn" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+      enterkeyhint="done" placeholder="들은 단어를 영어로 써요" aria-label="들은 단어 쓰기" value="${esc(Z.draft || '')}">`;
+  } else {
+    const slotsN = Z.hide ? Z.hide.length : w.length;
+    const shown = [];
+    let si = 0;
+    for (let i = 0; i < w.length; i++){
+      if (Z.hide && !Z.hide.includes(i)){ shown.push(`<span class="sp-slot fixed">${esc(w[i])}</span>`); continue; }
+      const tid = Z.slots[si]; const t = tid != null ? Z.tiles.find(x => x.id === tid) : null;
+      shown.push(`<button class="sp-slot ${t ? 'on' : ''}" data-act="spSlot" data-arg="${si}" ${Z.answered ? 'disabled' : ''}>${t ? esc(t.ch) : ''}</button>`);
+      si++;
+    }
+    body = `<div class="sp-word">${shown.join('')}</div>
+      ${Z.answered ? '' : `<div class="sp-tiles">${Z.tiles.map(t => `<button class="sp-tile" data-act="spTile" data-arg="${t.id}" ${t.used ? 'disabled' : ''}>${esc(t.ch)}</button>`).join('')}</div>`}
+      ${!Z.answered && Z.slots.length === slotsN && Z.confirm ? '<p class="muted" style="text-align:center;margin:6px 0 0">한 번 더 읽어 봤어요? 맞으면 확인!</p>' : ''}`;
+  }
+  const res = Z.answered ? (Z.ok
+    ? `<div class="banner info" style="margin-top:10px"><span>🎉</span><span><b>딩동댕!</b> ${esc(w)} — 철자 박사예요! ⭐</span></div>`
+    : `<div class="banner warn" style="margin-top:10px"><span>🤗</span><span><b>괜찮아요!</b> 정답은 <b>${esc(w)}</b>예요. ${esc(spDiff(w, Z.given || ''))}</span></div>`) : '';
+  return `<h3>${title}</h3>
+    <div class="row" style="margin:4px 0 10px"><span class="muted grow">${Z.i + 1} / ${Z.list.length}</span></div>
+    <div style="text-align:center">
+      <div style="font-size:46px;line-height:1.1">${esc(it.emoji || '🔤')}</div>
+      ${it.ko && Z.mode !== 'listen' ? `<div style="font-size:18px;margin-top:4px">${esc(it.ko)}</div>` : ''}
+      <button class="btn ghost sm" data-act="spSay" style="margin-top:8px">🔊 들어 보기</button>
+    </div>
+    ${body}
+    ${res}
+    <div class="row" style="gap:9px;margin-top:12px">
+      ${Z.answered ? `<button class="btn grow" data-act="spNext">${Z.i >= Z.list.length - 1 ? '다 했어요 🎉' : '다음 ▶'}</button>`
+        : `${Z.mode !== 'listen' ? '<button class="btn ghost grow" data-act="spUndo">↩ 지우기</button>' : ''}<button class="btn grow" data-act="spCheck">확인 ✔</button>`}
+    </div>`;
+}
+function spDiff(w, g){
+  if (!g) return '천천히 한 글자씩 소리 내어 써 봐요.';
+  const a = w.split(''), b = String(g).toLowerCase().split('');
+  const bad = a.filter((c, i) => b[i] !== c).length;
+  return bad === 1 ? '딱 한 글자만 다르게 썼어요. 거의 다 왔어요!' : '소리 나는 순서대로 한 글자씩 써 봐요.';
+}
+function spGiven(){
+  const Z = S.view.sp, w = Z.list[Z.i].w;
+  if (Z.mode === 'listen'){ const i = document.getElementById('spIn'); return String(i ? i.value : '').trim().toLowerCase(); }
+  const letters = Z.slots.map(id => (Z.tiles.find(t => t.id === id) || {}).ch || '');
+  if (!Z.hide) return letters.join('');
+  let si = 0; return w.split('').map((c, i) => Z.hide.includes(i) ? (letters[si++] || '_') : c).join('');
+}
+async function spCheck(){
+  const Z = S.view.sp, it = Z.list[Z.i];
+  const g = spGiven();
+  const need = Z.mode === 'listen' ? 1 : (Z.hide ? Z.hide.length : it.w.length);
+  if (Z.mode === 'listen' ? !g : Z.slots.length < need){ toast('글자를 다 채워 볼까요? 할 수 있어요! 💪'); return; }
+  if (Z.quick && !Z.confirm){ Z.confirm = true; Z.draft = Z.mode === 'listen' ? g : ''; openModal(spSheet()); toast('한 번 더 읽어 보고 확인을 눌러요 🔍'); return; }
+  Z.given = g; Z.answered = true; Z.ok = g === it.w;
+  Z.res.push({ w:it.w, ok:Z.ok });
+  if (Z.ok){ ttChime(); } else if (!Z.retry.has(it.w)){ Z.retry.add(it.w); Z.list.push(it); }   // 틀린 단어는 끝에 한 번 더
+  openModal(spSheet());
+}
+async function spFinish(){
+  const Z = S.view.sp; Z.done = true;
+  openModal(spSheet()); confetti();
+  const k = curKid(); if (!k) return;
+  const r = spRow(k.id), box = JSON.parse(JSON.stringify((r && r.w) || {})), now = Date.now();
+  const days = JSON.parse(JSON.stringify((r && r.days) || {})), dk = todayKey();
+  const first = {};
+  for (const x of Z.res){ if (first[x.w] == null) first[x.w] = x.ok; }
+  for (const [w, ok] of Object.entries(first)){
+    const b = box[w] || { lv:0, ok:0, no:0 };
+    b.lv = ok ? Math.min(6, (b.lv || 0) + 1) : 0; b[ok ? 'ok' : 'no'] = (b[ok ? 'ok' : 'no'] || 0) + 1;
+    b.next = now + SP_DAYS[b.lv] * 86400000 - 3600000; box[w] = b;
+  }
+  days[dk] = { n:((days[dk] || {}).n || 0) + Object.keys(first).length };
+  const ok = Object.values(first).filter(Boolean).length;
+  if (ok) awardStars(ok);
+  const data = { kidId:k.id, w:box, days };
+  if (r) await Store.update('spell', r.id, data); else await Store.add('spell', data);
+}
+ACTS.spGo = (arg) => { spStart(arg); };
+ACTS.spSay = () => { nvUnlock(); spSpeak(); };
+ACTS.spTile = (arg) => {
+  const Z = S.view.sp; if (!Z || Z.answered) return;
+  const t = Z.tiles.find(x => x.id === +arg); const need = Z.hide ? Z.hide.length : Z.list[Z.i].w.length;
+  if (!t || t.used || Z.slots.length >= need) return;
+  t.used = true; Z.slots.push(t.id); Z.confirm = false;
+  openModal(spSheet());
+  if (Z.slots.length === need && !Z.quick) spCheck();
+};
+ACTS.spSlot = (arg) => {
+  const Z = S.view.sp; if (!Z || Z.answered) return;
+  const si = +arg; if (si >= Z.slots.length) return;
+  for (const id of Z.slots.slice(si)){ const t = Z.tiles.find(x => x.id === id); if (t) t.used = false; }
+  Z.slots = Z.slots.slice(0, si); Z.confirm = false; openModal(spSheet());
+};
+ACTS.spUndo = () => { const Z = S.view.sp; if (!Z || Z.answered || !Z.slots.length) return; const t = Z.tiles.find(x => x.id === Z.slots.pop()); if (t) t.used = false; Z.confirm = false; openModal(spSheet()); };
+ACTS.spCheck = () => { spCheck(); };
+ACTS.spNext = () => {
+  const Z = S.view.sp; if (!Z) return;
+  if (Z.i >= Z.list.length - 1){ spFinish(); return; }
+  Z.i++; spSetup(); openModal(spSheet()); spSpeak();
+};
+
+/* ---------- 부모님 화면 → ✏️ 받아쓰기 ----------
+   급수표를 한 줄에 한 문장씩 넣는다. 📷 사진을 찍으면 AI가 글자를 읽어 칸에 채운다(부모님이 꼭 확인). */
+function dlParse(text){
+  return String(text || '').split(/\n+/).map(s => s.replace(/^\s*(?:\(?\d{1,2}[.)．\]]|\d{1,2}\s*번[.)]?|[①-⑳]|[-•·*])\s*/, '').replace(/\s+/g, ' ').trim()).filter(Boolean).slice(0, 40);
+}
+function dictTab(){
+  const ks = kids(), dr = S.view.dlDraft;
+  const lists = S.data.dlists.filter(l => !l.archived).sort((a, b) => (a.no || 0) - (b.no || 0));
+  const who = l => (!Array.isArray(l.kidIds) || !l.kidIds.length) ? '둘 다' : l.kidIds.map(id => (kid(id) || {}).name || '').filter(Boolean).join('·');
+  const rows = lists.map(l => {
+    const res = ks.map(k => { const p = dprogOf(k.id, l.id); return p && p.runs ? `${esc(k.name)} ${p.best || 0}점(${p.runs}번)${dWrongIdx(k.id, l).length ? ` · 오답 ${dWrongIdx(k.id, l).length}` : ''}` : ''; }).filter(Boolean).join(' · ');
+    return `<div style="padding:10px 0;border-bottom:1px solid var(--blush)">
+      <div class="row"><div class="grow"><b>${esc(l.title)}</b> <span class="muted">· ${l.lines.length}문장 · ${esc(who(l))}${l.testDate ? ` · 시험 ${esc(dDateLabel(l.testDate))}` : ''}${l.sample ? ' · 예시' : ''}</span>
+        ${res ? `<div class="muted" style="font-size:13px">${res}</div>` : ''}</div>
+        <button class="btn ghost sm" data-act="dlEdit" data-arg="${esc(l.id)}">고치기</button>
+        <button class="btn ghost sm" data-act="dlDel" data-arg="${esc(l.id)}" aria-label="지우기">🗑</button></div></div>`;
+  }).join('');
+  const editor = dr ? `<div class="card stack" style="margin-top:12px;border:2px solid var(--berry)">
+      <h3 class="sub" style="margin:0">${dr.id ? '급수표 고치기' : '새 급수표'}</h3>
+      <div class="row" style="gap:8px"><input class="field" id="dlNo" inputmode="numeric" placeholder="번호 (예: 3)" value="${esc(dr.no || '')}" style="max-width:110px">
+        <input class="field grow" id="dlTitle" placeholder="이름 (예: 3급)" value="${esc(dr.title || '')}"></div>
+      <textarea class="field" id="dlText" style="min-height:190px" placeholder="한 줄에 한 문장씩 적어 주세요.&#10;1. 가방을 메고 학교에 가요.&#10;2. 친구와 같이 놀았어요.">${esc(dr.text || '')}</textarea>
+      <div class="muted" style="font-size:13px">번호(1. 2.)는 저절로 빠져요. 문장 부호·띄어쓰기는 급수표 그대로 적어 주세요 — 채점할 때 봐요.</div>
+      <label class="btn ghost wide sm" style="cursor:pointer">📷 급수표 사진으로 채우기 (AI가 읽어요)
+        <input type="file" accept="image/*" id="dlPhoto" hidden></label>
+      ${dr.busy ? '<p class="muted" style="margin:0;text-align:center">🔎 사진에서 글자를 읽는 중이에요… (30초쯤 걸려요)</p>' : ''}
+      ${dr.msg ? `<div class="banner ${dr.msgOk ? 'info' : 'warn'}"><span>${dr.msgOk ? '✅' : '😥'}</span><span>${esc(dr.msg)}</span></div>` : ''}
+      ${dr.groups && dr.groups.length > 1 ? `<button class="btn mint wide sm" data-act="dlAddGroups">📚 사진 속 급수표 ${dr.groups.length}개 한꺼번에 넣기</button>` : ''}
+      <div class="row" style="gap:8px;flex-wrap:wrap"><span class="muted">시험 날 (선택)</span>
+        <input class="field" type="date" id="dlDate" value="${esc(dr.testDate || '')}" style="max-width:190px"></div>
+      <div><div class="muted" style="margin-bottom:6px">누가 연습해요?</div>
+        <div class="chips"><button class="chip" data-act="dlWho" data-arg="" aria-pressed="${!dr.kidIds.length}">둘 다</button>
+          ${ks.map(k => `<button class="chip" data-act="dlWho" data-arg="${esc(k.id)}" aria-pressed="${dr.kidIds.includes(k.id)}">${esc(k.name)}</button>`).join('')}</div></div>
+      <div class="row" style="gap:8px"><button class="btn ghost grow" data-act="dlCancel">그만두기</button><button class="btn grow" data-act="dlSave">저장</button></div>
+    </div>` : `<button class="btn wide" data-act="dlNew" style="margin-top:12px">+ 새 급수표 넣기</button>`;
+  return `<div class="card">
+      <h3 class="sub">✏️ 받아쓰기 급수표</h3>
+      <p class="muted" style="margin:0 0 6px">학교에서 받은 급수표를 넣으면 뚜뚜가 천천히 두 번 읽어 주고, 아이가 패드나 공책에 써요.</p>
+      ${rows || '<p class="muted">아직 없어요. 급수표를 넣어 주세요.</p>'}
+      ${editor}
+    </div>`;
+}
+function dlKeep(){
+  const dr = S.view.dlDraft; if (!dr) return;
+  const g = id => { const el = document.getElementById(id); return el ? el.value : null; };
+  if (g('dlNo') != null) dr.no = g('dlNo');
+  if (g('dlTitle') != null) dr.title = g('dlTitle');
+  if (g('dlText') != null) dr.text = g('dlText');
+  if (g('dlDate') != null) dr.testDate = g('dlDate');
+}
+ACTS.dlNew = () => { const n = S.data.dlists.filter(l => !l.archived && !l.sample).length + 1; S.view.dlDraft = { no:String(n), title:`${n}급`, text:'', testDate:'', kidIds:[] }; openModal(parentSheet()); };
+ACTS.dlEdit = (arg) => {
+  const l = S.data.dlists.find(x => x.id === arg); if (!l) return;
+  S.view.dlDraft = { id:l.id, no:String(l.no || ''), title:l.title || '', text:l.lines.join('\n'), testDate:l.testDate || '', kidIds:Array.isArray(l.kidIds) ? l.kidIds.slice() : [] };
+  openModal(parentSheet());
+};
+ACTS.dlCancel = () => { S.view.dlDraft = null; openModal(parentSheet()); };
+ACTS.dlWho = (arg) => {
+  dlKeep(); const dr = S.view.dlDraft; if (!dr) return;
+  if (!arg) dr.kidIds = [];
+  else dr.kidIds = dr.kidIds.includes(arg) ? dr.kidIds.filter(x => x !== arg) : dr.kidIds.concat(arg);
+  if (dr.kidIds.length >= kids().length) dr.kidIds = [];
+  openModal(parentSheet());
+};
+ACTS.dlSave = async () => {
+  dlKeep(); const dr = S.view.dlDraft; if (!dr) return;
+  const lines = dlParse(dr.text);
+  if (!lines.length){ toast('문장을 한 줄에 하나씩 적어 주세요'); return; }
+  const data = { no:parseInt(dr.no, 10) || 0, title:String(dr.title || '').trim().slice(0, 20) || `${parseInt(dr.no, 10) || ''}급`,
+    lines, kidIds:dr.kidIds.slice(), testDate:dr.testDate || '' };
+  if (dr.id){
+    const old = S.data.dlists.find(x => x.id === dr.id);
+    // 문장이 바뀌면 그 문장의 기록은 새로 시작한다 (같은 문장은 그대로 이어 간다)
+    if (old && old.lines.join('\n') !== lines.join('\n')){
+      for (const p of S.data.dprog.filter(x => x.listId === dr.id)){
+        const items = {};
+        lines.forEach((s, i) => { const oi = old.lines.indexOf(s); if (oi >= 0 && p.items && p.items[oi]) items[i] = p.items[oi]; });
+        await Store.update('dprog', p.id, { items });
+      }
+    }
+    await Store.update('dlists', dr.id, data);
+  } else await Store.add('dlists', { ...data, createdAt:new Date().toISOString() });
+  S.view.dlDraft = null; toast('급수표를 저장했어요 ✏️'); openModal(parentSheet());
+};
+ACTS.dlDel = (arg) => {
+  const l = S.data.dlists.find(x => x.id === arg); if (!l) return;
+  askConfirm({ title:`「${l.title}」 급수표를 지울까요?`, danger:true, okLabel:'지우기',
+    note:'아이들이 연습한 기록도 함께 지워져요.',
+    onOk: async () => {
+      for (const p of S.data.dprog.filter(x => x.listId === l.id)) await Store.remove('dprog', p.id);
+      await Store.remove('dlists', l.id);
+      S.view.parentTab = 'dict'; openModal(parentSheet()); toast('지웠어요');
+    } });
+};
+ACTS.dlAddGroups = async () => {
+  dlKeep(); const dr = S.view.dlDraft; if (!dr || !dr.groups) return;
+  let n = S.data.dlists.filter(l => !l.archived && !l.sample).length;
+  for (const g of dr.groups){
+    n++;
+    const no = parseInt(String(g.title).replace(/[^0-9]/g, ''), 10) || n;
+    await Store.add('dlists', { no, title:String(g.title || `${no}급`).slice(0, 20), lines:g.lines.slice(0, 40), kidIds:dr.kidIds.slice(),
+      testDate:'', createdAt:new Date(Date.now() + n).toISOString() });
+  }
+  S.view.dlDraft = null; toast(`급수표 ${dr.groups.length}개를 넣었어요. 시험 날은 ‘고치기’에서 정할 수 있어요 ✏️`); openModal(parentSheet());
+};
+/* 사진을 줄여서(긴 쪽 1600px) 서버로 보낸다 — 위치 정보 같은 사진 속 정보는 다시 그리면서 사라진다 */
+function imgShrink(file, max, q){
+  return new Promise((ok, bad) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, (max || 1600) / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+      const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob(b => b ? ok(b) : bad(new Error('shrink')), 'image/jpeg', q || 0.85);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); bad(new Error('image')); };
+    img.src = url;
+  });
+}
+function blobB64(blob){ return new Promise((ok, bad) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1] || ''); r.onerror = () => bad(r.error); r.readAsDataURL(blob); }); }
+async function dlPhoto(file){
+  dlKeep(); const dr = S.view.dlDraft; if (!dr || !file) return;
+  dr.busy = true; dr.msg = ''; openModal(parentSheet());
+  try {
+    const b = await imgShrink(file, 1600, 0.85);
+    const j = await ttAsk({ task:'ocr', image:await blobB64(b), mime:'image/jpeg' }, 60000);
+    const groups = (j.groups || []).filter(g => g && Array.isArray(g.lines) && g.lines.length);
+    if (!groups.length) throw new Error('사진에서 문장을 찾지 못했어요. 글자가 잘 보이게 다시 찍어 주세요.');
+    dr.groups = groups;
+    if (!String(dr.text || '').trim()){ dr.text = groups[0].lines.join('\n'); if (groups[0].title && !dr.id) dr.title = groups[0].title; }
+    else dr.text = String(dr.text).replace(/\s+$/, '') + '\n' + groups[0].lines.join('\n');
+    dr.msg = groups.length > 1 ? `급수표 ${groups.length}개를 찾았어요. 첫 번째를 칸에 넣었어요. 아래 단추로 한꺼번에 넣을 수도 있어요. 꼭 한 번 확인해 주세요!`
+      : `${groups[0].lines.length}문장을 읽었어요. 틀린 글자가 없는지 꼭 확인해 주세요!`;
+    dr.msgOk = true;
+  } catch(e){ dr.msg = (e && e.message) || '사진을 읽지 못했어요. 직접 적어 주세요.'; dr.msgOk = false; }
+  dr.busy = false;
+  if (S.view.dlDraft === dr) openModal(parentSheet());
+}
+
+/* ============================================================
+   💭 생각 키우기 — 스스로 계획하고, 생각하고, 돌아본다
+   🌟 오늘의 질문(뚜뚜가 한 번 되묻는다) · 🌈 하루 돌아보기 · 🤝 이번 주 나의 약속
+   🔎 궁금해 노트(내 생각 먼저!) · 🧩 문제 해결 미션 · 🎨 그림일기
+   정답이 있는 질문이 아니다 — 어떤 생각이든 "멋진 생각이야!"부터.
+   ============================================================ */
+/* 창 안의 입력칸 — 칠 때마다 담아 두어, 창을 다시 그려도 쓰던 글자가 남는다 (data-keep="이름") */
+function kv(k){ return (S.view.keep || {})[k] || ''; }
+function kvSet(k, v){ (S.view.keep = S.view.keep || {})[k] = v; }
+function kvClear(prefix){ const o = S.view.keep || {}; Object.keys(o).forEach(k => { if (k.indexOf(prefix) === 0) delete o[k]; }); }
+function kvField(k, ph, opts){
+  const o = opts || {};
+  return o.area
+    ? `<textarea class="field" data-keep="${k}" id="kv-${k}" maxlength="${o.max || 200}" placeholder="${esc(ph)}" style="min-height:${o.h || 90}px">${esc(kv(k))}</textarea>`
+    : `<input class="field" data-keep="${k}" id="kv-${k}" maxlength="${o.max || 80}" placeholder="${esc(ph)}" value="${esc(kv(k))}" enterkeyhint="done">`;
+}
+/* 말로 쓰기 (브라우저 음성 인식) — 들은 글자를 칸에 이어 붙인다 */
+function srOk(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition) && !window.claude; }
+function thListen(key, reopen){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
+  try {
+    const r = new SR(); r.lang = 'ko-KR'; r.interimResults = false; r.maxAlternatives = 1;
+    toast('🎧 말해 보세요 — 들은 대로 적어 줄게요');
+    r.onresult = e => { const t = String(e.results[0][0].transcript || '').trim(); if (t){ kvSet(key, (kv(key) ? kv(key) + ' ' : '') + t); reopen(); } };
+    r.onerror = ev => toast(ev && ev.error === 'not-allowed' ? '마이크를 쓰려면 “허용”을 눌러 주세요' : '앗, 잘 못 들었어요. 괜찮아요, 한 번 더 해 볼까요?');
+    r.start();
+  } catch(e){}
+}
+function micBtn(key, act){ return srOk() ? `<button class="btn ghost sm" data-act="${act}" data-arg="${key}" aria-label="말로 쓰기">🎙 말로 쓰기</button>` : ''; }
+function thinkOf(kidId, type){ return S.data.think.filter(x => x.kidId === kidId && x.type === type); }
+function thinkAiOn(){ return S.settings.thinkAi === true && !window.claude && location.protocol.startsWith('http') && navigator.onLine !== false; }
+
+/* ---------- 🌟 오늘의 질문 ---------- [id, 주제, 그림, 질문, 되묻기1, 되묻기2] */
+const TQ = [
+  ['f1','친구','🤝','친구가 슬퍼 보일 때 나는 무엇을 해 줄 수 있을까?','그렇게 하면 친구 마음이 어떨까?','내가 슬플 때는 친구가 뭘 해 주면 좋겠어?'],
+  ['f2','친구','🤝','좋은 친구는 어떤 친구일까?','나는 어떤 친구가 되고 싶어?','그렇게 생각한 까닭은 뭐야?'],
+  ['f3','친구','🤝','친구랑 다퉜을 때 먼저 사과하는 건 어떤 마음일까?','사과하기 어려운 까닭은 뭘까?','사과를 받으면 어떤 기분이 들어?'],
+  ['f4','친구','🤝','새로 온 친구가 혼자 있으면 어떻게 할까?','그 친구는 어떤 마음일까?','처음 말을 걸 때 뭐라고 하면 좋을까?'],
+  ['f5','친구','🤝','친구가 나랑 다른 걸 좋아하면 어떻게 같이 놀 수 있을까?','서로 달라서 좋은 점도 있을까?','번갈아 하면 어떨까?'],
+  ['f6','친구','🤝','비밀을 지키는 건 왜 중요할까?','그래도 꼭 어른에게 말해야 하는 비밀도 있을까?','비밀을 지켜 준 친구에게 어떤 마음이 들어?'],
+  ['j1','공평','⚖️','과자 5개를 둘이 나누려면 어떻게 하면 공평할까?','남은 한 개는 어떻게 하면 좋을까?','공평하다는 건 뭘까?'],
+  ['j2','공평','⚖️','똑같이 나누는 것과 필요한 만큼 나누는 것, 어느 쪽이 더 공평할까?','배가 더 고픈 사람이 있다면?','그렇게 생각한 까닭은 뭐야?'],
+  ['j3','공평','⚖️','순서를 정할 때 가장 좋은 방법은 뭘까?','가위바위보는 왜 공평할까?','매번 같은 사람이 먼저 하면 어떨까?'],
+  ['j4','공평','⚖️','놀이에서 규칙은 왜 필요할까?','규칙이 없으면 어떤 일이 생길까?','우리 가족만의 규칙을 하나 만든다면?'],
+  ['j5','공평','⚖️','내가 잘못하지 않았는데 혼나면 어떤 마음이 들까?','그럴 때 어떻게 말하면 좋을까?','다른 사람의 이야기도 들어 보면 어떨까?'],
+  ['j6','공평','⚖️','모두가 같은 옷만 입어야 한다면 어떨까?','좋은 점과 아쉬운 점은 뭘까?','나다운 건 뭘까?'],
+  ['b1','용기','🦁','용기가 필요했던 때는 언제였어?','그때 무엇이 힘을 줬어?','다음에 용기가 필요하면 어떻게 할래?'],
+  ['b2','용기','🦁','무서운 걸 이겨 내는 나만의 방법이 있어?','그 방법은 왜 도움이 될까?','친구에게도 알려 주고 싶어?'],
+  ['b3','용기','🦁','틀릴까 봐 손을 못 들 때가 있어? 그럴 때 어떻게 하면 좋을까?','틀리면 어떤 일이 생길까?','틀린 덕분에 배운 적이 있어?'],
+  ['b4','용기','🦁','처음 해 보는 일을 할 때 기분이 어때?','떨리는 마음은 나쁜 걸까?','해 보고 나서는 어땠어?'],
+  ['b5','용기','🦁','다른 사람을 도와줄 때도 용기가 필요할까?','어떤 때 그럴까?','내가 누군가를 도와준 적이 있어?'],
+  ['b6','용기','🦁','“싫어요”라고 말해야 할 때는 언제일까?','어떻게 말하면 좋을까?','그 말을 들은 사람은 어떤 마음일까?'],
+  ['n1','자연','🌳','나무가 말을 할 수 있다면 우리에게 무슨 말을 할까?','왜 그렇게 말할 것 같아?','나무를 위해 우리가 할 수 있는 일은?'],
+  ['n2','자연','🌳','비는 왜 올까? 비가 안 오면 어떻게 될까?','비가 오면 좋은 점은 뭘까?','비 오는 날 제일 좋아하는 건 뭐야?'],
+  ['n3','자연','🌳','가장 좋아하는 계절은 언제야? 왜?','그 계절에만 할 수 있는 건 뭘까?','다른 계절의 좋은 점도 찾아볼까?'],
+  ['n4','자연','🌳','개미는 작은데 어떻게 큰 먹이를 옮길까?','우리도 힘을 모으면 무엇을 할 수 있을까?','작아서 좋은 점도 있을까?'],
+  ['n5','자연','🌳','밤하늘의 별을 보면 어떤 생각이 들어?','별에 가 볼 수 있다면 뭘 하고 싶어?','왜 낮에는 별이 안 보일까?'],
+  ['n6','자연','🌳','동물들은 추운 겨울을 어떻게 날까?','나라면 겨울에 어떻게 지낼까?','사람과 동물이 비슷한 점은 뭘까?'],
+  ['i1','상상','🦄','하루 동안 동물이 될 수 있다면 무슨 동물이 되고 싶어?','그 동물이 되면 제일 먼저 뭘 하고 싶어?','그 동물은 어떤 점이 힘들까?'],
+  ['i2','상상','🦄','투명 인간이 된다면 무엇을 할까?','그게 좋은 일일까?','다시 보이게 되면 뭘 하고 싶어?'],
+  ['i3','상상','🦄','나만의 발명품을 만든다면 무엇을 만들고 싶어?','그 발명품은 누구를 도와줄까?','어떻게 움직일까?'],
+  ['i4','상상','🦄','구름 위에 마을이 있다면 어떤 모습일까?','거기 사는 사람들은 무엇을 먹을까?','나라면 그 마을에 뭘 가져갈까?'],
+  ['i5','상상','🦄','시간을 멈출 수 있다면 언제 멈추고 싶어?','왜 그때야?','시간이 멈추면 아쉬운 점도 있을까?'],
+  ['i6','상상','🦄','로봇 친구가 생긴다면 무엇을 함께 하고 싶어?','로봇도 마음이 있을까?','로봇에게 가르쳐 주고 싶은 건 뭐야?'],
+  ['h1','가족','🏠','우리 가족만의 특별한 점은 뭘까?','그걸 왜 특별하다고 생각해?','가족에게 고마운 점 하나를 말해 볼까?'],
+  ['h2','가족','🏠','엄마 아빠가 어릴 때는 어땠을까?','엄마 아빠께 무엇을 물어보고 싶어?','지금이랑 무엇이 다를까?'],
+  ['h3','가족','🏠','가족을 기쁘게 해 주는 방법은 뭘까?','오늘 해 볼 수 있는 건 뭐야?','가족이 기뻐하면 내 마음은 어때?'],
+  ['h4','가족','🏠','집안일을 나눠서 하면 좋은 점은 뭘까?','내가 할 수 있는 집안일은 뭐야?','한 사람이 다 하면 어떨까?'],
+  ['h5','가족','🏠','할머니 할아버지께 배우고 싶은 건 뭐야?','왜 그게 궁금해?','나는 무엇을 알려 드릴 수 있을까?'],
+  ['h6','가족','🏠','형제자매가 있어서 좋은 점은 뭘까?','가끔 힘든 점도 있을까?','서로에게 고마운 점은 뭐야?'],
+  ['m1','마음','💗','기분이 안 좋을 때 기분이 좋아지는 나만의 방법이 있어?','그 방법은 왜 효과가 있을까?','다른 사람에게도 도움이 될까?'],
+  ['m2','마음','💗','화가 날 때 내 몸은 어떻게 변해?','화가 날 때 숫자를 천천히 세면 어떨까?','화가 풀리면 무엇을 하고 싶어?'],
+  ['m3','마음','💗','“고마워”라는 말을 들으면 어떤 기분이 들어?','오늘 고마웠던 사람은 누구야?','고맙다는 말을 더 자주 하려면?'],
+  ['m4','마음','💗','샘이 날 때는 어떻게 하면 좋을까?','샘나는 마음이 생기는 건 괜찮을까?','그 친구를 응원해 주면 어떨까?'],
+  ['m5','마음','💗','행복은 어떤 색깔일까? 왜?','행복할 때 나는 무엇을 해?','다른 사람을 행복하게 하려면?'],
+  ['m6','마음','💗','걱정이 있을 때 누구에게 말하고 싶어?','말하고 나면 마음이 어때?','친구가 걱정이 있으면 어떻게 도와줄까?'],
+  ['s1','나','🌟','내가 제일 잘하는 건 뭐야? 어떻게 잘하게 됐어?','처음부터 잘했어?','더 잘하고 싶은 건 뭐야?'],
+  ['s2','나','🌟','10년 뒤의 나는 어떤 모습일까?','그렇게 되려면 오늘 무엇을 할 수 있을까?','그때의 나에게 한마디 한다면?'],
+  ['s3','나','🌟','나를 동물 하나로 표현한다면?','왜 그 동물이야?','친구는 나를 어떤 동물이라고 할까?'],
+  ['s4','나','🌟','요즘 새로 배운 것 중에 가장 재미있는 건?','어떻게 배웠어?','다른 사람에게 가르쳐 줄 수 있어?'],
+  ['s5','나','🌟','내가 좋아하는 나의 모습은 어떤 모습이야?','그 모습은 언제 나와?','더 자주 그런 모습이 되려면?'],
+  ['s6','나','🌟','실수했을 때 나에게 해 주고 싶은 말은?','친구가 실수하면 뭐라고 말해 줄래?','실수에서 배운 게 있어?'],
+  ['w1','세상','🌏','다른 나라 친구를 만나면 우리나라의 무엇을 소개해 주고 싶어?','왜 그걸 소개하고 싶어?','그 친구에게 묻고 싶은 건 뭐야?'],
+  ['w2','세상','🌏','말이 안 통하는 친구와 친해지려면 어떻게 할까?','몸짓이나 그림으로도 말할 수 있을까?','웃음은 어느 나라에서나 통할까?'],
+  ['w3','세상','🌏','세상에서 가장 멋진 직업은 뭘까?','그 일은 누구를 도와줄까?','나는 어떤 일을 하고 싶어?'],
+  ['w4','세상','🌏','학교가 없다면 어떻게 될까?','학교에서 배우는 것 중 가장 중요한 건?','학교 말고도 배울 수 있는 곳은?'],
+  ['w5','세상','🌏','돈이 없던 옛날에는 어떻게 물건을 바꿨을까?','물건끼리 바꾸면 어떤 점이 불편할까?','돈이 생겨서 좋아진 점은 뭘까?'],
+  ['w6','세상','🌏','모든 사람이 같은 말을 쓴다면 어떨까?','좋은 점과 아쉬운 점은 뭘까?','다른 나라 말을 배우면 좋은 점은?'],
+  ['e1','환경','♻️','지구가 아프지 않게 내가 오늘 할 수 있는 일은 뭘까?','그걸 매일 하려면 어떻게 하면 좋을까?','가족과 같이 할 수 있는 건 뭐야?'],
+  ['e2','환경','♻️','쓰레기는 버리면 어디로 갈까?','쓰레기를 줄이는 방법은 뭘까?','다시 쓸 수 있는 물건은 뭐가 있을까?'],
+  ['e3','환경','♻️','물을 아껴 써야 하는 까닭은 뭘까?','집에서 물을 아끼는 방법은?','물이 없으면 어떻게 될까?'],
+  ['e4','환경','♻️','바다에 사는 동물들에게 편지를 쓴다면 뭐라고 쓸까?','바다 동물들은 무엇을 부탁할까?','바다를 지키려면 어떻게 해야 할까?'],
+  ['e5','환경','♻️','하루 동안 전기가 없다면 어떻게 지낼까?','전기 없이도 할 수 있는 재미있는 일은?','전기를 아끼는 방법은 뭘까?'],
+  ['e6','환경','♻️','나무를 심으면 어떤 좋은 일이 생길까?','어디에 심고 싶어?','그 나무가 크면 무엇을 해 주고 싶어?']
+];
+const TQ_PRAISE = ['멋진 생각이야!', '우와, 그런 생각은 처음 들어 봐!', '깊이 생각했구나!', '네 생각이 정말 좋다!', '생각이 쑥쑥 자라고 있어!'];
+function thDayNo(d){ const x = d || new Date(); return Math.floor((new Date(x.getFullYear(), x.getMonth(), x.getDate()) - new Date(2026, 0, 1)) / 86400000); }
+function tqToday(){ const n = thDayNo(); return TQ[((n % TQ.length) + TQ.length) % TQ.length]; }
+function tqAnswer(kidId, date){ return thinkOf(kidId, 'q').find(x => x.date === (date || todayKey())); }
+function tqStreak(kidId){
+  let n = 0; const d = new Date();
+  if (!tqAnswer(kidId)) d.setDate(d.getDate() - 1);          // 오늘 아직이면 어제까지 센다
+  for (let i = 0; i < 60; i++){ if (tqAnswer(kidId, todayKey(d))) n++; else break; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function thQCard(){
+  const k = curKid(), q = tqToday(), mine = tqAnswer(S.kidId), other = kids().find(x => x.id !== S.kidId);
+  const theirs = other && tqAnswer(other.id), st = kidStyle(k), streak = tqStreak(S.kidId);
+  return `<div class="card" style="background:linear-gradient(170deg,#FFFFFF,#FFF4E8)">
+    <div class="row"><h3 class="sub grow" style="margin:0">🌟 오늘의 질문</h3><span class="tt-stage">${q[2]} ${esc(q[1])}</span></div>
+    <p class="th-q">${esc(q[3])}</p>
+    ${mine ? `<div class="th-ans"><b>내 생각</b> ${esc(mine.a1)}${mine.f ? `<div class="muted" style="margin-top:6px">🦜 ${esc(mine.f)}</div>${mine.a2 ? `<div>↳ ${esc(mine.a2)}</div>` : ''}` : ''}</div>
+      ${mine.f && !mine.a2 ? `<button class="btn ghost wide sm" data-act="thQ" style="margin-top:8px">🦜 뚜뚜 질문에 대답하기</button>` : ''}
+      ${streak >= 2 ? `<div class="muted" style="margin-top:8px">${st.compete === 'high' ? `🔥 ${streak}일 연속 생각 도전 중!` : `🌱 ${streak}일째 생각이 자라고 있어요`}</div>` : ''}`
+      : `<button class="btn wide" data-act="thQ" style="margin-top:6px">✏️ 내 생각 쓰기</button>
+      <p class="muted" style="margin:8px 0 0;text-align:center">정답은 없어요. 어떤 생각이든 멋져요!</p>`}
+    ${other ? (mine && theirs ? `<div class="th-ans" style="margin-top:10px;background:var(--mint-soft)"><b>${esc(other.name)}의 생각</b> ${esc(theirs.a1)}${theirs.a2 ? `<div>↳ ${esc(theirs.a2)}</div>` : ''}</div>`
+      : `<p class="muted" style="margin:10px 0 0;font-size:13px">🔒 ${esc(other.name)}도 답하면 서로의 생각을 볼 수 있어요${mine && st.strengths.includes('leader') ? ` — ${esc(other.name)}에게도 물어봐 줄래요? 📣` : ''}</p>`) : ''}
+  </div>`;
+}
+function thQSheet(){
+  const q = tqToday(), mine = tqAnswer(S.kidId);
+  if (mine && mine.f){
+    return `<h3>🦜 뚜뚜가 궁금해요</h3>
+      <p class="muted" style="margin:0 0 6px">내 생각: ${esc(mine.a1)}</p>
+      <p class="th-q" style="margin:4px 0 10px">${esc(mine.f)}</p>
+      ${kvField('thA2', '생각나는 대로 써 봐요', { area:true, max:200 })}
+      <div class="row" style="gap:8px;margin-top:10px">${micBtn('thA2', 'thMic')}<span class="grow"></span>
+        <button class="btn ghost sm" data-close="1">다음에 할래요</button><button class="btn sm" data-act="thQSave2">대답하기</button></div>`;
+  }
+  return `<h3>🌟 오늘의 질문</h3>
+    <p class="th-q" style="margin:6px 0 10px">${q[2]} ${esc(q[3])}</p>
+    ${kvField('thA1', '내 생각을 써 봐요 (말로 해도 돼요)', { area:true, max:200 })}
+    <div class="row" style="gap:8px;margin-top:10px">${micBtn('thA1', 'thMic')}<span class="grow"></span>
+      <button class="btn" data-act="thQSave">생각 저장 💭</button></div>`;
+}
+ACTS.thQ = () => { nvUnlock(); S.view.thSheet = thQSheet; openModal(thQSheet()); };
+ACTS.thMic = (arg) => { thListen(arg, () => { const sh = S.view.thSheet; openModal(sh ? sh() : thQSheet()); }); };
+ACTS.thQSave = async () => {
+  const a1 = kv('thA1').trim(); if (!a1){ toast('생각을 조금만 적어 볼까요? 한 줄도 좋아요 ✏️'); return; }
+  const q = tqToday(), f = thDayNo() % 2 ? q[5] : q[4];
+  await Store.add('think', { kidId:S.kidId, type:'q', date:todayKey(), qid:q[0], q:q[3], a1:a1.slice(0, 200), f, a2:'', at:new Date().toISOString() });
+  kvClear('thA'); awardStars(1);
+  const say = `${dtPick(TQ_PRAISE)} 그런데 뚜뚜가 하나 더 궁금해. ${f}`;
+  openModal(thQSheet()); voice(say, { lang:'ko' });
+};
+ACTS.thQSave2 = async () => {
+  const mine = tqAnswer(S.kidId), a2 = kv('thA2').trim(); if (!mine) return;
+  if (!a2){ toast('한 줄만 더 생각해 볼까요? 💭'); return; }
+  await Store.update('think', mine.id, { a2:a2.slice(0, 200) });
+  kvClear('thA'); closeModal();
+  cheerPopup({ emoji:'💭', title:'생각이 쑥쑥!', sub:'깊이 생각하는 모습이 정말 멋져요!' });
+};
+
+/* ---------- 🌈 하루 돌아보기 ---------- */
+const MOODS = [['😄','신나요'], ['🙂','좋아요'], ['😐','그냥 그래요'], ['😢','속상해요'], ['😠','화나요'], ['😴','피곤해요']];
+function dayOf(kidId, date){ return thinkOf(kidId, 'day').find(x => x.date === (date || todayKey())); }
+function thDayCard(){
+  const me = dayOf(S.kidId);
+  const strip = Array.from({ length:7 }, (_, i) => { const d = weekStart(); d.setDate(d.getDate() + i); const r = dayOf(S.kidId, todayKey(d));
+    return `<div><div class="dot ${todayKey(d) === todayKey() ? 'today' : ''}" style="background:${r ? '#FFF4E8' : 'var(--blush)'}">${r ? r.mood : ''}</div><small>${DAYNAMES[d.getDay()]}</small></div>`; }).join('');
+  return `<div class="card">
+    <h3 class="sub">🌈 오늘 하루 어땠어?</h3>
+    <div class="chips" style="justify-content:center">${MOODS.map(([e, l]) => `<button class="chip th-mood" data-act="thMood" data-arg="${e}" aria-pressed="${!!(me && me.mood === e)}" aria-label="${l}">${e}<small>${l}</small></button>`).join('')}</div>
+    ${me && (me.good || me.hard || me.next) ? `<div class="th-ans" style="margin-top:10px">${me.good ? `<div>✨ ${esc(me.good)}</div>` : ''}${me.hard ? `<div>🧗 ${esc(me.hard)}</div>` : ''}${me.next ? `<div>🌱 ${esc(me.next)}</div>` : ''}</div>` : ''}
+    ${me ? `<button class="btn ghost wide sm" data-act="thDay" style="margin-top:8px">✏️ ${me.good || me.hard || me.next ? '고쳐 쓰기' : '한 줄씩 적어 보기'}</button>` : ''}
+    <div class="weekstrip" style="margin-top:12px">${strip}</div>
+  </div>`;
+}
+function thDaySheet(){
+  const me = dayOf(S.kidId), m = me ? me.mood : '';
+  const sad = m === '😢' || m === '😠';
+  return `<h3>${esc(m)} 오늘을 돌아봐요</h3>
+    ${sad ? '<div class="banner info" style="margin:6px 0 10px"><span>🤗</span><span>그런 날도 있어요. 말해 줘서 고마워요. 엄마 아빠에게 꼭 안아 달라고 해 볼까요?</span></div>' : ''}
+    <div class="stack" style="gap:9px">
+      <div><div class="muted">✨ 오늘 잘한 것 하나</div>${kvField('thGood', '예: 받아쓰기를 끝까지 했어요')}</div>
+      <div><div class="muted">🧗 어려웠던 것 하나</div>${kvField('thHard', '예: 줄넘기가 잘 안 됐어요')}</div>
+      <div><div class="muted">🌱 내일은?</div>${kvField('thNext', '예: 줄넘기를 10번 더 해 볼래요')}</div>
+    </div>
+    <div class="row" style="gap:8px;margin-top:12px"><button class="btn ghost grow" data-close="1">다음에</button><button class="btn grow" data-act="thDaySave">저장</button></div>`;
+}
+ACTS.thMood = async (arg) => {
+  const me = dayOf(S.kidId);
+  if (me) await Store.update('think', me.id, { mood:arg });
+  else await Store.add('think', { kidId:S.kidId, type:'day', date:todayKey(), mood:arg, good:'', hard:'', next:'', at:new Date().toISOString() });
+  const r = dayOf(S.kidId);
+  kvSet('thGood', (r && r.good) || ''); kvSet('thHard', (r && r.hard) || ''); kvSet('thNext', (r && r.next) || '');
+  S.view.thSheet = thDaySheet; openModal(thDaySheet());
+};
+ACTS.thDay = () => { const r = dayOf(S.kidId); if (!r) return; kvSet('thGood', r.good || ''); kvSet('thHard', r.hard || ''); kvSet('thNext', r.next || ''); S.view.thSheet = thDaySheet; openModal(thDaySheet()); };
+ACTS.thDaySave = async () => {
+  const r = dayOf(S.kidId); if (!r) return;
+  const had = !!(r.good || r.hard || r.next);
+  await Store.update('think', r.id, { good:kv('thGood').trim().slice(0, 80), hard:kv('thHard').trim().slice(0, 80), next:kv('thNext').trim().slice(0, 80) });
+  kvClear('th'); closeModal();
+  if (!had) awardStars(1);
+  cheerPopup({ emoji:'🌈', title:'오늘도 수고했어요!', sub:'하루를 돌아보는 사람은 쑥쑥 자라요' });
+};
+
+/* ---------- 🤝 이번 주 나의 약속 ---------- 부모님이 메뉴를 준비하고, 아이가 1~3개를 고른다 */
+const GOAL_MENU = [
+  { id:'book3', icon:'📚', text:'책 3권 읽기', auto:'books', target:3 },
+  { id:'book5', icon:'📚', text:'책 5권 읽기', auto:'books', target:5 },
+  { id:'word5', icon:'🫧', text:'새 낱말 5개 모으기', auto:'words', target:5 },
+  { id:'speech20', icon:'🦜', text:'뚜뚜랑 20번 말해 보기', auto:'speech', target:20 },
+  { id:'dict20', icon:'✏️', text:'받아쓰기 20문장 쓰기', auto:'dict', target:20 },
+  { id:'q5', icon:'💭', text:'오늘의 질문 5번 답하기', auto:'q', target:5 },
+  { id:'todo80', icon:'⏰', text:'할 일 80% 해내기', auto:'rate', target:80 },
+  { id:'world3', icon:'🌏', text:'새 나라 3곳 알아보기', auto:'world', target:3 },
+  { id:'thanks', icon:'💌', text:'칭찬 스티커 3번 보내기', auto:'kudoSent', target:3 },
+  { id:'help', icon:'🤝', text:'가족 도와주기', auto:'', target:5 },
+  { id:'tidy', icon:'🧸', text:'장난감 스스로 정리하기', auto:'', target:5 },
+  { id:'early', icon:'🌅', text:'스스로 일어나기', auto:'', target:5 }
+];
+function goalMenu(){ return GOAL_MENU.concat((S.settings.goalExtra || []).filter(g => g && g.text)); }
+function goalWeek(back){ const d = weekStart(); d.setDate(d.getDate() - 7 * (back || 0)); return todayKey(d); }
+function goalsOf(kidId, back){ return S.data.goals.find(g => g.kidId === kidId && g.week === goalWeek(back)); }
+function goalValue(kidId, g, back){
+  const s = weekStatsAt(kidId, back || 0);
+  if (g.auto === 'books') return s.books;
+  if (g.auto === 'words') return s.words;
+  if (g.auto === 'speech') return s.speech;
+  if (g.auto === 'dict') return s.dict;
+  if (g.auto === 'q') return s.q;
+  if (g.auto === 'rate') return s.rate;
+  if (g.auto === 'world') return s.world;
+  if (g.auto === 'kudoSent') return s.kudoSent;
+  return (g.days || []).length;
+}
+function thGoalCard(){
+  const k = curKid(), rec = goalsOf(S.kidId), last = goalsOf(S.kidId, 1), dow = new Date().getDay();
+  const st = kidStyle(k);
+  if (!rec){
+    return `<div class="card" style="background:var(--mint-soft)">
+      <h3 class="sub">🤝 이번 주 나의 약속</h3>
+      <p style="margin:0 0 10px">이번 주에 해 보고 싶은 약속을 1~3개 골라 볼까요? 내가 정한 약속은 더 신나요!</p>
+      <button class="btn mint wide" data-act="thGoalPick">약속 고르기</button>
+      ${last && !last.review ? '<button class="btn ghost wide sm" data-act="thGoalReview" data-arg="1" style="margin-top:8px">🪞 지난주 약속 돌아보기</button>' : ''}
+    </div>`;
+  }
+  const rows = rec.picks.map((g, i) => {
+    const v = goalValue(S.kidId, g), done = g.target ? v >= g.target : false, pct = g.target ? clamp(v / g.target * 100, 0, 100) : 0;
+    const today = (g.days || []).includes(todayKey());
+    return `<div class="th-goal">
+      <div class="row"><span style="font-size:22px">${esc(g.icon)}</span><b class="grow">${esc(g.text)}</b><span class="muted">${g.auto === 'rate' ? `${v}%` : `${v}/${g.target}`}${done ? ' 🎉' : ''}</span></div>
+      <div class="gauge" style="height:12px;margin-top:6px"><span style="width:${pct}%"></span></div>
+      ${g.auto ? '' : `<button class="btn ${today ? 'mint' : 'ghost'} sm" data-act="thGoalTick" data-arg="${i}" style="margin-top:7px">${today ? '✓ 오늘 했어요!' : '오늘 했어요 ✓'}</button>`}
+    </div>`;
+  }).join('');
+  const reviewed = rec.review;
+  return `<div class="card" style="background:var(--mint-soft)">
+    <div class="row"><h3 class="sub grow" style="margin:0">🤝 이번 주 나의 약속</h3>${!reviewed ? '<button class="btn ghost sm" data-act="thGoalPick">바꾸기</button>' : ''}</div>
+    <div class="stack" style="gap:10px;margin-top:10px">${rows}</div>
+    ${reviewed ? `<div class="th-ans" style="margin-top:10px"><b>🪞 돌아보기</b> ${rec.picks.map(g => `${esc(g.icon)} ${({ star:'⭐ 해냈어요', some:'🙂 조금 했어요', next:'🌱 다음 주에 더' })[reviewed[g.id]] || ''}`).join(' · ')}${reviewed.note ? `<div>🌱 ${esc(reviewed.note)}</div>` : ''}</div>`
+      : ((dow === 0 || dow >= 5) ? '<button class="btn wide sm" data-act="thGoalReview" data-arg="0" style="margin-top:10px">🪞 이번 주 돌아보기</button>'
+        : `<p class="muted" style="margin:10px 0 0;font-size:13px">${st.compete === 'high' ? '🔥 약속을 지키면 반짝 왕관에 한 걸음 더!' : '🌿 내가 할 수 있는 만큼, 딱 좋은 약속이에요'} · 금요일부터 돌아볼 수 있어요</p>`)}
+    ${last && !last.review ? '<button class="btn ghost wide sm" data-act="thGoalReview" data-arg="1" style="margin-top:8px">🪞 지난주 약속 돌아보기</button>' : ''}
+  </div>`;
+}
+function thGoalSheet(){
+  const pick = S.view.goalPick || [], menu = goalMenu(), st = kidStyle(curKid());
+  return `<h3>🤝 이번 주 약속 고르기</h3>
+    <p class="muted" style="margin:0 0 10px">1~3개 골라요. ${st.compete === 'high' ? '조금 어려운 약속에 도전해 봐도 좋아요! 🔥' : '내가 할 수 있는 만큼이면 충분해요 🌿'}</p>
+    <div class="stack" style="gap:7px">${menu.map(g => `<button class="matchbtn" data-act="thGoalToggle" data-arg="${esc(g.id)}" aria-pressed="${pick.includes(g.id)}" style="text-align:left;min-height:48px;font-size:16px">${esc(g.icon)} ${esc(g.text)}${g.auto ? ' <span class="muted" style="font-size:12px">· 저절로 세어 줘요</span>' : ''}</button>`).join('')}</div>
+    <button class="btn wide" data-act="thGoalSave" style="margin-top:12px" ${pick.length ? '' : 'disabled'}>이걸로 약속할래요 (${pick.length}/3)</button>`;
+}
+ACTS.thGoalPick = () => { const rec = goalsOf(S.kidId); S.view.goalPick = rec ? rec.picks.map(g => g.id) : []; openModal(thGoalSheet()); };
+ACTS.thGoalToggle = (arg) => {
+  const p = S.view.goalPick || (S.view.goalPick = []);
+  if (p.includes(arg)) S.view.goalPick = p.filter(x => x !== arg);
+  else if (p.length < 3) p.push(arg); else toast('약속은 3개까지예요. 하나를 빼고 골라 볼까요?');
+  openModal(thGoalSheet());
+};
+ACTS.thGoalSave = async () => {
+  const ids = S.view.goalPick || [], menu = goalMenu(); if (!ids.length) return;
+  const rec = goalsOf(S.kidId);
+  const picks = ids.map(id => { const g = menu.find(x => x.id === id); const old = rec && rec.picks.find(x => x.id === id);
+    return g ? { id:g.id, icon:g.icon, text:g.text, auto:g.auto || '', target:g.target || 5, days:(old && old.days) || [] } : null; }).filter(Boolean);
+  if (rec) await Store.update('goals', rec.id, { picks });
+  else await Store.add('goals', { kidId:S.kidId, week:goalWeek(0), picks, review:null, at:new Date().toISOString() });
+  closeModal();
+  cheerPopup({ emoji:'🤝', title:'약속했어요!', sub:'스스로 정한 약속, 멋지게 해낼 수 있어요!' });
+};
+ACTS.thGoalTick = async (arg) => {
+  const rec = goalsOf(S.kidId); if (!rec) return;
+  const picks = JSON.parse(JSON.stringify(rec.picks)), g = picks[+arg]; if (!g) return;
+  const t = todayKey(); g.days = g.days || [];
+  if (g.days.includes(t)) g.days = g.days.filter(x => x !== t);
+  else { g.days.push(t); ttChime(); toast(`${g.icon} 오늘도 약속을 지켰어요! 최고!`); }
+  await Store.update('goals', rec.id, { picks });
+};
+function thReviewSheet(back){
+  const rec = goalsOf(S.kidId, back); if (!rec) return '';
+  const rv = S.view.goalRv || {};
+  return `<h3>🪞 ${back ? '지난주' : '이번 주'} 약속 돌아보기</h3>
+    <p class="muted" style="margin:0 0 10px">어땠는지 솔직하게 골라요. 다 못 했어도 괜찮아요 — 해 본 것만으로 멋져요!</p>
+    <div class="stack" style="gap:10px">${rec.picks.map(g => { const v = goalValue(S.kidId, g, back);
+      return `<div class="th-goal"><div class="row"><span style="font-size:22px">${esc(g.icon)}</span><b class="grow">${esc(g.text)}</b><span class="muted">${g.auto === 'rate' ? `${v}%` : `${v}/${g.target}`}</span></div>
+        <div class="chips" style="margin-top:7px">${[['star','⭐ 해냈어요'], ['some','🙂 조금 했어요'], ['next','🌱 다음 주에 더']].map(([k, l]) =>
+          `<button class="chip" data-act="thRv" data-arg="${esc(g.id)}|${k}" aria-pressed="${rv[g.id] === k}">${l}</button>`).join('')}</div></div>`; }).join('')}</div>
+    <div class="muted" style="margin:12px 0 4px">🌱 다음 주에는 어떻게 해 볼까?</div>${kvField('thRvNote', '예: 자기 전에 책 한 권씩!')}
+    <button class="btn wide" data-act="thRvSave" data-arg="${back}" style="margin-top:12px" ${rec.picks.every(g => rv[g.id]) ? '' : 'disabled'}>돌아보기 끝!</button>`;
+}
+ACTS.thGoalReview = (arg) => { S.view.goalRv = {}; S.view.goalBack = +arg || 0; S.view.thSheet = () => thReviewSheet(S.view.goalBack); openModal(thReviewSheet(S.view.goalBack)); };
+ACTS.thRv = (arg) => { const [id, v] = String(arg).split('|'); (S.view.goalRv = S.view.goalRv || {})[id] = v; openModal(thReviewSheet(S.view.goalBack || 0)); };
+ACTS.thRvSave = async (arg) => {
+  const back = +arg || 0, rec = goalsOf(S.kidId, back); if (!rec) return;
+  await Store.update('goals', rec.id, { review:{ ...(S.view.goalRv || {}), note:kv('thRvNote').trim().slice(0, 80) }, reviewedAt:new Date().toISOString() });
+  kvClear('thRv'); closeModal(); awardStars(2); confetti();
+  cheerPopup({ emoji:'🪞', title:'돌아보기 끝!', sub:'스스로 돌아보는 힘이 제일 멋진 힘이에요' });
+};
+
+/* ---------- 🔎 궁금해 노트 ---------- 내 생각 먼저 → 알아보기(책·부모님·AI·해 보기) → 알게 된 것 */
+const WONDER_HOW = [['book','📚 책에서'], ['family','👪 엄마 아빠에게'], ['try','🔬 직접 해 보고'], ['ai','🤖 AI에게']];
+function thWonderCard(){
+  const list = thinkOf(S.kidId, 'wonder').sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  const open = list.filter(w => w.status !== 'done'), done = list.filter(w => w.status === 'done');
+  return `<div class="card">
+    <div class="row"><h3 class="sub grow" style="margin:0">🔎 궁금해 노트</h3><button class="btn sm" data-act="thWonderNew">+ 궁금해요</button></div>
+    ${list.length ? `<div class="stack" style="gap:8px;margin-top:10px">
+      ${open.map(w => `<div class="th-ans"><b>❓ ${esc(w.q)}</b><div class="muted">내 생각: ${esc(w.guess || '')}</div>
+        <button class="btn ghost sm" data-act="thWonderFind" data-arg="${esc(w.id)}" style="margin-top:6px">🔍 알아보기</button></div>`).join('')}
+      ${done.slice(0, 3).map(w => `<div class="th-ans" style="background:var(--mint-soft)"><b>💡 ${esc(w.q)}</b><div>${esc(w.found || '')}</div>
+        ${w.guess ? `<div class="muted" style="font-size:13px">처음 내 생각: ${esc(w.guess)}</div>` : ''}</div>`).join('')}
+    </div>` : '<p class="muted" style="margin:8px 0 0">궁금한 게 생기면 적어 두어요. 궁금한 게 많은 건 똑똑해지고 있다는 뜻이에요!</p>'}
+  </div>`;
+}
+function thWonderSheet(){
+  const w = S.view.wonder || {};
+  if (w.id){
+    const rec = S.data.think.find(x => x.id === w.id); if (!rec) return '';
+    const how = w.how || [];
+    return `<h3>🔍 알아보기</h3>
+      <p class="th-q" style="margin:4px 0">❓ ${esc(rec.q)}</p>
+      <p class="muted" style="margin:0 0 10px">내 생각: ${esc(rec.guess || '')}</p>
+      <div class="muted" style="margin-bottom:6px">어떻게 알아봤어요?</div>
+      <div class="chips">${WONDER_HOW.filter(([k]) => k !== 'ai' || thinkAiOn()).map(([k, l]) => `<button class="chip" data-act="thHow" data-arg="${k}" aria-pressed="${how.includes(k)}">${l}</button>`).join('')}</div>
+      ${thinkAiOn() ? `<button class="btn ghost wide sm" data-act="thAskAi" style="margin-top:10px" ${w.busy ? 'disabled' : ''}>${w.busy ? '🤖 생각하는 중…' : '🤖 AI 도우미에게 물어보기'}</button>` : ''}
+      ${w.ai ? `<div class="th-ans" style="margin-top:10px;background:#EEF4FF"><b>🤖 AI 도우미</b> ${esc(w.ai.answer)}${w.ai.ask ? `<div class="muted" style="margin-top:4px">🤔 ${esc(w.ai.ask)}</div>` : ''}
+        <div class="muted" style="font-size:12px;margin-top:4px">AI도 틀릴 수 있어요. 책이나 엄마 아빠와 한 번 더 확인해 봐요!</div></div>` : ''}
+      ${w.aiErr ? `<p class="muted" style="margin:8px 0 0">${esc(w.aiErr)}</p>` : ''}
+      <div class="muted" style="margin:12px 0 4px">💡 알게 된 것 (내 말로 써요)</div>
+      ${kvField('thFound', '예: 공룡은 큰 운석이 떨어져서 사라졌대요', { area:true, max:200, h:80 })}
+      <div class="row" style="gap:8px;margin-top:10px">${micBtn('thFound', 'thMic')}<span class="grow"></span><button class="btn" data-act="thWonderDone">다 알아냈어요!</button></div>`;
+  }
+  return `<h3>🔎 궁금한 게 생겼어요</h3>
+    <div class="muted" style="margin-bottom:4px">무엇이 궁금해요?</div>
+    ${kvField('thWq', '예: 공룡은 왜 사라졌을까?', { max:100 })}
+    <div class="muted" style="margin:10px 0 4px">🤔 내 생각 먼저! 왜 그럴 것 같아요?</div>
+    ${kvField('thWg', '틀려도 괜찮아요. 내 생각이 제일 중요해요', { area:true, max:150, h:70 })}
+    <div class="row" style="gap:8px;margin-top:10px">${micBtn('thWq', 'thMic')}<span class="grow"></span><button class="btn" data-act="thWonderSave">궁금해 노트에 담기</button></div>`;
+}
+ACTS.thWonderNew = () => { S.view.wonder = {}; S.view.thSheet = thWonderSheet; openModal(thWonderSheet()); };
+ACTS.thWonderSave = async () => {
+  const q = kv('thWq').trim(), g = kv('thWg').trim();
+  if (!q){ toast('무엇이 궁금한지 적어 볼까요? ❓'); return; }
+  if (!g){ toast('내 생각을 먼저 적어 봐요! 틀려도 괜찮아요 🤔'); return; }
+  await Store.add('think', { kidId:S.kidId, type:'wonder', q:q.slice(0, 100), guess:g.slice(0, 150), how:[], found:'', status:'open', at:new Date().toISOString() });
+  kvClear('thW'); closeModal(); awardStars(1);
+  cheerPopup({ emoji:'🔎', title:'궁금해 노트에 담았어요!', sub:'궁금한 게 많은 건 똑똑해지고 있다는 뜻이에요' });
+};
+ACTS.thWonderFind = (arg) => { const r = S.data.think.find(x => x.id === arg); if (!r) return; S.view.wonder = { id:arg, how:(r.how || []).slice(), ai:r.ai || null }; kvSet('thFound', r.found || ''); S.view.thSheet = thWonderSheet; openModal(thWonderSheet()); };
+ACTS.thHow = (arg) => { const w = S.view.wonder; if (!w) return; w.how = w.how || []; w.how = w.how.includes(arg) ? w.how.filter(x => x !== arg) : w.how.concat(arg); openModal(thWonderSheet()); };
+ACTS.thAskAi = async () => {
+  const w = S.view.wonder, r = w && S.data.think.find(x => x.id === w.id); if (!r || w.busy) return;
+  w.busy = true; w.aiErr = ''; openModal(thWonderSheet());
+  try {
+    const j = await ttAsk({ task:'wonder', q:ttMask(r.q), guess:ttMask(r.guess || '') }, 45000);
+    w.ai = { answer:String(j.answer || '').slice(0, 300), ask:String(j.ask || '').slice(0, 120), at:new Date().toISOString() };
+    if (!w.how.includes('ai')) w.how.push('ai');
+    await Store.update('think', r.id, { ai:w.ai });
+  } catch(e){ w.aiErr = '🤖 AI 도우미가 지금은 바빠요. 책이나 엄마 아빠에게 물어볼까요?'; }
+  w.busy = false;
+  if (S.view.wonder === w) openModal(thWonderSheet());
+};
+ACTS.thWonderDone = async () => {
+  const w = S.view.wonder, r = w && S.data.think.find(x => x.id === w.id); if (!r) return;
+  const found = kv('thFound').trim();
+  if (!found){ toast('알게 된 것을 내 말로 한 줄 써 볼까요? 💡'); return; }
+  await Store.update('think', r.id, { how:w.how || [], found:found.slice(0, 200), status:'done', doneAt:new Date().toISOString() });
+  kvClear('thFound'); closeModal(); awardStars(2); confetti();
+  cheerPopup({ emoji:'💡', title:'알아냈어요!', sub:'스스로 찾아낸 건 오래오래 기억나요' });
+};
+
+/* ---------- 🧩 문제 해결 미션 ---------- 문제 알기 → 아이디어 3개 → 하나 고르기 → 해 보기 → 돌아보기 */
+const MISSIONS = [
+  { id:'m1', icon:'🧸', title:'장난감 하나를 둘이 같이 가지고 놀고 싶어요' },
+  { id:'m2', icon:'🌧️', title:'비 오는 날, 집에서 신나게 놀고 싶어요' },
+  { id:'m3', icon:'⏰', title:'아침에 늦지 않게 준비하고 싶어요' },
+  { id:'m4', icon:'🧹', title:'책상이 금방 어질러져요' },
+  { id:'m5', icon:'📚', title:'숙제가 하기 싫을 때가 있어요' },
+  { id:'m6', icon:'🤝', title:'친구랑 하고 싶은 놀이가 달라요' },
+  { id:'m7', icon:'🥦', title:'싫어하는 반찬도 한 입 먹어 보고 싶어요' },
+  { id:'m8', icon:'💧', title:'우리 집에서 물을 아껴 쓰고 싶어요' },
+  { id:'m9', icon:'♻️', title:'우리 집 쓰레기를 줄이고 싶어요' },
+  { id:'m10', icon:'😤', title:'화가 났을 때 마음을 가라앉히고 싶어요' },
+  { id:'m11', icon:'👋', title:'새 친구와 친해지고 싶어요' },
+  { id:'m12', icon:'🔍', title:'자꾸 물건을 잃어버려요' },
+  { id:'m13', icon:'🎁', title:'가족을 깜짝 기쁘게 해 주고 싶어요' },
+  { id:'m14', icon:'📺', title:'영상을 보면 멈추기가 어려워요' },
+  { id:'m15', icon:'💞', title:'형제와 다퉜을 때 화해하고 싶어요' },
+  { id:'m16', icon:'🪙', title:'용돈으로 사고 싶은 게 두 개예요' }
+];
+const MS_STEPS = ['🔍 문제 알기', '💡 아이디어', '👉 고르기', '🏃 해 보기', '🪞 돌아보기'];
+function missionMenu(){ return MISSIONS.concat((S.settings.missionExtra || []).filter(m => m && m.title)); }
+function curMission(kidId){ return thinkOf(kidId, 'mission').filter(m => m.step < 5).sort((a, b) => String(b.at).localeCompare(String(a.at)))[0] || null; }
+function thMissionCard(){
+  const m = curMission(S.kidId), done = thinkOf(S.kidId, 'mission').filter(x => x.step >= 5).length;
+  if (!m){
+    return `<div class="card">
+      <h3 class="sub">🧩 문제 해결 미션</h3>
+      <p class="muted" style="margin:0 0 10px">생활 속 문제를 스스로 풀어 보는 탐정 미션이에요!${done ? ` 지금까지 ${done}개 해결! 🏅` : ''}</p>
+      <button class="btn wide" data-act="thMsPick">미션 고르기</button></div>`;
+  }
+  return `<div class="card">
+    <div class="row"><h3 class="sub grow" style="margin:0">🧩 문제 해결 미션</h3>${done ? `<span class="tt-stage">🏅 ${done}개 해결</span>` : ''}</div>
+    <p class="th-q" style="margin:8px 0">${esc(m.icon)} ${esc(m.title)}</p>
+    <div class="ms-steps">${MS_STEPS.map((s, i) => `<span class="${i < m.step ? 'on' : (i === m.step ? 'now' : '')}">${s}</span>`).join('')}</div>
+    <button class="btn wide" data-act="thMsGo" style="margin-top:10px">${MS_STEPS[m.step]} 하러 가기 ▶</button></div>`;
+}
+function thMsSheet(){
+  const m = curMission(S.kidId);
+  if (!m || S.view.msPick){
+    return `<h3>🧩 어떤 문제를 풀어 볼까요?</h3>
+      <div class="stack" style="gap:7px;margin-top:8px">${missionMenu().map(x => `<button class="matchbtn" data-act="thMsStart" data-arg="${esc(x.id)}" style="text-align:left;min-height:48px;font-size:16px">${esc(x.icon)} ${esc(x.title)}</button>`).join('')}</div>`;
+  }
+  const head = `<p class="th-q" style="margin:0 0 6px">${esc(m.icon)} ${esc(m.title)}</p><div class="ms-steps" style="margin-bottom:10px">${MS_STEPS.map((s, i) => `<span class="${i < m.step ? 'on' : (i === m.step ? 'now' : '')}">${s}</span>`).join('')}</div>`;
+  let body = '';
+  if (m.step === 0) body = `<div class="muted">무엇이 문제일까요? 내 말로 써 봐요</div>${kvField('msProblem', '예: 둘 다 인형을 갖고 싶어서 다퉈요', { area:true, h:64 })}
+    <div class="muted" style="margin-top:9px">왜 그런 일이 생길까요?</div>${kvField('msWhy', '예: 인형이 하나밖에 없어서', { area:true, h:56 })}`;
+  else if (m.step === 1) body = `<div class="muted">해결할 방법을 3개 생각해 봐요. 엉뚱해도 좋아요!</div>
+    <div class="stack" style="gap:7px;margin-top:6px">${kvField('msI0', '💡 첫 번째 생각')}${kvField('msI1', '💡 두 번째 생각')}${kvField('msI2', '💡 세 번째 생각')}</div>`;
+  else if (m.step === 2) body = `<div class="muted">어떤 방법이 제일 좋을까요? 하나를 골라요</div>
+    <div class="stack" style="gap:7px;margin-top:6px">${m.ideas.map((x, i) => x ? `<button class="matchbtn" data-act="thMsIdea" data-arg="${i}" aria-pressed="${S.view.msIdea === i}" style="text-align:left;min-height:46px;font-size:16px">💡 ${esc(x)}</button>` : '').join('')}</div>
+    <div class="muted" style="margin-top:9px">왜 이 방법을 골랐어요?</div>${kvField('msPickWhy', '예: 둘 다 기분이 좋을 것 같아서')}`;
+  else if (m.step === 3) body = `<div class="th-ans">👉 고른 방법: ${esc(m.ideas[m.pick] || '')}</div>
+    <p class="muted" style="margin:8px 0">진짜로 해 보고 와서 알려 줘요! 해 보니까 어땠어요?</p>${kvField('msTried', '예: 시간을 정해서 번갈아 놀았어요', { area:true, h:64 })}
+    <div class="chips" style="margin-top:8px">${[['good','😄 잘 됐어요'], ['soso','🙂 조금 됐어요'], ['again','🔁 다시 해 볼래요']].map(([k, l]) => `<button class="chip" data-act="thMsRes" data-arg="${k}" aria-pressed="${S.view.msRes === k}">${l}</button>`).join('')}</div>`;
+  else if (m.step === 4) body = `<p class="muted" style="margin:0 0 6px">${m.result === 'good' ? '우와, 문제를 해결했어요! 🎉' : '해 본 것만으로도 멋진 탐정이에요!'}</p>
+    <div class="muted">다음에 비슷한 일이 생기면 어떻게 해 볼까요?</div>${kvField('msReflect', '예: 처음부터 순서를 정할래요', { area:true, h:64 })}`;
+  return `<h3>🧩 문제 해결 미션</h3>${head}${body}
+    <div class="row" style="gap:8px;margin-top:12px"><button class="btn ghost sm" data-act="thMsQuit">미션 바꾸기</button><span class="grow"></span>
+      <button class="btn" data-act="thMsNext">${m.step === 4 ? '미션 완료! 🏅' : (m.step === 3 ? '돌아보기로 ▶' : '다음 ▶')}</button></div>`;
+}
+ACTS.thMsPick = () => { S.view.msPick = true; S.view.thSheet = thMsSheet; openModal(thMsSheet()); };
+ACTS.thMsGo = () => { S.view.msPick = false; S.view.msIdea = null; S.view.msRes = null; const m = curMission(S.kidId); if (m){ kvSet('msProblem', m.problem || ''); kvSet('msWhy', m.why || ''); (m.ideas || []).forEach((x, i) => kvSet('msI' + i, x || '')); kvSet('msPickWhy', m.pickWhy || ''); kvSet('msTried', m.tried || ''); kvSet('msReflect', m.reflect || ''); if (m.pick != null) S.view.msIdea = m.pick; if (m.result) S.view.msRes = m.result; } S.view.thSheet = thMsSheet; openModal(thMsSheet()); };
+ACTS.thMsStart = async (arg) => {
+  const x = missionMenu().find(m => m.id === arg); if (!x) return;
+  const old = curMission(S.kidId); if (old) await Store.remove('think', old.id);        // 하던 미션은 바꾸기
+  await Store.add('think', { kidId:S.kidId, type:'mission', mid:x.id, icon:x.icon, title:x.title, problem:'', why:'', ideas:['', '', ''], pick:null, pickWhy:'', tried:'', result:'', reflect:'', step:0, at:new Date().toISOString() });
+  kvClear('ms'); S.view.msPick = false; S.view.msIdea = null; S.view.msRes = null; openModal(thMsSheet());
+};
+ACTS.thMsQuit = () => { S.view.msPick = true; openModal(thMsSheet()); };
+ACTS.thMsIdea = (arg) => { S.view.msIdea = +arg; openModal(thMsSheet()); };
+ACTS.thMsRes = (arg) => { S.view.msRes = arg; openModal(thMsSheet()); };
+ACTS.thMsNext = async () => {
+  const m = curMission(S.kidId); if (!m) return;
+  const patch = {};
+  if (m.step === 0){ patch.problem = kv('msProblem').trim().slice(0, 120); patch.why = kv('msWhy').trim().slice(0, 120); if (!patch.problem){ toast('무엇이 문제인지 한 줄 써 볼까요? 🔍'); return; } }
+  if (m.step === 1){ patch.ideas = [0, 1, 2].map(i => kv('msI' + i).trim().slice(0, 80)); if (patch.ideas.filter(Boolean).length < 2){ toast('아이디어를 2개는 생각해 볼까요? 엉뚱해도 좋아요! 💡'); return; } }
+  if (m.step === 2){ if (S.view.msIdea == null){ toast('제일 좋은 방법 하나를 골라 볼까요? 👉'); return; } patch.pick = S.view.msIdea; patch.pickWhy = kv('msPickWhy').trim().slice(0, 100); }
+  if (m.step === 3){ patch.tried = kv('msTried').trim().slice(0, 120); if (!S.view.msRes){ toast('어땠는지 하나 골라 볼까요?'); return; } patch.result = S.view.msRes; }
+  if (m.step === 4){ patch.reflect = kv('msReflect').trim().slice(0, 120); patch.doneAt = new Date().toISOString(); }
+  patch.step = m.step + 1;
+  await Store.update('think', m.id, patch);
+  if (patch.step >= 5){ kvClear('ms'); closeModal(); awardStars(3); confetti(); ttChime();
+    cheerPopup({ emoji:'🏅', title:'문제 해결사!', sub:'스스로 생각하고 해 본 거, 정말 대단해요!' }); return; }
+  ttChime(); openModal(thMsSheet());
+};
+
+/* ---------- 🎨 그림일기 (그림판은 화면 위 층 — 5초 동기화에 그림이 지워지지 않게) ---------- */
+const DY_COLORS = ['#6B4A52', '#E85C7C', '#FF8FA8', '#FFB36B', '#FFD98E', '#9BE0C8', '#3FA687', '#7FB2F0', '#B3A6EE', '#FFFFFF'];
+const DY_SIZES = [4, 9, 18];
+/* 아이들이 자주 헷갈리는 맞춤법 — 고칠 곳과 힌트만 알려 주고, 고치는 건 아이가 한다 */
+const KO_OOPS = [
+  ['됬', '받침을 다시 볼까요? ‘되었’을 줄이면?'], ['되요', '‘되어요’를 줄이면 어떻게 쓸까요?'], ['되서', '‘되어서’를 줄이면 어떻게 쓸까요?'],
+  ['몇일', '‘며칠’이라고 써요'], ['어떻해', '‘어떡해’와 ‘어떻게’를 헷갈렸나 봐요'], ['금새', '‘금세’가 맞아요 (금시에)'],
+  ['희안', '‘희한’이라고 써요'], ['설겆이', '‘설거지’라고 써요'], ['오랫만', '‘오랜만’이라고 써요'], ['오랜동안', '‘오랫동안’이라고 써요'],
+  ['왠만', '‘웬만’이라고 써요'], ['웬지', '‘왠지’라고 써요 (왜인지)'], ['않해', '‘안 해’처럼 ‘안’으로 써요'], ['않했', '‘안 했’처럼 ‘안’으로 써요'],
+  ['않하', '‘안 하’처럼 ‘안’으로 써요'], ['않가', '‘안 가’처럼 ‘안’으로 써요'], ['않먹', '‘안 먹’처럼 ‘안’으로 써요'],
+  ['곰곰히', '‘곰곰이’라고 써요'], ['깨끗히', '‘깨끗이’라고 써요'], ['일일히', '‘일일이’라고 써요'], ['틈틈히', '‘틈틈이’라고 써요'],
+  ['가르키', '가리킬 때는 ‘가리키’라고 써요'], ['역활', '‘역할’이라고 써요'], ['바램', '바라는 마음은 ‘바람’이에요'], ['설레임', '‘설렘’이라고 써요'],
+  ['뭐에요', '‘뭐예요’라고 써요'], ['아니예요', '‘아니에요’라고 써요'], ['할려고', '‘하려고’라고 써요'], ['갈려고', '‘가려고’라고 써요'],
+  ['볼려고', '‘보려고’라고 써요'], ['엇그제', '‘엊그제’라고 써요'], ['구지', '‘굳이’라고 써요'], ['어의없', '‘어이없’이라고 써요']
+];
+function koOops(text){
+  const t = String(text || ''), out = [];
+  for (const [w, hint] of KO_OOPS) if (t.includes(w)) out.push({ word:w, hint });
+  // ㄹ 받침 다음 '께' → '게' (할께 → 할게, 먹을께 → 먹을게). ‘함께’처럼 다른 받침은 그대로.
+  const chars = [...t];
+  for (let i = 1; i < chars.length; i++){
+    if (chars[i] !== '께') continue;
+    const a = kjSplit(chars[i - 1]);
+    if (a && a[2] === 8){ const w = chars[i - 1] + '께'; if (!out.some(o => o.word === w)) out.push({ word:w, hint:`‘${chars[i - 1]}게’처럼 ‘게’로 써요` }); }
+  }
+  return out.slice(0, 6);
+}
+let DY = null;
+function dyOpen(){
+  if (DY || TT || DT) return;
+  const k = curKid(); if (!k) return;
+  DY = { kidId:k.id, color:DY_COLORS[0], size:DY_SIZES[1], strokes:[], cur:null, weather:(todayWeather() || {}).icon || '', hints:null, busy:false, askQuit:false };
+  kvClear('dy');
+  const el = document.createElement('div');
+  el.className = 'ttl'; el.id = 'dyLayer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', '그림일기');
+  document.body.appendChild(el);
+  DY.el = el; dyDraw(true);
+}
+function dyClose(){ if (!DY) return; DY.el.remove(); DY = null; render(); }
+function dyDraw(first){
+  const d = DY;
+  const tools = `<div class="dy-tools">
+    ${DY_COLORS.map(c => `<button class="dy-color" data-act="dyColor" data-arg="${c}" aria-pressed="${d.color === c}" style="background:${c}" aria-label="${c === '#FFFFFF' ? '지우개' : '색깔'}">${c === '#FFFFFF' ? '🧽' : ''}</button>`).join('')}
+    <span class="dy-sep"></span>
+    ${DY_SIZES.map(s => `<button class="dy-size" data-act="dySize" data-arg="${s}" aria-pressed="${d.size === s}" aria-label="굵기 ${s}"><i style="width:${s + 4}px;height:${s + 4}px"></i></button>`).join('')}
+    <button class="btn ghost sm" data-act="dyUndo">↩</button><button class="btn ghost sm" data-act="dyClear">🗑</button></div>`;
+  const hints = d.hints ? (d.hints.length
+    ? `<div class="tt-tip" style="margin-top:8px"><span style="font-size:22px">🔍</span><div><b>다시 볼까요?</b>${d.hints.map(h => `‘${esc(h.word)}’ — ${esc(h.hint)}`).join('<br>')}<div style="font-size:13px;margin-top:4px">고치는 건 내가 직접! 할 수 있어요 💪</div></div></div>`
+    : '<div class="banner info" style="margin-top:8px"><span>✅</span><span>헷갈리기 쉬운 낱말은 안 보여요. 멋지게 썼어요!</span></div>') : '';
+  const body = d.askQuit
+    ? `<div class="tt-card stack" style="text-align:center;border:3px solid var(--butter)"><div style="font-size:40px">🤔</div>
+        <h3 class="sub" style="margin:0">그림일기를 그만할까요?</h3><p class="muted" style="margin:0">저장하지 않으면 그림이 사라져요.</p>
+        <div class="tt-foot"><button class="btn" data-act="dyQuitNo">계속 그릴래</button><button class="btn ghost" data-act="dyQuitYes">그만할래</button></div></div>`
+    : `<div class="tt-card stack" style="gap:10px">
+        <div class="row" style="gap:8px;flex-wrap:wrap"><b style="font-family:var(--display);font-size:20px">${esc(dateLabel())}</b><span class="grow"></span>
+          <div class="chips">${WEATHERS.slice(0, 6).map(w => `<button class="chip" data-act="dyWeather" data-arg="${w.icon}" aria-pressed="${d.weather === w.icon}" aria-label="${w.label}">${w.icon}</button>`).join('')}</div></div>
+        <canvas id="dyCanvas" class="dy-canvas" width="800" height="560" aria-label="그림 그리는 곳"></canvas>
+        ${tools}
+        ${kvField('dyTitle', '제목 (예: 놀이터에서 논 날)', { max:40 })}
+        ${kvField('dyText', '오늘 있었던 일을 써 봐요', { area:true, max:400, h:110 })}
+        ${hints}
+        <div class="tt-foot"><button class="btn ghost" data-act="dyCheck" ${d.busy ? 'disabled' : ''}>${d.busy ? '🔍 살펴보는 중…' : '🔍 맞춤법 살펴보기'}</button><button class="btn" data-act="dySave">저장하기 🎨</button></div>
+      </div>`;
+  d.el.innerHTML = `<div class="ttl-top"><button class="ttl-x" data-act="dyExit" aria-label="그만하기">✕</button>
+    <div class="ttl-dots"><span class="ttl-chip" style="background:var(--berry-soft);color:var(--berry-deep)">🎨 그림일기</span></div></div>
+    <div class="ttl-body">${body}</div>`;
+  if (!d.askQuit) dyBind(first);
+}
+function dyCtx(){ const c = document.getElementById('dyCanvas'); return c ? c.getContext('2d') : null; }
+function dyRepaint(){
+  const g = dyCtx(); if (!g) return;
+  g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, 800, 560);
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  for (const s of DY.strokes.concat(DY.cur ? [DY.cur] : [])){
+    g.strokeStyle = s.c; g.lineWidth = s.w * 2; g.beginPath();
+    s.p.forEach((pt, i) => { if (i) g.lineTo(pt[0], pt[1]); else g.moveTo(pt[0], pt[1]); });
+    if (s.p.length === 1){ g.lineTo(s.p[0][0] + 0.1, s.p[0][1]); }
+    g.stroke();
+  }
+}
+function dyBind(){
+  const c = document.getElementById('dyCanvas'); if (!c) return;
+  dyRepaint();
+  const at = ev => { const r = c.getBoundingClientRect(); return [(ev.clientX - r.left) / r.width * 800, (ev.clientY - r.top) / r.height * 560]; };
+  c.addEventListener('pointerdown', ev => { if (!DY) return; ev.preventDefault(); DY.cur = { c:DY.color, w:DY.size, p:[at(ev)] }; try { c.setPointerCapture(ev.pointerId); } catch(e){} dyRepaint(); });
+  c.addEventListener('pointermove', ev => { if (!DY || !DY.cur) return; DY.cur.p.push(at(ev)); dyRepaint(); });
+  const up = () => { if (DY && DY.cur){ DY.strokes.push(DY.cur); DY.cur = null; dyRepaint(); } };
+  c.addEventListener('pointerup', up); c.addEventListener('pointercancel', up);
+}
+ACTS.dyOpen = () => { dyOpen(); };
+ACTS.dyColor = (arg) => { if (DY){ DY.color = arg; dyDraw(); } };
+ACTS.dySize = (arg) => { if (DY){ DY.size = +arg; dyDraw(); } };
+ACTS.dyWeather = (arg) => { if (DY){ DY.weather = DY.weather === arg ? '' : arg; dyDraw(); } };
+ACTS.dyUndo = () => { if (DY && DY.strokes.length){ DY.strokes.pop(); dyRepaint(); } };
+ACTS.dyClear = () => { if (DY && DY.strokes.length){ DY.strokes = []; dyRepaint(); } };
+ACTS.dyExit = () => { if (!DY) return; if (!DY.strokes.length && !kv('dyText').trim()){ dyClose(); return; } DY.askQuit = true; dyDraw(); };
+ACTS.dyQuitNo = () => { if (DY){ DY.askQuit = false; dyDraw(); } };
+ACTS.dyQuitYes = () => { kvClear('dy'); dyClose(); };
+ACTS.dyCheck = async () => {
+  const d = DY; if (!d || d.busy) return;
+  const text = kv('dyText') + ' ' + kv('dyTitle');
+  d.hints = koOops(text);
+  if (thinkAiOn() && text.trim().length > 4){
+    d.busy = true; dyDraw();
+    try {
+      const j = await ttAsk({ task:'diary', text:ttMask(text).slice(0, 500) }, 40000);
+      for (const s of (j.spots || [])) if (s && s.word && !d.hints.some(h => h.word === s.word)) d.hints.push({ word:String(s.word).slice(0, 20), hint:String(s.hint || '다시 볼까요?').slice(0, 60) });
+    } catch(e){}
+    if (DY === d) d.busy = false;
+  }
+  if (DY === d) dyDraw();
+};
+ACTS.dySave = async () => {
+  const d = DY; if (!d) return;
+  const title = kv('dyTitle').trim(), text = kv('dyText').trim();
+  if (!d.strokes.length && !text){ toast('그림을 그리거나 글을 써 볼까요? 🎨'); return; }
+  const c = document.getElementById('dyCanvas');
+  d.busy = true; dyDraw();
+  let img = '';
+  try { const blob = await new Promise(ok => c.toBlob(ok, 'image/jpeg', 0.82)); if (blob) img = await photoSave(blob, 'diary'); } catch(e){}
+  await Store.add('think', { kidId:d.kidId, type:'diary', date:todayKey(), title:title.slice(0, 40), text:text.slice(0, 400), weather:d.weather, img, at:new Date().toISOString() });
+  kvClear('dy'); DY.el.remove(); DY = null;
+  awardStars(2); confetti(); render();
+  cheerPopup({ emoji:'🎨', title:'그림일기 완성!', sub:'오늘 하루가 멋진 그림으로 남았어요' });
+};
+function thDiaryCard(){
+  const list = thinkOf(S.kidId, 'diary').sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  return `<div class="card">
+    <div class="row"><h3 class="sub grow" style="margin:0">🎨 그림일기</h3><button class="btn sm" data-act="dyOpen">오늘 그림일기 쓰기</button></div>
+    ${list.length ? `<div class="dy-list">${list.slice(0, 6).map(x => `<button class="dy-item" data-act="dyShow" data-arg="${esc(x.id)}">
+        ${x.img ? `<img data-photo="${esc(x.img)}" alt="">` : '<span style="font-size:34px">📝</span>'}<small>${esc(x.date.slice(5).replace('-', '/'))} ${esc(x.weather || '')}</small></button>`).join('')}</div>`
+      : '<p class="muted" style="margin:8px 0 0">그림을 그리고 오늘 있었던 일을 써 봐요. 틀려도 괜찮아요!</p>'}
+  </div>`;
+}
+ACTS.dyShow = (arg) => {
+  const x = S.data.think.find(r => r.id === arg); if (!x) return;
+  openModal(`<h3>🎨 ${esc(x.title || '그림일기')}</h3>
+    <p class="muted" style="margin:0 0 8px">${esc(x.date)} ${esc(x.weather || '')}</p>
+    ${x.img ? `<img data-photo="${esc(x.img)}" alt="그림" style="width:100%;border-radius:var(--r-md);background:#fff;box-shadow:var(--shadow)">` : ''}
+    ${x.text ? `<p style="white-space:pre-wrap;font-size:17px">${esc(x.text)}</p>` : ''}
+    <button class="btn wide sm" data-close="1">닫기</button>`);
+};
+
+/* ---------- 탭 화면 ---------- */
+function viewThink(){
+  return `${thQCard()}${thDayCard()}${thGoalCard()}${thWonderCard()}${thMissionCard()}${thDiaryCard()}`;
+}
+
+/* ---------- ⏱ 예상 시간 vs 실제 시간 — 할 일을 시작할 때 "몇 분 걸릴까?" ---------- */
+function estSheet(todoId){
+  const t = S.data.todos.find(x => x.id === todoId);
+  return `<h3>⏱ 몇 분 걸릴 것 같아요?</h3>
+    <p class="muted" style="margin:0 0 10px">${t ? `${esc(t.icon || '')} ${esc(t.title)} — ` : ''}내 생각을 골라 봐요. 끝나고 진짜 시간이랑 비교해요!</p>
+    <div class="chips" style="justify-content:center">${[5, 10, 15, 20, 30, 45].map(m => `<button class="chip" data-act="estPick" data-arg="${esc(todoId)}|${m}">${m}분</button>`).join('')}</div>
+    <button class="btn ghost wide sm" data-act="estPick" data-arg="${esc(todoId)}|0" style="margin-top:12px">잘 모르겠어요 · 그냥 시작</button>`;
+}
+ACTS.estPick = (arg) => {
+  const [id, m] = String(arg).split('|');
+  S.running = { todoId:id, startedAt:Date.now(), est:+m || 0 };
+  closeModal(); render();
+};
+/* 끝났을 때 한마디 — 비슷하게 맞히면 "시간 감각 최고!" */
+function estLine(est, secs){
+  if (!est) return '';
+  const act = Math.max(1, Math.round(secs / 60)), gap = Math.abs(act - est);
+  if (gap <= Math.max(2, est * 0.25)) return `예상 ${est}분 → 진짜 ${act}분! 딱 맞혔어요 🎯`;
+  return act < est ? `예상 ${est}분 → 진짜 ${act}분! 생각보다 빨리 끝냈어요 ⚡` : `예상 ${est}분 → 진짜 ${act}분! 다음엔 조금 더 넉넉히 생각해 봐요 🌱`;
+}
+function estHit(est, secs){ if (!est) return false; const act = Math.max(1, Math.round(secs / 60)); return Math.abs(act - est) <= Math.max(2, est * 0.25); }
+
+/* ---------- 📖 책 한 줄 느낌 · 주인공에게 한마디 ---------- */
+ACTS.bookFeel = (arg) => {
+  const b = S.data.books.find(x => x.id === arg); if (!b) return;
+  kvSet('bfFeel', b.feel || ''); kvSet('bfHero', b.toHero || '');
+  S.view.feelBook = b.id;
+  openModal(`<h3>📖 ${esc(b.title)}</h3>
+    <div class="muted" style="margin:6px 0 4px">💭 한 줄 느낌</div>${kvField('bfFeel', '예: 구름빵을 먹으면 나도 날 수 있을 것 같았어요', { max:80 })}
+    <div class="muted" style="margin:10px 0 4px">💌 주인공에게 한마디</div>${kvField('bfHero', '예: 홍비야, 아빠를 도와준 거 멋졌어!', { max:80 })}
+    <div class="row" style="gap:8px;margin-top:12px"><button class="btn ghost grow" data-act="bookFeelBack">그만두기</button><button class="btn grow" data-act="bookFeelSave">저장</button></div>`);
+};
+ACTS.bookFeelBack = () => { const id = S.view.feelBook; kvClear('bf'); if (id) showBook(id); else closeModal(); };
+ACTS.bookFeelSave = async () => {
+  const id = S.view.feelBook, b = id && S.data.books.find(x => x.id === id); if (!b) return;
+  const had = !!(b.feel || b.toHero);
+  const feel = kv('bfFeel').trim().slice(0, 80), toHero = kv('bfHero').trim().slice(0, 80);
+  await Store.update('books', id, { feel, toHero });
+  kvClear('bf'); if (!had && (feel || toHero)) awardStars(1);
+  toast('책에 내 생각을 남겼어요 📖'); showBook(id);
+};
+
+/* ---------- 부모님 화면 → 💭 생각 ---------- 저녁 대화 카드 · 약속 · 기분 · 궁금해 노트 · 메뉴 고치기 · AI 도우미 */
+function thinkTab(){
+  const ks = kids(), q = tqToday();
+  const talk = ks.map(k => { const a = tqAnswer(k.id);
+    return `<div style="margin-top:8px"><b>${esc(k.name)}</b> ${a ? esc(a.a1) + (a.a2 ? ` <span class="muted">→ ${esc(a.f)}</span> ${esc(a.a2)}` : '') : '<span class="muted">아직 안 답했어요</span>'}</div>`; }).join('');
+  const moods = ks.map(k => `<div class="row" style="gap:6px;margin-top:6px"><b style="min-width:54px">${esc(k.name)}</b>${Array.from({ length:7 }, (_, i) => { const d = weekStart(); d.setDate(d.getDate() + i); const r = dayOf(k.id, todayKey(d)); return `<span title="${esc(todayKey(d))}" style="font-size:20px">${r ? r.mood : '·'}</span>`; }).join('')}</div>`).join('');
+  const sad = ks.filter(k => { const r = dayOf(k.id); return r && (r.mood === '😢' || r.mood === '😠'); });
+  const goals = ks.map(k => { const g = goalsOf(k.id); return `<div style="margin-top:6px"><b>${esc(k.name)}</b> ${g ? g.picks.map(p => `${esc(p.icon)} ${esc(p.text)} (${goalValue(k.id, p)}${p.auto === 'rate' ? '%' : '/' + p.target})`).join(' · ') : '<span class="muted">아직 안 골랐어요</span>'}</div>`; }).join('');
+  const wonders = S.data.think.filter(x => x.type === 'wonder' && x.status !== 'done').slice(-6).map(w => `<div style="margin-top:4px">❓ ${esc(w.q)} <span class="muted">— ${esc((kid(w.kidId) || {}).name || '')}</span></div>`).join('');
+  const gx = S.settings.goalExtra || [], mx = S.settings.missionExtra || [];
+  return `<div class="card" style="background:linear-gradient(170deg,#FFFFFF,#FFF4E8)">
+      <h3 class="sub">🍽 오늘의 저녁 대화 카드</h3>
+      <p style="margin:0">${q[2]} <b>${esc(q[3])}</b></p>${talk}
+      <p class="muted" style="margin:10px 0 0;font-size:13px">이렇게 물어봐 주세요: “${esc(thDayNo() % 2 ? q[4] : q[5])}” · 엄마 아빠의 생각도 들려주세요. 정답보다 ‘왜 그렇게 생각했는지’를 칭찬해 주세요.</p>
+    </div>
+    <div class="card" style="margin-top:12px"><h3 class="sub">🌈 이번 주 기분</h3>${moods}
+      ${sad.length ? `<div class="banner info" style="margin-top:8px"><span>🤗</span><span>${sad.map(k => esc(k.name)).join(', ')}의 오늘 기분이 속상해요. 한 번 꼭 안아 주세요.</span></div>` : ''}</div>
+    <div class="card" style="margin-top:12px"><h3 class="sub">🤝 이번 주 약속</h3>${goals}</div>
+    ${wonders ? `<div class="card" style="margin-top:12px"><h3 class="sub">🔎 아이들이 궁금해해요</h3>${wonders}
+      <p class="muted" style="margin:8px 0 0;font-size:13px">책이나 이야기로 함께 알아봐 주세요. 답을 바로 알려 주기보다 “어떻게 알아볼까?”를 같이 고민해 주세요.</p></div>` : ''}
+    <div class="card stack" style="margin-top:12px">
+      <h3 class="sub" style="margin:0">✍️ 메뉴 고치기</h3>
+      <div><div class="muted">🤝 약속 메뉴에 넣기 (스스로 체크하는 약속)</div>
+        <div class="row" style="gap:8px">${kvField('pGoal', '예: 동생과 사이좋게 놀기', { max:30 })}<button class="btn sm" data-act="pGoalAdd">넣기</button></div>
+        ${gx.length ? `<div class="chips" style="margin-top:6px">${gx.map(g => `<button class="chip" data-act="pGoalDel" data-arg="${esc(g.id)}">${esc(g.icon)} ${esc(g.text)} ✕</button>`).join('')}</div>` : ''}</div>
+      <div><div class="muted">🧩 문제 해결 미션 넣기</div>
+        <div class="row" style="gap:8px">${kvField('pMission', '예: 신발 정리를 잘 하고 싶어요', { max:40 })}<button class="btn sm" data-act="pMissionAdd">넣기</button></div>
+        ${mx.length ? `<div class="chips" style="margin-top:6px">${mx.map(m => `<button class="chip" data-act="pMissionDel" data-arg="${esc(m.id)}">${esc(m.icon)} ${esc(m.title)} ✕</button>`).join('')}</div>` : ''}</div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h3 class="sub">🤖 AI 도우미 (궁금해 노트 · 그림일기 맞춤법)</h3>
+      <p class="muted" style="margin:0 0 8px;font-size:13px">켜면 아이가 적은 궁금한 점·일기 글(이름은 가려서)을 Gemini로 보내 쉬운 설명과 맞춤법 힌트를 받아요.
+        Gemini API 약관은 18세 미만이 쓰는 서비스에 쓰지 않도록 정하고 있어서, 부모님이 읽고 판단해 주세요. 무료 등급은 보낸 내용이 구글 서비스 개선에 쓰일 수 있어요.
+        꺼 두어도 기기 안의 맞춤법 도우미는 그대로 동작해요.</p>
+      <button class="btn ${S.settings.thinkAi ? 'mint' : 'ghost'} wide sm" data-act="pThinkAi">${S.settings.thinkAi ? '✅ 켜져 있어요 (누르면 꺼요)' : '꺼져 있어요 (누르면 켜요)'}</button>
+    </div>`;
+}
+ACTS.pGoalAdd = async () => {
+  const t = kv('pGoal').trim(); if (!t){ toast('약속을 적어 주세요'); return; }
+  const list = (S.settings.goalExtra || []).concat({ id:'x' + Date.now().toString(36), icon:'⭐', text:t.slice(0, 30), auto:'', target:5 });
+  await Store.saveSettings({ goalExtra:list }); kvClear('pGoal'); openModal(parentSheet()); toast('약속 메뉴에 넣었어요');
+};
+ACTS.pGoalDel = async (arg) => { await Store.saveSettings({ goalExtra:(S.settings.goalExtra || []).filter(g => g.id !== arg) }); openModal(parentSheet()); };
+ACTS.pMissionAdd = async () => {
+  const t = kv('pMission').trim(); if (!t){ toast('미션을 적어 주세요'); return; }
+  const list = (S.settings.missionExtra || []).concat({ id:'x' + Date.now().toString(36), icon:'🧩', title:t.slice(0, 40) });
+  await Store.saveSettings({ missionExtra:list }); kvClear('pMission'); openModal(parentSheet()); toast('미션을 넣었어요');
+};
+ACTS.pMissionDel = async (arg) => { await Store.saveSettings({ missionExtra:(S.settings.missionExtra || []).filter(m => m.id !== arg) }); openModal(parentSheet()); };
+ACTS.pThinkAi = () => {
+  if (S.settings.thinkAi){ Store.saveSettings({ thinkAi:false }).then(() => openModal(parentSheet())); return; }
+  askConfirm({ title:'AI 도우미를 켤까요?', okLabel:'읽었어요, 켤게요',
+    note:'아이가 적은 궁금한 점과 일기 글이 Gemini(구글)로 가요. 이름은 가려서 보내요. Gemini API 약관은 18세 미만이 쓰는 서비스에 쓰지 않도록 정하고 있어요. 언제든 끌 수 있어요.',
+    onOk: async () => { await Store.saveSettings({ thinkAi:true }); S.view.parentTab = 'think'; openModal(parentSheet()); } });
+};
+
+/* ============================================================
+   🌏 세계 — 지구본 · 오늘의 나라 · 나의 여권 · 여행 기록 · 가고 싶은 곳
+   지구본은 d3-geo(정사영)로 캔버스에 그린다. 캔버스 하나를 계속 다시 붙여 써서 5초 동기화에도 끊기지 않는다.
+   손가락으로 돌리고, 나라를 누르면 나라 카드가 뜬다. 가 본 나라는 아이 색으로 칠해진다.
+   ============================================================ */
+const WORLD_LIB = ['https://cdn.jsdelivr.net/npm/d3-array@3.2.4/dist/d3-array.min.js',
+  'https://cdn.jsdelivr.net/npm/d3-geo@3.1.1/dist/d3-geo.min.js',
+  'https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js'];
+const WORLD_ATLAS = 'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json';
+// world-atlas 110m 나라 번호 → [ISO 두 글자, 한국어 이름] (Node의 CLDR 이름으로 만들고 아이들이 아는 이름으로 몇 개 고침)
+const WORLD_KO = '242:FJ:피지|834:TZ:탄자니아|732:EH:서사하라|124:CA:캐나다|840:US:미국|398:KZ:카자흐스탄|860:UZ:우즈베키스탄|598:PG:파푸아뉴기니|360:ID:인도네시아|032:AR:아르헨티나|152:CL:칠레|180:CD:콩고민주공화국|706:SO:소말리아|404:KE:케냐|729:SD:수단|148:TD:차드|332:HT:아이티|214:DO:도미니카 공화국|643:RU:러시아|044:BS:바하마|238:FK:포클랜드 제도|578:NO:노르웨이|304:GL:그린란드|260:TF:프랑스령 남방 지역|626:TL:동티모르|710:ZA:남아프리카 공화국|426:LS:레소토|484:MX:멕시코|858:UY:우루과이|076:BR:브라질|068:BO:볼리비아|604:PE:페루|170:CO:콜롬비아|591:PA:파나마|188:CR:코스타리카|558:NI:니카라과|340:HN:온두라스|222:SV:엘살바도르|320:GT:과테말라|084:BZ:벨리즈|862:VE:베네수엘라|328:GY:가이아나|740:SR:수리남|250:FR:프랑스|218:EC:에콰도르|630:PR:푸에르토리코|388:JM:자메이카|192:CU:쿠바|716:ZW:짐바브웨|072:BW:보츠와나|516:NA:나미비아|686:SN:세네갈|466:ML:말리|478:MR:모리타니|204:BJ:베냉|562:NE:니제르|566:NG:나이지리아|120:CM:카메룬|768:TG:토고|288:GH:가나|384:CI:코트디부아르|324:GN:기니|624:GW:기니비사우|430:LR:라이베리아|694:SL:시에라리온|854:BF:부르키나파소|140:CF:중앙아프리카 공화국|178:CG:콩고|266:GA:가봉|226:GQ:적도 기니|894:ZM:잠비아|454:MW:말라위|508:MZ:모잠비크|748:SZ:에스와티니|024:AO:앙골라|108:BI:부룬디|376:IL:이스라엘|422:LB:레바논|450:MG:마다가스카르|275:PS:팔레스타인|270:GM:감비아|788:TN:튀니지|012:DZ:알제리|400:JO:요르단|784:AE:아랍에미리트|634:QA:카타르|414:KW:쿠웨이트|368:IQ:이라크|512:OM:오만|548:VU:바누아투|116:KH:캄보디아|764:TH:태국|418:LA:라오스|104:MM:미얀마|704:VN:베트남|408:KP:북한|410:KR:대한민국|496:MN:몽골|356:IN:인도|050:BD:방글라데시|064:BT:부탄|524:NP:네팔|586:PK:파키스탄|004:AF:아프가니스탄|762:TJ:타지키스탄|417:KG:키르기스스탄|795:TM:투르크메니스탄|364:IR:이란|760:SY:시리아|051:AM:아르메니아|752:SE:스웨덴|112:BY:벨라루스|804:UA:우크라이나|616:PL:폴란드|040:AT:오스트리아|348:HU:헝가리|498:MD:몰도바|642:RO:루마니아|440:LT:리투아니아|428:LV:라트비아|233:EE:에스토니아|276:DE:독일|100:BG:불가리아|300:GR:그리스|792:TR:튀르키예|008:AL:알바니아|191:HR:크로아티아|756:CH:스위스|442:LU:룩셈부르크|056:BE:벨기에|528:NL:네덜란드|620:PT:포르투갈|724:ES:스페인|372:IE:아일랜드|540:NC:뉴칼레도니아|090:SB:솔로몬 제도|554:NZ:뉴질랜드|036:AU:호주|144:LK:스리랑카|156:CN:중국|158:TW:대만|380:IT:이탈리아|208:DK:덴마크|826:GB:영국|352:IS:아이슬란드|031:AZ:아제르바이잔|268:GE:조지아|608:PH:필리핀|458:MY:말레이시아|096:BN:브루나이|705:SI:슬로베니아|246:FI:핀란드|703:SK:슬로바키아|203:CZ:체코|232:ER:에리트리아|392:JP:일본|600:PY:파라과이|887:YE:예멘|682:SA:사우디아라비아|010:AQ:남극|N. Cyprus::북키프로스|196:CY:키프로스|504:MA:모로코|818:EG:이집트|434:LY:리비아|231:ET:에티오피아|262:DJ:지부티|Somaliland::소말릴란드|800:UG:우간다|646:RW:르완다|070:BA:보스니아 헤르체고비나|807:MK:북마케도니아|688:RS:세르비아|499:ME:몬테네그로|Kosovo:XK:코소보|780:TT:트리니다드 토바고|728:SS:남수단';
+// 지도에는 너무 작아 안 나오는 곳 — 핀으로 보여 준다 [이름, 위도, 경도]
+const WORLD_SMALL = { SG:['싱가포르', 1.3521, 103.8198], GU:['괌', 13.4443, 144.7937], MP:['사이판 (북마리아나 제도)', 15.185, 145.7467],
+  HK:['홍콩', 22.3193, 114.1694], MO:['마카오', 22.1987, 113.5439], MV:['몰디브', 3.2028, 73.2207], MT:['몰타', 35.9375, 14.3754],
+  BH:['바레인', 26.0667, 50.5577], MU:['모리셔스', -20.3484, 57.5522], SC:['세이셸', -4.6796, 55.492], PW:['팔라우', 7.515, 134.5825],
+  MC:['모나코', 43.7384, 7.4246], VA:['바티칸', 41.9029, 12.4534], AD:['안도라', 42.5063, 1.5218], SM:['산마리노', 43.9424, 12.4578],
+  LI:['리히텐슈타인', 47.166, 9.5554], PF:['타히티 (프랑스령 폴리네시아)', -17.6509, -149.426], WS:['사모아', -13.759, -172.1046],
+  TO:['통가', -21.179, -175.1982], FM:['미크로네시아', 6.8874, 158.215], BB:['바베이도스', 13.1939, -59.5432], AW:['아루바', 12.5211, -69.9683],
+  CV:['카보베르데', 15.1201, -23.6052], KM:['코모로', -11.6455, 43.3333], RE:['레위니옹', -21.1151, 55.5364] };
+/* 오늘의 나라 — 인사말(그 나라 말)·수도·랜드마크·음식·재미있는 사실. 사실은 하나하나 확인해서 넣었다. */
+const WC = [
+  { c:'KR', cap:'서울', hi:'안녕하세요', hk:'안녕하세요', lang:'ko-KR', lm:'경복궁', le:'🏯', ll:[37.5796, 126.977], food:'비빔밥·김치', fact:'한글은 세종대왕이 백성을 위해 만든 글자예요.', tz:'Asia/Seoul' },
+  { c:'JP', cap:'도쿄', hi:'こんにちは', hk:'곤니치와', lang:'ja-JP', lm:'후지산', le:'🗻', ll:[35.3606, 138.7274], food:'초밥·라멘', fact:'후지산은 일본에서 가장 높은 산이에요. 높이가 3,776m예요.', tz:'Asia/Tokyo' },
+  { c:'CN', cap:'베이징', hi:'你好', hk:'니하오', lang:'zh-CN', lm:'만리장성', le:'🧱', ll:[40.4319, 116.5704], food:'만두·베이징 오리구이', fact:'판다는 자연에서는 중국에만 살아요.', tz:'Asia/Shanghai' },
+  { c:'US', cap:'워싱턴 D.C.', hi:'Hello', hk:'헬로', lang:'en-US', lm:'자유의 여신상', le:'🗽', ll:[40.6892, -74.0445], food:'햄버거·핫도그', fact:'나라가 아주 넓어서 동쪽과 서쪽의 시간이 달라요.', tz:'America/New_York', city:'뉴욕' },
+  { c:'GB', cap:'런던', hi:'Hello', hk:'헬로', lang:'en-GB', lm:'빅벤', le:'🕰️', ll:[51.5007, -0.1246], food:'피시 앤 칩스', fact:'빅벤은 사실 시계탑 안에 있는 커다란 종의 이름이에요.', tz:'Europe/London' },
+  { c:'FR', cap:'파리', hi:'Bonjour', hk:'봉주르', lang:'fr-FR', lm:'에펠탑', le:'🗼', ll:[48.8584, 2.2945], food:'크루아상·바게트', fact:'에펠탑은 더운 여름에 쇠가 늘어나서 키가 조금 커져요.', tz:'Europe/Paris' },
+  { c:'IT', cap:'로마', hi:'Ciao', hk:'차오', lang:'it-IT', lm:'콜로세움', le:'🏟️', ll:[41.8902, 12.4922], food:'피자·스파게티', fact:'나라 모양이 긴 장화를 닮았어요.', tz:'Europe/Rome' },
+  { c:'ES', cap:'마드리드', hi:'¡Hola!', hk:'올라', lang:'es-ES', lm:'사그라다 파밀리아', le:'⛪', ll:[41.4036, 2.1744], food:'파에야', fact:'사그라다 파밀리아 성당은 1882년에 짓기 시작해서 지금도 조금씩 짓고 있어요.', tz:'Europe/Madrid' },
+  { c:'DE', cap:'베를린', hi:'Hallo', hk:'할로', lang:'de-DE', lm:'노이슈반슈타인 성', le:'🏰', ll:[47.5576, 10.7498], food:'소시지·프레첼', fact:'노이슈반슈타인 성은 디즈니 성을 만들 때 참고한 성으로 알려져 있어요.', tz:'Europe/Berlin' },
+  { c:'CH', cap:'베른', hi:'Grüezi', hk:'그뤼에치', lang:'de-DE', lm:'마터호른', le:'🏔️', ll:[45.9763, 7.6586], food:'퐁뒤·초콜릿', fact:'쓰는 말이 네 가지나 되는 나라예요. 독일어·프랑스어·이탈리아어·로망슈어!', tz:'Europe/Zurich' },
+  { c:'NL', cap:'암스테르담', hi:'Hallo', hk:'할로', lang:'nl-NL', lm:'킨더다이크 풍차 마을', le:'🌷', ll:[51.8833, 4.639], food:'치즈·스트룹와플', fact:'나라 땅의 4분의 1쯤이 바닷물보다 낮아요.', tz:'Europe/Amsterdam' },
+  { c:'GR', cap:'아테네', hi:'Γειά σου', hk:'야수', lang:'el-GR', lm:'파르테논 신전', le:'🏛️', ll:[37.9715, 23.7267], food:'수블라키·요거트', fact:'올림픽이 처음 시작된 나라예요.', tz:'Europe/Athens' },
+  { c:'RU', cap:'모스크바', hi:'Привет', hk:'프리볘트', lang:'ru-RU', lm:'성 바실리 대성당', le:'⛪', ll:[55.7525, 37.6231], food:'보르시·블리니', fact:'세계에서 가장 넓은 나라예요.', tz:'Europe/Moscow', city:'모스크바' },
+  { c:'EG', cap:'카이로', hi:'أهلاً', hk:'아흘란', lang:'ar-EG', lm:'기자 피라미드', le:'🔺', ll:[29.9792, 31.1342], food:'코샤리', fact:'가장 큰 피라미드는 약 4,500년 전에 지어졌어요.', tz:'Africa/Cairo' },
+  { c:'KE', cap:'나이로비', hi:'Jambo', hk:'잠보', lang:'sw-KE', lm:'마사이 마라', le:'🦁', ll:[-1.4061, 35.01], food:'우갈리', fact:'해마다 수많은 누 떼가 강을 건너 이동하는 모습을 볼 수 있어요.', tz:'Africa/Nairobi' },
+  { c:'ZA', cap:'프리토리아 (수도가 셋!)', hi:'Sawubona', hk:'사우보나', lang:'zu-ZA', lm:'테이블 마운틴', le:'⛰️', ll:[-33.9628, 18.4098], food:'브라이(바비큐)', fact:'수도가 세 곳이나 있는 나라예요. 프리토리아·케이프타운·블룸폰테인!', tz:'Africa/Johannesburg' },
+  { c:'AU', cap:'캔버라', hi:"G'day", hk:'그다이', lang:'en-AU', lm:'시드니 오페라 하우스', le:'🎭', ll:[-33.8568, 151.2153], food:'미트파이', fact:'캥거루와 코알라가 사는 나라예요. 우리나라가 겨울일 때 여름이에요.', tz:'Australia/Sydney', city:'시드니' },
+  { c:'NZ', cap:'웰링턴', hi:'Kia ora', hk:'키아 오라', lang:'en-NZ', lm:'밀포드 사운드', le:'🏞️', ll:[-44.6414, 167.8974], food:'키위·파블로바', fact:'양이 사람보다 훨씬 많이 사는 나라예요.', tz:'Pacific/Auckland' },
+  { c:'CA', cap:'오타와', hi:'Hello', hk:'헬로', lang:'en-CA', lm:'나이아가라 폭포', le:'💦', ll:[43.0896, -79.0849], food:'메이플 시럽', fact:'국기에 빨간 단풍잎이 그려져 있어요. 영어와 프랑스어를 함께 써요.', tz:'America/Toronto', city:'토론토' },
+  { c:'MX', cap:'멕시코시티', hi:'¡Hola!', hk:'올라', lang:'es-MX', lm:'치첸이트사', le:'🛕', ll:[20.6843, -88.5678], food:'타코', fact:'초콜릿의 재료인 카카오를 아주 오래전부터 먹던 곳이에요.', tz:'America/Mexico_City' },
+  { c:'BR', cap:'브라질리아', hi:'Olá', hk:'올라', lang:'pt-BR', lm:'예수 그리스도상', le:'🙌', ll:[-22.9519, -43.2105], food:'슈하스코', fact:'세계에서 가장 큰 열대 우림, 아마존이 있어요.', tz:'America/Sao_Paulo', city:'상파울루' },
+  { c:'AR', cap:'부에노스아이레스', hi:'¡Hola!', hk:'올라', lang:'es-AR', lm:'이과수 폭포', le:'🌊', ll:[-25.6953, -54.4367], food:'아사도', fact:'남쪽 끝에 ‘세상의 끝’이라고 불리는 도시 우수아이아가 있어요.', tz:'America/Argentina/Buenos_Aires' },
+  { c:'PE', cap:'리마', hi:'¡Hola!', hk:'올라', lang:'es-PE', lm:'마추픽추', le:'⛰️', ll:[-13.1631, -72.545], food:'세비체', fact:'감자의 고향이에요. 감자 종류가 수천 가지나 돼요.', tz:'America/Lima' },
+  { c:'IN', cap:'뉴델리', hi:'नमस्ते', hk:'나마스테', lang:'hi-IN', lm:'타지마할', le:'🕌', ll:[27.1751, 78.0421], food:'카레·난', fact:'세계에서 사람이 가장 많이 사는 나라예요.', tz:'Asia/Kolkata' },
+  { c:'TH', cap:'방콕', hi:'สวัสดีค่ะ', hk:'사왓디 카', lang:'th-TH', lm:'왓 아룬', le:'🛕', ll:[13.7437, 100.4889], food:'팟타이·똠얌꿍', fact:'코끼리를 아주 소중히 여기는 나라예요.', tz:'Asia/Bangkok' },
+  { c:'VN', cap:'하노이', hi:'Xin chào', hk:'씬 짜오', lang:'vi-VN', lm:'하롱베이', le:'⛵', ll:[20.9101, 107.1839], food:'쌀국수·반미', fact:'나라 모양이 S자처럼 길쭉해요.', tz:'Asia/Ho_Chi_Minh' },
+  { c:'PH', cap:'마닐라', hi:'Kumusta', hk:'쿠무스타', lang:'fil-PH', lm:'초콜릿 힐스', le:'🍫', ll:[9.8297, 124.1397], food:'아도보', fact:'7,000개가 넘는 섬으로 이루어진 나라예요.', tz:'Asia/Manila' },
+  { c:'ID', cap:'자카르타 (새 수도를 짓는 중)', hi:'Halo', hk:'할로', lang:'id-ID', lm:'보로부두르 사원', le:'🛕', ll:[-7.6079, 110.2038], food:'나시고렝', fact:'섬이 1만 7천 개가 넘는 나라예요.', tz:'Asia/Jakarta' },
+  { c:'SG', cap:'싱가포르', hi:'Hello', hk:'헬로', lang:'en-SG', lm:'멀라이언', le:'🦁', ll:[1.2868, 103.8545], food:'칠리크랩', fact:'나라 하나가 도시 하나만 한 도시 국가예요.', tz:'Asia/Singapore' },
+  { c:'MN', cap:'울란바토르', hi:'Сайн байна уу', hk:'사인 바이노', lang:'mn-MN', lm:'칭기즈 칸 기마상', le:'🐎', ll:[47.8081, 107.5299], food:'호쇼르', fact:'사람보다 말이 더 많은 나라예요.', tz:'Asia/Ulaanbaatar' },
+  { c:'TR', cap:'앙카라', hi:'Merhaba', hk:'메르하바', lang:'tr-TR', lm:'카파도키아', le:'🎈', ll:[38.6431, 34.8289], food:'케밥', fact:'아시아와 유럽, 두 대륙에 걸쳐 있는 나라예요.', tz:'Europe/Istanbul' },
+  { c:'AE', cap:'아부다비', hi:'مرحبا', hk:'마르하바', lang:'ar-AE', lm:'부르즈 할리파', le:'🏙️', ll:[25.1972, 55.2744], food:'후무스', fact:'세계에서 가장 높은 건물 부르즈 할리파가 있어요. 높이가 828m예요.', tz:'Asia/Dubai' },
+  { c:'NO', cap:'오슬로', hi:'Hei', hk:'헤이', lang:'nb-NO', lm:'게이랑에르 피오르', le:'🏞️', ll:[62.1049, 7.2059], food:'연어', fact:'여름에는 밤에도 해가 지지 않는 곳이 있어요.', tz:'Europe/Oslo' },
+  { c:'FI', cap:'헬싱키', hi:'Moi', hk:'모이', lang:'fi-FI', lm:'산타 마을', le:'🎅', ll:[66.5436, 25.8472], food:'연어 수프', fact:'산타클로스 마을이 있는 나라예요.', tz:'Europe/Helsinki' },
+  { c:'MA', cap:'라바트', hi:'سلام', hk:'살람', lang:'ar-MA', lm:'사하라 사막', le:'🐪', ll:[31.0998, -4.0122], food:'쿠스쿠스·타진', fact:'넓은 사하라 사막이 시작되는 나라예요.', tz:'Africa/Casablanca' },
+  { c:'PT', cap:'리스본', hi:'Olá', hk:'올라', lang:'pt-PT', lm:'벨렝 탑', le:'🏰', ll:[38.6916, -9.216], food:'에그타르트', fact:'에그타르트가 처음 만들어진 나라예요.', tz:'Europe/Lisbon' },
+  { c:'MY', cap:'쿠알라룸푸르', hi:'Selamat pagi', hk:'슬라맛 빠기', lang:'ms-MY', lm:'페트로나스 트윈 타워', le:'🏙️', ll:[3.1579, 101.7116], food:'나시르막', fact:'쌍둥이처럼 꼭 닮은 빌딩, 페트로나스 트윈 타워가 있어요.', tz:'Asia/Kuala_Lumpur' },
+  { c:'KH', cap:'프놈펜', hi:'សួស្តី', hk:'쑤어스다이', lang:'km-KH', lm:'앙코르와트', le:'🛕', ll:[13.4125, 103.867], food:'아목', fact:'국기에 사원(앙코르와트)이 그려져 있어요.', tz:'Asia/Phnom_Penh' },
+  { c:'NP', cap:'카트만두', hi:'नमस्ते', hk:'나마스테', lang:'ne-NP', lm:'에베레스트산', le:'🏔️', ll:[27.9881, 86.925], food:'모모', fact:'국기가 네모 모양이 아닌 하나뿐인 나라예요.', tz:'Asia/Kathmandu' },
+  { c:'DK', cap:'코펜하겐', hi:'Hej', hk:'하이', lang:'da-DK', lm:'레고랜드 빌룬', le:'🧱', ll:[55.7352, 9.1264], food:'스뫼레브뢰', fact:'레고가 처음 만들어진 나라예요.', tz:'Europe/Copenhagen' },
+  { c:'SE', cap:'스톡홀름', hi:'Hej', hk:'헤이', lang:'sv-SE', lm:'아이스호텔', le:'🧊', ll:[67.8517, 20.5967], food:'미트볼', fact:'해마다 얼음으로 호텔을 새로 짓는 곳이 있어요.', tz:'Europe/Stockholm' },
+  { c:'AT', cap:'빈', hi:'Grüß Gott', hk:'그뤼스 고트', lang:'de-AT', lm:'쇤브룬 궁전', le:'🏰', ll:[48.1845, 16.3122], food:'슈니첼', fact:'음악가 모차르트가 태어난 나라예요.', tz:'Europe/Vienna' }
+];
+/* 여행 기록에서 고르는 곳 — 자주 가는 여행지 (핀 위치) [이름, 나라, 위도, 경도, 그림] */
+const PLACES = [
+  ['제주도', 'KR', 33.38, 126.55, '🍊'], ['부산 해운대', 'KR', 35.1587, 129.1604, '🏖️'], ['경주', 'KR', 35.79, 129.332, '🏯'],
+  ['강릉', 'KR', 37.7519, 128.8761, '🌊'], ['속초·설악산', 'KR', 38.1195, 128.4656, '⛰️'], ['여수', 'KR', 34.7604, 127.6622, '🌉'],
+  ['전주 한옥마을', 'KR', 35.8151, 127.153, '🏘️'], ['에버랜드', 'KR', 37.2939, 127.2025, '🎢'], ['롯데월드', 'KR', 37.5111, 127.0982, '🎡'],
+  ['서울', 'KR', 37.5665, 126.978, '🏙️'], ['도쿄', 'JP', 35.6762, 139.6503, '🗼'], ['오사카', 'JP', 34.6937, 135.5023, '🏯'],
+  ['후쿠오카', 'JP', 33.5902, 130.4017, '🍜'], ['오키나와', 'JP', 26.2124, 127.6809, '🐠'], ['삿포로', 'JP', 43.0618, 141.3545, '⛄'],
+  ['괌', 'GU', 13.4443, 144.7937, '🏝️'], ['사이판', 'MP', 15.185, 145.7467, '🐢'], ['하와이', 'US', 21.3069, -157.8583, '🌺'],
+  ['뉴욕', 'US', 40.7128, -74.006, '🗽'], ['로스앤젤레스', 'US', 34.0522, -118.2437, '🎬'], ['다낭', 'VN', 16.0544, 108.2022, '🏖️'],
+  ['나트랑', 'VN', 12.2388, 109.1967, '🐬'], ['하노이', 'VN', 21.0278, 105.8342, '🍜'], ['방콕', 'TH', 13.7563, 100.5018, '🛕'],
+  ['푸껫', 'TH', 7.8804, 98.3923, '🏝️'], ['세부', 'PH', 10.3157, 123.8854, '🐋'], ['보라카이', 'PH', 11.9674, 121.9248, '🏖️'],
+  ['코타키나발루', 'MY', 5.9804, 116.0735, '🌅'], ['발리', 'ID', -8.4095, 115.1889, '🌴'], ['싱가포르', 'SG', 1.3521, 103.8198, '🦁'],
+  ['홍콩', 'HK', 22.3193, 114.1694, '🌃'], ['타이베이', 'TW', 25.033, 121.5654, '🏮'], ['베이징', 'CN', 39.9042, 116.4074, '🧱'],
+  ['상하이', 'CN', 31.2304, 121.4737, '🌆'], ['파리', 'FR', 48.8566, 2.3522, '🗼'], ['런던', 'GB', 51.5074, -0.1278, '💂'],
+  ['로마', 'IT', 41.9028, 12.4964, '🏟️'], ['바르셀로나', 'ES', 41.3874, 2.1686, '⛪'], ['시드니', 'AU', -33.8688, 151.2093, '🎭']
+];
+let W_KO = null;
+function wTable(){
+  if (W_KO) return W_KO;
+  const byId = {}, byA2 = {};
+  WORLD_KO.split('|').forEach(r => { const p = r.split(':'); byId[p[0]] = { a2:p[1], ko:p[2] }; if (p[1]) byA2[p[1]] = p[2]; });
+  for (const [a2, v] of Object.entries(WORLD_SMALL)) byA2[a2] = v[0];
+  W_KO = { byId, byA2 };
+  return W_KO;
+}
+function wName(a2){
+  const t = wTable();
+  if (t.byA2[a2]) return t.byA2[a2];
+  try { if (window.Intl && Intl.DisplayNames){ const n = new Intl.DisplayNames(['ko'], { type:'region' }).of(a2); if (n) return n; } } catch(e){}
+  return a2 || '어딘가';
+}
+function wFlag(a2){ if (!/^[A-Z]{2}$/.test(a2 || '')) return '🏳️'; try { return String.fromCodePoint(...a2.split('').map(c => 127397 + c.charCodeAt(0))); } catch(e){ return '🏳️'; } }
+function wInfo(a2){ return WC.find(x => x.c === a2) || null; }
+const eunNeun = w => `${w}${hasJong(w) ? '은' : '는'}`;         // 서울은 · 파리는
+const eulReul = w => `${w}${hasJong(w) ? '을' : '를'}`;         // 일본을 · 프랑스를
+function wPlaceNow(i){ const p = String(i.city || i.cap).replace(/\s*\(.*\)$/, ''); return `지금 ${eunNeun(p)} ${wTime(i.tz)}`; }
+function wToday(){ const n = thDayNo(); return WC[((n * 7) % WC.length + WC.length) % WC.length]; }   // 7칸씩 건너뛰어 대륙이 골고루
+function wTime(tz){
+  try {
+    const now = new Date();
+    const t = new Intl.DateTimeFormat('ko-KR', { timeZone:tz, hour:'numeric', minute:'2-digit' }).format(now);
+    const d1 = now.toLocaleDateString('en-CA', { timeZone:tz }), d0 = now.toLocaleDateString('en-CA', { timeZone:'Asia/Seoul' });
+    return `${t}${d1 < d0 ? ' (어제)' : (d1 > d0 ? ' (내일)' : '')}`;
+  } catch(e){ return ''; }
+}
+function wAllCountries(){
+  const t = wTable(), seen = new Set(), out = [];
+  for (const v of Object.values(t.byId)) if (v.a2 && !seen.has(v.a2)){ seen.add(v.a2); out.push([v.a2, v.ko]); }
+  for (const [a2, v] of Object.entries(WORLD_SMALL)) if (!seen.has(a2)){ seen.add(a2); out.push([a2, v[0]]); }
+  return out.sort((a, b) => a[1].localeCompare(b[1], 'ko'));
+}
+/* 기록 조회 */
+function tripsFor(kidId){ return S.data.trips.filter(t => !kidId || (Array.isArray(t.kidIds) ? t.kidIds.includes(kidId) : t.kidId === kidId)).sort((a, b) => String(b.date || b.at).localeCompare(String(a.date || a.at))); }
+function stampsOf(kidId, kind){ return S.data.stamps.filter(s => s.kidId === kidId && (!kind || s.kind === kind)); }
+function wishesOf(kidId){ return S.data.wishes.filter(w => w.kidId === kidId).sort((a, b) => String(b.at).localeCompare(String(a.at))); }
+function wVisited(kidId){ const s = new Set(); tripsFor(kidId).forEach(t => { if (t.code) s.add(t.code); }); return s; }
+/* 이번 주 세계 활동 수 (탐험왕·약속에 쓴다) */
+function wWeekCount(kidId, back){
+  const s0 = weekStart(); s0.setDate(s0.getDate() - 7 * (back || 0));
+  const a = s0.getTime(), b = a + 7 * 86400000, inW = x => { const t = new Date(x || 0).getTime(); return t >= a && t < b; };
+  return stampsOf(kidId).filter(s => inW(s.at)).length + S.data.trips.filter(t => (t.by === kidId) && inW(t.at)).length + wishesOf(kidId).filter(w => inW(w.at)).length;
+}
+
+/* ---------- 📷 사진 — 비공개 저장소(가족만)에 올리고, 안 되면 이 기기에만 둔다 ----------
+   폴더 이름은 가족 ID가 아니라 그 해시(SHA-256)라서, 사진 주소가 새어도 가족 기록 전체가 열리지 않는다.
+   사진은 긴 쪽 1600px로 줄이면서 다시 그리므로 위치 같은 사진 속 정보(EXIF)가 사라진다. */
+const PB = { hash:'', bucket:null, urls:new Map() };
+const PhotoDB = {
+  _db:null,
+  open(){
+    if (this._db) return Promise.resolve(this._db);
+    return new Promise((res, rej) => {
+      try {
+        const rq = indexedDB.open('dolearn-photos', 1);
+        rq.onupgradeneeded = () => { const db = rq.result; if (!db.objectStoreNames.contains('p')) db.createObjectStore('p', { keyPath:'id' }); };
+        rq.onsuccess = () => { this._db = rq.result; res(this._db); };
+        rq.onerror = () => rej(rq.error);
+      } catch(e){ rej(e); }
+    });
+  },
+  async tx(mode, fn){
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const t = db.transaction('p', mode), st = t.objectStore('p'); let out;
+      const rq = fn(st); if (rq) rq.onsuccess = () => { out = rq.result; };
+      t.oncomplete = () => res(out); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+    });
+  },
+  put(rec){ return this.tx('readwrite', st => st.put(rec)); },
+  get(id){ return this.tx('readonly', st => st.get(id)); },
+  del(id){ return this.tx('readwrite', st => st.delete(id)); }
+};
+function blobBuf(blob){ return new Promise((ok, bad) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = () => bad(r.error); r.readAsArrayBuffer(blob); }); }
+async function famHash(){
+  if (PB.hash) return PB.hash;
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(S.familyId)));
+  PB.hash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return PB.hash;
+}
+/* 가족 사진 저장소가 있는지 한 번 살펴본다 — 저장소를 만들 때 함께 만든 memories_ready() 가 true 를 돌려준다
+   (없는 저장소를 list 하면 오류 없이 빈 목록이 와서, 따로 물어본다) */
+async function photoBucketOk(){
+  if (PB.bucket != null) return PB.bucket;
+  if (!S.sb){ PB.bucket = false; return false; }
+  try { const r = await S.sb.rpc('memories_ready'); PB.bucket = !r.error && r.data === true; }
+  catch(e){ PB.bucket = false; }
+  return PB.bucket;
+}
+async function photoSave(blob, kind){
+  if (await photoBucketOk()){
+    try {
+      const path = `${await famHash()}/${kind || 'p'}-${uid()}.jpg`;
+      const up = await S.sb.storage.from('memories').upload(path, blob, { contentType:'image/jpeg', upsert:false });
+      if (up.error) throw up.error;
+      return 'sb:' + path;
+    } catch(e){ console.warn('사진 올리기 실패 — 이 기기에 둔다', e); if (/bucket/i.test(String((e && e.message) || ''))) PB.bucket = false; }
+  }
+  const id = uid();
+  await PhotoDB.put({ id, at:Date.now(), mime:'image/jpeg', data:await blobBuf(blob) });
+  return 'dev:' + id;
+}
+async function photoUrl(ref){
+  if (PB.urls.has(ref)) return PB.urls.get(ref);
+  let url = '';
+  if (ref.indexOf('sb:') === 0 && S.sb){
+    const r = await S.sb.storage.from('memories').createSignedUrl(ref.slice(3), 86400);
+    if (r && r.data && r.data.signedUrl) url = r.data.signedUrl;
+  } else if (ref.indexOf('dev:') === 0){
+    const rec = await PhotoDB.get(ref.slice(4));
+    if (rec && rec.data) url = URL.createObjectURL(new Blob([rec.data], { type:rec.mime || 'image/jpeg' }));
+  }
+  if (url) PB.urls.set(ref, url);
+  return url;
+}
+async function photoDel(ref){
+  try {
+    if (ref.indexOf('sb:') === 0 && S.sb) await S.sb.storage.from('memories').remove([ref.slice(3)]);
+    else if (ref.indexOf('dev:') === 0) await PhotoDB.del(ref.slice(4));
+  } catch(e){ console.warn('사진 지우기 실패', e); }
+  PB.urls.delete(ref);
+}
+/* 그린 화면의 <img data-photo="…">에 사진을 채운다 (다른 기기에만 있는 사진이면 안내 그림) */
+function hydratePhotos(root){
+  (root || document).querySelectorAll('img[data-photo]:not([data-ph])').forEach(img => {
+    img.setAttribute('data-ph', '1');
+    const ref = img.getAttribute('data-photo');
+    photoUrl(ref).then(u => {
+      if (u){ img.src = u; return; }
+      const s = document.createElement('span'); s.className = 'ph-miss'; s.textContent = '📱'; s.title = '다른 기기에 있는 사진이에요';
+      img.replaceWith(s);
+    }).catch(() => {});
+  });
+}
+
+/* ---------- 🌏 지구본 ---------- */
+const G = { ready:false, loading:false, error:false, canvas:null, ctx:null, W:0, rot:[127, 20], feats:[], proj:null, path:null, grat:null,
+  drag:null, vel:[0, 0], spin:true, anim:0, raf:0, touched:false };
+async function worldLoad(){
+  if (G.ready || G.loading) return;
+  G.loading = true; G.error = false;
+  try {
+    for (const u of WORLD_LIB) await loadScriptOnce(u);
+    const r = await fetch(WORLD_ATLAS); if (!r.ok) throw new Error('atlas ' + r.status);
+    const topo = await r.json();
+    const fc = topojson.feature(topo, topo.objects.countries), t = wTable();
+    G.feats = fc.features.map(f => {
+      const key = f.id != null ? String(f.id) : String((f.properties || {}).name || '');
+      const m = t.byId[key] || {};
+      f.a2 = m.a2 || ''; f.ko = m.ko || ((f.properties || {}).name || '');
+      return f;
+    });
+    G.proj = d3.geoOrthographic().clipAngle(90).precision(0.6);
+    G.grat = d3.geoGraticule10();
+    G.cent = {};
+    G.feats.forEach(f => { if (f.a2 && !G.cent[f.a2]) { try { G.cent[f.a2] = d3.geoCentroid(f); } catch(e){} } });
+    G.ready = true;
+  } catch(e){ console.warn('지구본 준비 실패', e); G.error = true; }
+  G.loading = false;
+  if (S.tab === 'world') render();
+}
+function worldMount(){
+  const slot = document.getElementById('globeSlot'); if (!slot) return;
+  if (!G.ready){ if (!G.loading && !G.error) worldLoad(); return; }
+  if (!G.canvas){
+    const c = document.createElement('canvas');
+    c.className = 'globe'; c.setAttribute('role', 'img'); c.setAttribute('aria-label', '지구본 — 손가락으로 돌리고 나라를 눌러요');
+    G.canvas = c; G.ctx = c.getContext('2d');
+    G.path = d3.geoPath(G.proj, G.ctx);
+    globeBind(c);
+  }
+  slot.innerHTML = ''; slot.appendChild(G.canvas);
+  const css = Math.max(220, Math.min(520, slot.clientWidth || 320)), dpr = Math.min(2, window.devicePixelRatio || 1);
+  if (G.W !== css || G.dpr !== dpr){ G.W = css; G.dpr = dpr; G.canvas.width = Math.round(css * dpr); G.canvas.height = Math.round(css * dpr); G.canvas.style.width = css + 'px'; G.canvas.style.height = css + 'px'; }
+  G.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  globeDraw();
+  if (G.spin && !G.touched && !S.view.wSel) globeSpin();
+}
+/* 나라 색 — 가 본 곳(혼자든 같이든)은 내 색 하나로 */
+function globeColors(){
+  const me = S.kidId;
+  const mine = wVisited(me);
+  const found = new Set(stampsOf(me, 'found').map(s => s.code)), learn = new Set(stampsOf(me, 'learn').map(s => s.code));
+  const wish = new Set(wishesOf(me).map(w => w.code));
+  return { mine, found, learn, wish, cm:kidColor(curKid()).bar, today:wToday().c, sel:S.view.wSel || '' };
+}
+function globeDraw(){
+  if (!G.ready || !G.canvas || !G.path) return;
+  const g = G.ctx, W = G.W, r = W / 2 - 4, C = globeColors();
+  G.proj.scale(r).translate([W / 2, W / 2]).rotate([-G.rot[0], -G.rot[1]]);
+  g.clearRect(0, 0, W, W);
+  const sea = g.createRadialGradient(W * 0.38, W * 0.32, r * 0.1, W / 2, W / 2, r);
+  sea.addColorStop(0, '#EAF7FF'); sea.addColorStop(1, '#B7DDF4');
+  g.beginPath(); G.path({ type:'Sphere' }); g.fillStyle = sea; g.fill();
+  g.beginPath(); G.path(G.grat); g.strokeStyle = 'rgba(255,255,255,.6)'; g.lineWidth = 0.8; g.stroke();
+  let selF = null;
+  for (const f of G.feats){
+    const a = f.a2, m = C.mine.has(a);
+    let fill = '#FFF7EA';
+    if (m) fill = C.cm;
+    else if (C.found.has(a)) fill = '#E4D2F3'; else if (C.learn.has(a)) fill = '#EEE7FA';
+    else if (a && a === C.today) fill = '#FFF1B8';
+    g.beginPath(); G.path(f); g.fillStyle = fill; g.fill();
+    g.strokeStyle = '#D9B994'; g.lineWidth = 0.6; g.stroke();
+    if (C.wish.has(a) && !m){ g.save(); g.setLineDash([3, 3]); g.strokeStyle = '#E85C7C'; g.lineWidth = 1.4; g.stroke(); g.restore(); }
+    if (a && a === C.sel) selF = f;
+  }
+  if (selF){ g.beginPath(); G.path(selF); g.strokeStyle = '#E85C7C'; g.lineWidth = 2.6; g.stroke(); }
+  // 핀 — 여행한 곳 📍, 오늘의 나라 ⭐, 고른 나라의 랜드마크, 지도에 안 나오는 작은 나라
+  for (const p of globePins(C)){
+    if (d3.geoDistance([p.lon, p.lat], G.rot) > Math.PI / 2 - 0.05) continue;
+    const xy = G.proj([p.lon, p.lat]); if (!xy) continue;
+    g.font = `${p.size || 18}px system-ui, "Apple Color Emoji", sans-serif`; g.textAlign = 'center'; g.textBaseline = 'bottom';
+    g.fillText(p.e, xy[0], xy[1] + 4);
+  }
+  g.beginPath(); G.path({ type:'Sphere' }); g.strokeStyle = '#8CC3E6'; g.lineWidth = 2; g.stroke();
+}
+function globePins(C){
+  const out = [], seen = new Set();
+  for (const t of tripsFor(S.kidId)) if (t.ll && t.ll.length === 2){ const k = t.ll.join(','); if (!seen.has(k)){ seen.add(k); out.push({ lat:t.ll[0], lon:t.ll[1], e:'📍', code:t.code, trip:t.id }); } }
+  const td = wToday(); out.push({ lat:td.ll[0], lon:td.ll[1], e:'⭐', code:td.c, size:20 });
+  const sel = C && C.sel ? wInfo(C.sel) : null;
+  if (sel && sel.c !== td.c) out.push({ lat:sel.ll[0], lon:sel.ll[1], e:sel.le, code:sel.c, size:22 });
+  for (const [a2, v] of Object.entries(WORLD_SMALL)){
+    if ((C && (C.mine.has(a2) || C.wish.has(a2) || C.sel === a2)) || a2 === td.c) out.push({ lat:v[1], lon:v[2], e:(C && C.sel === a2) ? '🔴' : '🔸', code:a2, size:14 });
+  }
+  return out;
+}
+function globePick(x, y){
+  const ll = G.proj.invert([x, y]);
+  if (!ll || isNaN(ll[0]) || d3.geoDistance(ll, G.rot) > Math.PI / 2) return null;
+  let best = null, bd = 22;
+  for (const p of globePins(globeColors())){
+    if (d3.geoDistance([p.lon, p.lat], G.rot) > Math.PI / 2) continue;
+    const xy = G.proj([p.lon, p.lat]); if (!xy) continue;
+    const d = Math.hypot(xy[0] - x, xy[1] - y + 8); if (d < bd){ bd = d; best = p.code; }
+  }
+  if (best) return best;
+  const f = G.feats.find(ff => d3.geoContains(ff, ll));
+  return f ? (f.a2 || null) : null;
+}
+function globeBind(c){
+  c.style.touchAction = 'none';
+  const pos = ev => { const r = c.getBoundingClientRect(); return [ev.clientX - r.left, ev.clientY - r.top]; };
+  c.addEventListener('pointerdown', ev => {
+    ev.preventDefault(); G.touched = true; cancelAnimationFrame(G.raf); G.anim = 0;
+    const p = pos(ev); G.drag = { x0:p[0], y0:p[1], x:p[0], y:p[1], t:performance.now(), moved:0 }; G.vel = [0, 0];
+    try { c.setPointerCapture(ev.pointerId); } catch(e){}
+  });
+  c.addEventListener('pointermove', ev => {
+    const d = G.drag; if (!d) return;
+    const p = pos(ev), dx = p[0] - d.x, dy = p[1] - d.y, now = performance.now();
+    const k = 180 / (Math.PI * (G.W / 2)) * 1.1;
+    G.rot[0] -= dx * k; G.rot[1] = clamp(G.rot[1] + dy * k, -75, 75);
+    const dt = Math.max(8, now - d.t); G.vel = [-dx * k / dt * 16, dy * k / dt * 16];
+    d.x = p[0]; d.y = p[1]; d.t = now; d.moved += Math.abs(dx) + Math.abs(dy);
+    globeDraw();
+  });
+  const up = ev => {
+    const d = G.drag; G.drag = null; if (!d) return;
+    if (d.moved < 8){ const code = globePick(d.x0, d.y0); if (code){ S.view.wSel = code; ttTone(784, 0, 0.12, 0.08); render(); } return; }
+    // 손을 떼면 조금 더 굴러가다 멈춘다
+    const glide = () => {
+      if (G.drag || !G.canvas.isConnected) return;
+      G.vel = [G.vel[0] * 0.92, G.vel[1] * 0.92];
+      if (Math.abs(G.vel[0]) + Math.abs(G.vel[1]) < 0.03) return;
+      G.rot[0] += G.vel[0]; G.rot[1] = clamp(G.rot[1] + G.vel[1], -75, 75);
+      globeDraw(); G.raf = requestAnimationFrame(glide);
+    };
+    G.raf = requestAnimationFrame(glide);
+  };
+  c.addEventListener('pointerup', up); c.addEventListener('pointercancel', () => { G.drag = null; });
+}
+/* 처음 열면 천천히 돈다 — 손대면 멈춘다 (1분 뒤에도 멈춘다) */
+function globeSpin(){
+  if (G.anim) return;
+  G.anim = 1; const t0 = performance.now();
+  const step = now => {
+    if (!G.anim || G.touched || G.drag || S.tab !== 'world' || !G.canvas || !G.canvas.isConnected || document.hidden || now - t0 > 60000 || S.view.wSel){ G.anim = 0; return; }
+    G.rot[0] += 0.12; globeDraw(); requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+function globeFly(lat, lon){
+  if (!G.ready) return;
+  G.touched = true; G.anim = 0; cancelAnimationFrame(G.raf);
+  const a0 = G.rot.slice(), dl = ((lon - a0[0] + 540) % 360) - 180, t0 = performance.now();
+  const step = now => {
+    const k = Math.min(1, (now - t0) / 900), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    G.rot = [a0[0] + dl * e, a0[1] + (clamp(lat, -60, 60) - a0[1]) * e];
+    globeDraw(); if (k < 1 && G.canvas && G.canvas.isConnected) G.raf = requestAnimationFrame(step);
+  };
+  G.raf = requestAnimationFrame(step);
+}
+function wCenter(a2){
+  const i = wInfo(a2); if (i) return i.ll;
+  if (WORLD_SMALL[a2]) return [WORLD_SMALL[a2][1], WORLD_SMALL[a2][2]];
+  const c = G.cent && G.cent[a2]; return c ? [c[1], c[0]] : null;
+}
+
+/* ---------- 탭 화면 ---------- */
+function viewWorld(){
+  const sel = S.view.wSel;
+  return `<div class="card" style="text-align:center">
+      <div class="row" style="text-align:left"><h3 class="sub grow" style="margin:0">🌏 지구본</h3>
+        <button class="btn ghost sm" data-act="wHome">🇰🇷 우리나라</button></div>
+      <div id="globeSlot" class="globe-slot">${G.error ? '<p class="muted">지구본을 불러오지 못했어요. 인터넷을 확인하고 다시 열어 볼까요?</p><button class="btn ghost sm" data-act="wRetry">다시 해 보기</button>'
+        : '<div class="waiting" style="margin-top:40%"><i></i><i></i><i></i></div><p class="muted">지구본을 준비하는 중…</p>'}</div>
+      <div class="globe-legend"><span><i style="background:${kidColor(curKid()).bar}"></i>가 본 곳</span>
+        <span><i style="background:#E4D2F3"></i>집 지구본에서 찾은 곳</span><span>⭐ 오늘의 나라</span><span>📍 여행한 곳</span></div>
+      <p class="muted" style="margin:6px 0 0;font-size:13px">손가락으로 돌리고, 나라를 눌러 보세요!</p>
+    </div>
+    ${sel ? wSelCard(sel) : ''}
+    ${wTodayCard()}
+    ${wPassCard()}
+    ${wTripCard()}
+    ${wWishCard()}`;
+}
+function wSelCard(a2){
+  const i = wInfo(a2), trips = tripsFor(S.kidId).filter(t => t.code === a2), wish = wishesOf(S.kidId).find(w => w.code === a2);
+  const found = stampsOf(S.kidId, 'found').some(s => s.code === a2);
+  return `<div class="card" style="border:3px solid var(--berry)">
+    <div class="row"><span style="font-size:40px;line-height:1">${wFlag(a2)}</span>
+      <div class="grow"><h3 class="sub" style="margin:0">${esc(wName(a2))}</h3>${i ? `<div class="muted">수도 ${esc(i.cap)}${i.tz ? ` · ${esc(wPlaceNow(i))}` : ''}</div>` : ''}</div>
+      <button class="btn ghost sm" data-act="wSel" data-arg="" aria-label="닫기">✕</button></div>
+    ${i ? `<div class="stack" style="gap:6px;margin-top:10px">
+      <div>👋 <b>${esc(i.hi)}</b> <span class="muted">(${esc(i.hk)})</span> <button class="chip" data-act="wHello" data-arg="${esc(a2)}" style="min-height:34px">🔊</button></div>
+      <div>${esc(i.le)} ${esc(i.lm)} · 🍽 ${esc(i.food)}</div>
+      <div class="muted">💡 ${esc(i.fact)}</div></div>` : ''}
+    ${trips.length ? `<div class="th-ans" style="margin-top:10px"><b>✈️ 우리 여행</b> ${trips.map(t => `<button class="chip" data-act="wTripShow" data-arg="${esc(t.id)}" style="min-height:34px">${esc(t.place || wName(t.code))} ${esc(String(t.date || '').slice(0, 7))}</button>`).join(' ')}</div>` : ''}
+    <div class="tt-foot" style="margin-top:10px">
+      <button class="btn ghost sm" data-act="wTripNew" data-arg="${esc(a2)}">✈️ 여행 기록 쓰기</button>
+      <button class="btn ghost sm" data-act="${wish ? 'wWishShow' : 'wWishNew'}" data-arg="${esc(wish ? wish.id : a2)}">${wish ? '⭐ 가고 싶은 곳이에요' : '⭐ 가고 싶어요'}</button>
+      ${found ? '<span class="tt-stage">🔎 집 지구본에서 찾았어요</span>' : `<button class="btn ghost sm" data-act="wFound" data-arg="${esc(a2)}">🔎 집 지구본에서 찾았어요</button>`}
+    </div></div>`;
+}
+function wTodayCard(){
+  const i = wToday(), learned = stampsOf(S.kidId, 'learn').some(s => s.code === i.c && s.date === todayKey());
+  const found = stampsOf(S.kidId, 'found').some(s => s.code === i.c);
+  return `<div class="card" style="background:linear-gradient(170deg,#FFFFFF,#FFF7DA)">
+    <div class="row"><h3 class="sub grow" style="margin:0">⭐ 오늘의 나라</h3><span class="tt-stage">${wFlag(i.c)} ${esc(wName(i.c))}</span></div>
+    <div class="w-today">
+      <div class="w-flag">${wFlag(i.c)}</div>
+      <div class="grow stack" style="gap:5px">
+        <div><b style="font-family:var(--display);font-size:24px">${esc(wName(i.c))}</b> <span class="muted">수도 ${esc(i.cap)}</span></div>
+        <div>👋 “${esc(i.hi)}” <span class="muted">(${esc(i.hk)})</span> <button class="chip" data-act="wHello" data-arg="${esc(i.c)}" style="min-height:34px">🔊 따라 말하기</button></div>
+        <div>${esc(i.le)} ${esc(i.lm)}</div>
+        <div>🍽 ${esc(i.food)}</div>
+        ${i.tz ? `<div>🕐 ${esc(wPlaceNow(i))}</div>` : ''}
+      </div>
+    </div>
+    <div class="tt-tip" style="margin-top:8px"><span style="font-size:22px">💡</span><div><b>알고 있었어요?</b>${esc(i.fact)}</div></div>
+    <div class="tt-foot" style="margin-top:10px">
+      <button class="btn ghost sm" data-act="wLook" data-arg="${esc(i.c)}">🌏 지구본에서 보기</button>
+      ${learned ? '<span class="tt-stage">📖 오늘 알아봤어요!</span>' : `<button class="btn sm" data-act="wLearn" data-arg="${esc(i.c)}">📖 알아봤어요</button>`}
+      ${found ? '' : `<button class="btn mint sm" data-act="wFound" data-arg="${esc(i.c)}">🔎 집 지구본에서 찾았어요!</button>`}
+    </div></div>`;
+}
+function wPassCard(){
+  const me = S.kidId, trips = tripsFor(me), seen = new Set(), st = [];
+  for (const t of trips.slice().reverse()) if (t.code && !seen.has('t' + t.code)){ seen.add('t' + t.code); st.push({ code:t.code, kind:'trip', y:String(t.date || t.at || '').slice(0, 4) }); }
+  for (const s of stampsOf(me, 'found')) if (!seen.has('f' + s.code)){ seen.add('f' + s.code); st.push({ code:s.code, kind:'found', y:String(s.at || '').slice(0, 4) }); }
+  const learn = new Set(stampsOf(me, 'learn').map(s => s.code));
+  const nTrip = st.filter(s => s.kind === 'trip').length, nFound = st.filter(s => s.kind === 'found').length;
+  return `<div class="card" style="background:linear-gradient(170deg,#FFFFFF,#EEF4FF)">
+    <h3 class="sub">🛂 나의 여권</h3>
+    <div class="muted" style="margin-bottom:10px">✈️ 여행한 나라 ${nTrip} · 🔎 찾은 나라 ${nFound} · 📖 알아본 나라 ${learn.size}</div>
+    ${st.length ? `<div class="pass">${st.map(s => `<div class="stamp ${s.kind}" style="transform:rotate(${(hueFor(s.code + s.kind) % 17) - 8}deg)">
+        <span class="sf">${wFlag(s.code)}</span><b>${esc(wName(s.code))}</b><small>${s.kind === 'trip' ? '✈️ 여행' : '🔎 찾았어요'}${s.y ? ' ' + esc(s.y) : ''}</small></div>`).join('')}</div>`
+      : '<p class="muted" style="margin:0">여행을 기록하거나 집 지구본에서 나라를 찾으면 도장이 찍혀요!</p>'}
+  </div>`;
+}
+function wTripCard(){
+  const all = !!S.view.wAllTrips, list = all ? tripsFor(null) : tripsFor(S.kidId);
+  return `<div class="card">
+    <div class="row"><h3 class="sub grow" style="margin:0">✈️ 여행 기록</h3><button class="btn sm" data-act="wTripNew" data-arg="">+ 기록하기</button></div>
+    <div class="chips" style="margin:8px 0"><button class="chip" data-act="wAllTrips" data-arg="" aria-pressed="${!all}">내 여행</button><button class="chip" data-act="wAllTrips" data-arg="1" aria-pressed="${all}">우리 가족 여행</button></div>
+    ${list.length ? `<div class="stack" style="gap:8px">${list.slice(0, 12).map(t => `<button class="trip-row" data-act="wTripShow" data-arg="${esc(t.id)}">
+        ${(t.photos || [])[0] ? `<img data-photo="${esc(t.photos[0])}" alt="">` : `<span class="trip-e">${esc(t.emoji || wFlag(t.code))}</span>`}
+        <span class="grow" style="text-align:left"><b>${wFlag(t.code)} ${esc(t.place || wName(t.code))}</b><br><span class="muted" style="font-size:13px">${esc(t.date ? String(t.date).slice(0, 7).replace('-', '년 ') + '월' : '')}${t.best ? ' · ' + esc(t.best) : ''}</span></span></button>`).join('')}</div>`
+      : '<p class="muted" style="margin:0">가 본 곳을 기록해 볼까요? 무엇을 했는지, 무엇을 먹었는지, 사진도 남길 수 있어요!</p>'}
+  </div>`;
+}
+function wWishCard(){
+  const list = wishesOf(S.kidId);
+  return `<div class="card">
+    <div class="row"><h3 class="sub grow" style="margin:0">⭐ 가고 싶은 곳</h3><button class="btn sm" data-act="wWishNew" data-arg="">+ 가고 싶어요</button></div>
+    ${list.length ? `<div class="stack" style="gap:8px;margin-top:8px">${list.map(w => { const i = wInfo(w.code);
+      return `<button class="trip-row" data-act="wWishShow" data-arg="${esc(w.id)}"><span class="trip-e">${wFlag(w.code)}</span>
+        <span class="grow" style="text-align:left"><b>${esc(w.place || wName(w.code))}</b><br><span class="muted" style="font-size:13px">${esc(w.why || '')}${i && i.tz ? ` · 지금 ${esc(wTime(i.tz))}` : ''}</span></span></button>`; }).join('')}</div>`
+      : '<p class="muted" style="margin:8px 0 0">가 보고 싶은 나라와 이유를 적어 봐요. 여행 계획도 세워 볼 수 있어요!</p>'}
+  </div>`;
+}
+
+/* ---------- 나라 고르기 (여행 기록·가고 싶은 곳 창 안) ---------- */
+function wPickerChips(prefix){
+  const q = kv(prefix + 'Q').trim();
+  const pop = ['KR', 'JP', 'CN', 'VN', 'TH', 'PH', 'GU', 'MP', 'US', 'SG', 'FR', 'GB', 'AU'];
+  const list = q ? wAllCountries().filter(([, ko]) => ko.includes(q)).slice(0, 12) : pop.map(c => [c, wName(c)]);
+  return list.length ? list.map(([c, ko]) => `<button class="chip" data-act="wPick" data-arg="${prefix}|${c}">${wFlag(c)} ${esc(ko)}</button>`).join('')
+    : '<span class="muted">그런 이름의 나라를 못 찾았어요. 다르게 적어 볼까요?</span>';
+}
+/* 찾는 칸에 칠 때마다 아래 목록만 바꾼다 (칸을 다시 그리지 않아서 한글 조합이 끊기지 않는다) */
+function wPicker(prefix){ return `<div class="chips" id="${prefix}QList" style="margin-top:6px">${wPickerChips(prefix)}</div>`; }
+/* ---------- ✈️ 여행 기록 ---------- */
+function wTripSheet(){
+  const f = S.view.wTrip, ks = kids();
+  if (!f) return '';
+  const places = PLACES.filter(p => p[1] === f.code);
+  return `<h3>✈️ ${f.id ? '여행 기록 고치기' : '여행 기록하기'}</h3>
+    <div class="stack" style="gap:10px;margin-top:6px">
+      <div><div class="muted">🌏 어느 나라예요?</div>
+        ${f.code ? `<div class="row" style="gap:8px;margin-top:4px"><span style="font-size:28px">${wFlag(f.code)}</span><b class="grow">${esc(wName(f.code))}</b><button class="btn ghost sm" data-act="wPick" data-arg="wt|">바꾸기</button></div>`
+          : `${kvField('wtQ', '나라 이름으로 찾기 (예: 일본)', { max:20 })}${wPicker('wt')}`}</div>
+      ${f.code ? `<div><div class="muted">📍 어디에 갔어요?</div>${kvField('wtPlace', '예: 제주도, 오사카, 디즈니랜드', { max:30 })}
+        ${places.length ? `<div class="chips" style="margin-top:6px">${places.map(p => `<button class="chip" data-act="wPlace" data-arg="${PLACES.indexOf(p)}" aria-pressed="${f.pi === PLACES.indexOf(p)}">${p[4]} ${esc(p[0])}</button>`).join('')}</div>` : ''}</div>` : ''}
+      <div><div class="muted">📅 언제 갔어요? (몰라도 괜찮아요)</div><input class="field" type="date" data-keep="wtDate" id="kv-wtDate" value="${esc(kv('wtDate'))}"></div>
+      <div><div class="muted">👪 누구랑 갔어요?</div>
+        <div class="chips">${ks.map(k => `<button class="chip" data-act="wWho" data-arg="${esc(k.id)}" aria-pressed="${f.kidIds.includes(k.id)}">${esc(k.avatar || '')} ${esc(k.name)}</button>`).join('')}</div>
+        <div style="margin-top:6px">${kvField('wtWith', '또 누구랑? (예: 엄마 아빠, 할머니)', { max:40 })}</div></div>
+      <div><div class="muted">🎈 무엇을 했어요?</div>${kvField('wtDid', '예: 바다에서 모래성을 쌓았어요', { area:true, h:60, max:150 })}</div>
+      <div><div class="muted">🍽 무엇을 먹었어요?</div>${kvField('wtAte', '예: 흑돼지, 귤', { max:60 })}</div>
+      <div><div class="muted">💖 제일 기억에 남는 것</div>${kvField('wtBest', '예: 돌고래를 봤어요!', { max:80 })}</div>
+      <div><div class="muted">📷 사진 (6장까지)</div>
+        <div class="trip-photos">${f.photos.map((p, n) => `<span class="tp"><img data-photo="${esc(p)}" alt=""><button data-act="wPhotoDel" data-arg="${n}" aria-label="사진 빼기">✕</button></span>`).join('')}
+          ${f.photos.length < 6 ? `<label class="tp add">${f.busy ? '⏳' : '＋'}<input type="file" accept="image/*" multiple id="wtPhoto" hidden></label>` : ''}</div>
+        <p class="muted" style="margin:4px 0 0;font-size:12px">${PB.bucket ? '🔒 우리 가족만 볼 수 있는 곳에 저장돼요.' : '📱 지금은 이 기기에만 저장돼요. (부모님이 가족 사진 저장소를 켜면 다른 기기에서도 보여요)'} 위치 정보는 지워서 저장해요.</p></div>
+      <div class="row" style="gap:8px">${f.id ? `<button class="btn ghost sm" data-act="wTripDel" data-arg="${esc(f.id)}">🗑</button>` : ''}<button class="btn ghost grow" data-close="1">그만두기</button><button class="btn grow" data-act="wTripSave" ${f.busy ? 'disabled' : ''}>저장</button></div>
+    </div>`;
+}
+ACTS.wTripNew = (arg) => {
+  const ks = kids();
+  kvClear('wt');
+  S.view.wTrip = { code:arg || '', kidIds:ks.map(k => k.id), photos:[], keep:[], pi:-1, ll:null, busy:false };
+  photoBucketOk().then(() => { if (S.view.wTrip && $('#modalRoot .sheet')) openModal(wTripSheet()); });
+  openModal(wTripSheet());
+};
+ACTS.wPick = (arg) => {
+  const [pre, code] = String(arg).split('|');
+  if (pre === 'wt' && S.view.wTrip){ S.view.wTrip.code = code || ''; S.view.wTrip.pi = -1; S.view.wTrip.ll = null; kvSet('wtQ', ''); openModal(wTripSheet()); }
+  if (pre === 'ww' && S.view.wWish){ S.view.wWish.code = code || ''; kvSet('wwQ', ''); openModal(wWishSheet()); }
+};
+ACTS.wPlace = (arg) => { const f = S.view.wTrip, p = PLACES[+arg]; if (!f || !p) return; f.pi = +arg; f.ll = [p[2], p[3]]; f.emoji = p[4]; kvSet('wtPlace', p[0]); openModal(wTripSheet()); };
+ACTS.wWho = (arg) => { const f = S.view.wTrip; if (!f) return; f.kidIds = f.kidIds.includes(arg) ? f.kidIds.filter(x => x !== arg) : f.kidIds.concat(arg); openModal(wTripSheet()); };
+ACTS.wPhotoDel = (arg) => { const f = S.view.wTrip; if (!f) return; const ref = f.photos.splice(+arg, 1)[0]; if (ref && !f.keep.includes(ref)) photoDel(ref); openModal(wTripSheet()); };   // 이미 저장된 사진은 ‘저장’할 때 지운다
+async function wTripPhotos(files){
+  const f = S.view.wTrip; if (!f) return;
+  f.busy = true; openModal(wTripSheet());
+  for (const file of Array.from(files).slice(0, 6 - f.photos.length)){
+    try { const b = await imgShrink(file, 1600, 0.82); f.photos.push(await photoSave(b, 'trip')); } catch(e){ toast('사진 하나를 못 넣었어요. 괜찮아요!'); }
+  }
+  f.busy = false;
+  if (S.view.wTrip === f) openModal(wTripSheet());
+}
+ACTS.wTripSave = async () => {
+  const f = S.view.wTrip; if (!f) return;
+  if (!f.code){ toast('어느 나라인지 골라 볼까요? 🌏'); return; }
+  if (!f.kidIds.length){ toast('누구랑 갔는지 골라 주세요 👪'); return; }
+  const place = kv('wtPlace').trim().slice(0, 30);
+  const p = f.pi >= 0 ? PLACES[f.pi] : PLACES.find(x => x[0] === place && x[1] === f.code);
+  const ll = p ? [p[2], p[3]] : (f.ll || wCenter(f.code));
+  const data = { code:f.code, place, kidIds:f.kidIds.slice(), with:kv('wtWith').trim().slice(0, 40), date:kv('wtDate') || '',
+    did:kv('wtDid').trim().slice(0, 150), ate:kv('wtAte').trim().slice(0, 60), best:kv('wtBest').trim().slice(0, 80),
+    photos:f.photos.slice(0, 6), ll:ll || null, emoji:(p && p[4]) || f.emoji || '' };
+  if (f.id) await Store.update('trips', f.id, data);
+  else await Store.add('trips', { ...data, by:S.kidId, at:new Date().toISOString() });
+  for (const ref of (f.keep || [])) if (!data.photos.includes(ref)) await photoDel(ref);
+  kvClear('wt'); S.view.wTrip = null; closeModal();
+  if (!f.id){ awardStars(2); confetti(); }
+  S.view.wSel = f.code; if (ll) globeFly(ll[0], ll[1]);
+  cheerPopup({ emoji:'✈️', title:f.id ? '여행 기록을 고쳤어요!' : '여권에 도장 쾅!', sub:`${wFlag(f.code)} ${wName(f.code)} — 소중한 추억이 남았어요` });
+};
+ACTS.wTripShow = (arg) => {
+  const t = S.data.trips.find(x => x.id === arg); if (!t) return;
+  const who = (t.kidIds || []).map(id => (kid(id) || {}).name).filter(Boolean).join('·');
+  openModal(`<h3>${wFlag(t.code)} ${esc(t.place || wName(t.code))}</h3>
+    <p class="muted" style="margin:0 0 8px">${esc(wName(t.code))}${t.date ? ' · ' + esc(t.date) : ''}${who ? ' · ' + esc(who) : ''}${t.with ? ' · ' + esc(t.with) : ''}</p>
+    ${(t.photos || []).length ? `<div class="trip-gallery">${t.photos.map(p => `<img data-photo="${esc(p)}" alt="여행 사진">`).join('')}</div>` : ''}
+    <div class="stack" style="gap:6px;margin-top:10px">
+      ${t.did ? `<div>🎈 ${esc(t.did)}</div>` : ''}${t.ate ? `<div>🍽 ${esc(t.ate)}</div>` : ''}${t.best ? `<div>💖 ${esc(t.best)}</div>` : ''}
+    </div>
+    <div class="row" style="gap:8px;margin-top:12px"><button class="btn ghost grow sm" data-act="wTripEdit" data-arg="${esc(t.id)}">✏️ 고치기</button><button class="btn grow sm" data-close="1">닫기</button></div>`);
+};
+ACTS.wTripEdit = (arg) => {
+  const t = S.data.trips.find(x => x.id === arg); if (!t) return;
+  kvClear('wt');
+  kvSet('wtPlace', t.place || ''); kvSet('wtDate', t.date || ''); kvSet('wtWith', t.with || ''); kvSet('wtDid', t.did || ''); kvSet('wtAte', t.ate || ''); kvSet('wtBest', t.best || '');
+  S.view.wTrip = { id:t.id, code:t.code, kidIds:(t.kidIds || []).slice(), photos:(t.photos || []).slice(), keep:(t.photos || []).slice(), pi:PLACES.findIndex(p => p[0] === t.place && p[1] === t.code), ll:t.ll || null, emoji:t.emoji || '', busy:false };
+  openModal(wTripSheet());
+};
+ACTS.wTripDel = (arg) => {
+  const t = S.data.trips.find(x => x.id === arg); if (!t) return;
+  askConfirm({ title:'이 여행 기록을 지울까요?', danger:true, okLabel:'지우기', note:'사진도 함께 지워지고 되돌릴 수 없어요.',
+    onOk: async () => { for (const p of (t.photos || [])) await photoDel(p); await Store.remove('trips', t.id); S.view.wTrip = null; toast('지웠어요'); } });
+};
+ACTS.wAllTrips = (arg) => { S.view.wAllTrips = !!arg; render(); };
+
+/* ---------- ⭐ 가고 싶은 곳 ---------- 이유와 여행 계획 세우기 */
+function wWishSheet(){
+  const f = S.view.wWish; if (!f) return '';
+  const i = f.code ? wInfo(f.code) : null;
+  return `<h3>⭐ 가고 싶은 곳</h3>
+    <div class="stack" style="gap:10px;margin-top:6px">
+      <div><div class="muted">🌏 어느 나라에 가 보고 싶어요?</div>
+        ${f.code ? `<div class="row" style="gap:8px;margin-top:4px"><span style="font-size:28px">${wFlag(f.code)}</span><b class="grow">${esc(wName(f.code))}</b>${f.id ? '' : '<button class="btn ghost sm" data-act="wPick" data-arg="ww|">바꾸기</button>'}</div>
+          ${i ? `<div class="muted" style="margin-top:4px">${esc(i.le)} ${esc(i.lm)} · ${esc(wPlaceNow(i))}</div>` : ''}`
+          : `${kvField('wwQ', '나라 이름으로 찾기 (예: 프랑스)', { max:20 })}${wPicker('ww')}`}</div>
+      <div><div class="muted">📍 가 보고 싶은 곳 (선택)</div>${kvField('wwPlace', i ? `예: ${i.lm}` : '예: 에펠탑', { max:30 })}</div>
+      <div><div class="muted">💭 왜 가고 싶어요?</div>${kvField('wwWhy', '예: 에펠탑에 올라가 보고 싶어서', { area:true, h:56, max:100 })}</div>
+      <div><div class="muted">🎒 여행 계획 세우기</div>
+        <div class="stack" style="gap:7px">${kvField('wwTodo', '가서 하고 싶은 것', { max:80 })}${kvField('wwWith', '누구랑 가고 싶어요?', { max:40 })}
+          ${kvField('wwWhen', '언제 가면 좋을까? (예: 여름방학)', { max:30 })}${kvField('wwPack', '꼭 챙길 것 (예: 수영복, 카메라)', { max:60 })}</div></div>
+      <div class="row" style="gap:8px">${f.id ? `<button class="btn ghost sm" data-act="wWishDel" data-arg="${esc(f.id)}">🗑</button>` : ''}<button class="btn ghost grow" data-close="1">그만두기</button><button class="btn grow" data-act="wWishSave">저장</button></div>
+    </div>`;
+}
+ACTS.wWishNew = (arg) => { kvClear('ww'); S.view.wWish = { code:arg || '' }; openModal(wWishSheet()); };
+ACTS.wWishShow = (arg) => {
+  const w = S.data.wishes.find(x => x.id === arg); if (!w) return;
+  kvClear('ww'); kvSet('wwPlace', w.place || ''); kvSet('wwWhy', w.why || ''); kvSet('wwTodo', w.todo || ''); kvSet('wwWith', w.with || ''); kvSet('wwWhen', w.when || ''); kvSet('wwPack', w.pack || '');
+  S.view.wWish = { id:w.id, code:w.code }; openModal(wWishSheet());
+};
+ACTS.wWishSave = async () => {
+  const f = S.view.wWish; if (!f) return;
+  if (!f.code){ toast('어느 나라인지 골라 볼까요? 🌏'); return; }
+  const data = { code:f.code, place:kv('wwPlace').trim().slice(0, 30), why:kv('wwWhy').trim().slice(0, 100), todo:kv('wwTodo').trim().slice(0, 80),
+    with:kv('wwWith').trim().slice(0, 40), when:kv('wwWhen').trim().slice(0, 30), pack:kv('wwPack').trim().slice(0, 60) };
+  if (f.id) await Store.update('wishes', f.id, data);
+  else { await Store.add('wishes', { kidId:S.kidId, ...data, at:new Date().toISOString() }); awardStars(1); }
+  kvClear('ww'); S.view.wWish = null; closeModal(); S.view.wSel = f.code;
+  const c = wCenter(f.code); if (c) globeFly(c[0], c[1]);
+  cheerPopup({ emoji:'⭐', title:'꿈의 여행지!', sub:`${wFlag(f.code)} ${wName(f.code)} — 언젠가 꼭 가 봐요!` });
+};
+ACTS.wWishDel = (arg) => { askConfirm({ title:'가고 싶은 곳에서 뺄까요?', okLabel:'빼기', onOk: async () => { await Store.remove('wishes', arg); S.view.wWish = null; } }); };
+
+/* ---------- 오늘의 나라 · 도장 ---------- */
+ACTS.wSel = (arg) => { S.view.wSel = arg || null; render(); };
+ACTS.wHome = () => { S.view.wSel = 'KR'; globeFly(36.5, 127.8); render(); };
+ACTS.wRetry = () => { G.error = false; worldLoad(); render(); };
+ACTS.wLook = (arg) => { const c = wCenter(arg); S.view.wSel = arg; render(); if (c) globeFly(c[0], c[1]); const el = document.getElementById('globeSlot'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior:'smooth', block:'center' }); };
+ACTS.wHello = (arg) => { const i = wInfo(arg); if (!i) return; nvUnlock(); voice(i.hi, { lang:i.lang, style:'hello' }); };
+ACTS.wLearn = async (arg) => {
+  if (stampsOf(S.kidId, 'learn').some(s => s.code === arg && s.date === todayKey())) return;
+  await Store.add('stamps', { kidId:S.kidId, code:arg, kind:'learn', date:todayKey(), at:new Date().toISOString() });
+  awardStars(1); ttChime();
+  cheerPopup({ emoji:wFlag(arg), title:`${eulReul(wName(arg))} 알아봤어요!`, sub:'세계가 한 뼘 더 가까워졌어요 🌏' });
+};
+ACTS.wFound = (arg) => {
+  S.view.pin = ''; S.view.pinError = ''; S.view.pinPurpose = 'globe:' + arg;
+  openModal(pinSheet('부모님, 확인해 주세요', `${eulReul(wName(arg))} 집에 있는 진짜 지구본에서 찾았대요! 봐 주셨나요?`));
+};
+async function worldFound(code){
+  if (!stampsOf(S.kidId, 'found').some(s => s.code === code)){
+    await Store.add('stamps', { kidId:S.kidId, code, kind:'found', date:todayKey(), at:new Date().toISOString() });
+    awardStars(2);
+  }
+  confetti(); ttChime();
+  cheerPopup({ emoji:'🔎', title:'탐험 도장 쾅!', sub:`${wFlag(code)} ${eulReul(wName(code))} 진짜 지구본에서 찾았어요!` });
+}
+
+/* ============================================================
    이벤트 배선
    ============================================================ */
 document.addEventListener('click', async (e) => {
@@ -5762,7 +8014,7 @@ document.addEventListener('click', async (e) => {
     '[data-close],[data-pin],[data-pinclear],[data-pinback],[data-ptab],[data-addtodo],[data-parentdel],'+
     '[data-kidav],[data-kidcol],[data-grant],[data-relock],[data-approve],[data-deny],'+
     '[data-nday],[data-tday],[data-tglink],[data-bookedit],[data-bookdel],[data-bookshow],[data-becat],[data-bestar],'+
-    '[data-weather],[data-cand],[data-ttword],[data-pz],button');
+    '[data-weather],[data-cand],[data-ttword],[data-pz],[data-act],button');
   if (!t) return;
   const d = t.dataset;
 
@@ -5811,6 +8063,8 @@ document.addEventListener('click', async (e) => {
   }
   if (t.id === 'openParent'){ S.view.pin=''; S.view.pinError=''; S.view.pinPurpose='parent'; openModal(pinSheet('부모님 화면')); return; }
 
+  /* --- 새 기능 단추 (data-act) — 받아쓰기·철자·생각·세계 --- */
+  if (d.act && ACTS[d.act]){ await ACTS[d.act](d.arg != null ? d.arg : '', t); return; }
   /* --- ✏️ 한붓그리기 층 --- */
   if (OL && OL.el.contains(t)){ olClick(t); return; }
   /* --- 🦜 뚜뚜 --- */
@@ -5856,15 +8110,17 @@ document.addEventListener('click', async (e) => {
     cheerDone();
     return;
   }
-  if (d.start){ S.running = { todoId:d.start, startedAt:Date.now() }; render(); return; }
+  if (d.start){ openModal(estSheet(d.start)); return; }          // ⏱ 몇 분 걸릴지 먼저 생각해 본다
   if (d.stop){
-    const dur = (Date.now() - S.running.startedAt)/1000;
+    const dur = (Date.now() - S.running.startedAt)/1000, est = S.running.est || 0;
     S.running = null;
     const key = todayKey(), s = sessionOf(S.kidId, d.stop, key);
     const wasDone = !!(s && s.done);
-    if (s) await Store.update('sessions', s.id, { durationSec:(s.durationSec||0)+dur, done:true });
-    else await Store.add('sessions', { kidId:S.kidId, todoId:d.stop, date:key, durationSec:dur, done:true });
-    if (!wasDone) cheerDone();
+    const extra = est ? { est, estHit:estHit(est, dur) } : {};
+    if (s) await Store.update('sessions', s.id, { durationSec:(s.durationSec||0)+dur, done:true, ...extra });
+    else await Store.add('sessions', { kidId:S.kidId, todoId:d.stop, date:key, durationSec:dur, done:true, ...extra });
+    const line = estLine(est, dur);
+    if (!wasDone) cheerDone(line); else if (line) toast(line);
     return;
   }
   if (d.deltodo){ await Store.update('todos', d.deltodo, { archived:true }); return; }
@@ -6237,6 +8493,16 @@ document.addEventListener('click', async (e) => {
   }
 });
 
+/* 새 기능의 입력칸 — 칠 때마다 담아 둔다 (data-keep). 나라 찾기 칸은 아래 목록만 바꾼다(한글 조합이 끊기지 않게) */
+document.addEventListener('input', (e) => {
+  const el = e.target;
+  if (!el || !el.dataset || !el.dataset.keep) return;
+  kvSet(el.dataset.keep, el.value);
+  if (el.dataset.keep === 'wtQ' || el.dataset.keep === 'wwQ'){
+    const pre = el.dataset.keep.slice(0, 2), box = document.getElementById(pre + 'QList');
+    if (box) box.innerHTML = wPickerChips(pre);
+  }
+});
 /* 뚜뚜 원고 고치는 칸 — 칠 때마다 임시 원고에 담아 둔다 (창을 다시 그려도 글자가 남게) */
 document.addEventListener('input', (e) => {
   const el = e.target, dr = S.view.ttDraft;
@@ -6254,6 +8520,9 @@ document.addEventListener('input', (e) => {
 /* 부모 설정 입력값 저장 */
 document.addEventListener('change', async (e) => {
   const el = e.target;
+  if (el.dataset && el.dataset.keep) kvSet(el.dataset.keep, el.value);
+  if (el.id === 'dlPhoto' && el.files && el.files[0]){ await dlPhoto(el.files[0]); el.value = ''; return; }
+  if (el.id === 'wtPhoto' && el.files && el.files.length){ await wTripPhotos(el.files); return; }
   if (el.id === 'ttVoice'){ await Store.saveSettings({ ttVoice: el.value || '' }); say('Hello, everyone!', { lang:'en' }); }
   if (el.id === 'ttMaskIn') await Store.saveSettings({ ttMask: el.value.trim().slice(0, 200) });
   if (el.id === 'ttDate' && S.view.ttDraft) S.view.ttDraft.contestDate = el.value;
@@ -6288,6 +8557,8 @@ document.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter') return;
   if (e.isComposing || e.keyCode === 229) return;       // 한글을 조합하는 중에 누른 엔터는 글자 확정용
   if (e.target.id === 'dictInput'){ e.preventDefault(); const q=(e.target.value||'').trim(); if (q) doLookup(q); }
+  if (e.target.id === 'dtIn'){ e.preventDefault(); ACTS.dtCheck(); }
+  if (e.target.id === 'spIn'){ e.preventDefault(); spCheck(); }
   if (e.target.id === 'wizWord'){ e.preventDefault(); const b=$('#wizAddWord'); if (b) b.click(); }
   if (e.target.id === 'askInput'){ e.preventDefault(); const b=$('#askOk'); if (b) b.click(); }
   if (e.target.id === 'newPin1'){ e.preventDefault(); const n=$('#newPin2'); if (n) n.focus(); }
@@ -6304,6 +8575,7 @@ function pinTitle(){
   const p = S.view.pinPurpose || '';
   if (p === 'unlock') return '부모님, 열어주세요';
   if (p.startsWith('approve:')) return '승인하시겠어요?';
+  if (p.startsWith('globe:')) return '부모님, 확인해 주세요';
   return '부모님 화면';
 }
 /* 처음 비밀번호(아무도 정하지 않은 상태)로 들어왔으면, 새 비밀번호를 정해야 넘어간다.
@@ -6322,6 +8594,7 @@ function pinSetSheet(note){
     <button class="btn wide" id="savePin" style="margin-top:6px">저장하고 계속</button>`;
 }
 function continueAfterPin(purpose){
+  if (purpose.startsWith('globe:')){ closeModal(); worldFound(purpose.slice(6)); render(); return; }
   if (purpose.startsWith('approve:')){
     approveRequest(purpose.slice(8)); closeModal(); confetti(); render();
   } else if (purpose === 'unlock'){
@@ -6341,7 +8614,8 @@ function checkPin(){
       setTimeout(() => { const i = $('#newPin1'); if (i) i.focus(); }, 60);
       return;
     }
-    if (purpose.startsWith('approve:')){
+    if (purpose.startsWith('globe:')){ closeModal(); worldFound(purpose.slice(6)); render(); }
+    else if (purpose.startsWith('approve:')){
       approveRequest(purpose.slice(8)); closeModal(); confetti(); render();
     } else if (purpose === 'unlock'){
       grantUnlock(S.kidId); closeModal(); confetti(); render();
@@ -6716,6 +8990,8 @@ function showBook(id){
     <p class="muted" style="margin:0">${esc(b.author||'지은이 몰라요')} · ${esc(b.category)} · ${'⭐'.repeat(b.stars||1)}</p>
     ${b.ar ? (() => { const bd = arBand(b.ar, (kid(b.kidId) || {}).arScore); return `<p style="margin:6px 0 0">📘 AR <b>${b.ar}</b>${bd ? ` · ${bd.ico} ${bd.label} — ${bd.note}` : ''}</p>`; })() : ''}
     <p class="muted" style="margin:4px 0 14px">${new Date(b.readAt).toLocaleDateString('ko-KR')}에 읽었어요</p>
+    ${b.feel || b.toHero ? `<div class="th-ans" style="margin:-4px 0 12px">${b.feel ? `<div>💭 ${esc(b.feel)}</div>` : ''}${b.toHero ? `<div>💌 ${esc(b.toHero)}</div>` : ''}</div>` : ''}
+    <button class="btn mint wide sm" data-act="bookFeel" data-arg="${b.id}" style="margin-bottom:8px">${b.feel || b.toHero ? '💭 느낌 고쳐 쓰기' : '💭 한 줄 느낌 · 주인공에게 한마디'}</button>
     <div class="row" style="gap:8px;margin-bottom:8px">
       <button class="btn ghost grow sm" data-bookedit="${b.id}">✏️ 고치기</button>
       <button class="btn ghost grow sm" data-bookdel="${b.id}">🗑 지우기</button>
@@ -6827,9 +9103,11 @@ async function seedSample(){
 }
 
 async function clearSample(){
-  for (const coll of ['todos','books','words','sessions','scripts']){
+  for (const coll of ['todos','books','words','sessions','scripts','dlists']){
     for (const r of S.data[coll].filter(x => x.sample)) await Store.remove(coll, r.id);
   }
+  const aliveL = new Set(S.data.dlists.map(x => x.id));
+  for (const p of S.data.dprog.filter(x => !aliveL.has(x.listId))) await Store.remove('dprog', p.id);
   // 예시 원고로 한 진도도 함께
   const alive = new Set(S.data.scripts.map(x => x.id));
   for (const p of S.data.speech.filter(x => !alive.has(x.scriptId))) await Store.remove('speech', p.id);
@@ -6893,6 +9171,7 @@ setInterval(() => {
   }
 }, 1000);
 
+document.addEventListener('visibilitychange', () => { if (document.hidden && (DT || DY)) hush(); });
 /* 다른 앱으로 가거나 화면이 꺼지면 녹음과 뚜뚜 목소리를 멈춘다 */
 document.addEventListener('visibilitychange', () => {
   if (!TT) return;
