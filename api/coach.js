@@ -100,7 +100,7 @@ async function prep(p, body) {
   const user = `원고 문장:\n${list}\n\n문장 ${sentences.length}개 모두에 대해 JSON으로 답해.`;
   let model = p.model;
   const text = p.id === 'gemini'
-    ? await askGeminiAny(p, { system: PREP_SYSTEM, parts: [{ text: user }], schema: PREP_SCHEMA, maxTokens: 6144, timeoutMs: 20000, temperature: 0.4 })
+    ? await askGeminiAny(p, { system: PREP_SYSTEM, parts: [{ text: user }], schema: PREP_SCHEMA, maxTokens: 6144, timeoutMs: 14000, temperature: 0.4 })
         .then(r => { model = r.model; return r.text; })
     : await askClaude(p, { system: PREP_SYSTEM, maxTokens: 4096, timeoutMs: 25000,
         text: `${user}\n아래 모양의 JSON 하나만 출력해. 설명도 코드펜스도 쓰지 마.\n{"items":[{"i":1,"ko":"","cue":"","stress":[""],"end":"fall","tricky":[{"word":"","tipKo":""}]}]}` });
@@ -182,7 +182,7 @@ async function speech(p, body) {
     parts: [{ text: facts }, { inlineData: { mimeType: mime, data: audio } }],
     schema: SPEECH_SCHEMA,
     maxTokens: 2048,
-    timeoutMs: kind === 'sentence' ? 18000 : 25000,
+    timeoutMs: kind === 'sentence' ? 12000 : 20000,
     temperature: 0.3
   });
   const out = parseJson(text);

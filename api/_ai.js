@@ -123,24 +123,25 @@ export async function geminiModels(p) {
   return modelList;
 }
 const ver = n => { const m = String(n).match(/gemini-(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : 0; };
-export async function geminiChain(p, max = 3) {
+export async function geminiChain(p, max = 5) {
   const list = (await geminiModels(p)).filter(n => /flash/.test(n));
-  const stable = list.filter(n => !/preview/.test(n)).sort((a, b) => ver(b) - ver(a));
+  const stable = list.filter(n => !/preview/.test(n)).sort((a, b) => ver(b) - ver(a) || (/lite/.test(a) ? 1 : -1));
   const preview = list.filter(n => /preview/.test(n)).sort((a, b) => ver(b) - ver(a));
   return [...new Set([p.model, ...stable, ...preview])].slice(0, max);
 }
-// 번갈아 묻기 — 붐빔(500·503)·한도(429)·모델 없음(404)·시간 초과면 다음 모델로. 전체 45초 안에서.
+// 번갈아 묻기 — 붐빔(500·503)·한도(429)·모델 없음(404)·시간 초과면 다음 모델로. 모델마다 12초, 전체 50초 안에서.
 export async function askGeminiAny(p, input) {
-  const chain = await geminiChain(p, 3), t0 = Date.now();
+  const chain = await geminiChain(p, 5), t0 = Date.now();
   let last = null;
   for (const model of chain) {
-    const left = 45000 - (Date.now() - t0);
-    if (left < 6000) break;
+    const left = 50000 - (Date.now() - t0);
+    if (left < 5000) break;
     try {
-      const text = await askGemini({ ...p, model }, { ...input, noRetry: true, timeoutMs: Math.min(input.timeoutMs || 20000, left) });
+      const text = await askGemini({ ...p, model }, { ...input, noRetry: true, timeoutMs: Math.min(input.timeoutMs || 12000, left) });
       return { text, model };
     } catch (e) {
       last = e;
+      console.warn('gemini busy, next model', model, (e && e.status) || (e && e.name));
       const busy = e instanceof GeminiError ? [404, 429, 500, 503].includes(e.status)
         : (e && (e.name === 'TimeoutError' || e.name === 'AbortError' || e instanceof TypeError));
       if (!busy) throw e;
