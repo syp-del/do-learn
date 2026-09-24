@@ -94,13 +94,59 @@ export async function askGemini(p, input) {
       }
       return text;
     }
-    // 잠깐 바쁜 경우(500/503)는 한 번만 다시 해본다
-    if (attempt === 0 && (r.status === 500 || r.status === 503)) {
+    // 잠깐 바쁜 경우(500/503)는 한 번만 다시 해본다 (여러 모델을 번갈아 쓸 때는 바로 다음 모델로)
+    if (attempt === 0 && (r.status === 500 || r.status === 503) && !(rich && input.noRetry)) {
       await new Promise(done => setTimeout(done, 600));
       continue;
     }
     throw new GeminiError(r.status, j);
   }
+}
+
+/* ---------- 모델이 붐빌 때 — 다른 모델로 넘어가기 ----------
+   무료 등급은 "high demand"(503)나 시간 초과가 잦다. 이 키로 쓸 수 있는 모델 목록을 한 시간에 한 번 받아 와서,
+   정해 둔 모델 → 같은 계열의 다른 flash 모델 순으로 번갈아 부른다. */
+let modelList = null, modelAt = 0;
+export async function geminiModels(p) {
+  if (modelList && Date.now() - modelAt < 3600e3) return modelList;
+  try {
+    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', {
+      headers: { 'x-goog-api-key': p.key }, signal: AbortSignal.timeout(6000)
+    });
+    const j = await r.json();
+    modelList = (j.models || [])
+      .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+      .map(m => String(m.name || '').replace(/^models\//, ''))
+      .filter(n => /^gemini-\d/.test(n) && !/tts|image|embed|live|native|robotics|computer|exp|learnlm|aqa/i.test(n));
+    modelAt = Date.now();
+  } catch (e) { modelList = modelList || []; }
+  return modelList;
+}
+const ver = n => { const m = String(n).match(/gemini-(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : 0; };
+export async function geminiChain(p, max = 3) {
+  const list = (await geminiModels(p)).filter(n => /flash/.test(n));
+  const stable = list.filter(n => !/preview/.test(n)).sort((a, b) => ver(b) - ver(a));
+  const preview = list.filter(n => /preview/.test(n)).sort((a, b) => ver(b) - ver(a));
+  return [...new Set([p.model, ...stable, ...preview])].slice(0, max);
+}
+// 번갈아 묻기 — 붐빔(500·503)·한도(429)·모델 없음(404)·시간 초과면 다음 모델로. 전체 45초 안에서.
+export async function askGeminiAny(p, input) {
+  const chain = await geminiChain(p, 3), t0 = Date.now();
+  let last = null;
+  for (const model of chain) {
+    const left = 45000 - (Date.now() - t0);
+    if (left < 6000) break;
+    try {
+      const text = await askGemini({ ...p, model }, { ...input, noRetry: true, timeoutMs: Math.min(input.timeoutMs || 20000, left) });
+      return { text, model };
+    } catch (e) {
+      last = e;
+      const busy = e instanceof GeminiError ? [404, 429, 500, 503].includes(e.status)
+        : (e && (e.name === 'TimeoutError' || e.name === 'AbortError' || e instanceof TypeError));
+      if (!busy) throw e;
+    }
+  }
+  throw last || new Error('no model');
 }
 
 /* ---------- Claude (공식 SDK) — 글만 다룬다 ----------

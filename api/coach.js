@@ -9,7 +9,7 @@
 
    녹음은 기기에만 저장되고, 여기로는 분석할 몇 초짜리만 온다. 아이 이름은 보내지 않는다. */
 
-import { provider, askGemini, askClaude, parseJson, explain, GeminiError, clean } from './_ai.js';
+import { provider, askGeminiAny, askClaude, parseJson, explain, GeminiError, clean, geminiModels } from './_ai.js';
 
 // 앱(index.html)과 같은 공개용 키 — 가족이 실제로 있는지만 확인한다
 const SB_URL = 'https://xirclohwurvtschwrtxw.supabase.co';
@@ -98,8 +98,10 @@ async function prep(p, body) {
   if (!sentences.length) return { status: 400, json: { error: 'bad_input', message: '원고 문장이 없어요.' } };
   const list = sentences.map((s, i) => `${i + 1}. ${s}`).join('\n');
   const user = `원고 문장:\n${list}\n\n문장 ${sentences.length}개 모두에 대해 JSON으로 답해.`;
+  let model = p.model;
   const text = p.id === 'gemini'
-    ? await askGemini(p, { system: PREP_SYSTEM, parts: [{ text: user }], schema: PREP_SCHEMA, maxTokens: 8192, timeoutMs: 25000, temperature: 0.4 })
+    ? await askGeminiAny(p, { system: PREP_SYSTEM, parts: [{ text: user }], schema: PREP_SCHEMA, maxTokens: 6144, timeoutMs: 20000, temperature: 0.4 })
+        .then(r => { model = r.model; return r.text; })
     : await askClaude(p, { system: PREP_SYSTEM, maxTokens: 4096, timeoutMs: 25000,
         text: `${user}\n아래 모양의 JSON 하나만 출력해. 설명도 코드펜스도 쓰지 마.\n{"items":[{"i":1,"ko":"","cue":"","stress":[""],"end":"fall","tricky":[{"word":"","tipKo":""}]}]}` });
   const out = parseJson(text);
@@ -114,7 +116,7 @@ async function prep(p, body) {
       tricky: arr(it.tricky, 2).map(t => ({ word: str(t && t.word, 30), tipKo: str(t && t.tipKo, 40) })).filter(t => t.word && t.tipKo)
     };
   });
-  return { status: 200, json: { items, provider: p.id } };
+  return { status: 200, json: { items, provider: p.id, model } };
 }
 
 /* ============================================================
@@ -175,12 +177,12 @@ async function speech(p, body) {
     `기기가 잰 값: 말한 시간 ${Number(m.secs || 0).toFixed(1)}초, 중간에 쉰 곳 ${Number(m.pauses || 0)}번, 목소리 크기 ${str(m.loud, 10) || '보통'}, 문장 끝 높낮이 ${str(m.endPitch, 10) || '모름'}`
   ].filter(Boolean).join('\n');
 
-  const text = await askGemini(p, {
+  const { text, model } = await askGeminiAny(p, {
     system: SPEECH_SYSTEM,
     parts: [{ text: facts }, { inlineData: { mimeType: mime, data: audio } }],
     schema: SPEECH_SCHEMA,
     maxTokens: 2048,
-    timeoutMs: kind === 'sentence' ? 20000 : 25000,
+    timeoutMs: kind === 'sentence' ? 18000 : 25000,
     temperature: 0.3
   });
   const out = parseJson(text);
@@ -196,7 +198,7 @@ async function speech(p, body) {
       intonation: { level: lvl(out.intonation && out.intonation.level), noteKo: str(out.intonation && out.intonation.noteKo, 50) },
       missing: arr(out.missing, 12).map(w => str(w, 30)).filter(Boolean),
       skipped: arr(out.skipped, 60).map(Number).filter(n => Number.isInteger(n) && n > 0),
-      provider: p.id
+      provider: p.id, model
     }
   };
 }
@@ -294,7 +296,8 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const p = provider(), pa = provider({ audio: true });
     res.setHeader('cache-control', 'no-store');
-    return res.status(200).json({ ok: !!p, provider: p ? p.id : null, model: p ? p.model : null, keyName: p ? p.name : null, audio: !!pa });
+    const models = req.query && req.query.models === '1' && pa ? await geminiModels(pa) : undefined;
+    return res.status(200).json({ ok: !!p, provider: p ? p.id : null, model: p ? p.model : null, keyName: p ? p.name : null, audio: !!pa, ...(models ? { models } : {}) });
   }
   if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed', message: 'POST로 보내주세요.' });
 
