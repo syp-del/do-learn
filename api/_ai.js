@@ -127,7 +127,9 @@ export async function geminiChain(p, max = 5) {
   const list = (await geminiModels(p)).filter(n => /flash/.test(n));
   const stable = list.filter(n => !/preview/.test(n)).sort((a, b) => ver(b) - ver(a) || (/lite/.test(a) ? 1 : -1));
   const preview = list.filter(n => /preview/.test(n)).sort((a, b) => ver(b) - ver(a));
-  return [...new Set([p.model, ...stable, ...preview])].slice(0, max);
+  // 최신 모델이 몰릴 때는 한 세대 전 모델이 비어 있는 경우가 많아서, 정해 둔 모델 다음에 먼저 넣는다
+  const older = stable.filter(n => ver(n) < 3), newer = stable.filter(n => ver(n) >= 3);
+  return [...new Set([p.model, ...older.slice(0, 2), ...newer, ...preview])].slice(0, max);
 }
 // 번갈아 묻기 — 붐빔(500·503)·한도(429)·모델 없음(404)·시간 초과면 다음 모델로. 모델마다 12초, 전체 50초 안에서.
 export async function askGeminiAny(p, input) {
