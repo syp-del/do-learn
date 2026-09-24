@@ -31,7 +31,7 @@ export default async function handler(req, res) {
   // Markdown은 이름에 _ * 같은 글자가 있으면 텔레그램이 메시지를 거부한다. HTML로 보내고 이스케이프한다.
   const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   const text =
-    `🔔 <b>${esc(subject)} 게임을 하고 싶대요!</b>\n` +
+    `🔔 <b>${esc(subject)} 놀이를 하고 싶대요!</b>\n` +
     `오늘 할 일을 모두 마쳤어요.\n` +
     `요청한 시간: ${mins}분\n\n` +
     `아래 버튼을 눌러 앱에서 승인해 주세요.`;

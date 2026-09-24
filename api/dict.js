@@ -7,48 +7,18 @@
      GEMINI_MODEL        (선택) 기본 gemini-3.5-flash-lite
    환경변수는 넣은 뒤 재배포(Redeploy)해야 반영된다.
 
-   POST /api/dict {term, mode}   낱말 풀이 (앱의 단어 탭이 부른다)
+   POST /api/dict {term, mode}   낱말 풀이 (앱의 단어장 탭이 부른다) — mode: en 영어(한국어 뜻 + 쉬운 영어 풀이) · kk 한글 (ek·ee 도 받는다)
    GET  /api/dict                부모님용 연결 확인 페이지
    GET  /api/dict?test=1         rainbow 를 실제로 찾아본다 */
 
-import Anthropic from '@anthropic-ai/sdk';
-
-const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
-const GEMINI_DEFAULT_MODEL = 'gemini-3.5-flash-lite';   // 무료 등급, 생각(thinking) 기본값 minimal 이라 빠르다
+import { esc, provider, askGemini, askClaude, parseJson, explain } from './_ai.js';
 
 const MODES = {
+  en: { label: '영어', rule: '영어 단어를 풀이한다. meaning은 한국어 뜻, meaningEn은 아주 쉬운 영어 풀이 한 문장, example은 아주 쉬운 영어 한 문장, exampleKo는 그 예문의 한국어 뜻으로 쓴다.' },
   ek: { label: '영한', rule: '영어 단어를 한국어로 풀이한다. meaning과 exampleKo는 한국어로, example은 아주 쉬운 영어 한 문장으로 쓴다.' },
   ee: { label: '영영', rule: '영어 단어를 아주 쉬운 영어로 풀이한다. meaning과 example은 영어로, exampleKo는 그 예문의 한국어 뜻으로 쓴다.' },
   kk: { label: '한글', rule: '한국어 낱말을 한국어로 풀이한다. meaning과 example은 한국어로 쓰고, exampleKo는 빈 문자열로 둔다.' }
 };
-
-const esc = s => String(s == null ? '' : s)
-  .replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-
-// 붙여넣을 때 딸려오는 앞뒤 공백·따옴표를 걷어낸다
-const clean = v => String(v || '').trim().replace(/^["']|["']$/g, '');
-
-// 정해진 이름들을 먼저 보고, 없으면 이름이 nameRe 에 맞고 값이 prefix 로 시작하는 환경변수를 쓴다
-function findKey(names, nameRe, prefix) {
-  for (const name of names) {
-    const key = clean(process.env[name]);
-    if (key) return { key, name };
-  }
-  for (const [name, value] of Object.entries(process.env)) {
-    const key = clean(value);
-    if (nameRe.test(name) && key.startsWith(prefix)) return { key, name };
-  }
-  return null;
-}
-
-// 쓸 AI를 고른다. Gemini(무료)를 먼저 본다. 둘 다 없으면 null.
-function provider() {
-  const g = findKey(['GEMINI_API_KEY', 'GOOGLE_API_KEY', 'GOOGLE_GENERATIVE_AI_API_KEY'], /GEMINI/i, 'AIza');
-  if (g) return { id: 'gemini', label: 'Gemini', model: clean(process.env.GEMINI_MODEL) || GEMINI_DEFAULT_MODEL, ...g };
-  const c = findKey(['ANTHROPIC_API_KEY', 'CLAUDE_API_KEY', 'ANTHROPIC_KEY'], /ANTHROPIC|CLAUDE/i, 'sk-ant-');
-  if (c) return { id: 'claude', label: 'Claude', model: CLAUDE_MODEL, ...c };
-  return null;
-}
 
 function promptFor(term, m) {
   return `너는 초등학교 1학년 아이에게 낱말을 알려주는 다정한 선생님이야.
@@ -56,7 +26,7 @@ function promptFor(term, m) {
 사전 종류: ${m.label}. ${m.rule}
 
 아래 JSON 하나만 출력해. 설명도 마크다운도 코드펜스도 쓰지 마.
-{"term":"","reading":"","meaning":"","example":"","exampleKo":"","emoji":""}
+${m === MODES.en ? '{"term":"","reading":"","meaning":"","meaningEn":"","example":"","exampleKo":"","emoji":""}' : '{"term":"","reading":"","meaning":"","example":"","exampleKo":"","emoji":""}'}
 
 규칙:
 - meaning은 15자 안팎의 한 문장. 어려운 한자어와 전문 용어를 쓰지 마.
@@ -65,128 +35,20 @@ function promptFor(term, m) {
 - 그런 낱말을 모르면 meaning에 "잘 모르겠어요"라고만 써.`;
 }
 
-/* ---------- Gemini (REST generateContent) ---------- */
-class GeminiError extends Error {
-  constructor(status, body) {
-    const err = (body && body.error) || {};
-    super(err.message || `HTTP ${status}`);
-    this.status = status;
-    // 예: API_KEY_INVALID (틀린 키), 답이 막혔을 때는 SAFETY 같은 이유
-    this.reason = ((err.details || []).find(d => d && d.reason) || {}).reason || err.status || '';
-  }
-}
-const GEMINI_BLOCKED = ['SAFETY', 'PROHIBITED_CONTENT', 'BLOCKLIST', 'SPII', 'IMAGE_SAFETY'];
-
-async function askGemini(p, prompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(p.model)}:generateContent`;
-  const body = JSON.stringify({
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { responseMimeType: 'application/json', maxOutputTokens: 1024 }
-  });
-  for (let attempt = 0; ; attempt++) {
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-goog-api-key': p.key },
-      body,
-      signal: AbortSignal.timeout(15000)
-    });
-    const j = await r.json().catch(() => null);
-    if (r.ok) {
-      const cand = (j && j.candidates && j.candidates[0]) || null;
-      const parts = (cand && cand.content && cand.content.parts) || [];
-      const text = parts.filter(x => !x.thought).map(x => x.text || '').join('').trim();
-      if (!text) {
-        const why = (j && j.promptFeedback && j.promptFeedback.blockReason) || (cand && cand.finishReason) || 'EMPTY';
-        throw new GeminiError(200, { error: { message: `답이 비었어요 (${why})`, status: why } });
-      }
-      return text;
-    }
-    // 잠깐 바쁜 경우(500/503)는 한 번만 다시 해본다
-    if (attempt === 0 && (r.status === 500 || r.status === 503)) {
-      await new Promise(done => setTimeout(done, 600));
-      continue;
-    }
-    throw new GeminiError(r.status, j);
-  }
-}
-
-/* ---------- Claude (공식 SDK) ---------- */
-async function askClaude(p, prompt) {
-  const client = new Anthropic({ apiKey: p.key, maxRetries: 1, timeout: 15000 });
-  const msg = await client.messages.create({
-    model: p.model,
-    max_tokens: 400,
-    messages: [{ role: 'user', content: prompt }]
-  });
-  return msg.content.filter(b => b.type === 'text').map(b => b.text).join('').trim();
-}
-
 // AI에게 묻고 앱이 쓰는 모양으로 돌려준다. 실패하면 오류를 그대로 던진다(explain()이 풀이한다).
 async function lookup(p, term, mode) {
   const prompt = promptFor(term, MODES[mode] || MODES.ek);
   const text = p.id === 'gemini' ? await askGemini(p, prompt) : await askClaude(p, prompt);
-  const start = text.indexOf('{'), end = text.lastIndexOf('}');
-  if (start < 0 || end < start) throw new SyntaxError('답에 JSON이 없어요');
-  const out = JSON.parse(text.slice(start, end + 1));
+  const out = parseJson(text);
   return {
     term: out.term || term,
     reading: out.reading || '',
     meaning: out.meaning || '',
     example: out.example || '',
     exampleKo: out.exampleKo || '',
+    ...(out.meaningEn ? { meaningEn: out.meaningEn } : {}),
     emoji: out.emoji || '📖'
   };
-}
-
-// 실패 이유를 아이에게 보여줄 말(kid)과 부모님 확인 페이지에 쓸 말(parent)로 바꾼다.
-const KID_LATER = '지금은 사전을 쓸 수 없어요. 조금 뒤에 다시 해볼까요?';
-const KID_PARENT = '지금은 사전을 쓸 수 없어요. 부모님께 말씀해 주세요.';
-const BAD_KEY = { code: 'bad_key', kid: '사전 열쇠가 맞지 않아요. 부모님께 말씀해 주세요.' };
-const BUSY = { code: 'busy', kid: '사전이 조금 바빠요. 잠깐 뒤에 다시 해볼까요?' };
-
-function explain(e, p) {
-  if (e instanceof GeminiError) {
-    const s = e.status;
-    if (e.reason === 'API_KEY_INVALID' || s === 401) return { ...BAD_KEY,
-      parent: 'Gemini 키가 틀렸거나 지워졌어요. AI Studio에서 새 키를 만들어 다시 넣어주세요.' };
-    if (s === 403) return { code: 'denied', kid: KID_PARENT,
-      parent: '이 키로는 Gemini를 쓸 수 없어요. AI Studio에서 만든 키인지 확인해 주세요.' };
-    if (s === 404) return { code: 'no_model', kid: KID_LATER,
-      parent: `모델(${p.model})을 찾지 못했어요. 버셀 환경변수 GEMINI_MODEL 에 다른 모델 이름을 넣을 수 있어요.` };
-    if (s === 429) return { ...BUSY,
-      parent: '무료 사용량(분당·하루)을 넘었어요. 잠시 뒤나 내일 다시 해보세요.' };
-    if (s === 200 && GEMINI_BLOCKED.includes(e.reason)) return { code: 'blocked',
-      kid: '그 낱말은 사전에서 찾을 수 없어요.',
-      parent: 'Gemini가 안전 문제로 답하지 않았어요.' };
-    if (s === 200) return { code: 'bad_json', kid: '답을 알아듣지 못했어요. 다시 해볼까요?',
-      parent: `Gemini의 답이 비었어요 (${e.reason}). 한 번 더 해보세요.` };
-    return { code: 'upstream', kid: KID_LATER, parent: `Gemini가 오류를 돌려줬어요 (${s}): ${e.message}` };
-  }
-  // Claude SDK 오류 — 구체적인 것부터. APIConnectionError 는 APIError 의 하위 클래스라 먼저 본다.
-  if (e instanceof Anthropic.AuthenticationError) return { ...BAD_KEY,
-    parent: 'Claude 키가 틀렸거나 지워졌어요. 콘솔에서 새 키를 만들어 다시 넣어주세요.' };
-  if (e instanceof Anthropic.PermissionDeniedError) return { code: 'denied', kid: KID_PARENT,
-    parent: '이 키로는 Claude를 쓸 권한이 없어요. 콘솔에서 키가 속한 워크스페이스를 확인해 주세요.' };
-  if (e instanceof Anthropic.NotFoundError) return { code: 'no_model', kid: KID_LATER,
-    parent: `모델(${p.model})을 찾지 못했어요. 코드의 모델 이름을 바꿔야 해요.` };
-  if (e instanceof Anthropic.RateLimitError) return { ...BUSY,
-    parent: '너무 자주 불렀어요(요청 한도). 잠시 뒤에 다시 해보세요.' };
-  if (e instanceof Anthropic.APIConnectionError) return { code: 'network',
-    kid: '사전에 연결하지 못했어요. 조금 뒤에 다시 해볼까요?',
-    parent: 'Claude 서버에 연결하지 못했어요. 잠시 뒤에 다시 해보세요.' };
-  if (e instanceof Anthropic.APIError && (e.status === 402 || e.type === 'billing_error')) return { code: 'no_credit',
-    kid: '사전 이용권이 다 됐어요. 부모님께 말씀해 주세요.',
-    parent: '결제 정보나 크레딧이 없어요. Claude 콘솔의 Billing 에서 크레딧을 충전해 주세요.' };
-  if (e instanceof Anthropic.APIError) return { code: 'upstream', kid: KID_LATER,
-    parent: `Claude가 오류를 돌려줬어요 (${e.status || '?'}): ${e.message || ''}` };
-  // Gemini fetch 가 끊기거나 시간이 넘었을 때
-  if (e && (e.name === 'TimeoutError' || e.name === 'AbortError' || (e instanceof TypeError && /fetch/i.test(e.message)))) {
-    return { code: 'network', kid: '사전에 연결하지 못했어요. 조금 뒤에 다시 해볼까요?',
-      parent: `${p.label} 서버에 연결하지 못했어요. 잠시 뒤에 다시 해보세요.` };
-  }
-  if (e instanceof SyntaxError) return { code: 'bad_json', kid: '답을 알아듣지 못했어요. 다시 해볼까요?',
-    parent: `${p.label}의 답을 읽지 못했어요. 한 번 더 해보세요.` };
-  return { code: 'failed', kid: '지금은 사전을 쓸 수 없어요.', parent: `알 수 없는 오류: ${(e && e.message) || e}` };
 }
 
 export default async function handler(req, res) {

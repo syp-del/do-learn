@@ -58,7 +58,7 @@ export default async function handler(req, res) {
   if (bot && chatId && req.query && req.query.test === '1') {
     const r = await tg(token, 'sendMessage', {
       chat_id: chatId,
-      text: '✅ Do-Learn Do-Learn 알림이 연결됐어요!\n아이가 게임을 요청하면 여기로 알려드릴게요.'
+      text: '✅ Do-Learn Do-Learn 알림이 연결됐어요!\n아이가 놀이를 요청하면 여기로 알려드릴게요.'
     });
     test = r.ok ? { ok: true } : { ok: false, why: r.description || '보내지 못했어요' };
   }
@@ -161,7 +161,7 @@ export default async function handler(req, res) {
   a{color:var(--deep)}
 </style></head><body><main>
   <h1>텔레그램 알림 연결</h1>
-  <p class="lead">아이가 게임을 요청하면 부모님 휴대폰으로 알림이 가도록 설정해요.</p>
+  <p class="lead">아이가 놀이를 요청하면 부모님 휴대폰으로 알림이 가도록 설정해요.</p>
   ${allDone && test && test.ok ? '<div class="done">모든 설정이 끝났어요! 이제 이 페이지는 닫아도 돼요.</div>' : ''}
   ${step(1, done1, '봇 토큰', s1)}
   ${step(2, done2, '부모님 대화방 번호 (chat id)', s2)}

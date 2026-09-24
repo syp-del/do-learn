@@ -55,7 +55,7 @@ export default async function handler(req, res) {
     }
     const r = await tg(tok, 'sendMessage', {
       chat_id: String(chatId),
-      text: '✅ Do-Learn Do-Learn 알림이 연결됐어요!\n아이가 오늘 할 일을 마치고 게임을 요청하면 여기로 알려드릴게요.'
+      text: '✅ Do-Learn Do-Learn 알림이 연결됐어요!\n아이가 오늘 할 일을 마치고 놀이를 요청하면 여기로 알려드릴게요.'
     });
     if (!r.ok) {
       const why = r.description || '';

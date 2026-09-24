@@ -530,6 +530,106 @@
     .tower{width:144px;}
     nav.tabs button{font-size:14px;}
   }
+
+  /* ---------- 🦜 뚜뚜 스피치 교실 ---------- */
+  .tt{display:block;overflow:visible;animation:tt-bob 3.2s ease-in-out infinite;}
+  @keyframes tt-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .tt .tt-eyes-happy,.tt .tt-eyes-up,.tt .tt-listen,.tt .tt-think,.tt .tt-cheer{display:none;}
+  .tt[data-mood="happy"] .tt-eyes-open,.tt[data-mood="cheer"] .tt-eyes-open,.tt[data-mood="think"] .tt-eyes-open{display:none;}
+  .tt[data-mood="happy"] .tt-eyes-happy,.tt[data-mood="cheer"] .tt-eyes-happy{display:inline;}
+  .tt[data-mood="think"] .tt-eyes-up,.tt[data-mood="think"] .tt-think{display:inline;}
+  .tt[data-mood="listen"] .tt-listen{display:inline;}
+  .tt[data-mood="cheer"] .tt-cheer{display:inline;}
+  .tt .tt-wing-l,.tt .tt-wing-r{transition:transform .35s cubic-bezier(.3,1.4,.5,1);}
+  .tt[data-mood="cheer"] .tt-wing-l{transform:rotate(110deg);}
+  .tt[data-mood="cheer"] .tt-wing-r{transform:rotate(-110deg);}
+  .tt.talk .tt-jaw{animation:tt-jaw .16s ease-in-out infinite alternate;}
+  @keyframes tt-jaw{from{transform:scaleY(1)}to{transform:scaleY(1.9)}}
+  .tt[data-mood="listen"] .tt-listen path{animation:tt-wave 1s ease-in-out infinite;}
+  @keyframes tt-wave{0%,100%{opacity:.25}50%{opacity:1}}
+
+  /* 수업 화면 — 5초 동기화에 지워지지 않도록 화면 위에 따로 띄운다 (새총 게임과 같은 방식) */
+  .ttl{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;
+    background-color:var(--cream);
+    background-image:linear-gradient(rgba(255,143,168,.10) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,143,168,.10) 1px,transparent 1px);
+    background-size:26px 26px;
+    padding:calc(8px + env(safe-area-inset-top,0px)) 14px calc(14px + env(safe-area-inset-bottom,0px));
+    overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  .ttl-top{display:flex;align-items:center;gap:10px;max-width:680px;width:100%;margin:0 auto;}
+  .ttl-x{width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--blush);
+    font-size:20px;display:grid;place-items:center;flex:none;box-shadow:var(--shadow);}
+  .ttl-dots{flex:1;display:flex;gap:5px;justify-content:center;flex-wrap:wrap;}
+  .ttl-dots i{width:12px;height:12px;border-radius:50%;background:var(--blush);display:block;transition:transform .2s;}
+  .ttl-dots i.on{background:var(--mint-deep);}
+  .ttl-dots i.now{background:var(--berry);transform:scale(1.3);}
+  .ttl-chip{font-family:var(--display);font-size:17px;font-weight:700;background:var(--butter);color:#6a4a10;
+    border-radius:999px;padding:4px 12px;white-space:nowrap;}
+  .ttl-body{flex:1;width:100%;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:12px;padding-top:8px;}
+  .tt-teach{display:flex;align-items:flex-end;gap:8px;}
+  .tt-teach .tt{width:112px;height:112px;flex:none;}
+  .tt-bubble{position:relative;flex:1;background:var(--surface);border:3px solid var(--mint);
+    border-radius:22px 22px 22px 6px;padding:12px 15px;font-family:var(--display);font-size:22px;line-height:1.3;
+    box-shadow:var(--shadow);margin-bottom:24px;}
+  .tt-bubble::before{content:'';position:absolute;left:-15px;bottom:8px;border:8px solid transparent;border-right:12px solid var(--mint);}
+  .tt-card{background:var(--surface);border-radius:26px;padding:18px 18px 16px;box-shadow:var(--shadow-lift);}
+  .tt-num{font-family:var(--display);font-size:16px;color:var(--cocoa-soft);}
+  .tt-en{font-size:clamp(24px,5.4vw,34px);font-weight:700;line-height:1.4;color:var(--cocoa);margin:6px 0 4px;
+    letter-spacing:-.01em;word-break:normal;}
+  .tt-en .w{border-radius:6px;padding:0 1px;transition:background .15s;}
+  .tt-en .w.on{background:var(--butter);}
+  .tt-en .st{color:var(--berry-deep);}
+  .tt-en .hide{color:#E7C9D0;letter-spacing:.04em;}
+  .tt-en .miss{background:#FFEBC9;border-bottom:3px dotted var(--butter-deep);cursor:pointer;}
+  .tt-en .ok{color:var(--mint-deep);}
+  .tt-ko{font-size:19px;color:var(--cocoa);margin:2px 0 0;}
+  .tt-cue{font-size:46px;line-height:1.1;margin:4px 0;}
+  .tt-stage{display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-size:17px;font-weight:700;
+    border-radius:999px;background:var(--mint-soft);color:#215a49;padding:4px 12px;}
+  .tt-mic{width:112px;height:112px;border-radius:50%;background:var(--berry);color:#fff;font-size:46px;
+    display:grid;place-items:center;margin:8px auto 4px;box-shadow:0 10px 24px rgba(232,92,124,.35);transition:transform .12s;}
+  .tt-mic:active{transform:scale(.94);}
+  .tt-mic.rec{background:var(--berry-deep);animation:tt-pulse 1.1s ease-in-out infinite;}
+  @keyframes tt-pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,92,124,.45)}50%{box-shadow:0 0 0 18px rgba(232,92,124,0)}}
+  .tt-level{height:12px;border-radius:999px;background:var(--blush);overflow:hidden;max-width:260px;margin:8px auto 0;}
+  .tt-level span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mint),var(--butter),var(--berry));
+    transition:width .08s;}
+  .tt-stars{display:flex;gap:6px;justify-content:center;font-size:48px;line-height:1;margin:2px 0 6px;}
+  .tt-stars span{animation:tt-star .5s cubic-bezier(.2,1.6,.4,1) both;}
+  .tt-stars span:nth-child(2){animation-delay:.12s} .tt-stars span:nth-child(3){animation-delay:.24s}
+  .tt-stars span.off{filter:grayscale(1);opacity:.28;}
+  @keyframes tt-star{from{transform:scale(0) rotate(-40deg)}to{transform:none}}
+  .tt-tip{background:var(--butter);color:#5d3f0c;border-radius:18px;padding:12px 14px;font-size:17px;
+    display:flex;gap:9px;align-items:flex-start;text-align:left;}
+  .tt-tip b{font-family:var(--display);font-size:19px;display:block;}
+  .tt-badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+  .tt-badge{font-size:14px;border-radius:999px;padding:5px 11px;background:var(--mint-soft);color:#215a49;font-weight:700;}
+  .tt-badge.try{background:var(--berry-soft);color:var(--berry-deep);}
+  .tt-wave{width:100%;height:74px;display:block;background:#FFFDF6;border-radius:14px;border:2px solid var(--blush);}
+  .tt-heard{font-size:15px;color:var(--cocoa-soft);margin:0;}
+  .tt-foot{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;}
+  .tt-foot .btn{flex:1 1 150px;}
+  .tt-speed{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
+  .tt-big-time{font-family:var(--display);font-size:64px;text-align:center;font-variant-numeric:tabular-nums;line-height:1;}
+  .tt-cuestrip{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  .tt-cuestrip span{display:flex;flex-direction:column;align-items:center;font-size:12px;color:var(--cocoa-soft);}
+  .tt-cuestrip span b{font-size:30px;font-weight:400;line-height:1.1;}
+  .tt-mini{display:flex;align-items:center;gap:12px;}
+  .tt-mini .tt{width:76px;height:76px;flex:none;}
+  .tt-mission{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 10px;}
+  .tt-mission span{font-size:14px;border-radius:999px;padding:4px 10px;background:var(--blush);}
+  .tt-mission span.ok{background:var(--mint-soft);color:#215a49;}
+  .tt-sent{display:grid;gap:6px;padding:10px 0;border-bottom:1px solid var(--blush);}
+  .tt-sent:last-child{border-bottom:0;}
+  .tt-sent .row .field{min-height:42px;font-size:15px;padding:8px 11px;}
+  .tt-count{font-family:var(--display);font-size:120px;text-align:center;line-height:1;color:var(--berry-deep);
+    animation:tt-star .5s cubic-bezier(.2,1.6,.4,1) both;}
+  @media (min-width:900px){ .ttl-body{max-width:760px;} .tt-teach .tt{width:132px;height:132px;} }
+  @media (max-width:430px){
+    .tt-teach .tt{width:88px;height:88px;}
+    .tt-bubble{font-size:19px;padding:10px 12px;}
+    .tt-mic{width:98px;height:98px;font-size:40px;}
+  }
 </style>
 
 </head>
@@ -568,7 +668,7 @@
 const SB_URL = 'https://xirclohwurvtschwrtxw.supabase.co';
 const SB_KEY = 'sb_publishable_97VPBM0syPSyG2r1S6ScMg_azkVXgdN';
 
-const COLLS = ['profiles','books','words','todos','sessions','unlocks','dict','requests'];
+const COLLS = ['profiles','books','words','todos','sessions','unlocks','dict','requests','scripts','speech','kudos'];
 const DEFAULT_CATS = ['그림책','동화책','영어책','지식책','만화','시'];
 const KID_COLORS = [
   {bg:'#FFE3EA', ink:'#E85C7C', bar:'#FF8FA8'},
@@ -730,7 +830,7 @@ function cheerDone(){
     cheerPopup({
       emoji:'🏆', finale:true,
       title:'오늘 할 일 모두 끝!',
-      sub:`${callName(k.name)}, 정말 대단해! 게임을 열어달라고 해볼까?`,
+      sub:`${callName(k.name)}, 정말 대단해! 놀이를 열어달라고 해볼까?`,
       dots
     });
     confetti();
@@ -827,8 +927,8 @@ function familyLink(){
 }
 
 const Store = {
-  async add(coll, data){
-    const id = uid();
+  async add(coll, data, presetId){
+    const id = presetId || uid();
     S.data[coll].push({id, ...data});
     render();
     if (S.sb){
@@ -873,16 +973,28 @@ const Store = {
   }
 };
 
+/* 서버는 한 번에 1000줄까지만 돌려준다. 기록이 쌓여도 빠지지 않도록 1000줄씩 나눠 끝까지 읽는다. */
+async function sbAllItems(){
+  const all = [];
+  for (let from = 0; from < 50000; from += 1000){
+    const r = await S.sb.from('items').select('id,coll,data').order('id').range(from, from + 999);
+    if (r.error) throw r.error;
+    const rows = r.data || [];
+    all.push(...rows);
+    if (rows.length < 1000) break;
+  }
+  return { data:[...new Map(all.map(r => [r.id, r])).values()] };
+}
+
 /* 수파베이스에서 전체를 한 번 읽어 화면 상태를 갈아끼운다.
    실시간 구독 대신 5초 폴링 — 코드가 단순하고 RLS 헤더 방식과도 잘 맞는다. */
 async function sbPull(){
   if (!S.sb) return;
   try {
     const [items, st] = await Promise.all([
-      S.sb.from('items').select('id,coll,data'),
+      sbAllItems(),
       S.sb.from('settings').select('data').eq('family_id', S.familyId).maybeSingle()
     ]);
-    if (items.error) throw items.error;
     // 바뀐 게 없으면 화면을 다시 그리지 않는다.
     // 매번 다시 그리면 입력칸이 새로 만들어져 쓰던 글자가 5초마다 지워진다(첫 화면의 아이 이름 등).
     const rows = (items.data || []).slice().sort((a, b) => a.id < b.id ? -1 : 1);
@@ -1004,21 +1116,30 @@ function activeUnlock(kidId){
   const now = Date.now();
   return S.data.unlocks.find(u => u.kidId===kidId && new Date(u.expiresAt).getTime() > now);
 }
-function weekStats(kidId){
-  const start = weekStart().getTime();
-  const books = S.data.books.filter(b=>b.kidId===kidId && new Date(b.readAt||0).getTime()>=start).length;
-  const words = S.data.words.filter(w=>w.kidId===kidId && new Date(w.createdAt||0).getTime()>=start).length;
+/* 한 주의 기록 — back 0 이번 주, 1 지난주. 노력은 공부한 시간(분) + 뚜뚜에게 말해 본 횟수, 착한 일은 받은 칭찬 스티커 */
+function weekStatsAt(kidId, back){
+  const s0 = weekStart(); s0.setDate(s0.getDate() - 7 * (back || 0));
+  const start = s0.getTime(), end = start + 7 * 86400000, inWeek = t => t >= start && t < end;
+  const books = S.data.books.filter(b => b.kidId === kidId && inWeek(new Date(b.readAt || 0).getTime())).length;
+  const words = S.data.words.filter(w => w.kidId === kidId && inWeek(new Date(w.createdAt || 0).getTime())).length;
   let sched = 0, done = 0;
-  for (let i=0;i<7;i++){
-    const d = new Date(weekStart()); d.setDate(d.getDate()+i);
+  for (let i = 0; i < 7; i++){
+    const d = new Date(s0); d.setDate(d.getDate() + i);
     if (d > new Date()) break;
-    const key = todayKey(d);
-    const list = todosFor(kidId, d);
+    const key = todayKey(d), list = todosFor(kidId, d);
     sched += list.length;
     done += list.filter(t => { const s = sessionOf(kidId, t.id, key); return s && s.done; }).length;
   }
-  return { books, words, done, sched, rate: sched ? Math.round(done/sched*100) : 0 };
+  const secs = S.data.sessions.filter(x => x.kidId === kidId && inWeek(new Date(x.date + 'T12:00:00').getTime()))
+    .reduce((n, x) => n + (x.durationSec || 0), 0);
+  let speech = 0;
+  for (const p of S.data.speech.filter(x => x.kidId === kidId))
+    for (const [dk, v] of Object.entries(p.days || {})) if (inWeek(new Date(dk + 'T12:00:00').getTime())) speech += (v.rec || 0);
+  const kind = S.data.kudos.filter(x => x.to === kidId && inWeek(new Date(x.at || 0).getTime())).length;
+  const mins = Math.round(secs / 60);
+  return { books, words, done, sched, rate: sched ? Math.round(done / sched * 100) : 0, speech, mins, effort: mins + speech, kind };
 }
+function weekStats(kidId){ return weekStatsAt(kidId, 0); }
 
 /* ============================================================
    렌더 진입점
@@ -1092,8 +1213,8 @@ function draw(){
 
   tabs.hidden = false;
   const items = [
-    ['today','오늘','🌤'], ['shelf','책장','📚'], ['words','단어','🫧'],
-    ['versus','대결','🏆'], ['games','게임','🎈']
+    ['today','오늘','🌤'], ['shelf','책장','📚'], ['words','단어장','🫧'], ['speech','스피치','🦜'],
+    ['versus','배움기록','📒'], ['games','놀이','🎈']
   ];
   tabs.innerHTML = items.map(([id,label,ico]) =>
     `<button data-tab="${id}" aria-current="${S.tab===id}"><span class="ico">${ico}</span>${label}</button>`
@@ -1102,7 +1223,7 @@ function draw(){
   // 다른 아이가 올린 승인 요청은 어느 화면에서든 보이게 한다 (부모님 폰에서 바로 승인)
   const others = pendingRequests().filter(r => r.kidId !== S.kidId);
 
-  const views = { today:viewToday, shelf:viewShelf, words:viewWords, versus:viewVersus, games:viewGames };
+  const views = { today:viewToday, shelf:viewShelf, words:viewWords, speech:viewSpeech, versus:viewVersus, games:viewGames };
   screen.innerHTML = `<div class="wrap stack">${storageBanner()}${others.map(askCard).join('')}${(views[S.tab]||viewToday)()}</div>`;
 
   if (S.tab === 'shelf') requestAnimationFrame(fitSpines);
@@ -1132,7 +1253,7 @@ function viewSetup(){
         <input class="field" id="setupPin" type="password" inputmode="numeric" pattern="[0-9]*"
           maxlength="4" autocomplete="off" placeholder="부모님 비밀번호 정하기 (숫자 4자리)">
         <p class="muted" style="margin:6px 2px 0;font-size:13px">
-          게임 승인과 부모님 관리에 써요. 아이들이 보지 않을 때 정해주세요.</p>
+          놀이 승인과 부모님 관리에 써요. 아이들이 보지 않을 때 정해주세요.</p>
       </div>
       <button class="btn wide" id="setupGo">시작하기</button>
     </div>
@@ -1240,7 +1361,7 @@ function askCard(r){
   return `<div class="askcard">
     <span class="bell">🔔</span>
     <div class="grow">
-      <b style="font-family:var(--display);font-size:20px">${esc(subj(r.kidName||'아이'))} 게임을 하고 싶대요!</b>
+      <b style="font-family:var(--display);font-size:20px">${esc(subj(r.kidName||'아이'))} 놀이를 하고 싶대요!</b>
       <div style="font-size:13px">오늘 할 일을 모두 마쳤어요 · ${r.minutes||20}분 요청</div>
     </div>
     <button class="btn sm" data-approve="${r.id}">승인</button>
@@ -1285,6 +1406,8 @@ function viewToday(){
       <span style="width:${pct}%;background:${col.bar}"></span></div>
   </div>
 
+  ${ttCard(true)}
+
   <div class="card">
     <h3 class="sub">이번 주</h3>
     <div class="weekstrip">${strip}</div>
@@ -1297,13 +1420,13 @@ function viewToday(){
     </div>
     ${list.length ? list.map(t=>todoRow(t,key)).join('') : `
       <div class="empty"><div class="face">🧺</div>
-        <p>아직 할 일이 없어요.<br>부모님이 넣어주시거나 직접 추가해도 돼요.</p></div>`}
+        <p>아직 할 일이 없어요.<br>오늘 해보고 싶은 걸 직접 적어볼까요? ✨</p></div>`}
   </div>
 
   ${all ? `<div class="card" style="text-align:center;background:var(--mint-soft)">
       <div style="font-size:40px">🎉</div>
       <h3 class="sub">오늘 할 일을 다 했어요!</h3>
-      <button class="btn mint" id="goGames">게임 열어달라고 하기</button>
+      <button class="btn mint" id="goGames">놀이 열어달라고 하기</button>
     </div>` : ''}
   `;
 }
@@ -1313,6 +1436,17 @@ function todoRow(t, key){
   const done = !!(s && s.done);
   const running = S.running && S.running.todoId === t.id;
   const secs = (s && s.durationSec) || 0;
+  if (t.kind === 'speech'){
+    const note = ttTodoNote(S.kidId);
+    return `<div class="todo ${done?'done':''}">
+      <button class="tick" data-tick="${t.id}" aria-pressed="${done}" aria-label="${esc(t.title)} 완료">${done?'✓':''}</button>
+      <div class="grow">
+        <div class="name">${esc(t.icon||'')} ${esc(t.title)}</div>
+        <div class="muted">${done ? '오늘 미션 완료! 멋져요 🎉' : (note ? esc(note) : '뚜뚜 선생님이 기다려요')}</div>
+      </div>
+      ${done ? '' : `<button class="btn sm" data-ttgo="1">🦜 하러 가기</button>`}
+    </div>`;
+  }
   return `<div class="todo ${done?'done':''}">
     <button class="tick" data-tick="${t.id}" aria-pressed="${done}" aria-label="${esc(t.title)} 완료">${done?'✓':''}</button>
     <div class="grow">
@@ -1389,15 +1523,15 @@ function viewShelf(){
    ============================================================ */
 function viewWords(){
   const mine = S.data.words.filter(w=>w.kidId===S.kidId).slice().reverse();
-  const due = mine.filter(w => !w.nextReviewAt || new Date(w.nextReviewAt) <= new Date());
-  const mode = S.view.dictMode || 'ek';
+  const due = mine.filter(w => w.meaning && (!w.nextReviewAt || new Date(w.nextReviewAt) <= new Date()));
+  const mode = S.view.dictMode === 'kk' ? 'kk' : 'en';
   const r = S.view.dictResult;
 
   return `
   <div class="card">
     <h3 class="sub">사전에서 찾아보기</h3>
     <div class="chips" style="margin-bottom:9px">
-      ${[['ek','영한'],['ee','영영'],['kk','한글']].map(([m,l])=>
+      ${[['en','🔤 영어'],['kk','🇰🇷 한글']].map(([m,l])=>
         `<button class="chip" data-mode="${m}" aria-pressed="${mode===m}">${l}</button>`).join('')}
     </div>
     <div class="row" style="gap:8px">
@@ -1421,10 +1555,19 @@ function viewWords(){
           <button class="btn ghost sm" data-say="${esc(r.term)}" data-lang="${mode==='kk'?'ko':'en'}">🔊</button>
         </div>
         <p style="margin:8px 0 4px">${esc(r.meaning)}</p>
+        ${r.meaningEn ? `<p class="muted" style="margin:0 0 4px">🔤 ${esc(r.meaningEn)}</p>` : ''}
         ${r.example ? `<p class="muted" style="margin:0">“${esc(r.example)}”</p>` : ''}
         ${r.exampleKo ? `<p class="muted" style="margin:2px 0 0">${esc(r.exampleKo)}</p>` : ''}
         <button class="btn wide mint sm" id="saveWord" style="margin-top:11px">🫧 단어 가방에 담기</button>
       </div>` : ''}
+  </div>
+
+  <div class="card" style="background:linear-gradient(170deg,#FFFFFF,#FFF4E8)">
+    <div class="row">
+      <div class="grow"><h3 class="sub" style="margin:0">🧩 단어 퀴즈</h3>
+        <div class="muted" style="font-size:14px">빈칸 채우기 · 뜻 맞추기 · 한글 맞춤법 — 틀려도 괜찮아요!</div></div>
+      <button class="btn" id="quizGo">퀴즈 풀기</button>
+    </div>
   </div>
 
   ${due.length ? `<div class="card" style="background:var(--mint-soft)">
@@ -1444,6 +1587,7 @@ function viewWords(){
           <div class="grow">
             <div class="term">${esc(w.emoji||'')} ${esc(w.term)}</div>
             <div style="font-size:15px">${esc(w.meaning||'')}</div>
+            ${w.meaningEn ? `<div class="muted" style="font-size:13px">${esc(w.meaningEn)}</div>` : ''}
           </div>
           <div class="stack" style="gap:6px;align-items:flex-end">
             <button class="btn ghost sm" data-say="${esc(w.term)}" data-lang="${w.lang==='ko'?'ko':'en'}">🔊</button>
@@ -1452,23 +1596,59 @@ function viewWords(){
         </div>
       </div>`).join('')}</div>`
     : `<div class="empty"><div class="face">🫧</div>
-        <p>아직 담은 단어가 없어요.<br>책을 등록할 때 어려운 낱말을 담아보세요.</p></div>`}
+        <p>아직 담은 단어가 없어요.<br>궁금한 낱말을 사전에서 찾아 담아볼까요? 🫧</p></div>`}
   </div>`;
 }
 
 /* ============================================================
    화면: 대결
    ============================================================ */
+/* 반짝 왕관 — 한 아이가 왕관을 다 가져가지 않으면서도, 정말 잘한 건 정직하게.
+   실력 왕관(책·단어·성실·연습): 앞선 아이가 받는다. 비기면 둘 다.
+     한 아이가 절반보다 많이 앞서면, 차이가 작은 것부터 '둘이 함께' 왕관이 된다(빼앗아 주지 않는다).
+   개인 왕관(노력·착한·성장): 형제끼리 겨루지 않고, 기준을 넘으면 둘 다 받는다. */
+function crownPlan(sa, sb, pa, pb){
+  const head = [
+    { id:'books',  ico:'📚', title:'책왕',   va:sa.books,  vb:sb.books,  unit:'권' },
+    { id:'words',  ico:'🫧', title:'단어왕', va:sa.words,  vb:sb.words,  unit:'개' },
+    { id:'rate',   ico:'⏰', title:'성실왕', va:sa.rate,   vb:sb.rate,   unit:'%' }
+  ];
+  if (S.data.scripts.length) head.push({ id:'speech', ico:'🦜', title:'연습왕', va:sa.speech, vb:sb.speech, unit:'번' });
+  const out = { a:[], b:[], both:[] };
+  const live = head.filter(c => c.va > 0 || c.vb > 0);
+  live.filter(c => c.va === c.vb).forEach(c => out.both.push(c));
+  const won = live.filter(c => c.va !== c.vb).map(c => ({ ...c, lead:c.va > c.vb ? 'a' : 'b', gap:Math.abs(c.va - c.vb) / Math.max(c.va, c.vb) }));
+  const cap = Math.ceil(won.length / 2);
+  for (const who of ['a', 'b']){
+    const mine = won.filter(c => c.lead === who).sort((x, y) => y.gap - x.gap);
+    mine.slice(0, cap).forEach(c => out[who].push(c));
+    mine.slice(cap).forEach(c => out.both.push(c));                  // 넘치는 건 함께
+  }
+  // 개인 왕관 — 둘 다 받을 수 있다
+  const grew = (s, p) => ['books', 'words', 'speech', 'mins', 'kind'].filter(k => (s[k] || 0) > (p[k] || 0)).length;
+  const mine = (s, p, who) => {
+    const list = [];
+    if (s.effort >= 20) list.push({ id:'effort', ico:'💪', title:'노력왕', unit:'점', ['v' + who]:s.effort });
+    if (s.kind >= 1) list.push({ id:'kind', ico:'😇', title:'착한왕', unit:'개', ['v' + who]:s.kind });
+    if (grew(s, p) >= 2) list.push({ id:'grow', ico:'🌱', title:'성장왕', unit:'' });
+    return list;
+  };
+  out.a.push(...mine(sa, pa, 'a'));
+  out.b.push(...mine(sb, pb, 'b'));
+  return out;
+}
+const KUDOS = ['🤝 도와줘서 고마워', '🎁 양보해줘서 고마워', '🎈 같이 놀아줘서 고마워', '📣 응원해줘서 고마워', '💖 그냥 좋아서!'];
+function kudosToday(fromId){ return S.data.kudos.filter(x => x.from === fromId && String(x.at || '').slice(0, 10) === new Date().toISOString().slice(0, 10)).length; }
+
 function viewVersus(){
   const ks = kids();
   if (ks.length < 2){
-    return `<div class="card empty"><div class="face">🏆</div>
-      <p>친구가 한 명 더 있어야 대결할 수 있어요.<br>부모님 화면에서 추가해 주세요.</p></div>`;
+    return `<div class="card empty"><div class="face">📒</div>
+      <p>친구가 한 명 더 있으면 함께 배움기록을 볼 수 있어요.<br>부모님 화면에서 추가해 주세요.</p></div>`;
   }
   const [a, b] = ks;
-  const sa = weekStats(a.id), sb = weekStats(b.id);
+  const sa = weekStatsAt(a.id, 0), sb = weekStatsAt(b.id, 0), pa = weekStatsAt(a.id, 1), pb = weekStatsAt(b.id, 1);
   const ca = kidColor(a), cb = kidColor(b);
-
   const rowFor = (label, va, vb) => {
     const max = Math.max(va, vb, 1);
     return `<div class="vsrow">
@@ -1483,19 +1663,25 @@ function viewVersus(){
       </div>
     </div>`;
   };
-
-  const badge = (title, ico, va, vb) => {
-    const who = va === vb ? '둘 다' : (va > vb ? a.name : b.name);
-    return `<div class="badge"><div style="font-size:26px">${ico}</div>
-      <div class="b">${title}</div><div class="muted">${esc(who)}</div></div>`;
+  const cp = crownPlan(sa, sb, pa, pb);
+  const crownList = (list, who) => list.length
+    ? list.map(c => `<div class="badge" style="text-align:left;display:flex;gap:8px;align-items:center;padding:9px 11px">
+        <span style="font-size:24px">${c.ico}</span><div><div class="b" style="font-size:18px">${c.title}</div>
+        <div class="muted" style="font-size:13px">${c.id === 'grow' ? '지난주보다 늘었어요!' : `${who === 'a' ? c.va : c.vb}${c.unit}`}</div></div></div>`).join('')
+    : `<div class="muted" style="text-align:center;padding:10px 4px">이번 주 첫 왕관을 받아볼까요?<br>할 수 있어요! 💪</div>`;
+  const growth = (s, p) => {
+    const bits = [['📚', 'books', '권'], ['🫧', 'words', '개'], ['🦜', 'speech', '번'], ['⏱', 'mins', '분'], ['😇', 'kind', '개']]
+      .filter(([, k]) => (s[k] || 0) > (p[k] || 0)).map(([ico, k, u]) => `${ico} +${s[k] - (p[k] || 0)}${u}`);
+    return bits.length ? `지난주보다 ▲ ${bits.join(' · ')}` : '이번 주도 한 걸음씩! 오늘 하나만 더 해볼까요? 🌱';
   };
-
-  const total = sa.books + sb.books;
-  const goal = S.settings.weeklyGoal || 20;
+  const me = curKid(), other = ks.find(k => k.id !== S.kidId);
+  const sent = kudosToday(S.kidId);
+  const got = S.data.kudos.filter(x => x.to === S.kidId).sort((x, y) => String(y.at).localeCompare(String(x.at))).slice(0, 4);
+  const total = sa.books + sb.books, goal = S.settings.weeklyGoal || 20;
 
   return `
   <div class="card">
-    <h3 class="sub">이번 주 대결</h3>
+    <h3 class="sub">이번 주 배움기록</h3>
     <div class="row" style="justify-content:space-between;margin-bottom:12px">
       <div class="row"><span class="avatar" style="background:${ca.bg}">${esc(a.avatar)}</span>
         <b style="font-family:var(--display);font-size:21px">${esc(a.name)}</b></div>
@@ -1505,15 +1691,37 @@ function viewVersus(){
     ${rowFor('읽은 책', sa.books, sb.books)}
     ${rowFor('모은 단어', sa.words, sb.words)}
     ${rowFor('할 일 %', sa.rate, sb.rate)}
+    ${rowFor('공부 시간(분)', sa.mins, sb.mins)}
+    ${S.data.scripts.length ? rowFor('뚜뚜 연습', sa.speech, sb.speech) : ''}
+    ${rowFor('칭찬 스티커', sa.kind, sb.kind)}
   </div>
 
   <div class="card">
-    <h3 class="sub">이번 주 왕관</h3>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px">
-      ${badge('책왕','📚',sa.books,sb.books)}
-      ${badge('단어왕','🫧',sa.words,sb.words)}
-      ${badge('성실왕','⏰',sa.rate,sb.rate)}
+    <h3 class="sub">이번 주 반짝 왕관 👑</h3>
+    <p class="muted" style="margin:0 0 10px">둘 다 빛난 곳이 있어요! 💪 노력왕 · 😇 착한왕 · 🌱 성장왕은 둘 다 받을 수 있어요.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="stack" style="gap:7px"><div class="row" style="gap:6px"><span class="avatar" style="background:${ca.bg}">${esc(a.avatar)}</span><b>${esc(a.name)}</b></div>${crownList(cp.a, 'a')}</div>
+      <div class="stack" style="gap:7px"><div class="row" style="gap:6px"><span class="avatar" style="background:${cb.bg}">${esc(b.avatar)}</span><b>${esc(b.name)}</b></div>${crownList(cp.b, 'b')}</div>
     </div>
+    ${cp.both.length ? `<div class="badge" style="margin-top:10px">🤝 둘이 함께 받은 왕관: ${cp.both.map(c => `${c.ico} ${c.title}`).join(' · ')}</div>` : ''}
+    <p class="muted" style="text-align:center;margin:10px 0 0">왕관보다 멋진 건 매일 조금씩 해내는 거예요. 둘 다 너무 잘하고 있어요! 💕</p>
+  </div>
+
+  <div class="card">
+    <h3 class="sub">🌱 나의 성장</h3>
+    <div class="stack" style="gap:8px">
+      <div><b>${esc(a.name)}</b> <span class="muted">${esc(growth(sa, pa))}</span></div>
+      <div><b>${esc(b.name)}</b> <span class="muted">${esc(growth(sb, pb))}</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="sub">💌 칭찬 스티커</h3>
+    ${other ? `<p class="muted" style="margin:0 0 8px">${esc(other.name)}에게 고마운 마음을 보내볼까요? (하루 3번까지)</p>
+      <div class="chips">${KUDOS.map((r, i) => `<button class="chip" data-kudo="${i}" ${sent >= 3 ? 'disabled' : ''}>${r}</button>`).join('')}</div>
+      ${sent >= 3 ? '<p class="muted" style="margin:8px 0 0;font-size:13px">오늘은 칭찬을 다 보냈어요. 내일 또 보내요!</p>' : ''}` : ''}
+    ${got.length ? `<div style="margin-top:12px"><div class="muted" style="margin-bottom:4px">${esc(me ? me.name : '')}가 받은 칭찬</div>
+      ${got.map(x => `<div style="font-size:15px">💌 ${esc(x.reason)} <span class="muted" style="font-size:12px">— ${x.from === 'parent' ? '엄마 아빠' : esc((kid(x.from) || {}).name || '')}</span></div>`).join('')}</div>` : ''}
   </div>
 
   <div class="card" style="background:var(--mint-soft)">
@@ -1547,10 +1755,10 @@ function viewGames(){
     const ready = allDoneToday(S.kidId);
     return `<div class="card lock">
       <div class="big-lock">${ready?'🔓':'🔒'}</div>
-      <h3 class="sub">${ready ? '준비 끝! 부모님께 물어보세요' : '게임은 아직 잠겨 있어요'}</h3>
+      <h3 class="sub">${ready ? '준비 끝! 부모님께 물어보세요' : '놀이는 아직 잠겨 있어요'}</h3>
       <p class="muted">${ready
         ? '부모님 휴대폰으로 “승인해 주세요” 알림을 보내요.'
-        : (list.length ? `오늘 할 일이 ${left}개 남았어요.` : '오늘 할 일부터 정해볼까요?')}</p>
+        : (list.length ? `오늘 할 일이 ${left}개 남았어요. 조금만 더 힘내요! 할 수 있어요 💪` : '오늘 할 일부터 정해볼까요?')}</p>
       <button class="btn wide" id="askUnlock" ${ready?'':'disabled'}>🔔 부모님께 승인 받기</button>
     </div>`;
   }
@@ -1559,13 +1767,13 @@ function viewGames(){
   const g = S.view.game;
   return `
   <div class="card row" style="background:var(--mint-soft)">
-    <div class="grow"><div class="muted">남은 게임 시간</div>
+    <div class="grow"><div class="muted">남은 놀이 시간</div>
       <div class="big" style="font-size:34px" id="unlockLeft">${fmtClock(left)}</div></div>
     ${g ? `<button class="btn ghost sm" id="quitGame">그만하기</button>` : ''}
   </div>
   ${g ? gameBody(g) : `
   <div class="card">
-    <h3 class="sub">무슨 게임 할까요?</h3>
+    <h3 class="sub">무슨 놀이 할까요?</h3>
     <div class="stack">
       <button class="btn wide ghost" data-game="memory" style="justify-content:flex-start">🐰 같은 그림 찾기</button>
       <button class="btn wide ghost" data-game="stars" style="justify-content:flex-start">⭐ 별똥별 받기</button>
@@ -1679,6 +1887,7 @@ function openModal(html){
 }
 function closeModal(){
   stopScanner();
+  if (!TT) hush();
   $('#modalRoot').innerHTML = '';
 }
 
@@ -1787,7 +1996,7 @@ function notifyTab(){
   if (linked){
     return `<div class="card" style="background:var(--mint-soft)">
       <h3 class="sub">✅ 텔레그램과 연결됐어요</h3>
-      <p style="margin:0">아이가 게임을 요청하면
+      <p style="margin:0">아이가 놀이를 요청하면
         <b>${esc(S.settings.telegram.name || '부모님')}</b> 님 텔레그램(@${esc(d.bot.username)})으로 알려드려요.</p>
       <div class="stack" style="margin-top:12px;gap:9px">
         <button class="btn wide" id="tgTest">📨 테스트 메시지 보내기</button>
@@ -1799,7 +2008,7 @@ function notifyTab(){
   const qr = qrSvg(d.link);
   return `<div class="card">
     <h3 class="sub">텔레그램 알림 연결</h3>
-    <p class="muted" style="margin:0 0 12px">아이가 게임을 요청하면 부모님 폰 텔레그램으로 알림이 가요.</p>
+    <p class="muted" style="margin:0 0 12px">아이가 놀이를 요청하면 부모님 폰 텔레그램으로 알림이 가요.</p>
 
     <div class="tgstep"><span class="tgnum">1</span><div class="grow">
       <b>봇에게 말 걸기</b>
@@ -1940,6 +2149,11 @@ function parentSheet(){
       <div class="chips">${KID_COLORS.map((c,ci)=>
         `<button class="chip" data-kidcol="${k.id}|${ci}" aria-pressed="${(k.colorIdx||0)===ci}"
           style="background:${c.bg};border-color:${c.bar}">${ci===(k.colorIdx||0)?'✓':'  '}</button>`).join('')}</div>
+      <button class="btn ghost sm" data-parentkudo="${k.id}" style="margin-top:10px">😇 착한 일 칭찬하기 (착한왕 스티커 +1)</button>
+      <div class="muted" style="margin:12px 0 5px">성향 — 뚜뚜가 ${esc(k.name)}에게 맞춰 말하고 도전을 골라줘요</div>
+      ${(() => { const st = kidStyle(k); return ['compete','pace','strengths'].map(f => `<div class="chips" style="margin-bottom:7px">${
+        TT_STYLE_OPTS[f].map(([v, l]) => `<button class="chip" data-kidstyle="${k.id}|${f}|${v}"
+          aria-pressed="${f === 'strengths' ? st.strengths.includes(v) : st[f] === v}">${l}</button>`).join('')}</div>`).join(''); })()}
     </div>`).join('') + `<button class="btn ghost wide" id="addKid">+ 친구 추가</button>`;
   }
   if (t === 'settings'){
@@ -1951,7 +2165,7 @@ function parentSheet(){
           placeholder="예: 오늘도 너희가 자랑스러워! 사랑해 💕">${esc(noteText)}</textarea>
         <p class="muted" style="margin:5px 0 0;font-size:13px">비워두면 매일 바뀌는 응원 문구가 나와요. (60자까지)</p>
       </div>
-      <div><div class="muted">게임 시간 (분)</div>
+      <div><div class="muted">놀이 시간 (분)</div>
         <input class="field" type="number" min="5" max="120" id="setGameMin" value="${S.settings.gameMinutes}"></div>
       <div><div class="muted">이번 주 함께 읽기 목표 (권)</div>
         <input class="field" type="number" min="2" max="200" id="setGoal" value="${S.settings.weeklyGoal}"></div>
@@ -1988,6 +2202,9 @@ function parentSheet(){
   if (t === 'notify'){
     body = notifyTab();
   }
+  if (t === 'speech'){
+    body = speechTab();
+  }
   if (t === 'unlock'){
     const pend = pendingRequests();
     body = `${pend.length ? `<div class="stack" style="margin-bottom:12px">${pend.map(askCard).join('')}</div>` : ''}
@@ -1996,7 +2213,7 @@ function parentSheet(){
         const un = activeUnlock(k.id);
         return `<div class="row">
           <div class="grow"><b style="font-family:var(--display);font-size:20px">${esc(k.name)}</b>
-            <div class="muted">${un ? `게임 중 · ${fmtClock((new Date(un.expiresAt)-Date.now())/1000)} 남음`
+            <div class="muted">${un ? `놀이 중 · ${fmtClock((new Date(un.expiresAt)-Date.now())/1000)} 남음`
               : (allDoneToday(k.id) ? '할 일 다 함 · 열어줄 수 있어요' : '할 일이 남았어요')}</div></div>
           ${un ? `<button class="btn ghost sm" data-relock="${k.id}">지금 잠그기</button>`
                : `<button class="btn sm" data-grant="${k.id}">${S.settings.gameMinutes}분 열어주기</button>`}
@@ -2007,7 +2224,7 @@ function parentSheet(){
 
   return `<h3>부모님 화면</h3>
     <div class="chips" style="margin:8px 0 14px">
-      ${tabBtn('todos','할 일')}${tabBtn('kids','아이')}${tabBtn('notify','알림')}${tabBtn('unlock','게임 승인' +
+      ${tabBtn('todos','할 일')}${tabBtn('speech','🦜 스피치')}${tabBtn('kids','아이')}${tabBtn('notify','알림')}${tabBtn('unlock','놀이 승인' +
       (pendingRequests().length ? `<span class="dot-badge">${pendingRequests().length}</span>` : ''))}${tabBtn('settings','설정')}
     </div>
     ${body}`;
@@ -2017,6 +2234,7 @@ function parentSheet(){
    사전 (Claude sample)
    ============================================================ */
 const DICT_MODES = {
+  en: { label:'영어', instruct:'영어 단어를 풀이한다. meaning은 한국어 뜻, meaningEn은 아주 쉬운 영어 풀이 한 문장, example은 아주 쉬운 영어 한 문장, exampleKo는 그 예문의 한국어 뜻으로 쓴다.' },
   ek: { label:'영한', instruct:'영어 단어를 한국어로 풀이한다. meaning과 exampleKo는 한국어로, example은 아주 쉬운 영어 한 문장으로 쓴다.' },
   ee: { label:'영영', instruct:'영어 단어를 아주 쉬운 영어로 풀이한다. meaning과 example은 영어로, exampleKo는 그 예문의 한국어 뜻으로 쓴다.' },
   kk: { label:'한글', instruct:'한국어 낱말을 한국어로 풀이한다. meaning과 example은 한국어로 쓰고, exampleKo는 빈 문자열로 둔다.' }
@@ -2050,10 +2268,11 @@ async function lookupWord(term, mode){
 사전 종류: ${m.label}. ${m.instruct}
 
 아래 JSON 하나만 출력해. 설명도 마크다운도 코드펜스도 쓰지 마.
-{"term":"","reading":"","meaning":"","example":"","exampleKo":"","emoji":""}
+{"term":"","reading":"","meaning":"","meaningEn":"","example":"","exampleKo":"","emoji":""}
 
 규칙:
 - meaning은 15자 안팎의 한 문장. 어려운 한자어와 전문 용어를 쓰지 마.
+- meaningEn: 영어 단어면 아주 쉬운 영어 풀이 한 문장, 한국어 낱말이면 빈 문자열.
 - reading: 영어 단어면 한글로 읽는 법(예: 레인보우), 한국어 낱말이면 빈 문자열.
 - emoji: 낱말이 떠오르는 이모지 딱 한 개.
 - 그런 낱말을 모르면 meaning에 "잘 모르겠어요"라고만 써.`;
@@ -2071,6 +2290,7 @@ function normalizeDict(out, term){
     meaning: (out && out.meaning) || '',
     example: (out && out.example) || '',
     exampleKo: (out && out.exampleKo) || '',
+    meaningEn: (out && out.meaningEn) || '',
     emoji: (out && out.emoji) || '📖'
   };
 }
@@ -2214,7 +2434,7 @@ async function autoWeather(interactive){
     await Store.saveSettings({ weather:{ date:todayKey(), icon:w.icon, label:w.label, place:geo.name||'' } });
     return true;
   } catch(e){
-    if (interactive) toast('날씨를 가져오지 못했어요. 직접 골라주세요');
+    if (interactive) toast('날씨를 가져오지 못했어요. 창밖을 보고 직접 골라볼까요? ☀️');
     return false;
   }
 }
@@ -2222,16 +2442,407 @@ async function autoWeather(interactive){
 /* ============================================================
    음성
    ============================================================ */
-function speak(text, lang){
-  try {
-    if (!window.speechSynthesis) return;
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang === 'ko' ? 'ko-KR' : 'en-US';
-    u.rate = 0.85;
-    speechSynthesis.cancel();
-    speechSynthesis.speak(u);
-  } catch(e){}
+/* 기기에 깔린 목소리 중에서 고른다. 장난감 같은 목소리(Bubbles, Zarvox…)는 빼고,
+   영어는 en-US → 다른 영어, 한국어는 ko-KR. 부모님이 고른 영어 목소리가 있으면 그걸 쓴다. */
+const NOVELTY_VOICE = /Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Deranged|Good News|Hysterical|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Junior|Ralph|Fred|Kathy|Princess|Grandma|Grandpa|Rocko|Shelley|Flo|Eddy|Reed|Sandy/i;
+function voiceList(){ try { return (window.speechSynthesis && speechSynthesis.getVoices()) || []; } catch(e){ return []; } }
+function voiceScore(v, lang){
+  const L = String(v.lang || '').replace('_', '-');
+  if (NOVELTY_VOICE.test(v.name)) return -1;
+  let s = 0;
+  if (lang === 'ko'){ if (!/^ko/i.test(L)) return -1; s += 50; }
+  else {
+    if (/^en-US/i.test(L)) s += 50; else if (/^en-(GB|AU|CA|IE|NZ)/i.test(L)) s += 30; else if (/^en/i.test(L)) s += 10; else return -1;
+  }
+  if (/premium|enhanced|natural|neural/i.test(v.name)) s += 20;
+  if (/Samantha|Ava|Allison|Nicky|Zoe|Susan|Google US English|Yuna|Google 한국/i.test(v.name)) s += 10;
+  if (v.localService) s += 3;
+  return s;
 }
+function pickVoice(lang){
+  const all = voiceList();
+  const want = lang === 'en' ? S.settings.ttVoice : '';
+  if (want){ const v = all.find(x => x.voiceURI === want); if (v) return v; }
+  let best = null, bs = -1;
+  for (const v of all){ const sc = voiceScore(v, lang); if (sc > bs){ bs = sc; best = v; } }
+  return best;
+}
+try { if (window.speechSynthesis){ speechSynthesis.getVoices(); speechSynthesis.addEventListener('voiceschanged', () => {}); } } catch(e){}
+
+/* 말하기 — 끝나면 풀리는 Promise. onword(글자 위치)로 읽는 단어에 불을 켤 수 있다.
+   아이패드는 첫 말하기가 반드시 손가락 누른 순간에 일어나야 해서, 말하는 중이 아니면 바로 말한다. */
+const SAY = { u:null, at:0 };
+function say(text, { lang='en', rate, onword, onstart } = {}){
+  return new Promise(done => {
+    try {
+      if (!window.speechSynthesis || !text){ done(false); return; }
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang === 'ko' ? 'ko-KR' : 'en-US';
+      const v = pickVoice(lang === 'ko' ? 'ko' : 'en'); if (v) u.voice = v;
+      u.rate = rate || (lang === 'ko' ? 1.05 : 0.85);
+      let fin = false, tm = 0;
+      const end = ok => { if (fin) return; fin = true; clearTimeout(tm); if (SAY.u === u) SAY.u = null; done(ok); };
+      u.onend = () => end(true);
+      u.onerror = () => end(false);
+      if (onword) u.onboundary = ev => { if (!ev.name || ev.name === 'word') onword(ev.charIndex); };
+      if (onstart) u.onstart = onstart;
+      SAY.u = u;                      // 사파리가 말하는 도중 버려서 onend 가 안 오는 일을 막는다
+      tm = setTimeout(() => end(true), 2000 + text.length * 120 / u.rate);   // 이벤트가 안 와도 끝낸다
+      const busy = speechSynthesis.speaking || speechSynthesis.pending || Date.now() - SAY.at < 120;
+      if (busy){ speechSynthesis.cancel(); setTimeout(() => { if (!fin) speechSynthesis.speak(u); }, 90); }
+      else speechSynthesis.speak(u);
+    } catch(e){ done(false); }
+  });
+}
+function speak(text, lang){ nvUnlock(); voice(text, { lang: lang === 'ko' ? 'ko' : 'en' }); }   // 🔊 단추들이 쓰는 예전 이름
+function hush(){
+  nvStop();
+  try { if (window.speechSynthesis && (speechSynthesis.speaking || speechSynthesis.pending)) speechSynthesis.cancel(); } catch(e){}
+  SAY.u = null; SAY.at = Date.now();
+}
+
+/* ---------- 🦜 뚜뚜의 자연스러운 목소리 (Gemini 음성 합성) ----------
+   뚜뚜가 할 말만 서버(/api/coach)로 보내 사람처럼 자연스러운 목소리로 받는다. 아이 목소리는 보내지 않는다.
+   같은 말은 한 번 만들어 이 기기(IndexedDB)에 저장하고 다시 쓴다. 안 되면 기기 목소리로 바로 넘어간다. */
+const NV_VOICES = [['Sulafat','따뜻한'], ['Achernar','부드러운'], ['Vindemiatrix','다정한'], ['Leda','앳된'], ['Aoede','산뜻한'], ['Autonoe','밝은']];
+const NV = { el:null, unlocked:false, fails:0, offUntil:0, mem:new Map(), cur:null, curEnd:null, silent:'' };
+function nvOn(){ return S.settings.ttNatural !== false && !window.claude && location.protocol.startsWith('http') && !(NV.offUntil > Date.now()); }
+function nvVoice(){ const v = S.settings.ttNvVoice; return NV_VOICES.some(x => x[0] === v) ? v : 'Sulafat'; }
+function nvEl(){ if (!NV.el){ NV.el = new Audio(); NV.el.setAttribute('playsinline', ''); NV.el.preload = 'auto'; } return NV.el; }
+/* 누른 순간에 한 번 — 아이패드가 나중에(목소리를 받아 온 뒤에) 소리를 내도록 허락받는다 */
+function nvUnlock(){
+  try { if (window.speechSynthesis && !SAY.primed){ const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); SAY.primed = true; } } catch(e){}
+  if (NV.unlocked) return;
+  const a = nvEl();
+  if (!NV.silent) NV.silent = 'data:audio/wav;base64,' + wavBase64(new Float32Array(800), 16000);
+  try { a.src = NV.silent; const p = a.play(); if (p && p.then) p.then(() => { NV.unlocked = true; }).catch(() => {}); else NV.unlocked = true; } catch(e){}
+}
+async function nvFetch(text, style){
+  const k = `${nvVoice()}|${style}|${text}`;
+  if (NV.mem.has(k)) return NV.mem.get(k);
+  try { const hit = await AudioBox.ttsGet(k); if (hit && hit.data){ const b = new Blob([hit.data], { type:'audio/wav' }); NV.mem.set(k, b); return b; } } catch(e){}
+  const j = await ttAsk({ task:'tts', text, voice:nvVoice(), style }, 20000);
+  const bin = atob(j.audio || ''), u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  if (u8.length < 100) throw new Error('empty');
+  const blob = new Blob([u8], { type:'audio/wav' });
+  NV.mem.set(k, blob); if (NV.mem.size > 40) NV.mem.delete(NV.mem.keys().next().value);
+  AudioBox.ttsPut({ k, at:Date.now(), data:u8.buffer }).catch(() => {});
+  return blob;
+}
+/* 끝나면 true, 못 하면 false (그때는 기기 목소리로) */
+function nvPlay(text, { style = 'en', rate = 1, onstart, onprogress } = {}){
+  if (NV.curEnd) NV.curEnd(true);                     // 하던 말은 끝낸 걸로
+  const me = {}; NV.cur = me;
+  return new Promise(async done => {
+    let fin = false, url = '';
+    const a = nvEl();
+    const end = ok => {
+      if (fin) return; fin = true;
+      if (NV.cur === me){ a.onended = a.onerror = a.ontimeupdate = null; NV.cur = null; NV.curEnd = null; }
+      if (url) { try { URL.revokeObjectURL(url); } catch(e){} }
+      done(ok);
+    };
+    NV.curEnd = end;
+    let blob;
+    try { blob = await nvFetch(text, style); }
+    catch(e){
+      NV.fails++;
+      if (e && (e.code === 'no_key' || e.code === 'busy' || e.code === 'no_family' || NV.fails >= 2))
+        NV.offUntil = Date.now() + (e.code === 'busy' ? 10 : 30) * 60000;
+      end(false); return;
+    }
+    if (NV.cur !== me || fin){ end(true); return; }     // 그 사이 다른 말을 시작했으면 조용히 끝
+    NV.fails = 0;
+    url = URL.createObjectURL(blob);
+    a.onended = () => end(true);
+    a.onerror = () => end(false);
+    a.ontimeupdate = onprogress ? () => { if (a.duration) onprogress(a.currentTime / a.duration); } : null;
+    a.src = url; a.playbackRate = rate || 1;
+    try { a.preservesPitch = true; a.webkitPreservesPitch = true; } catch(e){}
+    let p; try { p = a.play(); } catch(e){ end(false); return; }
+    if (onstart) onstart();
+    if (p && p.catch) p.catch(() => end(false));
+  });
+}
+function nvStop(){ const e = NV.curEnd; NV.cur = null; NV.curEnd = null; if (NV.el){ try { NV.el.pause(); } catch(x){} } if (e) e(true); }
+/* 뚜뚜 목소리 — 자연스러운 목소리를 먼저, 안 되면 기기 목소리.
+   rate: 0.6 천천히 · 0.8 보통 · 1 대회 속도 (자연스러운 목소리는 말투로, 기기 목소리는 빠르기로) */
+async function voice(text, { lang = 'en', rate, onword, onprogress, onstart } = {}){
+  if (nvOn()){
+    const style = lang === 'ko' ? 'ko' : (rate && rate <= 0.65 ? 'slow' : (rate >= 1 ? 'speech' : 'en'));
+    if (await nvPlay(text, { style, onstart, onprogress })) return true;
+  }
+  return say(text, { lang, rate, onword, onstart });
+}
+
+/* ---------- 녹음 ----------
+   말이 끝나고 조용해지면(기본 1.3초) 알아서 멈춘다. 마이크는 녹음할 때만 켠다. */
+const REC = { stream:null, mr:null, chunks:[], mime:'', src:null, an:null, raf:0, t0:0, heard:false, quiet:0, floor:null, resolve:null };
+let AC = null;
+function audioCtx(){
+  const A = window.AudioContext || window.webkitAudioContext;
+  if (!A) return null;
+  if (!AC || AC.state === 'closed') AC = new A();
+  if (AC.state === 'suspended') AC.resume().catch(() => {});
+  return AC;
+}
+function micSupported(){ return !window.claude && window.isSecureContext !== false && !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder); }
+function recMime(){
+  for (const m of ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus']){
+    try { if (MediaRecorder.isTypeSupported(m)) return m; } catch(e){}
+  }
+  return '';
+}
+async function recStart(opts = {}){
+  if (REC.mr) return false;
+  const ctx = audioCtx();                         // 누른 순간에 깨워 둔다 (아이패드)
+  const stream = await navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:true, noiseSuppression:true, autoGainControl:true } });
+  REC.stream = stream; REC.mime = recMime(); REC.chunks = [];
+  const mr = new MediaRecorder(stream, REC.mime ? { mimeType:REC.mime } : undefined);
+  REC.mr = mr;
+  mr.ondataavailable = e => { if (e.data && e.data.size) REC.chunks.push(e.data); };
+  mr.onstop = () => {
+    const blob = new Blob(REC.chunks, { type:(mr.mimeType || REC.mime || 'audio/mp4') });
+    const r = REC.resolve; REC.resolve = null;
+    recRelease();
+    if (r) r(blob);
+  };
+  mr.start(250);
+  REC.t0 = performance.now(); REC.heard = false; REC.quiet = 0; REC.floor = null;
+  if (ctx){
+    try {
+      REC.src = ctx.createMediaStreamSource(stream);
+      REC.an = ctx.createAnalyser(); REC.an.fftSize = 1024;
+      REC.src.connect(REC.an);
+      const buf = new Float32Array(REC.an.fftSize);
+      const silenceMs = opts.silenceMs || 1300, maxMs = (opts.maxSec || 15) * 1000;
+      const tick = () => {
+        if (!REC.mr || !REC.an) return;
+        REC.an.getFloatTimeDomainData(buf);
+        let sum = 0; for (let i = 0; i < buf.length; i++) sum += buf[i] * buf[i];
+        const lv = clamp((20 * Math.log10(Math.sqrt(sum / buf.length) + 1e-9) + 60) / 50, 0, 1);   // -60dB→0, -10dB→1
+        // 주변 소음 높이를 천천히 따라가서, 그보다 확실히 클 때만 "말하는 중"으로 본다
+        REC.floor = REC.floor == null ? lv : (lv < REC.floor ? lv : REC.floor + (lv - REC.floor) * 0.003);
+        if (opts.onLevel) opts.onLevel(lv);
+        const now = performance.now();
+        if (lv > Math.max(0.28, REC.floor + 0.18)){ REC.heard = true; REC.quiet = 0; }
+        else if (REC.heard && lv < REC.floor + 0.1){
+          if (!REC.quiet) REC.quiet = now;
+          else if (opts.onAuto && now - REC.quiet > silenceMs){ opts.onAuto(); return; }
+        }
+        if (now - REC.t0 > maxMs){ if (opts.onAuto) opts.onAuto(); return; }
+        REC.raf = requestAnimationFrame(tick);
+      };
+      REC.raf = requestAnimationFrame(tick);
+    } catch(e){}
+  }
+  return true;
+}
+function recStop(){
+  return new Promise(res => {
+    if (!REC.mr){ res(null); return; }
+    REC.resolve = res;
+    try { if (REC.mr.state !== 'inactive') REC.mr.stop(); else { REC.resolve = null; recRelease(); res(null); } }
+    catch(e){ REC.resolve = null; recRelease(); res(null); }
+  });
+}
+function recRelease(){
+  cancelAnimationFrame(REC.raf);
+  try { REC.src && REC.src.disconnect(); } catch(e){}
+  try { REC.stream && REC.stream.getTracks().forEach(t => t.stop()); } catch(e){}
+  REC.stream = null; REC.mr = null; REC.src = null; REC.an = null;
+}
+function recCancel(){
+  if (REC.mr){ REC.resolve = null; try { REC.mr.onstop = null; if (REC.mr.state !== 'inactive') REC.mr.stop(); } catch(e){} }
+  recRelease();
+}
+
+/* ---------- 녹음 다시 듣기 ---------- */
+const PLAY = { el:null, url:'' };
+function playBlob(blob){
+  playStop();
+  if (!blob) return;
+  const a = new Audio(); a.setAttribute('playsinline', '');
+  PLAY.url = URL.createObjectURL(blob); a.src = PLAY.url; PLAY.el = a;
+  a.onended = () => playStop();
+  a.play().catch(() => {});
+}
+function playStop(){
+  if (PLAY.el){ try { PLAY.el.pause(); } catch(e){} PLAY.el = null; }
+  if (PLAY.url){ try { URL.revokeObjectURL(PLAY.url); } catch(e){} PLAY.url = ''; }
+}
+/* 수업 중에는 화면이 꺼지지 않게 */
+let WAKE = null;
+async function wakeOn(){
+  try { if ('wakeLock' in navigator && !WAKE){ WAKE = await navigator.wakeLock.request('screen'); WAKE.addEventListener('release', () => { WAKE = null; }); } } catch(e){}
+}
+function wakeOff(){ try { WAKE && WAKE.release(); } catch(e){} WAKE = null; }
+function stopAudio(){ hush(); recCancel(); playStop(); }
+
+/* ---------- 기기 안에서 목소리 살펴보기 (서버로 보내지 않는다) ----------
+   녹음 → 한 채널 → 16kHz → 소리 크기·말한 시간·쉰 곳·음높이(높낮이) */
+async function decodeAudio(blob){
+  const ctx = audioCtx(); if (!ctx) throw new Error('no audio');
+  const ab = await blob.arrayBuffer();
+  const buf = await new Promise((res, rej) => {
+    try { const p = ctx.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); } catch(e){ rej(e); }
+  });
+  const ch = buf.numberOfChannels, n = buf.length, mono = new Float32Array(n);
+  for (let c = 0; c < ch; c++){ const d = buf.getChannelData(c); for (let i = 0; i < n; i++) mono[i] += d[i] / ch; }
+  return { pcm:mono, rate:buf.sampleRate };
+}
+function resample(pcm, from, to){
+  if (from === to) return pcm;
+  const ratio = from / to, n = Math.floor(pcm.length / ratio), out = new Float32Array(n);
+  const half = Math.max(0, Math.floor(ratio / 2));
+  for (let i = 0; i < n; i++){
+    const c = Math.floor(i * ratio); let s = 0, k = 0;
+    for (let j = c - half; j <= c + half; j++){ if (j >= 0 && j < pcm.length){ s += pcm[j]; k++; } }
+    out[i] = k ? s / k : 0;
+  }
+  return out;
+}
+function analyzeVoice(x, rate){
+  const F = Math.round(rate * 0.032), H = Math.round(rate * 0.016);   // 32ms 창, 16ms 간격
+  const db = [];
+  for (let i = 0; i + F <= x.length; i += H){ let s = 0; for (let j = i; j < i + F; j++) s += x[j] * x[j]; db.push(10 * Math.log10(s / F + 1e-10)); }
+  const empty = { silent:true, secs:0, pauses:0, longest:0, loudDb:-99, s0:0, s1:0, contour:[], endPitch:'flat', range:0 };
+  if (db.length < 4) return empty;
+  const sorted = db.slice().sort((a, b) => a - b);
+  const floor = sorted[Math.floor(sorted.length * 0.1)], peak = sorted[Math.floor(sorted.length * 0.97)];
+  if (peak < -58 || peak - floor < 8) return empty;
+  const thr = Math.max(floor + 9, peak - 28, -56);
+  const on = db.map(v => v > thr);
+  const first = on.indexOf(true), last = on.lastIndexOf(true);
+  if (first < 0 || (last - first + 1) * H / rate < 0.25) return empty;
+  let pauses = 0, run = 0, longest = 0;
+  for (let i = first; i <= last; i++){
+    if (!on[i]) run++;
+    else { const t = run * H / rate; if (t >= 0.35){ pauses++; longest = Math.max(longest, t); } run = 0; }
+  }
+  const sp = db.filter((v, i) => on[i]).sort((a, b) => a - b);
+  const s0 = Math.max(0, first * H - Math.round(rate * 0.25)), s1 = Math.min(x.length, (last + 1) * H + F + Math.round(rate * 0.25));
+  return { silent:false, secs:(last - first + 1) * H / rate, pauses, longest, loudDb:sp[Math.floor(sp.length / 2)], s0, s1,
+           ...pitchTrack(x, rate, first * H, (last + 1) * H + F) };
+}
+/* 음높이 — 8kHz로 줄인 뒤 자기상관(30~40ms 창). 아이 목소리 120~600Hz */
+function pitchTrack(x, rate, a0, a1){
+  const step = Math.max(1, Math.round(rate / 8000)), r = rate / step;
+  const n = Math.max(0, Math.floor((Math.min(a1, x.length) - a0) / step));
+  const y = new Float32Array(n);
+  for (let i = 0; i < n; i++){ let s = 0; for (let j = 0; j < step; j++) s += x[a0 + i * step + j] || 0; y[i] = s / step; }
+  const W = Math.round(r * 0.035), Hp = Math.round(r * 0.01);
+  const minLag = Math.floor(r / 600), maxLag = Math.ceil(r / 120);
+  const f0 = [], corr = new Float32Array(maxLag + 1);
+  for (let i = 0; i + W + maxLag <= n; i += Hp){
+    let e0 = 0; for (let j = 0; j < W; j++) e0 += y[i + j] * y[i + j];
+    if (e0 / W < 2e-6){ f0.push(0); continue; }
+    let best = 0;
+    for (let lag = minLag; lag <= maxLag; lag++){
+      let c = 0, e1 = 0;
+      for (let j = 0; j < W; j++){ const a = y[i + j], b = y[i + j + lag]; c += a * b; e1 += b * b; }
+      corr[lag] = c / Math.sqrt(e0 * e1 + 1e-12);
+      if (corr[lag] > best) best = corr[lag];
+    }
+    // 한 옥타브 아래로 잘못 잡지 않도록, 최고값에 가까운 것 중 가장 짧은 주기를 고른다
+    let pick = 0;
+    for (let lag = minLag + 1; lag < maxLag; lag++){
+      if (corr[lag] >= best * 0.92 && corr[lag] >= corr[lag - 1] && corr[lag] >= corr[lag + 1]){ pick = lag; break; }
+    }
+    f0.push(best > 0.55 && pick ? r / pick : 0);
+  }
+  const sm = f0.map((v, i) => {
+    if (!v) return 0;
+    const w = f0.slice(Math.max(0, i - 2), i + 3).filter(Boolean).sort((p, q) => p - q);
+    return w[Math.floor(w.length / 2)];
+  });
+  const voiced = sm.filter(Boolean);
+  if (voiced.length < 6) return { contour:[], endPitch:'flat', range:0 };
+  const med = voiced.slice().sort((p, q) => p - q)[Math.floor(voiced.length / 2)];
+  const st = sm.map(v => v ? 12 * Math.log2(v / med) : null);                 // 반음 단위
+  const vals = st.filter(v => v !== null);
+  const mean = vals.reduce((s, v) => s + v, 0) / vals.length;
+  const range = Math.sqrt(vals.reduce((s, v) => s + (v - mean) * (v - mean), 0) / vals.length);
+  // 문장 끝 — 소리 난 부분의 뒤쪽 40%에서 앞 1/3과 뒤 1/3을 비교한다
+  const idx = st.map((v, i) => v !== null ? i : -1).filter(i => i >= 0);
+  const tail = idx.slice(Math.floor(idx.length * 0.6));
+  const k = Math.max(1, Math.floor(tail.length / 3));
+  const avg = list => list.reduce((s, i) => s + st[i], 0) / list.length;
+  const d = avg(tail.slice(-k)) - avg(tail.slice(0, k));
+  const contour = [];
+  const B = 60;
+  for (let b = 0; b < B; b++){
+    const lo = Math.floor(b * st.length / B), hi = Math.max(lo + 1, Math.floor((b + 1) * st.length / B));
+    const part = st.slice(lo, hi).filter(v => v !== null);
+    contour.push(part.length ? part.reduce((s, v) => s + v, 0) / part.length : null);
+  }
+  return { contour, endPitch: d > 1.5 ? 'rise' : (d < -1.5 ? 'fall' : 'flat'), range };
+}
+/* WAV(16비트 한 채널)로 싸서 base64 — 조용하게 녹음돼도 AI가 잘 듣도록 크기를 맞춘다 */
+function wavBase64(pcm, rate){
+  const n = pcm.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  w(36, 'data'); v.setUint32(40, n * 2, true);
+  let peak = 0; for (let i = 0; i < n; i++){ const a = Math.abs(pcm[i]); if (a > peak) peak = a; }
+  const g = peak > 0 ? Math.min(8, 0.9 / peak) : 1;
+  for (let i = 0; i < n; i++){ const s = clamp(pcm[i] * g, -1, 1); v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true); }
+  return bytesBase64(new Uint8Array(buf));
+}
+function bytesBase64(bytes){
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+
+/* ---------- 녹음함 — 이 기기(IndexedDB)에만 둔다 ----------
+   owner = "아이|원고|문장번호" (리허설은 -1). 문장마다 최근 3개, 리허설은 최근 10개 + 첫 리허설은 계속 */
+const AudioBox = {
+  _db:null,
+  open(){
+    if (this._db) return Promise.resolve(this._db);
+    return new Promise((res, rej) => {
+      try {
+        const rq = indexedDB.open('dolearn-audio', 2);
+        rq.onupgradeneeded = () => {
+          const db = rq.result;
+          if (!db.objectStoreNames.contains('clips')) db.createObjectStore('clips', { keyPath:'id' }).createIndex('owner', 'owner');
+          if (!db.objectStoreNames.contains('tts')) db.createObjectStore('tts', { keyPath:'k' });   // 뚜뚜 목소리 저장
+        };
+        rq.onsuccess = () => { this._db = rq.result; res(this._db); };
+        rq.onerror = () => rej(rq.error);
+      } catch(e){ rej(e); }
+    });
+  },
+  async tx(mode, fn, store = 'clips'){
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const t = db.transaction(store, mode), st = t.objectStore(store);
+      let out; const rq = fn(st); if (rq) rq.onsuccess = () => { out = rq.result; };
+      t.oncomplete = () => res(out); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+    });
+  },
+  put(rec){ return this.tx('readwrite', st => st.put(rec)); },
+  del(id){ return this.tx('readwrite', st => st.delete(id)); },
+  get(id){ return this.tx('readonly', st => st.get(id)); },
+  async list(owner){ return ((await this.tx('readonly', st => st.index('owner').getAll(owner))) || []).sort((a, b) => b.at - a.at); },
+  async keep(owner, n){ const all = await this.list(owner); for (const r of all.filter(r => !r.pinned).slice(n)) await this.del(r.id); },
+  blob(rec){ return rec ? new Blob([rec.data], { type:rec.mime || 'audio/mp4' }) : null; },
+  ttsGet(k){ return this.tx('readonly', st => st.get(k), 'tts'); },
+  async ttsPut(rec){
+    await this.tx('readwrite', st => st.put(rec), 'tts');
+    // 250개가 넘으면 오래된 것부터 지운다
+    const keys = (await this.tx('readonly', st => st.getAllKeys(), 'tts')) || [];
+    if (keys.length > 250){
+      const all = (await this.tx('readonly', st => st.getAll(), 'tts')) || [];
+      all.sort((a, b) => a.at - b.at);
+      for (const r of all.slice(0, all.length - 220)) await this.tx('readwrite', st => st.delete(r.k), 'tts');
+    }
+  }
+};
 /* 마이크로 듣고 → 글자로 적어준다 (브라우저 내장 음성인식). */
 function listen(lang, onResult){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -2250,7 +2861,7 @@ function listen(lang, onResult){
       stop();
       S.view.dictError = (ev && ev.error === 'not-allowed')
         ? '마이크를 쓰려면 “허용”을 눌러주세요.'
-        : '잘 못 들었어요. 한 번 더 말해볼까요?';
+        : '앗, 잘 못 들었어요. 괜찮아요, 한 번 더 말해볼까요?';
       render();
     };
     r.onend = stop;
@@ -2693,7 +3304,7 @@ function openSling(){
       <div class="sl-score">⭐ <b id="slScore">0</b><small>최고 <span id="slBest">${(k && k.slingBest) || 0}</span></small></div>
       <div class="sl-time" id="slTime"></div>
     </div>
-    <button class="sl-x" id="slExit" aria-label="게임 그만하기">✕</button>
+    <button class="sl-x" id="slExit" aria-label="놀이 그만하기">✕</button>
     <div class="sl-bar">
       <div class="sl-ammo" id="slAmmo" aria-label="남은 별"></div>
       <div class="sl-weapons">${Object.entries(SLING_WEAPONS).map(([id, w]) =>
@@ -2722,14 +3333,14 @@ function openSling(){
       </div>
       <div class="sl-card" id="slAsk" hidden>
         <div style="font-size:44px">🤔</div>
-        <h3>게임을 그만할까요?</h3>
+        <h3>놀이를 그만할까요?</h3>
         <p id="slAskInfo"></p>
         <button class="btn wide" id="slKeep">계속하기</button>
         <button class="btn ghost wide sm" id="slQuit" style="margin-top:8px">그만하기</button>
       </div>
       <div class="sl-card" id="slOver" hidden>
         <div style="font-size:44px">⏰</div>
-        <h3>게임 시간이 끝났어요</h3>
+        <h3>놀이 시간이 끝났어요</h3>
         <p id="slOverInfo"></p>
         <button class="btn wide" id="slOverOk">알겠어요</button>
       </div>
@@ -2790,7 +3401,7 @@ function slingAskQuit(){
   if (!s.layer.querySelector('#slOver').hidden) return;          // 시간 끝 카드가 떠 있으면 그대로
   slingPause(true);
   s.layer.querySelector('#slAskInfo').textContent =
-    `지금 ${s.level + 1}단계, 점수 ${s.score.toLocaleString()}점이에요. 게임 시간 안에 다시 들어오면 여기서부터 이어서 할 수 있어요.`;
+    `지금 ${s.level + 1}단계, 점수 ${s.score.toLocaleString()}점이에요. 놀이 시간 안에 다시 들어오면 여기서부터 이어서 할 수 있어요.`;
   s.layer.querySelector('#slAsk').hidden = false;
   setTimeout(() => { const b = s.layer.querySelector('#slKeep'); if (b) b.focus(); }, 50);
 }
@@ -3294,6 +3905,1431 @@ function relock(kidId){
 }
 
 /* ============================================================
+   🦜 뚜뚜 스피치 교실 — 영어 스피치 대회 준비
+   한 문장씩: 뜻 알기 → 뚜뚜가 읽어주기 → "자 이제 말해볼까?" → 녹음 → 뚜뚜 피드백
+   외우기: 문장마다 0 보고 말하기 → 1 몇 개 가리기 → 2 첫 글자만 → 3 뜻만 → (외웠다!) → 4 혼자서 복습
+   틀려도 괜찮다는 말을 곳곳에. 별은 잘한 것을 세는 것이지, 못한 것을 세는 게 아니다.
+   녹음은 이 기기에만 저장하고, 피드백을 받을 때만 몇 초짜리를 /api/coach 로 보낸다.
+   ============================================================ */
+const TT_STAGES = [
+  { name:'보고 말하기', icon:'👀' },
+  { name:'몇 개 가리기', icon:'🙈' },
+  { name:'첫 글자만', icon:'🔤' },
+  { name:'뜻만 보고', icon:'💭' },
+  { name:'혼자서', icon:'🌟' }
+];
+const TT_REVIEW_DAYS = [1, 2, 4, 7, 14];
+const TT_RATES = [[0.6, '🐢 천천히'], [0.8, '🐰 보통'], [1, '🚀 대회 속도']];
+
+/* 뚜뚜 말버릇 — AI가 없어도 같은 선생님처럼 느껴지게.
+   {call} 나리야/하윤아 · {nick} 나리/하윤이 · {topic} 나리는/하윤이는 · {obj} 나리를/하윤이를 */
+const TT_LINES = {
+  hello:   ['안녕 {call}! 뚜뚜 선생님이야. 오늘도 같이 해볼까?', '{call}, 왔구나! 뚜뚜가 기다리고 있었어.', '반가워 {call}! 오늘도 즐겁게 말해보자.'],
+  meaning: ['먼저 무슨 뜻인지 알아볼까?', '이 문장은 이런 뜻이야.'],
+  listen:  ['뚜뚜가 먼저 읽어줄게. 귀를 쫑긋!', '잘 들어봐. 뚜뚜가 읽어볼게.'],
+  speak:   ['자 이제 말해볼까?', '이번엔 {nick} 차례야! 자 이제 말해볼까?', '틀려도 괜찮아. 자 이제 말해볼까?'],
+  think:   ['뚜뚜가 잘 듣고 있어…', '음… 귀 기울여 듣는 중!'],
+  pass3:   ['우와, 완벽해! 뚜뚜가 깜짝 놀랐어!', '최고야! 진짜 멋지게 말했어!', '와아, 박수 짝짝짝!'],
+  pass2:   ['잘했어! 거의 다 됐어!', '좋아! 점점 더 좋아지고 있어!', '멋져! 너무 잘하고 있는 거야!'],
+  retry:   ['괜찮아, 틀려도 괜찮아! 한 번만 더 해볼까?', '거의 다 왔어! {topic} 할 수 있어!', '좋아, 연습하면 점점 쉬워져. 다시 해보자!'],
+  stageUp: ['이제 몇 개를 가려볼게. 기억나지?', '다음 단계! {topic} 할 수 있어!', '조금 더 어렵게 해볼까? 뚜뚜는 {obj} 믿어!'],
+  learned: ['이 문장은 이제 {nick} 거야!', '외웠다! 너무 잘하고 있어!'],
+  moveOn:  ['괜찮아, 조금씩 하면 돼. 다음에 또 하면 더 쉬워질 거야!', '오늘 해본 것만으로도 멋져! 다음으로 가볼까?'],
+  review:  ['전에 배운 문장, 기억나? 혼자 말해볼까?', '복습 시간! 기억나는 대로 말해보자.'],
+  chain:   ['이번엔 이어서 말해볼까? 눈덩이 굴리기!'],
+  done:    ['오늘 수업 끝! {call}, 정말 대단해!', '오늘도 멋지게 해냈어! 내일 또 만나!'],
+  stage:   ['실전 무대야! 처음부터 끝까지 해볼까? 틀려도 괜찮아, 끝까지 말하는 게 제일 멋져!']
+};
+function ttFill(s, k){
+  const n = (k && k.name) || '친구';
+  return String(s).replace(/\{call\}/g, callName(n)).replace(/\{nick\}/g, hasJong(n) ? n + '이' : n)
+    .replace(/\{topic\}/g, topic(n)).replace(/\{obj\}/g, `${n}${hasJong(n) ? '이를' : '를'}`);
+}
+function ttPick(key){ const l = TT_LINES[key] || ['']; return l[Math.floor(Math.random() * l.length)]; }
+
+/* 아이 성향 — 부모님 화면 → 아이에서 고른다. 뚜뚜의 말과 도전 방식이 아이에게 맞춰진다.
+   compete: high 도전을 좋아해요 / low 차분히 하는 게 좋아요
+   pace:    quick 척척 빨라요(확인 습관을 칭찬) / careful 꼼꼼해요(한 단계 더 깊은 도전)
+   strengths: leader 리더십 · bright 밝음 · smart 총명 · focus 집중력 */
+const TT_STYLE_OPTS = {
+  compete:[['high','🔥 도전을 좋아해요'], ['low','🌿 차분히 하는 게 좋아요']],
+  pace:[['quick','🐇 척척 빨라요'], ['careful','🔍 꼼꼼해요']],
+  strengths:[['leader','🌟 리더십'], ['bright','☀️ 밝아요'], ['smart','💡 총명해요'], ['focus','🎯 집중력']]
+};
+function kidStyle(k){ const st = (k && k.style) || {}; return { compete:st.compete || '', pace:st.pace || '', strengths:Array.isArray(st.strengths) ? st.strengths : [] }; }
+const TT_STYLE_LINES = {
+  quickSpeak: ['천천히, 또박또박! 자 이제 말해볼까?', '한 단어씩 또박또박 말해보자. 자 이제 말해볼까?'],
+  quickPass:  ['천천히 하니까 완벽해졌어! 역시 최고야!', '또박또박 확인하면서 말한 거 너무 멋져!'],
+  carefulPass:['집중하는 모습 최고야! 이제 목소리를 더 크게 뽐내볼까?', '꼼꼼하게 정말 잘했어! 이번엔 느낌을 살려서 말해보자!'],
+  challenge:  ['오늘의 도전! 어제보다 별을 더 모아볼까?', '기록 깨기 도전! {topic} 할 수 있어!'],
+  calm:       ['천천히 해도 괜찮아. 뚜뚜랑 차근차근 해보자.', '오늘도 어제의 나보다 한 걸음만 더!'],
+  leader:     ['리더 미션 💪 오늘 외운 문장을 친구에게 알려줘 볼까? 가르치면 더 잘 기억나!'],
+  smart:      ['궁금한 단어가 있으면 영어 탭 사전에서 찾아봐! 척척박사 도전!']
+};
+function ttStyleLine(key, k){ const l = TT_STYLE_LINES[key] || ['']; return ttFill(l[Math.floor(Math.random() * l.length)], k); }
+
+/* 예시 원고 — 원고가 오기 전에 먼저 해볼 수 있게 */
+const TT_SAMPLE = {
+  title:'예시 원고 — My Family',
+  timeLimitSec:60,
+  sentences:[
+    { en:'Hello, everyone!', ko:'안녕하세요, 여러분!', cue:'👋', stress:['everyone'], end:'fall',
+      tricky:[{ word:'everyone', tipKo:'v는 윗니를 아랫입술에 살짝 대요' }] },
+    { en:'Today I want to talk about my family.', ko:'오늘은 우리 가족 이야기를 할게요.', cue:'👨‍👩‍👧‍👧', stress:['family'], end:'fall',
+      tricky:[{ word:'family', tipKo:'f는 윗니로 아랫입술을 살짝 물어요' }] },
+    { en:'I have a twin sister.', ko:'저는 쌍둥이 자매가 있어요.', cue:'👯', stress:['twin', 'sister'], end:'fall',
+      tricky:[{ word:'twin', tipKo:'입술을 동그랗게 모으면서 시작해요' }] },
+    { en:'We read books together every night.', ko:'우리는 매일 밤 같이 책을 읽어요.', cue:'📚🌙', stress:['books', 'together'], end:'fall',
+      tricky:[{ word:'together', tipKo:'th는 혀끝을 윗니 사이로 살짝 내밀어요' }] },
+    { en:'Thank you for listening!', ko:'들어주셔서 고마워요!', cue:'🙏', stress:['Thank', 'listening'], end:'fall',
+      tricky:[{ word:'Thank', tipKo:'혀끝을 살짝 물고 바람을 후 내보내요' }] }
+  ]
+};
+
+/* ---------- 원고 · 진도 ---------- */
+function ttScript(kidId){
+  return S.data.scripts.filter(s => Array.isArray(s.kidIds) && s.kidIds.includes(kidId) && Array.isArray(s.sentences) && s.sentences.length)
+    .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')))[0] || null;
+}
+const TT_PID = {};                  // 진도 줄 id — 5초 동기화로 잠깐 사라져도 같은 줄을 고치도록 기억한다
+function ttProg(kidId, scriptId){
+  const hit = S.data.speech.find(p => p.kidId === kidId && p.scriptId === scriptId);
+  if (hit) TT_PID[kidId + '|' + scriptId] = hit.id;
+  return hit || null;
+}
+function ttBlank(kidId, scriptId){ return { kidId, scriptId, sents:[], days:{}, runs:[], createdAt:new Date().toISOString() }; }
+function ttSents(script, prog){
+  const a = (prog && Array.isArray(prog.sents)) ? prog.sents : [];
+  return script.sentences.map((_, i) => ({ lv:0, reps:0, best:0, lastAt:'', nextAt:'', ...(a[i] || {}) }));
+}
+function ttDay(p){
+  const k = todayKey();
+  p.days = p.days || {};
+  return p.days[k] || (p.days[k] = { learn:0, review:0, chain:0, runs:0, rec:0, secs:0, stars:0 });
+}
+/* 진도는 통째로 저장한다 (Store.update 는 서버에 받은 모양 그대로 남긴다) */
+async function ttSaveProg(p){
+  const key = p.kidId + '|' + p.scriptId;
+  const { id:_x, ...data } = p;
+  const keys = Object.keys(data.days || {}).sort();
+  if (keys.length > 60) keys.slice(0, keys.length - 60).forEach(k => { delete data.days[k]; });   // 두 달 치만
+  const id = TT_PID[key] || (S.data.speech.find(r => r.kidId === p.kidId && r.scriptId === p.scriptId) || {}).id;
+  if (id){ TT_PID[key] = id; await Store.update('speech', id, data); }
+  else { const nid = uid(); TT_PID[key] = nid; await Store.add('speech', data, nid); }
+}
+function ttDaysLeft(script){
+  if (!script || !script.contestDate) return null;
+  return Math.round((new Date(script.contestDate + 'T00:00:00') - new Date(todayKey() + 'T00:00:00')) / 86400000);
+}
+
+/* 오늘의 미션 — 대회 날짜와 남은 문장으로. 마지막 며칠은 실전 무대 위주 */
+function ttPlan(script, prog){
+  const sents = ttSents(script, prog), n = sents.length, now = Date.now();
+  const day = (prog && prog.days && prog.days[todayKey()]) || { learn:0, review:0, chain:0, runs:0, rec:0, secs:0, stars:0 };
+  const learned = sents.filter(s => s.lv >= 4).length;
+  const dleft = ttDaysLeft(script);
+  const learnDays = dleft == null ? 7 : Math.max(1, dleft - 2);
+  const startLeft = (n - learned) + (day.learn || 0);                      // 오늘 시작할 때 남아 있던 문장
+  const newGoal = startLeft > 0 ? Math.min(startLeft, Math.max(1, Math.ceil(startLeft / learnDays))) : 0;
+  const due = sents.map((s, i) => ({ s, i }))
+    .filter(x => x.s.lv >= 4 && x.s.nextAt && new Date(x.s.nextAt).getTime() <= now).map(x => x.i);
+  const reviewGoal = Math.min(6, due.length + (day.review || 0));
+  const late = dleft != null && dleft <= 3;
+  const runGoal = (learned === n || late) ? (late && dleft >= 0 ? 2 : 1) : 0;
+  const done = (day.learn || 0) >= newGoal && (day.review || 0) >= reviewGoal && (day.runs || 0) >= runGoal;
+  return { n, sents, learned, dleft, newGoal, reviewGoal, runGoal, due, day, done };
+}
+function ttQueue(script, prog){
+  const plan = ttPlan(script, prog), q = [];
+  const reviews = plan.due.slice(0, Math.max(0, plan.reviewGoal - (plan.day.review || 0)));
+  reviews.slice(0, 2).forEach(i => q.push({ type:'review', i }));
+  const newLeft = Math.max(0, plan.newGoal - (plan.day.learn || 0));
+  const fresh = plan.sents.map((s, i) => ({ s, i })).filter(x => x.s.lv < 4).slice(0, newLeft).map(x => x.i);
+  fresh.forEach(i => q.push({ type:'new', i }));
+  reviews.slice(2).forEach(i => q.push({ type:'review', i }));
+  const last = fresh.length ? fresh[fresh.length - 1] : -1;       // 눈덩이 — 오늘 배운 문장을 앞 문장들과 이어서
+  if (last >= 1) q.push({ type:'chain', from:Math.max(0, last - 2), to:last });
+  return q;
+}
+function ttExtraQueue(script, prog){
+  const sents = ttSents(script, prog), q = [];
+  const next = sents.findIndex(s => s.lv < 4);
+  if (next >= 0) q.push({ type:'new', i:next });
+  sents.map((s, i) => ({ s, i })).filter(x => x.s.lv >= 4).map(x => x.i)
+    .sort(() => Math.random() - 0.5).slice(0, 3).forEach(i => q.push({ type:'review', i }));
+  if (!q.length && sents.length) q.push({ type:'new', i:0 });
+  return q;
+}
+function ttPassed(stars, tries, type){
+  if (type === 'review' || type === 'chain') return stars >= 2;
+  return stars >= 3 || (stars >= 2 && tries >= 1);                 // 두 번째부터는 별 두 개도 통과
+}
+/* 할 일과 연결 — 오늘 미션을 다 하면 '뚜뚜랑 스피치 연습' 할 일이 저절로 체크된다 */
+function ttMarkMission(kidId, script, prog){
+  const plan = ttPlan(script, prog);
+  if (!plan.done) return false;
+  const key = todayKey();
+  let newly = false;
+  for (const td of todosFor(kidId).filter(x => x.kind === 'speech')){
+    const s = sessionOf(kidId, td.id, key);
+    if (s && s.done) continue;
+    newly = true;
+    const secs = plan.day.secs || 0;
+    if (s) Store.update('sessions', s.id, { done:true, durationSec:Math.max(s.durationSec || 0, secs) });
+    else Store.add('sessions', { kidId, todoId:td.id, date:key, durationSec:secs, done:true });
+  }
+  return newly;
+}
+function ttEnsureTodos(kidIds){
+  for (const kidId of kidIds){
+    if (S.data.todos.some(t => t.kidId === kidId && t.kind === 'speech' && !t.archived)) continue;
+    Store.add('todos', { kidId, title:'뚜뚜랑 스피치 연습', icon:'🦜', repeatDays:[], kind:'speech',
+      createdBy:'parent', createdAt:new Date().toISOString() });
+  }
+}
+/* AI 듣기는 부모님이 안내를 읽고 직접 켰을 때만. 이름이 들어간 문장은 보내지 않는다. */
+function ttAiOn(){ return S.settings.ttAi === true && !window.claude && location.protocol.startsWith('http') && navigator.onLine !== false; }
+function ttMaskWords(){
+  const extra = String(S.settings.ttMask || '').split(/[,，\n]/).map(w => w.trim()).filter(Boolean);
+  return kids().map(k => k.name).concat(extra).filter(w => w && w.length >= 2);
+}
+function ttHasName(text){ const t = String(text || '').toLowerCase(); return ttMaskWords().some(w => t.includes(w.toLowerCase())); }
+function ttMask(text){
+  let out = String(text || '');
+  for (const w of ttMaskWords()) out = out.split(w).join('[NAME]').replace(new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '[NAME]');
+  return out;
+}
+/* AI가 바쁘면(429) 10분 쉬고, 연결이 두 번 연달아 끊기면 이번 수업은 기기 분석으로만 */
+function ttAiReady(){ return ttAiOn() && TT && !(TT.aiOffUntil > Date.now()); }
+function ttAiFail(e){
+  if (!TT) return;
+  if (e && e.code === 'busy') TT.aiOffUntil = Date.now() + 10 * 60000;
+  else if (!e || !e.code || e.code === 'network'){ TT.aiFails = (TT.aiFails || 0) + 1; if (TT.aiFails >= 2) TT.aiOffUntil = Date.now() + 36e5; }
+}
+
+/* 서버의 뚜뚜에게 묻는다 — 우리 가족 주소(가족 ID)로만 동작한다 */
+async function ttAsk(body, ms){
+  const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), ms || 45000);
+  let r = null;
+  try {
+    r = await fetch('/api/coach', { method:'POST', signal:ctl.signal,
+      headers:{ 'content-type':'application/json', 'x-family-id':S.familyId }, body:JSON.stringify(body) });
+  } catch(e){ r = null; } finally { clearTimeout(tm); }
+  if (!r) throw new Error('뚜뚜랑 연결이 잠깐 끊겼어. 괜찮아, 이번엔 뚜뚜 귀로 들은 만큼 알려줄게!');
+  const j = await r.json().catch(() => null);
+  if (!r.ok || !j || j.error){ const e = new Error((j && j.message) || '뚜뚜가 잠깐 쉬고 있어요.'); e.code = j && j.error; throw e; }
+  return j;
+}
+
+/* ---------- 🦜 뚜뚜 그림 — 앵무새 선생님 (앱 스티커와 같은 그림체) ----------
+   mood: idle 기본 · happy 기쁨 · listen 듣는 중 · think 생각 중 · cheer 신남(날개 번쩍) */
+function ttSvg(mood){
+  return `<svg class="tt" data-mood="${mood || 'idle'}" viewBox="0 0 160 160" aria-hidden="true">
+  <g stroke="#6B4A52" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <g class="tt-cheer" stroke-width="2">
+      <path d="M22 40 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" fill="#FFD98E"/>
+      <path d="M138 30 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5 z" fill="#FFC2CE"/>
+    </g>
+    <path d="M70 34 C60 23 63 11 70 8 C76 16 78 25 77 33 Z" fill="#FF8FA8"/>
+    <path d="M80 31 C75 18 79 6 86 3 C91 13 90 23 87 32 Z" fill="#FFD98E"/>
+    <path d="M88 35 C91 24 99 16 107 17 C106 26 100 33 93 37 Z" fill="#FF8FA8"/>
+    <ellipse cx="68" cy="150" rx="8" ry="4.5" fill="#FFB36B"/>
+    <ellipse cx="92" cy="150" rx="8" ry="4.5" fill="#FFB36B"/>
+    <g transform="translate(46 100)"><g class="tt-wing-l"><path d="M0 -6 C-19 2 -23 27 -12 42 C-2 35 5 21 6 2 Z" fill="#6FCFB0"/></g></g>
+    <g transform="translate(114 100)"><g class="tt-wing-r"><path d="M0 -6 C19 2 23 27 12 42 C2 35 -5 21 -6 2 Z" fill="#6FCFB0"/></g></g>
+    <g stroke-width="5"><ellipse cx="80" cy="108" rx="38" ry="40" fill="#9BE0C8"/><circle cx="80" cy="64" r="35" fill="#9BE0C8"/></g>
+  </g>
+  <ellipse cx="80" cy="108" rx="38" ry="40" fill="#9BE0C8"/>
+  <circle cx="80" cy="64" r="35" fill="#9BE0C8"/>
+  <g stroke="#6B4A52" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+    <ellipse cx="80" cy="120" rx="24" ry="22" fill="#FFF1D6"/>
+    <ellipse cx="63" cy="62" rx="13" ry="12" fill="#FFFFFF"/>
+    <ellipse cx="97" cy="62" rx="13" ry="12" fill="#FFFFFF"/>
+    <path d="M80 107 L66 100 L66 114 Z" fill="#FF8FA8"/>
+    <path d="M80 107 L94 100 L94 114 Z" fill="#FF8FA8"/>
+    <circle cx="80" cy="107" r="3.6" fill="#E85C7C"/>
+    <g transform="translate(80 84)"><g class="tt-jaw"><path d="M-8 -1 Q0 11 8 -1 Z" fill="#FFD98E"/></g></g>
+    <path d="M80 67 C91 67 96 76 89 87 C86 83 74 83 71 87 C64 76 69 67 80 67 Z" fill="#FFB36B"/>
+    <g class="tt-think"><circle cx="120" cy="30" r="3.5" fill="#FFFFFF"/><circle cx="130" cy="21" r="4.5" fill="#FFFFFF"/><circle cx="143" cy="11" r="6" fill="#FFFFFF"/></g>
+    <g class="tt-listen" fill="none" stroke="#3FA687" stroke-width="3"><path d="M124 56 q7 8 0 16"/><path d="M131 49 q13 15 0 30"/></g>
+    <g class="tt-eyes-happy" fill="none" stroke-width="3"><path d="M57 64 Q63 56 69 64"/><path d="M91 64 Q97 56 103 64"/></g>
+  </g>
+  <g class="tt-eyes-open" fill="#6B4A52"><circle cx="64" cy="62" r="5.5"/><circle cx="96" cy="62" r="5.5"/>
+    <circle cx="66" cy="60" r="1.9" fill="#FFFFFF"/><circle cx="98" cy="60" r="1.9" fill="#FFFFFF"/></g>
+  <g class="tt-eyes-up" fill="#6B4A52"><circle cx="65" cy="58" r="5.5"/><circle cx="97" cy="58" r="5.5"/>
+    <circle cx="67" cy="56" r="1.9" fill="#FFFFFF"/><circle cx="99" cy="56" r="1.9" fill="#FFFFFF"/></g>
+  <ellipse cx="52" cy="79" rx="6" ry="3.8" fill="#FF8FA8" opacity="0.6"/>
+  <ellipse cx="108" cy="79" rx="6" ry="3.8" fill="#FF8FA8" opacity="0.6"/>
+  <ellipse cx="62" cy="40" rx="8" ry="4.2" fill="#FFFFFF" opacity="0.7" transform="rotate(-30 62 40)"/>
+</svg>`;
+}
+
+/* ---------- 글자 다루기 ---------- */
+function ttNorm(s){
+  return String(s || '').toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9' ]+/g, ' ').split(/\s+/)
+    .map(w => w.replace(/^'+|'+$/g, '')).filter(Boolean);
+}
+function ttLev(a, b){
+  if (Math.abs(a.length - b.length) > 1) return 2;
+  const d = Array.from({ length:a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+/* 목표 문장의 단어마다 뚜뚜가 들었는지(true) 못 들었는지(false) — LCS 로 맞춘다 */
+function ttAlign(target, heard){
+  const a = ttNorm(target), b = ttNorm(heard);
+  const eq = (x, y) => x === y || x.replace(/'/g, '') === y.replace(/'/g, '') || (x.length >= 4 && ttLev(x, y) <= 1);
+  const L = Array.from({ length:a.length + 1 }, () => new Array(b.length + 1).fill(0));
+  for (let i = a.length - 1; i >= 0; i--) for (let j = b.length - 1; j >= 0; j--)
+    L[i][j] = eq(a[i], b[j]) ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+  const marks = new Array(a.length).fill(false);
+  let i = 0, j = 0;
+  while (i < a.length && j < b.length){
+    if (eq(a[i], b[j])){ marks[i] = true; i++; j++; }
+    else if (L[i + 1][j] >= L[i][j + 1]) i++; else j++;
+  }
+  return marks;
+}
+function ttWordOffsets(text){ const out = [], re = /[A-Za-z0-9’'-]+/g; let m; while ((m = re.exec(text))) out.push(m.index); return out; }
+/* 영어 문장을 단어 칸으로 — stage 1 은 하나 건너 가리기, 2 는 첫 글자만. marks 가 있으면 들은/못 들은 단어 색 */
+function ttWords(en, { stage = 0, stress = [], marks = null } = {}){
+  const st = new Set((stress || []).map(w => String(w).toLowerCase()));
+  let wi = 0;
+  return String(en || '').split(/(\s+)/).map(tok => {
+    if (!tok || /^\s+$/.test(tok)) return tok;
+    const m = tok.match(/^([^A-Za-z0-9’']*)([A-Za-z0-9’'-]+)(.*)$/);
+    if (!m) return esc(tok);
+    const pre = m[1], w = m[2], post = m[3], i = wi++;
+    let cls = 'w', txt = esc(w);
+    if (stage === 1 && i % 2 === 1 && w.length > 1){ cls += ' hide'; txt = '＿'.repeat(Math.min(6, Math.max(2, w.length - 1))); }
+    else if (stage === 2) txt = `${esc(w[0])}<span class="hide">${'_'.repeat(Math.min(6, Math.max(1, w.length - 1)))}</span>`;
+    if (stage === 0 && !marks && st.has(w.toLowerCase())) cls += ' st';
+    let extra = '';
+    if (marks){
+      if (marks[i] === true) cls += ' ok';
+      else if (marks[i] === false){ cls += ' miss'; extra = ` data-ttword="${esc(w)}" role="button" tabindex="0"`; }
+    }
+    return `${esc(pre)}<span class="${cls}"${extra}>${txt}</span>${esc(post)}`;
+  }).join('');
+}
+/* 원고를 문장으로 — 줄바꿈과 . ! ? 로 나눈다. Mr. 같은 줄임말에서는 나누지 않는다 */
+function ttSplit(text){
+  const abbr = /\b(Mr|Mrs|Ms|Dr|St|Jr|Sr|vs|etc)\.$/i;
+  const out = [];
+  let lastLine = [];                                                      // 바로 위 영어 줄에서 나온 문장 번호들
+  const cut = t => t.replace(/([.!?…]+["'”’)]?)\s+/g, '$1\u0001').split('\u0001').map(x => x.trim()).filter(Boolean);
+  String(text || '').replace(/\r/g, '').split(/\n+/).forEach(line => {
+    line = line.replace(/\s+/g, ' ').trim().replace(/^(\d{1,2}[.)]|[-•*·▶])\s*/, '');
+    if (!line) return;
+    if (/[가-힣]/.test(line) && !/[A-Za-z]{2,}/.test(line)){              // 한국어 해석 줄
+      if (!out.length) return;
+      const ko = cut(line), idx = lastLine.length ? lastLine : [out.length - 1];
+      const put = (i, k) => { const cur = out[i]; out[i] = typeof cur === 'object' ? { ...cur, ko:(cur.ko ? cur.ko + ' ' : '') + k } : { en:cur, ko:k }; };
+      if (ko.length === idx.length) idx.forEach((i, n) => put(i, ko[n]));
+      else put(idx[idx.length - 1], line);
+      lastLine = [];
+      return;
+    }
+    const before = out.length;
+    let buf = '';
+    line.replace(/([.!?…]+["'”’)]?)\s+(?=["'“‘(]?[A-Z0-9])/g, '$1\u0001').split('\u0001').forEach(p => {
+      buf = buf ? buf + ' ' + p : p;
+      if (!abbr.test(buf)){ out.push(buf.trim()); buf = ''; }
+    });
+    if (buf) out.push(buf.trim());
+    lastLine = Array.from({ length:out.length - before }, (_, n) => before + n);
+  });
+  return out.filter(Boolean).slice(0, 80).map(x => typeof x === 'object' ? x : { en:x, ko:'' });
+}
+function ttParseLimit(v){
+  const s = String(v || '').trim();
+  if (!s) return 0;
+  const m = s.match(/^(\d{1,2})\s*[:분]\s*(\d{1,2})?/);
+  if (m) return (+m[1]) * 60 + (+(m[2] || 0));
+  const n = +s.replace(/[^\d]/g, '');
+  if (!n) return 0;
+  return n <= 10 ? n * 60 : n;                    // 10 이하면 분, 그보다 크면 초
+}
+/* AI 없이 채우는 기본 힌트 — 그림 힌트(낱말 → 이모지, 없으면 번호), 힘줄 단어(긴 낱말), 끝 억양, 발음 팁 */
+const TT_CUES = { hello:'👋', hi:'👋', everyone:'👋', name:'📛', family:'👨‍👩‍👧', mom:'👩', mother:'👩', dad:'👨', father:'👨',
+  sister:'👧', brother:'👦', twin:'👯', friend:'🧑‍🤝‍🧑', friends:'🧑‍🤝‍🧑', school:'🏫', teacher:'🧑‍🏫', book:'📚', books:'📚', read:'📖',
+  love:'❤️', like:'💗', happy:'😊', dream:'💭', future:'🔭', dog:'🐶', cat:'🐱', rabbit:'🐰', bird:'🐦', tree:'🌳', flower:'🌸',
+  sun:'☀️', moon:'🌙', night:'🌙', star:'⭐', world:'🌏', earth:'🌍', travel:'✈️', sea:'🌊', eat:'🍽', food:'🍽', apple:'🍎',
+  play:'⚽', game:'🎮', sing:'🎤', song:'🎵', music:'🎵', draw:'🎨', paint:'🎨', thank:'🙏', thanks:'🙏', listening:'👂',
+  today:'📅', big:'🐘', small:'🐭', grow:'🌱', help:'🤝', together:'🤝', smile:'😄', heart:'💖', home:'🏠', house:'🏠' };
+const TT_STOP = new Set('a an the i you he she it we they my your our is am are was were be to of in on at for and or but with this that do does did have has can will'.split(' '));
+const TT_TIPS = [[/th/i, '혀끝을 윗니에 살짝 대고 바람을 후~'], [/f/i, '윗니로 아랫입술을 살짝 물고 ㅍ~'],
+  [/v/i, '윗니로 아랫입술을 살짝 물고 부르르~'], [/^r/i, '입술을 동그랗게, 혀는 뒤로 살짝'], [/l/i, '혀끝을 윗니 뒤에 딱 붙여요'], [/z/i, '벌처럼 즈으~']];
+function ttLocalPrep(s, i){
+  const words = ttNorm(s.en);
+  if (!s.stress || !s.stress.length){
+    const raw = String(s.en || '').match(/[A-Za-z’'-]+/g) || [];
+    s.stress = raw.filter(w => !TT_STOP.has(w.toLowerCase())).sort((a, b) => b.length - a.length).slice(0, 2);
+  }
+  if (!s.cue){
+    const hit = s.stress.map(w => TT_CUES[w.toLowerCase()]).find(Boolean) || words.map(w => TT_CUES[w]).find(Boolean);
+    s.cue = hit || (i < 10 ? ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'][i] : '💬');
+  }
+  if (!s.end) s.end = /\?\s*["”’']?$/.test(s.en) && /^(do|does|did|is|are|am|was|were|can|could|will|would|should|have|has|may)\b/i.test(s.en) ? 'rise' : 'fall';
+  if (!s.tricky || !s.tricky.length){
+    const out = [];
+    for (const w of (String(s.en || '').match(/[A-Za-z’'-]+/g) || []).filter(w => !TT_STOP.has(w.toLowerCase()))){
+      const tip = TT_TIPS.find(([re]) => re.test(w));
+      if (tip && !out.some(x => x.word.toLowerCase() === w.toLowerCase())) out.push({ word:w, tipKo:tip[1] });
+      if (out.length >= 2) break;
+    }
+    s.tricky = out;
+  }
+  return s;
+}
+/* 원고를 고쳐 문장이 바뀌어도, 같은 문장은 진도를 그대로 이어 간다 */
+function ttRemap(oldS, newS, sents){
+  const key = s => ttNorm(s.en).join(' ');
+  const used = new Set();
+  return newS.map(ns => {
+    const k = key(ns);
+    const oi = oldS.findIndex((os, i) => !used.has(i) && key(os) === k);
+    if (oi >= 0){ used.add(oi); return sents[oi] || {}; }
+    return {};
+  });
+}
+
+/* ---------- 효과음 (파일 없이) ---------- */
+function ttTone(f, at, dur, vol){
+  const c = audioCtx(); if (!c) return;
+  const t0 = c.currentTime + (at || 0), o = c.createOscillator(), g = c.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(f, t0);
+  g.gain.setValueAtTime(vol || 0.14, t0); g.gain.exponentialRampToValueAtTime(0.001, t0 + (dur || 0.25));
+  o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0 + (dur || 0.25) + 0.02);
+}
+function ttChime(){ [523, 659, 784, 1047].forEach((f, i) => ttTone(f, i * 0.1, 0.3, 0.12)); }
+
+/* ============================================================
+   수업 층 (화면 위에 따로)
+   ============================================================ */
+let TT = null;
+function ttLayer(){
+  if (!TT) return;
+  let el = document.getElementById('ttLayer');
+  if (!el){
+    el = document.createElement('div');
+    el.className = 'ttl'; el.id = 'ttLayer';
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', '뚜뚜 스피치 교실');
+    document.body.appendChild(el);
+  }
+  el.innerHTML = TT.kind === 'stage' ? ttStageView() : ttLessonView();
+  const s = el.querySelector('.tt');
+  if (s && TT.talking) s.classList.add('talk');
+  ttAfterDraw();
+}
+function ttRemoveLayer(){ stopAudio(); wakeOff(); if (TT){ clearInterval(TT.tick); clearInterval(TT.cd); } const el = document.getElementById('ttLayer'); if (el) el.remove(); }
+function ttClose(){
+  const was = TT;
+  ttRemoveLayer(); TT = null;
+  render();
+  if (was && was.cheer) setTimeout(cheerDone, 350);
+}
+function ttMood(m){ if (TT) TT.mood = m; const s = document.querySelector('#ttLayer .tt'); if (s) s.setAttribute('data-mood', m); }
+function ttMouth(on){ if (TT) TT.talking = !!on; const s = document.querySelector('#ttLayer .tt'); if (s) s.classList.toggle('talk', !!on); }
+/* 뚜뚜가 한국어로 말한다 — 말풍선 + 부리 움직임. 누른 순간에 부르면 아이패드에서도 바로 소리가 난다 */
+function ttTalk(text){
+  if (!TT) return Promise.resolve();
+  TT.say = text;
+  const b = document.getElementById('ttBubble'); if (b) b.textContent = text;
+  if (TT.quiet) return Promise.resolve();
+  const me = TT;
+  return voice(text, { lang:'ko', onstart:() => { if (TT === me) ttMouth(true); } }).then(() => { if (TT === me) ttMouth(false); });
+}
+/* 뚜뚜가 영어 문장을 읽는다 — 읽는 단어에 불이 켜진다 */
+function ttModel(text, rate){
+  hush();
+  const spans = [...document.querySelectorAll('#ttLayer .tt-en .w')];
+  const offs = ttWordOffsets(text);
+  const me = TT;
+  const lit = wi => spans.forEach((s, i) => s.classList.toggle('on', i === wi));
+  // 자연스러운 목소리는 단어 위치를 알려주지 않아서, 낱말 길이로 어림해 불을 켠다
+  const words = (text.match(/[A-Za-z0-9’'-]+/g) || []), wsum = words.reduce((s, w) => s + w.length + 2, 0);
+  const onprogress = f => { let acc = 0, wi = 0; for (let i = 0; i < words.length; i++){ acc += words[i].length + 2; if (acc / wsum > f){ wi = i; break; } wi = i; } lit(wi); };
+  return voice(text, { lang:'en', rate:rate || (TT && TT.rate) || 0.8,
+    onstart:() => { if (TT === me) ttMouth(true); }, onprogress,
+    onword: ci => { let wi = 0; for (let i = 0; i < offs.length; i++) if (offs[i] <= ci) wi = i; lit(wi); }
+  }).then(() => { if (TT === me) ttMouth(false); spans.forEach(s => s.classList.remove('on')); });
+}
+function ttTopBar(title){
+  const t = TT;
+  const dots = t.kind === 'lesson'
+    ? t.queue.map((q, i) => `<i class="${i < t.qi || t.step === 'done' ? 'on' : (i === t.qi && t.step !== 'intro' ? 'now' : '')}"></i>`).join('')
+    : `<span class="ttl-chip" style="background:var(--berry-soft);color:var(--berry-deep)">${esc(title || '')}</span>`;
+  return `<div class="ttl-top">
+    <button class="ttl-x" id="ttExit" aria-label="그만하기">✕</button>
+    <div class="ttl-dots" aria-label="오늘 수업 순서">${dots}</div>
+    <button class="ttl-x" id="ttQuiet" aria-label="뚜뚜 목소리 ${t.quiet ? '켜기' : '끄기'}">${t.quiet ? '🔇' : '🔈'}</button>
+  </div>`;
+}
+function ttTeacher(){
+  return `<div class="tt-teach">${ttSvg(TT.mood)}<div class="tt-bubble" id="ttBubble" aria-live="polite">${esc(TT.say || '')}</div></div>`;
+}
+function ttQuitCard(){
+  return `<div class="tt-card stack" style="text-align:center;border:3px solid var(--butter)">
+    <div style="font-size:40px">🤔</div>
+    <h3 class="sub" style="margin:0">${TT.kind === 'stage' ? '무대를 그만할까요?' : '수업을 그만할까요?'}</h3>
+    <p class="muted" style="margin:0">지금까지 한 건 다 저장했어요. 언제든 다시 와도 돼요!</p>
+    <div class="tt-foot"><button class="btn" id="ttQuitNo">계속할래</button><button class="btn ghost" id="ttQuitYes">그만할래</button></div>
+  </div>`;
+}
+
+/* ---------- 수업 ---------- */
+function ttOpenLesson(extra, only){
+  if (TT) return;
+  nvUnlock();
+  const k = curKid(); if (!k) return;
+  const sc = ttScript(k.id); if (!sc) return;
+  const saved = ttProg(k.id, sc.id);
+  const prog = JSON.parse(JSON.stringify(saved || ttBlank(k.id, sc.id)));
+  let q = extra ? [] : ttQueue(sc, prog);
+  if (typeof only === 'number' && sc.sentences[only]) q = [{ type:ttSents(sc, prog)[only].lv >= 4 ? 'review' : 'new', i:only }];
+  if (!q.length) q = ttExtraQueue(sc, prog);
+  TT = { kind:'lesson', kidId:k.id, script:sc, prog, queue:q, qi:0, step:'intro', stage:0, tries:0,
+         rate:+(lsGet('dolearn.ttRate') || 0.8), fb:null, clip:null, mood:'happy', say:'', quiet:false,
+         t0:Date.now(), lastSave:Date.now(), talking:false };
+  const nNew = q.filter(x => x.type === 'new').length, nRev = q.filter(x => x.type === 'review').length;
+  const plan = [nNew ? `새 문장 ${nNew}개` : '', nRev ? `복습 ${nRev}개` : ''].filter(Boolean).join('랑 ');
+  const stl = kidStyle(k);
+  TT.say = `${ttFill(ttPick('hello'), k)} ${plan ? `오늘은 ${plan} 해볼 거야.` : ''}${stl.compete === 'high' ? ' ' + ttStyleLine('challenge', k) : (stl.compete === 'low' ? ' ' + ttStyleLine('calm', k) : '')}`;
+  ttLayer();
+  ttTalk(TT.say);                  // 누른 순간에 말한다 (아이패드)
+  wakeOn();
+}
+function ttItem(){ return TT && TT.queue[TT.qi]; }
+function ttItemSentence(it){
+  const ss = TT.script.sentences;
+  if (it.type === 'chain'){
+    const part = ss.slice(it.from, it.to + 1);
+    return { en:part.map(s => s.en).join(' '), ko:part.map(s => s.ko || '').join(' '), cue:part.map(s => s.cue || '').join(' '),
+             stress:[], end:(part[part.length - 1] || {}).end || 'fall', tricky:[], label:`${it.from + 1}~${it.to + 1}번 이어 말하기` };
+  }
+  const s = ss[it.i] || {};
+  return { en:s.en || '', ko:s.ko || '', cue:s.cue || '', stress:s.stress || [], end:s.end || 'fall', tricky:s.tricky || [], label:`${it.i + 1}번 문장` };
+}
+function ttChainReady(it){ const s = ttSents(TT.script, TT.prog); return s.slice(it.from, it.to + 1).every(x => x.lv >= 4); }
+function ttEnterItem(){
+  const t = TT, it = ttItem(), k = kid(t.kidId);
+  t.fb = null; t.clip = null; t.tries = 0; t.peek = false; t.micErr = false;
+  if (it.type === 'new'){
+    t.stage = Math.min(3, ttSents(t.script, t.prog)[it.i].lv || 0);
+    if (t.stage === 0){
+      t.step = 'meaning'; ttMood('happy');
+      const s = ttItemSentence(it);
+      t.say = `${ttPick('meaning')} “${s.ko || s.en}”`;
+    } else { t.step = 'speak'; ttMood('happy'); t.say = `지난번에 하던 문장이야. ${ttFill(ttPick('speak'), k)}`; }
+  } else if (it.type === 'review'){ t.stage = 4; t.step = 'speak'; ttMood('happy'); t.say = ttPick('review'); }
+  else { t.stage = 4; t.step = 'speak'; ttMood('happy'); t.say = ttPick('chain'); }
+  ttLayer(); ttTalk(t.say);
+}
+function ttAdvance(){
+  const t = TT;
+  t.qi++;
+  while (t.qi < t.queue.length && t.queue[t.qi].type === 'chain' && !ttChainReady(t.queue[t.qi])) t.qi++;
+  if (t.qi >= t.queue.length){ ttFinish(); return; }
+  ttEnterItem();
+}
+function ttFinish(){
+  const t = TT;
+  t.step = 'done'; ttMood('cheer');
+  t.say = ttFill(ttPick('done'), kid(t.kidId));
+  if (ttMarkMission(t.kidId, t.script, t.prog)) t.cheer = true;
+  ttLayer(); ttTalk(t.say); confetti(); ttChime();
+}
+/* 한 번 말할 때마다 진도에 반영한다 */
+function ttApply(stars){
+  const t = TT, it = ttItem(), p = t.prog, day = ttDay(p), now = new Date();
+  p.sents = ttSents(t.script, p);
+  day.stars = (day.stars || 0) + stars;
+  day.rec = (day.rec || 0) + 1;
+  day.secs = (day.secs || 0) + Math.round((Date.now() - t.lastSave) / 1000); t.lastSave = Date.now();
+  const pass = ttPassed(stars, t.tries, it.type);
+  if (it.type === 'new'){
+    const st = p.sents[it.i];
+    st.best = Math.max(st.best || 0, stars); st.lastAt = now.toISOString();
+    if (pass){
+      st.lv = Math.max(st.lv || 0, t.stage + 1);
+      if (st.lv >= 4 && !it.learned){
+        st.lv = 4; st.reps = 0; st.nextAt = new Date(Date.now() + 86400000).toISOString();
+        day.learn = (day.learn || 0) + 1; it.learned = true;
+      }
+    }
+  } else if (it.type === 'review'){
+    const st = p.sents[it.i];
+    st.lastAt = now.toISOString();
+    if (pass){
+      st.reps = (st.reps || 0) + 1;
+      st.nextAt = new Date(Date.now() + TT_REVIEW_DAYS[Math.min(st.reps, TT_REVIEW_DAYS.length - 1)] * 86400000).toISOString();
+      if (!it.counted){ day.review = (day.review || 0) + 1; it.counted = true; }
+    } else if (t.tries >= 1 && !it.counted){
+      st.lv = 2; st.nextAt = '';                   // 한 번 더 어려우면 첫 글자 단계부터 다시 — 괜찮아, 금방 돌아와요
+      day.review = (day.review || 0) + 1; it.counted = true;
+    }
+  } else if (it.type === 'chain' && pass && !it.counted){ day.chain = (day.chain || 0) + 1; it.counted = true; }
+  ttSaveProg(p);
+}
+function ttKeepClip(owner, blob, stars, secs, pinned){
+  if (!blob || !blob.size) return;
+  blob.arrayBuffer()
+    .then(buf => AudioBox.put({ id:uid(), owner, at:Date.now(), mime:(blob.type || 'audio/mp4'), data:buf, secs:Math.round(secs || 0), stars, pinned:!!pinned }))
+    .then(() => AudioBox.keep(owner, owner.endsWith('|-1') ? 10 : 3)).catch(() => {});
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {}); } catch(e){}
+}
+/* 기기 분석만으로 주는 피드백 (AI가 꺼져 있거나 바쁠 때) */
+function ttLocalFb(m, s){
+  const words = Math.max(1, ttNorm(s.en).length);
+  let stars = 3, tip = '';
+  if (!m || m.silent || m.secs < 0.4){ stars = 1; tip = '목소리가 잘 안 들렸어요. 마이크 가까이에서 크게 말해볼까?'; }
+  else {
+    const per = m.secs / words, want = s.end === 'rise' ? 'rise' : 'fall';
+    if (m.loudDb < -40){ stars--; tip = tip || '목소리를 조금 더 크게! 뒤에 있는 친구도 들리게 말해보자.'; }
+    if (per < 0.18){ stars--; tip = tip || '조금만 천천히, 또박또박 말해볼까?'; }
+    else if (per > 1.2 || m.pauses > Math.max(2, Math.floor(words / 4))){ stars--; tip = tip || '중간에 쉬지 않고 이어서 말해보자!'; }
+    if (!tip && m.contour && m.contour.length && m.endPitch !== want)
+      tip = want === 'rise' ? '문장 끝을 살짝 올려볼까? ↗' : '문장 끝을 살짝 내려서 말하면 더 멋져요 ↘';
+    if (!tip && s.stress && s.stress.length) tip = `‘${s.stress[0]}’에 힘을 꼭 주면 더 멋져요!`;
+  }
+  stars = clamp(stars, 1, 3);
+  return { stars, praise: stars >= 3 ? '또박또박 잘 말했어!' : (stars === 2 ? '좋아, 잘하고 있어!' : '괜찮아, 할 수 있어!'),
+           tip, words:[], heard:'', local:m, source:'local' };
+}
+function ttMerge(ai, m){
+  return { stars:ai.stars || 2, praise:ai.praise || '잘했어!', tip:ai.tip || '', words:ai.words || [], heard:ai.heard || '',
+           fluency:ai.fluency, intonation:ai.intonation, missing:ai.missing || [], skipped:ai.skipped || [], local:m, source:'ai' };
+}
+function ttMetrics(m){
+  return m ? { secs:+(m.secs || 0).toFixed(1), pauses:m.pauses || 0, loud:m.loudDb < -40 ? '작음' : '좋음',
+               endPitch:m.endPitch === 'rise' ? '올림' : (m.endPitch === 'fall' ? '내림' : '평평') } : {};
+}
+async function ttMicStart(){
+  const t = TT; if (!t || t.step !== 'speak') return;
+  hush(); playStop();
+  t.step = 'rec'; ttMood('listen'); ttLayer();
+  try {
+    const it0 = ttItem();
+    await recStart({
+      maxSec: it0.type === 'chain' ? 40 : 15,
+      silenceMs: (it0.type !== 'new' || t.stage >= 3) ? 2300 : 1400,
+      onLevel: lv => { const el = document.querySelector('#ttLevel span'); if (el) el.style.width = Math.round(lv * 100) + '%'; },
+      onAuto: () => ttMicStop()
+    });
+  } catch(e){
+    recCancel();
+    if (TT !== t) return;
+    t.step = 'speak'; t.micErr = true; ttMood('idle');
+    const nm = e && e.name;
+    t.say = nm === 'NotAllowedError' ? '마이크를 쓰려면 “허용”을 눌러줘! 안 되면 부모님께 설정 → Safari → 마이크 → 허용을 부탁해 봐.'
+      : nm === 'NotReadableError' ? '다른 앱이 마이크를 쓰고 있나 봐. 괜찮아, 잠깐 뒤에 다시 눌러볼까?'
+      : nm === 'NotFoundError' ? '이 기기에는 마이크가 없나 봐. 괜찮아, 소리 내어 말해 보고 아래 단추를 눌러도 돼!'
+      : (nm === 'SecurityError' || !window.isSecureContext) ? '녹음은 https 주소(버셀)에서 열었을 때만 돼. 괜찮아, 소리 내어 말해 봐도 돼!'
+      : '마이크를 켜지 못했어. 괜찮아, 소리 내어 말해 보고 아래 단추를 눌러도 돼!';
+    ttLayer(); ttTalk(t.say);
+  }
+}
+async function ttMicStop(){
+  const t = TT; if (!t || t.step !== 'rec') return;
+  t.step = 'think'; ttMood('think'); t.say = ttPick('think'); ttLayer();
+  const blob = await recStop();
+  if (TT !== t) return;
+  if (!blob || !blob.size){ t.step = 'speak'; ttMood('happy'); t.say = '앗, 녹음이 안 됐어. 괜찮아, 다시 눌러볼까?'; ttLayer(); ttTalk(t.say); return; }
+  await ttReview(blob);
+}
+async function ttReview(blob){
+  const t = TT, it = ttItem(), s = ttItemSentence(it);
+  let m = null, x = null;
+  try { const d = await decodeAudio(blob); x = resample(d.pcm, d.rate, 16000); m = analyzeVoice(x, 16000); } catch(e){ m = null; }
+  let fb = null;
+  if (ttAiReady() && !(m && m.silent) && !ttHasName(s.en)){
+    try {
+      let audio, mime = 'audio/wav';
+      if (x && m) audio = wavBase64(x.subarray(m.s0, m.s1), 16000);
+      else { audio = bytesBase64(new Uint8Array(await blob.arrayBuffer())); mime = (blob.type || 'audio/mp4').split(';')[0]; }
+      const ai = await ttAsk({ task:'speech', kind:it.type === 'chain' ? 'chain' : 'sentence', sentence:s.en, audio, mime,
+        stage:t.stage, stress:s.stress, end:s.end, metrics:ttMetrics(m) });
+      fb = ttMerge(ai, m);
+      if (TT) TT.aiFails = 0;
+      // 들은 말이 목표 문장을 그대로 베낀 것처럼 보여도, 말한 시간이 너무 짧으면 별 셋은 아껴 둔다
+      if (m && fb.stars >= 3 && m.secs < Math.max(1, ttNorm(s.en).length) * 0.15) fb.stars = 2;
+    } catch(e){
+      ttAiFail(e);
+      fb = ttLocalFb(m, s);
+      fb.aiNote = `${e.message || '뚜뚜가 잠깐 쉬고 있어요.'} 이번엔 소리 크기·빠르기·높낮이만 봤어요.`;
+    }
+  } else fb = ttLocalFb(m, s);
+  if (TT !== t) return;
+  t.fb = fb; t.clip = blob;
+  ttKeepClip(`${t.kidId}|${t.script.id}|${it.type === 'chain' ? 'c' + it.to : it.i}`, blob, fb.stars, m ? m.secs : 0);
+  ttApply(fb.stars);
+  const pass = ttPassed(fb.stars, t.tries, it.type), k = kid(t.kidId);
+  t.step = 'fb'; ttMood(fb.stars >= 3 ? 'cheer' : 'happy');
+  const style = kidStyle(k);
+  t.say = ttFill(ttPick(pass ? (fb.stars >= 3 ? 'pass3' : 'pass2') : 'retry'), k);
+  if (pass && fb.stars >= 3 && style.pace === 'quick' && Math.random() < 0.6) t.say = ttStyleLine('quickPass', k);
+  if (pass && fb.stars >= 3 && style.pace === 'careful' && Math.random() < 0.5) t.say = ttStyleLine('carefulPass', k);
+  ttLayer();
+  if (fb.stars >= 3) ttChime();
+  ttTalk(t.say + (fb.tip ? ' ' + fb.tip : ''));
+}
+function ttSelfDone(){                   // 녹음을 못 할 때 — 말해 봤다고 스스로 알려준다
+  const t = TT, s = ttItemSentence(ttItem());
+  const fb = { stars:2, praise:'소리 내어 말해 봤구나! 멋져!', tip:(s.tricky[0] && s.tricky[0].tipKo) || '', words:[], heard:'', local:null, source:'self' };
+  t.fb = fb; t.clip = null; ttApply(2);
+  t.step = 'fb'; ttMood('happy'); t.say = '잘했어! 스스로 해본 게 제일 멋져!';
+  ttLayer(); ttTalk(t.say);
+}
+function ttNext(){
+  const t = TT, it = ttItem(), k = kid(t.kidId);
+  const pass = t.fb && ttPassed(t.fb.stars, t.tries, it.type);
+  playStop();
+  if (it.type === 'new' && pass && !it.learned){        // 같은 문장, 한 단계 더 가려서
+    const jump = kidStyle(k).pace === 'careful' && t.stage === 0 && t.fb.stars >= 3 && t.tries === 0;
+    t.stage = Math.min(3, t.stage + (jump ? 2 : 1)); t.tries = 0; t.fb = null; t.clip = null; t.peek = false;
+    if (jump){ t.prog.sents = ttSents(t.script, t.prog); t.prog.sents[it.i].lv = Math.max(t.prog.sents[it.i].lv || 0, 2); ttSaveProg(t.prog); }
+    t.step = 'speak'; ttMood('happy');
+    t.say = `${ttFill(ttPick('stageUp'), k)} 자 이제 말해볼까?`;
+    ttLayer(); ttTalk(t.say); return;
+  }
+  if (it.type === 'new' && it.learned && !it.cheered){   // 다 외웠다!
+    it.cheered = true; ttChime(); confetti();
+  }
+  if (!pass && it.type === 'new'){ t.say = ttPick('moveOn'); }
+  ttAdvance();
+}
+function ttRetry(){
+  const t = TT, k = kid(t.kidId);
+  playStop();
+  t.tries++; t.fb = null; t.clip = null; t.step = 'speak'; ttMood('happy');
+  t.say = `${t.tries >= 2 ? '할 수 있어! ' : '좋아! '}${ttFill(ttPick('speak'), k)}`;
+  ttLayer(); ttTalk(t.say);
+}
+
+/* ---------- 수업 화면 ---------- */
+function ttLessonView(){
+  const t = TT;
+  let card = '';
+  if (t.step === 'intro') card = ttIntroCard();
+  else if (t.step === 'meaning' || t.step === 'listen') card = ttLearnCard();
+  else if (t.step === 'speak' || t.step === 'rec' || t.step === 'think') card = ttSpeakCard();
+  else if (t.step === 'fb') card = ttFbCard();
+  else if (t.step === 'done') card = ttDoneCard();
+  return `${ttTopBar()}<div class="ttl-body">${ttTeacher()}${t.askQuit ? ttQuitCard() : card}</div>`;
+}
+function ttIntroCard(){
+  const q = TT.queue;
+  const nNew = q.filter(x => x.type === 'new').length, nRev = q.filter(x => x.type === 'review').length;
+  return `<div class="tt-card stack" style="text-align:center">
+    <div style="font-size:44px">🎤✨</div>
+    <h3 class="sub" style="margin:0">오늘의 수업</h3>
+    <div class="tt-mission" style="justify-content:center">
+      ${nNew ? `<span>🌱 새 문장 ${nNew}개</span>` : ''}${nRev ? `<span>🔁 복습 ${nRev}개</span>` : ''}
+      ${q.some(x => x.type === 'chain') ? '<span>⛄ 이어 말하기</span>' : ''}
+    </div>
+    <p class="muted" style="margin:0">틀려도 괜찮아요. 뚜뚜랑 한 문장씩 천천히 해봐요!</p>
+    <button class="btn wide" id="ttStart">시작하기 ▶</button>
+  </div>`;
+}
+function ttLearnCard(){
+  const t = TT, s = ttItemSentence(ttItem()), listen = t.step === 'listen';
+  return `<div class="tt-card stack" style="text-align:center">
+    <div class="row"><span class="tt-num">${esc(s.label)}</span><span class="grow"></span><span class="tt-stage">🌱 새 문장</span></div>
+    <div class="tt-cue">${esc(s.cue)}</div>
+    <div class="tt-en">${ttWords(s.en, { stage:0, stress:s.stress })}</div>
+    <p class="tt-ko">${esc(s.ko)}</p>
+    ${s.tricky.length ? `<div class="stack" style="gap:6px">${s.tricky.map(x => `<div class="row" style="gap:8px;justify-content:center">
+      <button class="chip" data-ttword="${esc(x.word)}">🔊 ${esc(x.word)}</button>
+      <span class="muted" style="font-size:14px;text-align:left">${esc(x.tipKo)}</span></div>`).join('')}</div>` : ''}
+    ${listen ? `<div class="tt-speed">${TT_RATES.map(([r, l]) => `<button class="chip" data-ttrate="${r}" aria-pressed="${t.rate === r}">${l}</button>`).join('')}</div>` : ''}
+    <div class="tt-foot">${listen
+      ? `<button class="btn ghost" id="ttAgain">🔊 한 번 더</button><button class="btn" id="ttSpeak">🎤 자 이제 말해볼까?</button>`
+      : `<button class="btn" id="ttListen">🔊 뚜뚜가 읽어줄게</button>`}</div>
+  </div>`;
+}
+function ttSpeakCard(){
+  const t = TT, it = ttItem(), s = ttItemSentence(it), stage = t.peek ? 0 : t.stage;
+  const rec = t.step === 'rec', think = t.step === 'think';
+  let show;
+  if (it.type === 'chain'){
+    show = `<div class="tt-cuestrip">${t.script.sentences.slice(it.from, it.to + 1).map((x, j) =>
+      `<span><b>${esc(x.cue || '💬')}</b>${it.from + j + 1}번</span>`).join('')}</div>
+      ${t.peek ? `<div class="tt-en" style="font-size:clamp(18px,4vw,24px)">${ttWords(s.en)}</div>` : '<p class="muted" style="margin:0">그림을 보며 이어서 말해봐요!</p>'}`;
+  } else if (stage <= 2){
+    show = `<div class="tt-cue">${esc(s.cue)}</div><div class="tt-en">${ttWords(s.en, { stage, stress:s.stress })}</div>
+      ${stage === 0 ? `<p class="tt-ko">${esc(s.ko)}</p>` : ''}`;
+  } else if (stage === 3){
+    show = `<div class="tt-cue">${esc(s.cue)}</div><p class="tt-ko" style="font-size:24px;font-family:var(--display)">${esc(s.ko)}</p>`;
+  } else {
+    show = `<div class="tt-cue" style="font-size:64px">${esc(s.cue || '🌟')}</div>
+      <p class="muted" style="margin:0">${esc(s.label)} — 기억나는 대로 말해봐요!</p>`;
+  }
+  const stg = it.type === 'chain' ? '⛄ 이어 말하기' : `${TT_STAGES[t.stage].icon} ${TT_STAGES[t.stage].name}`;
+  let action;
+  if (think) action = `<div class="waiting"><i></i><i></i><i></i></div><p class="muted" style="margin:0">뚜뚜가 듣고 있어요…</p>`;
+  else if (rec) action = `<button class="tt-mic rec" id="ttStop" aria-label="다 말했어요">⏹</button>
+      <div class="tt-level" id="ttLevel"><span></span></div>
+      <p class="muted" style="margin:6px 0 0">말이 끝나면 뚜뚜가 알아서 멈춰요 · 다 말했으면 눌러요</p>`;
+  else if (micSupported()) action = `<button class="tt-mic" id="ttMic" aria-label="녹음하기">🎤</button>
+      <p class="muted" style="margin:4px 0 0">마이크를 누르고 말해요</p>
+      ${t.micErr ? `<button class="btn ghost wide sm" id="ttSelf">🙋 소리 내어 말해 봤어요</button>` : ''}`;
+  else action = `<p class="muted">이 기기에서는 녹음을 할 수 없어요. 소리 내어 말해 보고 눌러요!</p>
+      <button class="btn mint wide" id="ttSelf">🙋 말해 봤어요</button>`;
+  return `<div class="tt-card stack" style="text-align:center">
+    <div class="row"><span class="tt-num">${esc(s.label)}</span><span class="grow"></span><span class="tt-stage">${stg}</span></div>
+    ${show}
+    ${action}
+    ${!rec && !think ? `<div class="tt-foot">
+      <button class="btn ghost sm" id="ttModel">🔊 뚜뚜 목소리 듣기</button>
+      ${(t.stage >= 1 || it.type === 'chain') && !t.peek ? '<button class="btn ghost sm" id="ttPeek">👀 살짝 보기</button>' : ''}
+    </div>` : ''}
+  </div>`;
+}
+function ttFbCard(){
+  const t = TT, f = t.fb, it = ttItem(), s = ttItemSentence(it);
+  const pass = ttPassed(f.stars, t.tries, it.type), last = t.qi >= t.queue.length - 1;
+  const marks = f.heard ? ttAlign(s.en, f.heard) : null;
+  const nextLabel = (it.type === 'new' && pass && !it.learned) ? '좋아! 다음 단계 ▶'
+    : (it.type === 'new' && it.learned) ? (last ? '외웠다! 수업 마치기 🎉' : '외웠다! 다음 ▶')
+    : (last ? '수업 마치기 🎉' : (pass ? '다음 ▶' : '다음으로 ▶'));
+  return `<div class="tt-card stack" style="text-align:center">
+    <div class="tt-stars" aria-label="별 ${f.stars}개">${[1, 2, 3].map(i => `<span class="${i <= f.stars ? '' : 'off'}">⭐</span>`).join('')}</div>
+    ${f.praise ? `<div style="font-family:var(--display);font-size:24px;line-height:1.25">${esc(f.praise)}</div>` : ''}
+    ${marks ? `<div class="tt-en" style="font-size:clamp(20px,4.6vw,28px)">${ttWords(s.en, { marks })}</div>
+      <p class="tt-heard">🦜 뚜뚜가 들은 말: “${esc(f.heard)}”${marks.includes(false) ? ' · 색칠된 단어를 누르면 들을 수 있어요' : ''}</p>` : ''}
+    ${f.tip ? `<div class="tt-tip"><span style="font-size:26px">💡</span><div><b>이렇게 말해보면 더 좋아요</b>${esc(f.tip)}</div></div>` : ''}
+    ${f.words.length ? `<div class="stack" style="gap:6px">${f.words.map(w => `<div class="row" style="gap:8px;justify-content:center">
+      <button class="chip" data-ttword="${esc(w.word)}">🔊 ${esc(w.word)}</button>
+      <span class="muted" style="font-size:14px;text-align:left">${esc(w.tipKo)}</span></div>`).join('')}</div>` : ''}
+    <div class="tt-badges">${ttBadges(f, s)}</div>
+    ${f.local && f.local.contour && f.local.contour.length ? `<canvas class="tt-wave" id="ttWave" aria-label="내 목소리 높낮이 그림"></canvas>
+      <div class="muted" style="font-size:13px;margin-top:-4px">〰️ 내 목소리 파도 — ${s.end === 'rise' ? '끝을 살짝 올려요 ↗' : '끝을 살짝 내려요 ↘'}</div>` : ''}
+    ${f.aiNote ? `<p class="muted" style="font-size:13px;margin:0">${esc(f.aiNote)}</p>` : ''}
+    <div class="tt-foot">
+      ${t.clip ? '<button class="btn ghost sm" id="ttMine">▶ 내 목소리</button>' : ''}
+      <button class="btn ghost sm" id="ttModel">🔊 뚜뚜 목소리</button>
+    </div>
+    <div class="tt-foot">
+      ${pass ? '' : '<button class="btn" id="ttRetry">🔁 다시 해볼래</button>'}
+      <button class="btn ${pass ? 'mint' : 'ghost'}" id="ttNext">${esc(nextLabel)}</button>
+    </div>
+  </div>`;
+}
+/* 기기가 잰 것 — 잘한 건 초록, 다음에 해볼 건 분홍 (틀렸다가 아니라 "해볼까?") */
+function ttBadges(f, s){
+  const m = f.local, out = [];
+  if (f.fluency && f.fluency.noteKo) out.push(`<span class="tt-badge${f.fluency.level < 3 ? ' try' : ''}">🎵 ${esc(f.fluency.noteKo)}</span>`);
+  if (f.intonation && f.intonation.noteKo) out.push(`<span class="tt-badge${f.intonation.level < 3 ? ' try' : ''}">🎢 ${esc(f.intonation.noteKo)}</span>`);
+  if (!m) return out.join('');
+  if (m.silent) return out.concat('<span class="tt-badge try">🤫 소리가 작았어요</span>').join('');
+  const words = Math.max(1, ttNorm(s.en).length), per = m.secs / words;
+  out.push(m.loudDb < -40 ? '<span class="tt-badge try">📣 조금 더 크게</span>' : '<span class="tt-badge">📣 목소리 좋아요</span>');
+  if (!f.fluency){
+    out.push(per < 0.18 ? '<span class="tt-badge try">🐢 조금 천천히</span>'
+      : (per > 1.2 ? '<span class="tt-badge try">🐇 조금 더 이어서</span>' : '<span class="tt-badge">🎵 빠르기 딱 좋아요</span>'));
+  }
+  if (m.pauses > Math.max(1, Math.floor(words / 5))) out.push(`<span class="tt-badge try">🫧 쉰 곳 ${m.pauses}번</span>`);
+  if (m.contour && m.contour.length){
+    const want = s.end === 'rise' ? 'rise' : 'fall';
+    out.push(m.endPitch === want ? `<span class="tt-badge">${want === 'rise' ? '↗' : '↘'} 끝 높낮이 좋아요</span>`
+      : `<span class="tt-badge try">${want === 'rise' ? '↗ 끝을 살짝 올려요' : '↘ 끝을 살짝 내려요'}</span>`);
+  }
+  return out.join('');
+}
+function ttDoneCard(){
+  const t = TT, day = ttDay(t.prog), plan = ttPlan(t.script, t.prog);
+  return `<div class="tt-card stack" style="text-align:center">
+    <div style="font-size:52px">🏆</div>
+    <h3 class="sub" style="margin:0">오늘 수업 끝! 너무 잘했어요</h3>
+    <div class="tt-mission" style="justify-content:center">
+      <span class="${day.learn ? 'ok' : ''}">🌱 새로 외운 문장 ${day.learn || 0}개</span>
+      <span class="${day.review ? 'ok' : ''}">🔁 복습 ${day.review || 0}개</span>
+      <span class="ok">🎤 말해 본 횟수 ${day.rec || 0}번</span>
+      <span class="ok">⭐ 오늘 모은 별 ${day.stars || 0}개</span>
+    </div>
+    <p class="muted" style="margin:0">지금까지 ${plan.learned}/${plan.n} 문장을 외웠어요. ${plan.done ? '오늘 미션 완료! 🎉' : '내일 또 만나요!'}</p>
+    ${ttStyleNote(kid(t.kidId), t.prog)}
+    ${plan.runGoal > (day.runs || 0) ? '<button class="btn mint wide" id="ttStageFromDone">🎤 실전 무대 해보기</button>' : ''}
+    <button class="btn wide" id="ttDoneBtn">끝내기</button>
+  </div>`;
+}
+/* 성향에 맞춘 한마디 — 도전을 좋아하면 기록 깨기, 차분하면 어제의 나와 비교, 리더십이 있으면 가르쳐 주기 */
+function ttStyleNote(k, p){
+  const st = kidStyle(k), days = (p && p.days) || {}, keys = Object.keys(days).sort();
+  const today = days[todayKey()] || {}, prev = keys.filter(x => x < todayKey()).map(x => days[x]).pop() || null;
+  const lines = [];
+  if (st.compete === 'high') lines.push(prev ? ((today.stars || 0) > (prev.stars || 0)
+    ? `🔥 기록 깨기 성공! 지난번 별 ${prev.stars || 0}개 → 오늘 ${today.stars || 0}개!` : `🔥 지난번 기록은 별 ${prev.stars || 0}개! 다음엔 깰 수 있어!`)
+    : '🔥 첫 기록을 세웠어요! 다음엔 이 기록을 깨볼까?');
+  else if (st.compete === 'low' && prev) lines.push(`🌿 어제의 나보다 한 걸음! 말해 본 횟수 ${prev.rec || 0}번 → 오늘 ${today.rec || 0}번`);
+  if (st.strengths.includes('leader')) lines.push(ttStyleLine('leader', k));
+  if (st.strengths.includes('smart') && Math.random() < 0.5) lines.push(ttStyleLine('smart', k));
+  return lines.length ? `<div class="banner info" style="text-align:left"><span>✨</span><span>${lines.map(esc).join('<br>')}</span></div>` : '';
+}
+function ttAfterDraw(){
+  const cv = document.getElementById('ttWave');
+  if (cv && TT && TT.fb && TT.fb.local && TT.fb.local.contour){
+    const it = TT.kind === 'lesson' ? ttItem() : null;
+    ttDrawWave(cv, TT.fb.local.contour, it ? ttItemSentence(it).end : 'fall');
+  }
+}
+function ttDrawWave(cv, contour, end){
+  const dpr = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth || 300, h = cv.clientHeight || 74;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+  const vals = contour.filter(v => v !== null);
+  if (!vals.length) return;
+  const lo = Math.min(-4, ...vals), hi = Math.max(4, ...vals);
+  const X = i => 12 + i * (w - 44) / Math.max(1, contour.length - 1), Y = v => h - 10 - (v - lo) / (hi - lo) * (h - 20);
+  g.lineWidth = 4; g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = '#3FA687';
+  g.beginPath(); let pen = false;
+  contour.forEach((v, i) => { if (v === null){ pen = false; return; } if (!pen){ g.moveTo(X(i), Y(v)); pen = true; } else g.lineTo(X(i), Y(v)); });
+  g.stroke();
+  g.fillStyle = '#E85C7C'; g.font = 'bold 22px sans-serif'; g.textAlign = 'center';
+  g.fillText(end === 'rise' ? '↗' : '↘', w - 16, h / 2 + 8);
+}
+
+/* ---------- 🎤 실전 무대 — 처음부터 끝까지, 제한 시간 타이머 ---------- */
+function ttOpenStage(){
+  if (TT) return;
+  nvUnlock();
+  const k = curKid(); if (!k) return;
+  const sc = ttScript(k.id); if (!sc) return;
+  const prog = JSON.parse(JSON.stringify(ttProg(k.id, sc.id) || ttBlank(k.id, sc.id)));
+  TT = { kind:'stage', kidId:k.id, script:sc, prog, step:'ready', hints:false, say:ttFill(ttPick('stage'), k),
+         mood:'happy', quiet:false, t0:Date.now(), talking:false };
+  ttLayer(); ttTalk(TT.say); wakeOn();
+}
+function ttStageView(){
+  const t = TT, sc = t.script, lim = sc.timeLimitSec || 0;
+  let card = '';
+  if (t.askQuit) card = ttQuitCard();
+  else if (t.step === 'ready'){
+    card = `<div class="tt-card stack" style="text-align:center">
+      <div style="font-size:48px">🎤🌟</div>
+      <h3 class="sub" style="margin:0">처음부터 끝까지 말해봐요</h3>
+      <p class="muted" style="margin:0">${lim ? `제한 시간은 <b>${fmtClock(lim)}</b>이에요. ` : ''}틀려도 멈추지 말고 끝까지! 그게 제일 멋져요.</p>
+      <button class="chip" id="ttHints" aria-pressed="${t.hints}" style="align-self:center">${t.hints ? '💡 그림 힌트 켜짐' : '💡 그림 힌트 보기'}</button>
+      <button class="btn wide" id="ttStageGo">시작 ▶</button>
+      <p class="muted" style="margin:0;font-size:13px">녹음은 이 기기에만 저장돼요. 첫 무대 녹음은 계속 간직해요.</p>
+    </div>`;
+  } else if (t.step === 'count'){
+    card = `<div class="tt-card" style="text-align:center"><div class="tt-count" id="ttCount">${t.count}</div>
+      <p class="muted" style="margin:6px 0 0">심호흡 한 번… 준비!</p></div>`;
+  } else if (t.step === 'run'){
+    card = `<div class="tt-card stack" style="text-align:center">
+      <div class="muted">🔴 녹음 중</div>
+      <div class="tt-big-time" id="ttClock">0:00</div>
+      ${lim ? `<div class="muted" id="ttLimitNote">제한 ${fmtClock(lim)}</div>` : ''}
+      ${t.hints ? `<div class="tt-cuestrip">${sc.sentences.map((s, i) => `<span><b>${esc(s.cue || '💬')}</b>${i + 1}</span>`).join('')}</div>` : ''}
+      <button class="tt-mic rec" id="ttStageStop" aria-label="끝">⏹</button>
+      <p class="muted" style="margin:0">다 말했으면 눌러요</p>
+    </div>`;
+  } else if (t.step === 'think'){
+    card = `<div class="tt-card" style="text-align:center"><div class="waiting"><i></i><i></i><i></i></div>
+      <p class="muted" style="margin:0">뚜뚜가 끝까지 잘 들었어요. 잠깐만요…</p></div>`;
+  } else if (t.step === 'result') card = ttStageResult();
+  return `${ttTopBar('🎤 실전 무대')}<div class="ttl-body">${ttTeacher()}${card}</div>`;
+}
+function ttStageResult(){
+  const t = TT, f = t.fb || {}, sc = t.script, lim = sc.timeLimitSec || 0, secs = t.secs || 0;
+  const skipped = (f.skipped || []).filter(n => n >= 1 && n <= sc.sentences.length);
+  return `<div class="tt-card stack" style="text-align:center">
+    <div style="font-size:48px">🏆</div>
+    <h3 class="sub" style="margin:0">끝까지 해냈어요!</h3>
+    <div class="tt-stars" aria-label="별 ${f.stars || 1}개">${[1, 2, 3].map(i => `<span class="${i <= (f.stars || 1) ? '' : 'off'}">⭐</span>`).join('')}</div>
+    <div class="tt-badges">
+      <span class="tt-badge${lim && secs > lim ? ' try' : ''}">⏱ ${fmtClock(secs)}${lim ? (secs <= lim ? ' · 시간 안에 딱!' : ` · 제한 ${fmtClock(lim)}보다 조금 길어요`) : ''}</span>
+      ${f.local && !f.local.silent ? `<span class="tt-badge${f.local.loudDb < -40 ? ' try' : ''}">${f.local.loudDb < -40 ? '📣 조금 더 크게' : '📣 목소리 좋아요'}</span>` : ''}
+    </div>
+    ${f.praise ? `<div style="font-family:var(--display);font-size:22px">${esc(f.praise)}</div>` : ''}
+    ${f.tip ? `<div class="tt-tip"><span style="font-size:26px">💡</span><div><b>이렇게 말해보면 더 좋아요</b>${esc(f.tip)}</div></div>` : ''}
+    ${skipped.length ? `<div><div class="muted" style="margin-bottom:6px">🧩 한 번 더 연습하면 좋은 문장 — 눌러서 들어봐요</div>
+      <div class="chips" style="justify-content:center">${skipped.map(n => `<button class="chip" data-ttsent="${n - 1}">🔊 ${n}번</button>`).join('')}</div></div>` : ''}
+    ${t.aiNote ? `<p class="muted" style="font-size:13px;margin:0">${esc(t.aiNote)}</p>` : ''}
+    <div class="tt-foot">
+      ${t.clip ? '<button class="btn ghost sm" id="ttMine">▶ 내 무대 듣기</button>' : ''}
+      ${t.hasFirst ? '<button class="btn ghost sm" id="ttFirst">⭐ 첫 무대 듣기</button>' : ''}
+    </div>
+    <div class="tt-foot">
+      <button class="btn ghost" id="ttStageAgain">🔁 한 번 더</button>
+      <button class="btn" id="ttDoneBtn">끝내기</button>
+    </div>
+  </div>`;
+}
+function ttStageGo(){
+  const t = TT; if (!t || t.step !== 'ready') return;
+  audioCtx(); hush();
+  t.step = 'count'; t.count = 3; ttLayer(); ttTone(660, 0, 0.18);
+  t.cd = setInterval(async () => {
+    if (TT !== t){ clearInterval(t.cd); return; }
+    t.count--;
+    if (t.count > 0){ const c = document.getElementById('ttCount'); if (c) c.textContent = t.count; ttTone(660, 0, 0.18); return; }
+    clearInterval(t.cd); ttTone(990, 0, 0.3);
+    try {
+      await recStart({ maxSec:Math.max(90, (t.script.timeLimitSec || 120) + 90), silenceMs:1e9, onAuto:() => ttStageStop() });
+    } catch(e){
+      if (TT !== t) return;
+      t.step = 'ready'; t.say = '마이크를 켜지 못했어. “허용”을 눌렀는지 확인해 볼까? 괜찮아, 다시 해보면 돼!';
+      ttLayer(); ttTalk(t.say); return;
+    }
+    if (TT !== t){ recCancel(); return; }
+    t.step = 'run'; t.runAt = Date.now(); ttMood('listen'); ttLayer();
+    const lim = t.script.timeLimitSec || 0;
+    t.tick = setInterval(() => {
+      const el = document.getElementById('ttClock'); if (!el) return;
+      const s = (Date.now() - t.runAt) / 1000;
+      el.textContent = fmtClock(s);
+      el.style.color = lim && s > lim ? 'var(--berry-deep)' : (lim && s > lim - 10 ? 'var(--butter-deep)' : '');
+    }, 250);
+  }, 900);
+}
+async function ttStageStop(){
+  const t = TT; if (!t || t.step !== 'run') return;
+  clearInterval(t.tick);
+  const secs = (Date.now() - t.runAt) / 1000;
+  t.step = 'think'; ttMood('think'); t.say = '뚜뚜가 끝까지 잘 들었어! 잠깐만…'; ttLayer();
+  const blob = await recStop();
+  if (TT !== t) return;
+  if (!blob || !blob.size){
+    t.step = 'ready'; ttMood('happy'); t.say = '앗, 녹음이 안 됐어. 괜찮아, 한 번 더 해볼까?';
+    ttLayer(); ttTalk(t.say); return;
+  }
+  let m = null, x = null, fb = null;
+  try { const d = await decodeAudio(blob); x = resample(d.pcm, d.rate, 16000); m = analyzeVoice(x, 16000); } catch(e){}
+  if (ttAiReady() && m && !m.silent && secs <= 180 && !t.script.sentences.some(x => ttHasName(x.en))){
+    try {
+      const x8 = resample(x.subarray(m.s0, m.s1), 16000, 8000);
+      const ai = await ttAsk({ task:'speech', kind:'stage', stage:4, mime:'audio/wav', audio:wavBase64(x8, 8000),
+        sentence:t.script.sentences.map((s, i) => `${i + 1}. ${s.en}`).join('\n'), metrics:ttMetrics(m) });
+      fb = ttMerge(ai, m);
+    } catch(e){ ttAiFail(e); t.aiNote = `${e.message || '뚜뚜가 잠깐 쉬고 있어요.'} 이번엔 시간·목소리 크기만 봤어요.`; }
+  }
+  if (!fb) fb = { stars:(m && !m.silent) ? 2 : 1, praise:'끝까지 해낸 거 정말 멋져!', tip:'', words:[], skipped:[], local:m, source:'local' };
+  if (TT !== t) return;
+  t.fb = fb; t.secs = secs; t.clip = blob;
+  const p = t.prog, day = ttDay(p);
+  p.runs = (p.runs || []).slice(-30);
+  p.runs.push({ at:new Date().toISOString(), secs:Math.round(secs), stars:fb.stars });
+  day.runs = (day.runs || 0) + 1; day.rec = (day.rec || 0) + 1; day.secs = (day.secs || 0) + Math.round(secs);
+  ttSaveProg(p);
+  const owner = `${t.kidId}|${t.script.id}|-1`;
+  let first = false;
+  try { first = !(await AudioBox.list(owner)).length; } catch(e){}
+  ttKeepClip(owner, blob, fb.stars, secs, first);
+  try { t.hasFirst = !first && (await AudioBox.list(owner)).some(r => r.pinned); } catch(e){ t.hasFirst = false; }
+  if (ttMarkMission(t.kidId, t.script, p)) t.cheer = true;
+  t.step = 'result'; ttMood('cheer'); t.say = `${fb.praise || '끝까지 해냈어! 정말 멋져!'}`;
+  ttLayer(); confetti(); ttChime(); ttTalk(t.say + (fb.tip ? ' ' + fb.tip : ''));
+}
+async function ttPlayFirst(){
+  const t = TT; if (!t) return;
+  try {
+    const r = (await AudioBox.list(`${t.kidId}|${t.script.id}|-1`)).find(x => x.pinned);
+    if (r) playBlob(AudioBox.blob(r));
+  } catch(e){}
+}
+async function ttRecsSheet(){
+  const k = curKid(); const sc = k && ttScript(k.id); if (!sc) return;
+  openModal('<h3>🎧 내 무대 녹음</h3><p class="muted">불러오는 중…</p>');
+  let list = [];
+  try { list = await AudioBox.list(`${k.id}|${sc.id}|-1`); } catch(e){}
+  if (!$('#modalRoot .sheet')) return;
+  const when = at => new Date(at).toLocaleString('ko-KR', { month:'numeric', day:'numeric', hour:'numeric', minute:'2-digit' });
+  openModal(`<h3>🎧 내 무대 녹음</h3>
+    <p class="muted" style="margin:0 0 10px">실전 무대에서 녹음한 목소리예요. 이 기기에만 있어요.
+      첫 무대와 오늘을 비교해 들어보면 얼마나 멋지게 늘었는지 알 수 있어요!</p>
+    ${list.length ? `<div class="card stack">${list.map(r => `<div class="row">
+      <div class="grow"><b>${r.pinned ? '⭐ 첫 무대' : '🎤 무대'}</b>
+        <div class="muted" style="font-size:13px">${when(r.at)} · ${fmtClock(r.secs || 0)}${r.stars ? ' · ' + '⭐'.repeat(r.stars) : ''}</div></div>
+      <button class="btn ghost sm" data-ttplay="${r.id}">▶ 듣기</button></div>`).join('')}</div>`
+    : '<div class="empty"><div class="face">🎤</div><p>아직 무대 녹음이 없어요.<br>실전 무대에 한 번 올라가 볼까요?</p></div>'}`);
+}
+
+/* 수업 층 안의 단추들 — 처리했으면 true */
+async function ttClick(t, d){
+  const T = TT; if (!T) return false;
+  nvUnlock();
+  if (t.id === 'ttExit'){
+    if ((T.kind === 'lesson' && (T.step === 'intro' || T.step === 'done')) || (T.kind === 'stage' && (T.step === 'ready' || T.step === 'result'))){ ttClose(); return true; }
+    if (T.step === 'rec' || T.step === 'run'){ recCancel(); clearInterval(T.tick); T.step = T.kind === 'stage' ? 'ready' : 'speak'; }
+    hush(); ttMouth(false); T.askQuit = true; ttLayer(); return true;
+  }
+  if (t.id === 'ttQuitNo'){ T.askQuit = false; ttLayer(); return true; }
+  if (t.id === 'ttQuitYes' || t.id === 'ttDoneBtn'){ ttClose(); return true; }
+  if (t.id === 'ttQuiet'){ T.quiet = !T.quiet; if (T.quiet){ hush(); ttMouth(false); } ttLayer(); return true; }
+  if (d.ttword){ hush(); voice(d.ttword, { lang:'en', rate:0.7 }); return true; }
+  if (d.ttsent){ const s = T.script.sentences[+d.ttsent]; if (s){ hush(); voice(s.en, { lang:'en', rate:0.8 }); } return true; }
+  if (t.id === 'ttMine'){ hush(); playBlob(T.clip); return true; }
+  if (T.kind === 'stage'){
+    if (t.id === 'ttHints'){ T.hints = !T.hints; ttLayer(); return true; }
+    if (t.id === 'ttStageGo'){ ttStageGo(); return true; }
+    if (t.id === 'ttStageStop'){ ttStageStop(); return true; }
+    if (t.id === 'ttFirst'){ hush(); ttPlayFirst(); return true; }
+    if (t.id === 'ttStageAgain'){ playStop(); T.step = 'ready'; T.fb = null; T.clip = null; T.aiNote = ''; ttMood('happy'); T.say = '좋아, 한 번 더! 할 수 있어!'; ttLayer(); ttTalk(T.say); return true; }
+    return false;
+  }
+  if (t.id === 'ttStart'){ ttEnterItem(); return true; }
+  if (t.id === 'ttListen' || t.id === 'ttAgain'){
+    const s = ttItemSentence(ttItem());
+    if (T.step !== 'listen'){ T.step = 'listen'; T.say = ttPick('listen'); ttMood('happy'); ttLayer(); }
+    const me = TT;
+    ttModel(s.en, T.rate).then(() => { if (TT === me && me.step === 'listen') ttTalk('자 이제 말해볼까?'); });
+    return true;
+  }
+  if (d.ttrate){
+    T.rate = +d.ttrate; lsSet('dolearn.ttRate', d.ttrate); ttLayer();
+    const me = TT;
+    ttModel(ttItemSentence(ttItem()).en, T.rate).then(() => { if (TT === me && me.step === 'listen') ttTalk('자 이제 말해볼까?'); });
+    return true;
+  }
+  if (t.id === 'ttSpeak'){
+    hush(); T.step = 'speak'; ttMood('happy');
+    const k = kid(T.kidId);
+    T.say = kidStyle(k).pace === 'quick' ? ttStyleLine('quickSpeak', k) : ttFill(ttPick('speak'), k);
+    ttLayer(); ttTalk(T.say); return true;
+  }
+  if (t.id === 'ttMic'){ ttMicStart(); return true; }
+  if (t.id === 'ttStop'){ ttMicStop(); return true; }
+  if (t.id === 'ttSelf'){ ttSelfDone(); return true; }
+  if (t.id === 'ttModel'){ ttModel(ttItemSentence(ttItem()).en, T.rate); return true; }
+  if (t.id === 'ttPeek'){ T.peek = true; ttLayer(); return true; }
+  if (t.id === 'ttRetry'){ ttRetry(); return true; }
+  if (t.id === 'ttNext'){ ttNext(); return true; }
+  if (t.id === 'ttStageFromDone'){ ttRemoveLayer(); TT = null; ttOpenStage(); return true; }
+  return false;
+}
+
+/* ---------- 🦜 스피치 탭 — 뚜뚜 교실 + 내 원고 (문장을 누르면 그 문장만 연습) ---------- */
+function viewSpeech(){
+  const card = ttCard(false);
+  const k = curKid(), sc = k && ttScript(k.id);
+  if (!sc || window.claude) return card;
+  const sents = ttSents(sc, ttProg(k.id, sc.id));
+  return `${card}
+  <div class="card">
+    <h3 class="sub">📜 내 원고</h3>
+    <p class="muted" style="margin:0 0 6px">문장을 누르면 그 문장만 뚜뚜랑 연습해요. 동그라미는 외운 단계예요.</p>
+    ${sc.sentences.map((s, i) => {
+      const lv = Math.min(4, sents[i].lv || 0);
+      return `<button class="todo" data-ttone="${i}" style="width:100%;text-align:left">
+        <span class="tick" aria-hidden="true" style="font-size:20px;${lv >= 4 ? 'background:var(--mint-soft);border-color:var(--mint)' : ''}">${lv >= 4 ? '🌟' : esc(s.cue || '💬')}</span>
+        <div class="grow"><div class="name">${i + 1}. ${esc(s.en)}</div><div class="muted" style="font-size:14px">${esc(s.ko || '')}</div></div>
+        <span class="boxdots" aria-label="${lv}단계">${[1, 2, 3, 4].map(n => `<i class="${lv >= n ? 'on' : ''}"></i>`).join('')}</span>
+      </button>`;
+    }).join('')}
+  </div>`;
+}
+
+/* ---------- 스피치 탭 · 오늘 탭 카드 ---------- */
+function ttCard(compact){
+  if (window.claude){
+    return compact ? '' : `<div class="card tt-mini">${ttSvg('idle')}<p class="muted" style="margin:0">🦜 뚜뚜 스피치 교실은
+      버셀 주소(do-learn-syp4.vercel.app)로 열었을 때 쓸 수 있어요.</p></div>`;
+  }
+  const k = curKid(); if (!k) return '';
+  const sc = ttScript(k.id);
+  if (!sc){
+    if (compact) return '';
+    return `<div class="card tt-mini">${ttSvg('happy')}<div class="grow">
+      <h3 class="sub" style="margin:0 0 4px">🦜 뚜뚜 스피치 교실</h3>
+      <p class="muted" style="margin:0 0 9px">부모님이 대회 원고를 넣어주시면 뚜뚜 선생님이랑 한 문장씩 연습할 수 있어요!</p>
+      <button class="btn ghost sm" id="ttSample">예시 원고로 먼저 해보기</button></div></div>`;
+  }
+  const plan = ttPlan(sc, ttProg(k.id, sc.id)), day = plan.day;
+  const pct = plan.n ? plan.learned / plan.n * 100 : 0;
+  const bits = [
+    plan.newGoal ? `<span class="${(day.learn || 0) >= plan.newGoal ? 'ok' : ''}">🌱 새 문장 ${Math.min(day.learn || 0, plan.newGoal)}/${plan.newGoal}</span>` : '',
+    plan.reviewGoal ? `<span class="${(day.review || 0) >= plan.reviewGoal ? 'ok' : ''}">🔁 복습 ${Math.min(day.review || 0, plan.reviewGoal)}/${plan.reviewGoal}</span>` : '',
+    plan.runGoal ? `<span class="${(day.runs || 0) >= plan.runGoal ? 'ok' : ''}">🎤 무대 ${Math.min(day.runs || 0, plan.runGoal)}/${plan.runGoal}</span>` : ''
+  ].join('');
+  return `<div class="card" style="background:linear-gradient(170deg,#FFFFFF,#E9F8F1)">
+    <div class="tt-mini">${ttSvg(plan.done ? 'cheer' : 'happy')}
+      <div class="grow">
+        <h3 class="sub" style="margin:0">🦜 뚜뚜 스피치 교실</h3>
+        <div class="muted" style="font-size:14px">${esc(sc.title || '스피치 원고')} · ${plan.learned}/${plan.n} 문장 외웠어요</div>
+        <div class="gauge" style="height:12px;margin-top:6px"><span style="width:${pct}%"></span></div>
+      </div></div>
+    <div class="tt-mission">${bits || '<span class="ok">오늘도 연습해볼까요?</span>'}</div>
+    <p class="muted" style="margin:0 0 10px;font-size:14px">${plan.done
+      ? '오늘 미션 완료! 너무 잘하고 있어요 🎉' : '틀려도 괜찮아요. 뚜뚜랑 천천히 해봐요!'}</p>
+    <div class="row" style="gap:8px;flex-wrap:wrap">
+      <button class="btn grow" id="ttGo">${plan.done ? '🦜 더 연습하기' : '🦜 뚜뚜랑 수업하기'}</button>
+      ${compact ? '' : '<button class="btn ghost grow" id="ttStage">🎤 실전 무대</button><button class="btn ghost sm" id="ttRecs" aria-label="내 무대 녹음 듣기">🎧</button>'}
+    </div>
+  </div>`;
+}
+function ttTodoNote(kidId){
+  const sc = ttScript(kidId); if (!sc) return '';
+  const plan = ttPlan(sc, ttProg(kidId, sc.id)), d = plan.day;
+  const bits = [];
+  if (plan.newGoal) bits.push(`새 문장 ${Math.min(d.learn || 0, plan.newGoal)}/${plan.newGoal}`);
+  if (plan.reviewGoal) bits.push(`복습 ${Math.min(d.review || 0, plan.reviewGoal)}/${plan.reviewGoal}`);
+  if (plan.runGoal) bits.push(`무대 ${Math.min(d.runs || 0, plan.runGoal)}/${plan.runGoal}`);
+  return bits.join(' · ');
+}
+async function ttAddSample(){
+  const ks = kids(); if (!ks.length) return;
+  const have = S.data.scripts.find(s => s.sample);
+  if (have){
+    const ids = Array.from(new Set((have.kidIds || []).concat(ks.map(k => k.id))));
+    await Store.update('scripts', have.id, { kidIds:ids });
+  } else {
+    await Store.add('scripts', { ...JSON.parse(JSON.stringify(TT_SAMPLE)), kidIds:ks.map(k => k.id), contestDate:'',
+      sample:true, createdAt:new Date().toISOString() });
+  }
+  toast('예시 원고를 넣었어요. 뚜뚜랑 해봐요! 🦜');
+}
+
+/* ---------- 부모님 화면 → 🦜 스피치 ---------- */
+async function ttCheckStatus(){
+  try { const r = await fetch('/api/coach', { cache:'no-store' }); S.view.ttStatus = await r.json(); }
+  catch(e){ S.view.ttStatus = { error:true }; }
+  if (S.view.parentTab === 'speech' && $('#modalRoot .sheet')) openModal(parentSheet());
+}
+function speechTab(){
+  if (window.claude){
+    return `<div class="card"><p class="muted" style="margin:0">뚜뚜 스피치 교실은 버셀 주소(do-learn-syp4.vercel.app)로 열었을 때 쓸 수 있어요.</p></div>`;
+  }
+  if (S.view.ttStatus === undefined){ S.view.ttStatus = null; setTimeout(ttCheckStatus, 0); }
+  const st = S.view.ttStatus;
+  const on = S.settings.ttAi === true;
+  const status = !st ? '<div class="banner info"><span>🦜</span><span>뚜뚜 연결을 확인하는 중…</span></div>'
+    : st.error ? '<div class="banner warn"><span>🌐</span><span>뚜뚜 연결 상태를 확인하지 못했어요. 인터넷을 확인해 주세요.</span></div>'
+    : st.audio ? `<div class="banner info"><span>${on ? '✅' : '🦜'}</span><span>${on
+        ? `AI 듣기가 켜져 있어요. 뚜뚜가 녹음을 듣고 발음·유창성·높낮이를 봐줘요 (${esc(st.model || 'Gemini')}).`
+        : '지금은 기기 안에서만 들어요 — 소리 크기·빠르기·쉬는 곳·문장 끝 높낮이. 아래에서 AI 듣기를 켜면 발음까지 봐줘요.'}</span></div>`
+    : st.ok ? '<div class="banner warn"><span>⚠️</span><span>지금 AI 키로는 원고 준비만 돼요. 녹음을 들으려면 버셀 환경변수에 <b>GEMINI_API_KEY</b>가 필요해요.</span></div>'
+    : '<div class="banner warn"><span>⚠️</span><span>AI 키가 없어요. 뚜뚜는 기기 안에서 소리 크기·빠르기·높낮이만 봐줘요. 원고 뜻은 직접 적으면 돼요.</span></div>';
+  const d = S.view.ttDraft;
+  if (d) return status + ttEditor(d);
+  const ks = kids();
+  const list = S.data.scripts.slice().sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+  const voices = voiceList().filter(v => voiceScore(v, 'en') >= 0).sort((a, b) => voiceScore(b, 'en') - voiceScore(a, 'en'));
+  return `${status}
+  <div class="card stack" style="margin-top:12px">
+    <h3 class="sub" style="margin:0">🦜 스피치 원고</h3>
+    ${list.length ? list.map(sc => {
+      const who = ks.filter(k => (sc.kidIds || []).includes(k.id));
+      return `<div class="tt-sent">
+        <div class="row"><b class="grow">${esc(sc.title || '스피치 원고')}${sc.sample ? ' <span class="muted">(예시)</span>' : ''}</b>
+          <span class="muted">${(sc.sentences || []).length}문장</span></div>
+        <div class="muted" style="font-size:13px">${sc.contestDate ? `대회 ${esc(sc.contestDate)}` : '대회 날짜 없음 (하루에 한 문장씩)'}${sc.timeLimitSec ? ` · 제한 ${fmtClock(sc.timeLimitSec)}` : ''}</div>
+        <div class="chips">${ks.map(k => `<button class="chip" data-ttassign="${sc.id}|${k.id}" aria-pressed="${(sc.kidIds || []).includes(k.id)}">${esc(k.name)}</button>`).join('')}</div>
+        ${who.length ? `<div class="muted" style="font-size:13px">${who.map(k => {
+          const pl = ttPlan(sc, ttProg(k.id, sc.id));
+          return `${esc(k.name)}: ${pl.learned}/${pl.n} 외움`;
+        }).join(' · ')}</div>` : ''}
+        <div class="row" style="gap:6px;flex-wrap:wrap">
+          <button class="btn ghost sm" data-ttedit="${sc.id}">✏️ 고치기</button>
+          <button class="btn ghost sm" data-ttreset="${sc.id}">↺ 진도 처음부터</button>
+          <button class="btn ghost sm" data-ttremove="${sc.id}">🗑 지우기</button>
+        </div>
+      </div>`;
+    }).join('') : '<p class="muted" style="margin:0">아직 원고가 없어요. 대회 원고를 붙여넣으면 뚜뚜가 문장을 나누고 한국어 뜻과 힌트를 준비해요.</p>'}
+    <button class="btn wide" id="ttNew">+ 새 원고 넣기</button>
+  </div>
+  <div class="card stack" style="margin-top:12px">
+    <h3 class="sub" style="margin:0">뚜뚜 설정</h3>
+    <div class="row" style="align-items:flex-start">
+      <div class="grow"><b>뚜뚜가 녹음 듣기 (AI)</b>
+        <div class="muted" style="font-size:13px">켜면 한 문장 녹음(몇 초)을 구글 Gemini가 듣고 발음·유창성·높낮이를 봐줘요.
+          녹음 파일은 이 기기에만 저장되고 서버에 남지 않아요. 이름이 들어간 문장은 보내지 않아요.</div></div>
+      <button class="chip" id="ttAiToggle" aria-pressed="${on}">${on ? '켜짐' : '꺼짐'}</button>
+    </div>
+    <div><div class="muted">AI에 보내지 않을 이름 (영어 철자, 쉼표로)</div>
+      <input class="field" id="ttMaskIn" value="${esc(S.settings.ttMask || '')}" placeholder="예: Iseo, Ihyeon"
+        autocapitalize="off" autocorrect="off" spellcheck="false">
+      <p class="muted" style="margin:5px 0 0;font-size:13px">원고에 이 낱말이 든 문장은 기기 안에서만 들어요. 한글 이름은 자동으로 가려요.</p></div>
+    <div class="row" style="align-items:flex-start">
+      <div class="grow"><b>🎙 뚜뚜 목소리 — 자연스러운 목소리 (Gemini)</b>
+        <div class="muted" style="font-size:13px">뚜뚜가 할 말을 사람처럼 자연스러운 목소리로 읽어줘요. 아이 목소리는 보내지 않아요.
+          한 번 만든 목소리는 이 기기에 저장해서 다시 쓰고, 안 될 때는 기기 목소리로 바로 바꿔 말해요.</div></div>
+      <button class="chip" id="ttNvToggle" aria-pressed="${S.settings.ttNatural !== false}">${S.settings.ttNatural !== false ? '켜짐' : '꺼짐'}</button>
+    </div>
+    ${S.settings.ttNatural !== false ? `<div><div class="muted" style="margin-bottom:5px">목소리 고르기 — 누르면 들어볼 수 있어요</div>
+      <div class="chips">${NV_VOICES.map(([v, l]) => `<button class="chip" data-ttnv="${v}" aria-pressed="${nvVoice() === v}">${l}</button>`).join('')}</div></div>` : ''}
+    <div><div class="muted">기기 영어 목소리 (자연스러운 목소리를 못 쓸 때)</div>
+      <div class="row" style="gap:8px">
+        <select class="field grow" id="ttVoice">
+          <option value="">자동으로 고르기</option>
+          ${voices.map(v => `<option value="${esc(v.voiceURI)}" ${S.settings.ttVoice === v.voiceURI ? 'selected' : ''}>${esc(v.name)} (${esc(v.lang)})</option>`).join('')}
+        </select>
+        <button class="btn ghost sm" id="ttVoiceTest" aria-label="목소리 들어보기">🔊</button>
+      </div>
+      <p class="muted" style="margin:5px 0 0;font-size:13px">목록이 비어 있으면 잠시 뒤 다시 열어주세요. 아이패드는 설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성에서 더 좋은 목소리(고품질)를 받을 수 있어요.</p>
+    </div>
+  </div>`;
+}
+function ttEditor(d){
+  const ks = kids();
+  if (d.step === 'paste'){
+    return `<div class="card stack" style="margin-top:12px">
+      <h3 class="sub" style="margin:0">${d.id ? '원고 고치기' : '새 원고 넣기'}</h3>
+      <div><div class="muted">제목</div><input class="field" id="ttTitle" value="${esc(d.title)}" placeholder="예: My Family"></div>
+      <div><div class="muted">원고 (영어) — 그대로 붙여넣으세요</div>
+        <textarea class="field" id="ttText" style="min-height:180px" placeholder="Hello, everyone! My name is …"
+          autocapitalize="off" autocorrect="off" spellcheck="false">${esc(d.text)}</textarea></div>
+      <div class="row" style="gap:8px;align-items:flex-end">
+        <div class="grow"><div class="muted">대회 날짜 (선택 — 하루 연습량을 정하는 데만 써요)</div><input class="field" type="date" id="ttDate" value="${esc(d.contestDate)}"></div>
+        <div style="width:120px"><div class="muted">제한 시간</div><input class="field" id="ttLimit" value="${esc(d.limitText)}" placeholder="2:00"></div>
+      </div>
+      <div><div class="muted" style="margin-bottom:5px">누가 연습할까요?</div>
+        <div class="chips">${ks.map(k => `<button class="chip" data-ttkid="${k.id}" aria-pressed="${d.kidIds.includes(k.id)}">${esc(k.name)}</button>`).join('')}</div></div>
+      <div class="row" style="gap:8px"><button class="btn ghost grow" id="ttCancel">그만두기</button>
+        <button class="btn grow" id="ttSplit">✂️ 문장 나누기</button></div>
+    </div>`;
+  }
+  return `<div class="card stack" style="margin-top:12px">
+    <div class="row"><h3 class="sub grow" style="margin:0">문장 확인하기</h3><span class="muted">${d.sentences.length}문장</span></div>
+    <p class="muted" style="margin:0;font-size:13px">한 문장이 너무 길면 두 칸으로 나눠도 좋아요. 뜻과 그림 힌트는 뚜뚜가 먼저 채워드려요.</p>
+    ${d.busy ? '<div class="banner info"><span>🦜</span><span>뚜뚜가 한국어 뜻과 힌트를 준비하고 있어요…</span></div>' : ''}
+    ${d.msg ? `<div class="banner warn"><span>😥</span><span>${esc(d.msg)}</span></div>` : ''}
+    ${d.sentences.map((s, i) => `<div class="tt-sent">
+      <div class="row" style="gap:6px"><span class="tt-num">${i + 1}</span>
+        <input class="field grow" data-ttf="${i}|en" value="${esc(s.en)}" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <button class="btn ghost sm" data-ttdel="${i}" aria-label="${i + 1}번 문장 지우기">🗑</button></div>
+      <div class="row" style="gap:6px">
+        <input class="field" data-ttf="${i}|cue" value="${esc(s.cue || '')}" style="width:66px;text-align:center" placeholder="🙂" aria-label="그림 힌트">
+        <input class="field grow" data-ttf="${i}|ko" value="${esc(s.ko || '')}" placeholder="한국어 뜻"></div>
+      ${(s.stress || []).length || (s.tricky || []).length ? `<div class="muted" style="font-size:13px">${(s.stress || []).length ? `힘줄 단어: ${esc(s.stress.join(', '))} · ` : ''}끝 ${s.end === 'rise' ? '올리기 ↗' : '내리기 ↘'}${(s.tricky || []).map(x => ` · ${esc(x.word)}: ${esc(x.tipKo)}`).join('')}</div>` : ''}
+    </div>`).join('')}
+    <button class="btn ghost wide sm" id="ttAddSent">+ 문장 추가</button>
+    <button class="btn ghost wide" id="ttPrep" ${d.busy ? 'disabled' : ''}>🤖 뚜뚜에게 뜻·힌트 ${d.prepped ? '다시 ' : ''}만들어 달라기</button>
+    <div class="row" style="gap:8px"><button class="btn ghost grow" id="ttBack">← 원고로</button>
+      <button class="btn grow" id="ttSave" ${d.busy ? 'disabled' : ''}>저장하기</button></div>
+  </div>`;
+}
+async function ttRunPrep(){
+  const d = S.view.ttDraft; if (!d || d.busy) return;
+  const list = d.sentences.map(s => String(s.en || '').trim()).filter(Boolean);
+  if (!list.length){ toast('문장이 하나는 있어야 해요'); return; }
+  d.busy = true; d.msg = ''; openModal(parentSheet());
+  try {
+    const j = await ttAsk({ task:'prep', sentences:d.sentences.map(s => ttMask(String(s.en || '').trim())) });
+    (j.items || []).forEach((it, i) => {
+      const s = d.sentences[i]; if (!s) return;
+      s.ko = it.ko || s.ko || ''; s.cue = it.cue || s.cue || ''; s.stress = it.stress || []; s.end = it.end || 'fall'; s.tricky = it.tricky || [];
+    });
+    d.prepped = true;
+  } catch(e){
+    d.msg = (e.code === 'no_key' ? '뚜뚜 AI 키가 아직 없어서' : (e.message || '지금은 준비하지 못해서'))
+      + ' 그림 힌트·힘줄 단어·억양·발음 팁은 기기가 먼저 채웠어요. 한국어 뜻은 직접 적어주세요.';
+    d.sentences.forEach((s, i) => ttLocalPrep(s, i));
+  }
+  d.busy = false;
+  if (S.view.parentTab === 'speech' && $('#modalRoot .sheet')) openModal(parentSheet());
+}
+async function ttSaveDraft(){
+  const d = S.view.ttDraft; if (!d || d.busy) return;
+  const sentences = d.sentences.map(s => ({ en:String(s.en || '').trim(), ko:String(s.ko || '').trim(), cue:String(s.cue || '').trim(),
+    stress:s.stress || [], end:s.end === 'rise' ? 'rise' : 'fall', tricky:s.tricky || [] })).filter(s => s.en);
+  if (!sentences.length){ toast('문장이 하나는 있어야 해요'); return; }
+  const kidIds = d.kidIds.length ? d.kidIds.slice() : kids().map(k => k.id);
+  const data = { title:(d.title || '').trim() || '스피치 원고', contestDate:d.contestDate || '', timeLimitSec:ttParseLimit(d.limitText),
+                 kidIds, sentences, updatedAt:new Date().toISOString() };
+  if (d.id){
+    const old = S.data.scripts.find(x => x.id === d.id);
+    if (old){
+      // 문장이 바뀌어도 같은 문장은 진도를 이어 간다
+      for (const p of S.data.speech.filter(x => x.scriptId === d.id)){
+        const moved = { ...p, sents:ttRemap(old.sentences || [], sentences, p.sents || []) };
+        ttSaveProg(moved);
+      }
+      const { id:_x, ...rest } = old;
+      await Store.update('scripts', d.id, { ...rest, ...data });
+    }
+  } else await Store.add('scripts', { ...data, createdAt:new Date().toISOString() });
+  ttEnsureTodos(kidIds);
+  S.view.ttDraft = null;
+  openModal(parentSheet());
+  toast('원고를 저장했어요 🦜 아이 화면의 스피치 탭에서 시작해요');
+}
+/* 부모님 화면 단추 — 처리했으면 true */
+async function ttParentClick(t, d){
+  if (t.id === 'ttNew'){
+    S.view.ttDraft = { step:'paste', title:'', text:'', contestDate:'', limitText:'2:00', kidIds:kids().map(k => k.id), sentences:[] };
+    openModal(parentSheet()); return true;
+  }
+  const dr = S.view.ttDraft;
+  if (t.id === 'ttCancel'){ S.view.ttDraft = null; openModal(parentSheet()); return true; }
+  if (d.ttkid && dr){ dr.kidIds = dr.kidIds.includes(d.ttkid) ? dr.kidIds.filter(x => x !== d.ttkid) : dr.kidIds.concat(d.ttkid); openModal(parentSheet()); return true; }
+  if (t.id === 'ttSplit' && dr){
+    const list = ttSplit(dr.text);
+    if (!list.length){ toast('원고를 먼저 붙여넣어 주세요'); return true; }
+    const old = dr.sentences || [];
+    dr.sentences = list.map((x, i) => old.find(s => ttNorm(s.en).join(' ') === ttNorm(x.en).join(' '))
+      || ttLocalPrep({ en:x.en, ko:x.ko || '', cue:'', stress:[], end:'', tricky:[] }, i));
+    dr.step = 'edit';
+    openModal(parentSheet());
+    if (dr.sentences.some(s => !s.ko)) ttRunPrep();            // 뜻이 빈 문장이 있으면 뚜뚜가 바로 채운다
+    return true;
+  }
+  if (t.id === 'ttBack' && dr){ dr.step = 'paste'; openModal(parentSheet()); return true; }
+  if (t.id === 'ttAddSent' && dr){ dr.sentences.push({ en:'', ko:'', cue:'', stress:[], end:'fall', tricky:[] }); openModal(parentSheet()); return true; }
+  if (d.ttdel && dr){ dr.sentences.splice(+d.ttdel, 1); openModal(parentSheet()); return true; }
+  if (t.id === 'ttPrep'){ ttRunPrep(); return true; }
+  if (t.id === 'ttSave'){ await ttSaveDraft(); return true; }
+  if (d.ttedit){
+    const sc = S.data.scripts.find(x => x.id === d.ttedit); if (!sc) return true;
+    S.view.ttDraft = { id:sc.id, step:'edit', title:sc.title || '', text:(sc.sentences || []).map(s => s.en).join('\n'),
+      contestDate:sc.contestDate || '', limitText:sc.timeLimitSec ? fmtClock(sc.timeLimitSec) : '', kidIds:(sc.kidIds || []).slice(),
+      sentences:JSON.parse(JSON.stringify(sc.sentences || [])), prepped:true };
+    openModal(parentSheet()); return true;
+  }
+  if (d.ttassign){
+    const [sid, kidId] = d.ttassign.split('|'), sc = S.data.scripts.find(x => x.id === sid); if (!sc) return true;
+    const ids = (sc.kidIds || []).includes(kidId) ? sc.kidIds.filter(x => x !== kidId) : (sc.kidIds || []).concat(kidId);
+    await Store.update('scripts', sid, { kidIds:ids });
+    if (!sc.sample) ttEnsureTodos(ids);
+    openModal(parentSheet()); return true;
+  }
+  if (d.ttreset){
+    const sc = S.data.scripts.find(x => x.id === d.ttreset); if (!sc) return true;
+    askConfirm({ title:`「${sc.title || '원고'}」 진도를 처음부터 할까요?`, danger:true, okLabel:'처음부터',
+      note:'외운 단계와 복습 날짜가 처음으로 돌아가요. 기기에 있는 녹음은 그대로 남아요.',
+      onOk: async () => {
+        for (const p of S.data.speech.filter(x => x.scriptId === sc.id)){ delete TT_PID[p.kidId + '|' + p.scriptId]; await Store.remove('speech', p.id); }
+        S.view.parentTab = 'speech'; openModal(parentSheet()); toast('진도를 처음으로 돌렸어요');
+      } });
+    return true;
+  }
+  if (d.ttremove){
+    const sc = S.data.scripts.find(x => x.id === d.ttremove); if (!sc) return true;
+    askConfirm({ title:`「${sc.title || '원고'}」를 지울까요?`, danger:true, okLabel:'지우기',
+      note:'원고와 진도가 사라지고 되돌릴 수 없어요. 기기에 있는 녹음은 남아요.',
+      onOk: async () => {
+        for (const p of S.data.speech.filter(x => x.scriptId === sc.id)){ delete TT_PID[p.kidId + '|' + p.scriptId]; await Store.remove('speech', p.id); }
+        await Store.remove('scripts', sc.id);
+        S.view.parentTab = 'speech'; openModal(parentSheet()); toast('원고를 지웠어요');
+      } });
+    return true;
+  }
+  if (t.id === 'ttAiToggle'){
+    if (S.settings.ttAi === true){ await Store.saveSettings({ ttAi:false }); openModal(parentSheet()); toast('AI 듣기를 껐어요. 기기 안에서만 들어요'); return true; }
+    askConfirm({ title:'뚜뚜 AI 듣기를 켤까요?', okLabel:'알고 켤게요',
+      note:'켜면 아이가 말한 한 문장 녹음(몇 초)을 구글 Gemini로 보내 낱말·발음·억양을 확인해요. 이 앱은 녹음을 서버에 저장하지 않고, 이름이 든 문장은 보내지 않아요. '
+        + '다만 무료 등급에서는 보낸 내용이 구글 서비스 개선에 쓰이고 사람이 검토할 수 있어요. 또 Gemini API 약관은 18세 미만이 쓰는 서비스에는 쓰지 않도록 정하고 있어요. '
+        + '꺼 두어도 뚜뚜는 기기 안에서 소리 크기·빠르기·높낮이를 봐줘요.',
+      onOk: async () => { await Store.saveSettings({ ttAi:true }); S.view.parentTab = 'speech'; openModal(parentSheet()); toast('AI 듣기를 켰어요 🦜'); } });
+    return true;
+  }
+  if (t.id === 'ttVoiceTest'){ say('Hello, everyone! Thank you for listening.', { lang:'en', rate:0.85 }); return true; }
+  if (t.id === 'ttNvToggle'){ await Store.saveSettings({ ttNatural:S.settings.ttNatural === false }); NV.offUntil = 0; NV.fails = 0; openModal(parentSheet()); return true; }
+  if (d.ttnv){
+    nvUnlock(); NV.offUntil = 0; NV.fails = 0;
+    await Store.saveSettings({ ttNvVoice:d.ttnv }); openModal(parentSheet());
+    const ok = await voice('안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?', { lang:'ko' });
+    if (!nvOn()) toast('자연스러운 목소리를 지금은 쓸 수 없어서 기기 목소리로 들려드렸어요');
+    return true;
+  }
+  return false;
+}
+
+/* ============================================================
    이벤트 배선
    ============================================================ */
 document.addEventListener('click', async (e) => {
@@ -3302,7 +5338,7 @@ document.addEventListener('click', async (e) => {
     '[data-close],[data-pin],[data-pinclear],[data-pinback],[data-ptab],[data-addtodo],[data-parentdel],'+
     '[data-kidav],[data-kidcol],[data-grant],[data-relock],[data-approve],[data-deny],'+
     '[data-nday],[data-tday],[data-tglink],[data-bookedit],[data-bookdel],[data-bookshow],[data-becat],[data-bestar],'+
-    '[data-weather],[data-cand],button');
+    '[data-weather],[data-cand],[data-ttword],button');
   if (!t) return;
   const d = t.dataset;
 
@@ -3351,12 +5387,43 @@ document.addEventListener('click', async (e) => {
   }
   if (t.id === 'openParent'){ S.view.pin=''; S.view.pinError=''; S.view.pinPurpose='parent'; openModal(pinSheet('부모님 화면')); return; }
 
+  /* --- 🦜 뚜뚜 --- */
+  if (TT && document.getElementById('ttLayer') && document.getElementById('ttLayer').contains(t)){
+    await ttClick(t, d);
+    return;
+  }
+  if (t.id === 'ttGo' || d.ttgo){ ttOpenLesson(); return; }
+  if (d.ttone){ ttOpenLesson(false, +d.ttone); return; }
+  if (t.id === 'ttStage'){ ttOpenStage(); return; }
+  if (t.id === 'ttSample'){ await ttAddSample(); return; }
+  if (t.id === 'ttRecs'){ ttRecsSheet(); return; }
+  if (d.ttplay){ try { const r = await AudioBox.get(d.ttplay); if (r) playBlob(AudioBox.blob(r)); } catch(e){} return; }
+  if (await ttParentClick(t, d)) return;
+  if (quizClick(t, d)) return;
+  if (d.kudo != null && d.kudo !== ''){
+    const other = kids().find(k => k.id !== S.kidId), me = curKid();
+    if (!other || !me || kudosToday(S.kidId) >= 3) return;
+    await Store.add('kudos', { from:S.kidId, to:other.id, reason:KUDOS[+d.kudo] || KUDOS[4], at:new Date().toISOString() });
+    cheerPopup({ emoji:'💌', title:'칭찬 스티커를 보냈어요!', sub:`고마운 마음을 전하는 ${me.name}, 정말 멋져요!` });
+    return;
+  }
+  if (d.parentkudo){
+    await Store.add('kudos', { from:'parent', to:d.parentkudo, reason:'😇 착한 일을 했어요', at:new Date().toISOString() });
+    toast('칭찬 스티커를 붙여줬어요 😇'); openModal(parentSheet()); return;
+  }
+
   /* --- 탭 --- */
   if (d.tab){ S.tab = d.tab; if (d.tab!=='games'){ S.view.game=null; stopStars(); } render(); return; }
 
   /* --- 할 일 --- */
   if (d.tick){
     const key = todayKey(), s = sessionOf(S.kidId, d.tick, key);
+    const td = S.data.todos.find(x => x.id === d.tick);
+    if (td && td.kind === 'speech' && !(s && s.done) && ttScript(S.kidId)){
+      toast('뚜뚜랑 오늘 미션을 끝내면 저절로 체크돼요! 🦜');
+      ttOpenLesson();
+      return;
+    }
     if (s && s.done){ await Store.update('sessions', s.id, { done:false }); return; }   // 체크 해제는 응원 없이
     if (s) await Store.update('sessions', s.id, { done:true });
     else await Store.add('sessions', { kidId:S.kidId, todoId:d.tick, date:key, durationSec:0, done:true });
@@ -3382,7 +5449,7 @@ document.addEventListener('click', async (e) => {
       onOk: async (v) => {
         await Store.add('todos', { kidId:S.kidId, title:v, icon:'✨', repeatDays:[],
           createdBy:'kid', createdAt:new Date().toISOString() });
-        toast('할 일을 넣었어요');
+        toast('스스로 할 일을 정했네요! 할 수 있어요 💪');
       }
     });
     return;
@@ -3408,7 +5475,7 @@ document.addEventListener('click', async (e) => {
   if (t.id === 'wizSearchTitle'){
     const w = S.view.wiz;
     w.title = ($('#wizTitle').value||'').trim();
-    if (!w.title){ toast('먼저 제목을 조금 적어주세요'); return; }
+    if (!w.title){ toast('제목을 조금만 적어주면 찾아볼게요! 🔎'); return; }
     w.busy = true; openModal(bookWizard());
     const r = await bookSearch(w.title, 'title');
     w.busy = false;
@@ -3429,7 +5496,7 @@ document.addEventListener('click', async (e) => {
     const w = S.view.wiz;
     w.title = ($('#wizTitle').value||'').trim();
     w.author = ($('#wizAuthor').value||'').trim();
-    if (!w.title){ toast('책 제목을 적어주세요'); return; }
+    if (!w.title){ toast('책 제목을 적어줄래요? 📚'); return; }
     w.step = 'cover'; openModal(bookWizard()); return;
   }
   if (t.id === 'wizSkipCover' || t.id === 'wizSave'){ await saveBook(); return; }
@@ -3464,7 +5531,7 @@ document.addEventListener('click', async (e) => {
     keepBookEditTyping();
     const e = S.view.bookEdit, b = S.data.books.find(x => x.id === e.id);
     if (!b){ closeModal(); return; }
-    if (!e.title.trim()){ toast('책 제목을 적어주세요'); $('#beTitle').focus(); return; }
+    if (!e.title.trim()){ toast('책 제목을 적어줄래요? 📚'); $('#beTitle').focus(); return; }
     e.saving = true; openModal(bookEditSheet());
     const patch = { title:e.title.trim(), author:e.author.trim(), category:e.category, stars:e.stars };
     if (e.coverFile){
@@ -3476,7 +5543,7 @@ document.addEventListener('click', async (e) => {
     }
     await Store.update('books', e.id, patch);
     S.view.bookEdit = null;
-    toast('책을 고쳤어요');
+    toast('책을 고쳤어요 ✨');
     showBook(b.id);
     return;
   }
@@ -3498,7 +5565,7 @@ document.addEventListener('click', async (e) => {
   if (d.mode){ S.view.dictMode = d.mode; S.view.dictResult=null; render(); return; }
   if (d.say){ speak(d.say, d.lang); return; }
   if (t.id === 'micBtn'){
-    const mode = S.view.dictMode || 'ek';
+    const mode = S.view.dictMode === 'kk' ? 'kk' : 'en';
     listen(mode==='kk'?'ko':'en', txt => { S.view.dictQuery = txt; render(); doLookup(txt); });
     return;
   }
@@ -3511,7 +5578,7 @@ document.addEventListener('click', async (e) => {
     const r = S.view.dictResult; if (!r) return;
     await Store.add('words', {
       kidId:S.kidId, term:r.term, lang:(S.view.dictMode==='kk')?'ko':'en',
-      meaning:r.meaning, example:r.example, emoji:r.emoji, box:1,
+      meaning:r.meaning, meaningEn:r.meaningEn || '', example:r.example, emoji:r.emoji, box:1,
       nextReviewAt:new Date(Date.now()+86400000).toISOString(), createdAt:new Date().toISOString()
     });
     S.view.dictResult = null; S.view.dictQuery=''; render();
@@ -3527,7 +5594,7 @@ document.addEventListener('click', async (e) => {
       await Store.update('words', w.id, { box, nextReviewAt:new Date(Date.now()+days*86400000).toISOString() });
     }
     st.i++; st.show = false;
-    if (st.i >= st.queue.length){ closeModal(); confetti(); }
+    if (st.i >= st.queue.length){ closeModal(); confetti(); cheerPopup({ emoji:'🫧', title:'복습 끝! 최고예요!', sub:'"아직이요" 한 낱말도 괜찮아요. 다음에 또 보면 기억날 거예요' }); }
     else openModal(reviewSheet());
     return;
   }
@@ -3624,6 +5691,13 @@ document.addEventListener('click', async (e) => {
   if (d.parentdel){ await Store.update('todos', d.parentdel, { archived:true }); openModal(parentSheet()); return; }
   if (d.kidav){ const [id,av] = d.kidav.split('|'); await Store.update('profiles', id, { avatar:av }); openModal(parentSheet()); return; }
   if (d.kidcol){ const [id,ci] = d.kidcol.split('|'); await Store.update('profiles', id, { colorIdx:+ci }); openModal(parentSheet()); return; }
+  if (d.kidstyle){
+    const [id, f, v] = d.kidstyle.split('|'), k = kid(id); if (!k) return;
+    const st = kidStyle(k);
+    if (f === 'strengths') st.strengths = st.strengths.includes(v) ? st.strengths.filter(x => x !== v) : st.strengths.concat(v);
+    else st[f] = st[f] === v ? '' : v;                    // 한 번 더 누르면 비운다
+    await Store.update('profiles', id, { style:st }); openModal(parentSheet()); return;
+  }
   if (t.id === 'addKid'){
     askText({
       title:'새 친구 이름은?', placeholder:'이름', okLabel:'추가',
@@ -3665,7 +5739,7 @@ document.addEventListener('click', async (e) => {
   if (t.id === 'tgUnlink'){
     askConfirm({
       title:'텔레그램 연결을 끊을까요?', danger:true, okLabel:'끊기',
-      note:'끊으면 아이가 게임을 요청해도 알림이 가지 않아요. 언제든 다시 연결할 수 있어요.',
+      note:'끊으면 아이가 놀이를 요청해도 알림이 가지 않아요. 언제든 다시 연결할 수 있어요.',
       onOk: async () => {
         await Store.saveSettings({ telegram:null });
         S.view.tg = null; S.view.parentTab = 'notify';
@@ -3724,9 +5798,26 @@ document.addEventListener('click', async (e) => {
   }
 });
 
+/* 뚜뚜 원고 고치는 칸 — 칠 때마다 임시 원고에 담아 둔다 (창을 다시 그려도 글자가 남게) */
+document.addEventListener('input', (e) => {
+  const el = e.target, dr = S.view.ttDraft;
+  if (!dr) return;
+  if (el.id === 'ttTitle') dr.title = el.value;
+  if (el.id === 'ttText') dr.text = el.value;
+  if (el.id === 'ttDate') dr.contestDate = el.value;
+  if (el.id === 'ttLimit') dr.limitText = el.value;
+  if (el.dataset && el.dataset.ttf){
+    const [i, f] = el.dataset.ttf.split('|');
+    if (dr.sentences[+i]) dr.sentences[+i][f] = el.value;
+  }
+});
+
 /* 부모 설정 입력값 저장 */
 document.addEventListener('change', async (e) => {
   const el = e.target;
+  if (el.id === 'ttVoice'){ await Store.saveSettings({ ttVoice: el.value || '' }); say('Hello, everyone!', { lang:'en' }); }
+  if (el.id === 'ttMaskIn') await Store.saveSettings({ ttMask: el.value.trim().slice(0, 200) });
+  if (el.id === 'ttDate' && S.view.ttDraft) S.view.ttDraft.contestDate = el.value;
   if (el.id === 'setGameMin') await Store.saveSettings({ gameMinutes: clamp(+el.value||20, 5, 120) });
   if (el.id === 'setGoal') await Store.saveSettings({ weeklyGoal: clamp(+el.value||20, 2, 200) });
   if (el.id === 'setCats'){
@@ -3751,6 +5842,7 @@ document.addEventListener('change', async (e) => {
 
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter') return;
+  if (e.isComposing || e.keyCode === 229) return;       // 한글을 조합하는 중에 누른 엔터는 글자 확정용
   if (e.target.id === 'dictInput'){ e.preventDefault(); const q=(e.target.value||'').trim(); if (q) doLookup(q); }
   if (e.target.id === 'wizWord'){ e.preventDefault(); const b=$('#wizAddWord'); if (b) b.click(); }
   if (e.target.id === 'askInput'){ e.preventDefault(); const b=$('#askOk'); if (b) b.click(); }
@@ -3821,7 +5913,7 @@ async function doLookup(q){
   S.view.dictQuery = q; S.view.dictBusy = true; S.view.dictError=''; S.view.dictResult=null;
   render();
   try {
-    const r = await lookupWord(q, S.view.dictMode || 'ek');
+    const r = await lookupWord(q, S.view.dictMode === 'kk' ? 'kk' : 'en');
     S.view.dictResult = r;
   } catch(err){
     S.view.dictError = (err && err.code === 'not_granted')
@@ -3830,6 +5922,262 @@ async function doLookup(q){
   }
   S.view.dictBusy = false;
   render();
+}
+
+/* ============================================================
+   🧩 단어 퀴즈 — 단어 가방에 담은 낱말로 (적으면 뚜뚜 추천 낱말을 섞는다)
+   빈칸 채우기 · 영→한 뜻 · 한→영 · 한글 맞춤법.
+   틀려도 괜찮아 — 틀린 낱말은 다음 퀴즈에 먼저 나와서 오래 기억나요.
+   척척 빠른 아이는 고른 뒤 "✔ 이걸로 할래요"로 한 번 더 확인하는 습관을, 꼼꼼한 아이는 보기가 하나 더.
+   ============================================================ */
+const QZ_TYPES = [
+  ['mix', '🎲 골고루 섞어서'], ['blank', '🔤 빈칸 채우기'], ['e2k', '🇺🇸 → 🇰🇷 무슨 뜻일까?'],
+  ['k2e', '🇰🇷 → 🇺🇸 영어로 뭘까?'], ['spell', '✏️ 한글 맞춤법']
+];
+const QZ_EN = [
+  ['apple','사과','🍎','I eat an apple.'], ['happy','행복한','😊','I am happy.'], ['school','학교','🏫','I go to school.'],
+  ['friend','친구','🧑‍🤝‍🧑','She is my friend.'], ['water','물','💧','I drink water.'], ['flower','꽃','🌸','The flower is pretty.'],
+  ['rabbit','토끼','🐰','The rabbit can jump.'], ['yellow','노란색','💛','The sun is yellow.'], ['music','음악','🎵','I like music.'],
+  ['smile','미소','😄','Please smile!'], ['rainbow','무지개','🌈','I see a rainbow.'], ['window','창문','🪟','Open the window.']
+];
+const QZ_KO = [
+  ['같이','여럿이 함께','🤝'], ['놀이터','아이들이 뛰어노는 곳','🛝'], ['깨끗이','더럽지 않게 말끔히','🧼'], ['읽다','글을 보고 소리 내어 말하다','📖'],
+  ['앉다','의자에 엉덩이를 대다','🪑'], ['많이','수나 양이 넉넉하게','➕'], ['떡볶이','떡을 매콤하게 볶은 음식','🌶️'], ['꽃밭','꽃을 가꾸는 밭','🌷'],
+  ['부엌','음식을 만드는 곳','🍳'], ['닭','꼬꼬댁 우는 새','🐔'], ['여덟','숫자 8','8️⃣'], ['해돋이','해가 떠오르는 것','🌅'],
+  ['국물','국이나 찌개의 물','🍲'], ['무릎','다리가 접히는 곳','🦵'], ['맛있다','음식 맛이 좋다','😋'], ['괜찮아','걱정 없다는 말','🙆'],
+  ['좋아요','마음에 든다는 말','👍'], ['선생님','가르쳐 주시는 분','🧑‍🏫']
+];
+const QZ_WHY = {
+  sound:'소리 나는 대로 쓰면 헷갈려요. 소리는 비슷해도 쓰는 글자는 달라요!',
+  batchim:'받침이 헷갈리기 쉬워요. 받침을 한 번 더 확인해요!',
+  vowel:'ㅐ와 ㅔ처럼 소리가 비슷한 모음이라 헷갈려요.',
+  tense:'소리는 세게 나도 쓸 때는 부드러운 글자로 써요.'
+};
+
+/* ---------- 한글 자모 — 헷갈리는 맞춤법 보기 만들기 ----------
+   초성 ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ(0~18) · 중성 ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ(0~20)
+   종성 없음ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ(0~27) */
+function kjSplit(ch){ const c = ch.charCodeAt(0) - 0xAC00; return (c >= 0 && c <= 11171) ? [Math.floor(c / 588), Math.floor(c % 588 / 28), c % 28] : null; }
+function kjJoin(a, b, c){ return String.fromCharCode(0xAC00 + a * 588 + b * 28 + c); }
+// 받침이 뒤 글자 'ㅇ' 자리로 넘어갈 때 [남는 받침, 넘어가는 첫소리] — 놀이→노리, 읽어→일거, 많이→마니
+const KJ_MOVE = { 1:[0,0], 2:[0,1], 4:[0,2], 7:[0,3], 8:[0,5], 16:[0,6], 17:[0,7], 19:[0,9], 20:[0,10], 22:[0,12], 23:[0,14],
+  24:[0,15], 25:[0,16], 26:[0,17], 3:[1,9], 5:[4,12], 6:[0,2], 9:[8,0], 10:[8,6], 11:[8,7], 12:[8,9], 13:[8,16], 14:[8,17], 15:[0,5], 18:[17,9] };
+// 받침 대표 소리 — 옷→옫, 부엌→부억, 닭→닥, 여덟→여덜
+const KJ_REP = { 2:1, 24:1, 3:1, 9:1, 19:7, 20:7, 22:7, 23:7, 25:7, 27:7, 26:17, 14:17, 18:17, 5:4, 6:4, 11:8, 12:8, 13:8, 15:8, 10:16 };
+const KJ_VOWEL = { 1:5, 5:1, 3:7, 7:3, 11:10, 10:11, 15:10, 19:20 };      // ㅐ↔ㅔ, ㅒ↔ㅖ, ㅚ↔ㅙ, ㅞ→ㅙ, ㅢ→ㅣ
+function koVariants(word){
+  const chars = [...String(word || '')], out = [];
+  const add = (arr, why) => { const t = arr.join(''); if (t !== word && !out.some(o => o.t === t)) out.push({ t, why }); };
+  const G = [1, 2, 3, 9, 24], D = [7, 19, 20, 22, 23, 25, 27], B = [17, 18, 26, 14];
+  for (let i = 0; i < chars.length; i++){
+    const a = kjSplit(chars[i]); if (!a) continue;
+    const b = i + 1 < chars.length ? kjSplit(chars[i + 1]) : null;
+    const set = (i1, v1, i2, v2) => { const c = chars.slice(); c[i1] = v1; if (i2 != null) c[i2] = v2; return c; };
+    const c0 = a[0], j0 = a[1], f0 = a[2];
+    if (f0 && b){
+      const c1 = b[0], j1 = b[1], f1 = b[2];
+      if (c1 === 11){                                                    // 뒤 글자가 'ㅇ'으로 시작
+        if ((f0 === 7 || f0 === 25) && j1 === 20) add(set(i, kjJoin(c0, j0, 0), i + 1, kjJoin(f0 === 7 ? 12 : 14, j1, f1)), 'sound');   // 같이→가치
+        else if (f0 === 27) add(set(i, kjJoin(c0, j0, 0)), 'sound');                                                                   // 좋아→조아
+        else if (KJ_MOVE[f0] && f0 !== 21){ const m = KJ_MOVE[f0]; add(set(i, kjJoin(c0, j0, m[0]), i + 1, kjJoin(m[1], j1, f1)), 'sound'); }   // 놀이→노리
+        if (f0 === 8) add(set(i + 1, kjJoin(5, j1, f1)), 'sound');                                                                     // 놀이→놀리, 얼음→얼름
+        if (KJ_REP[f0] != null) add(set(i, kjJoin(c0, j0, KJ_REP[f0])), 'batchim');                                                   // 같이→갇이, 많이→만이
+      } else {
+        if ((c1 === 2 || c1 === 6) && (G.includes(f0) || D.includes(f0) || B.includes(f0)))
+          add(set(i, kjJoin(c0, j0, G.includes(f0) ? 21 : (D.includes(f0) ? 4 : 16))), 'sound');                                        // 국물→궁물
+        if ([27, 6, 15].includes(f0) && [0, 3, 12].includes(c1))
+          add(set(i, kjJoin(c0, j0, f0 === 27 ? 0 : (f0 === 6 ? 4 : 8)), i + 1, kjJoin({ 0:15, 3:16, 12:14 }[c1], j1, f1)), 'sound');   // 좋다→조타
+        if (c1 === 18 && [1, 7, 17].includes(f0))
+          add(set(i, kjJoin(c0, j0, 0), i + 1, kjJoin({ 1:15, 7:16, 17:17 }[f0], j1, f1)), 'sound');                                   // 축하→추카
+        if (f0 === 4 && c1 === 5) add(set(i, kjJoin(c0, j0, 8)), 'sound');                                                              // 신라→실라
+        if (f0 === 8 && c1 === 2) add(set(i + 1, kjJoin(5, j1, f1)), 'sound');                                                         // 칼날→칼랄
+        const T = { 0:1, 3:4, 7:8, 9:10, 12:13 };
+        if (T[c1] != null && (G.includes(f0) || D.includes(f0) || B.includes(f0))) add(set(i + 1, kjJoin(T[c1], j1, f1)), 'tense');   // 학교→학꾜
+        if (KJ_REP[f0] != null) add(set(i, kjJoin(c0, j0, KJ_REP[f0])), 'batchim');                                                   // 꽃밭→꼳밭
+      }
+    } else if (f0 && !b && KJ_REP[f0] != null) add(set(i, kjJoin(c0, j0, KJ_REP[f0])), 'batchim');                                     // 부엌→부억
+    if (KJ_VOWEL[j0] != null) add(set(i, kjJoin(c0, KJ_VOWEL[j0], f0)), 'vowel');                                                      // 개→게
+  }
+  const order = { sound:0, batchim:1, vowel:2, tense:3 };
+  out.sort((x, y) => order[x.why] - order[y.why]);
+  for (let i = chars.length - 1; i >= 0 && out.length < 2; i--){                                    // 그래도 모자라면 받침을 빼거나 넣어 본다
+    const a = kjSplit(chars[i]); if (!a) continue;
+    const c = chars.slice(); c[i] = kjJoin(a[0], a[1], a[2] ? 0 : 4);
+    const t = c.join(''); if (t !== word && !out.some(o => o.t === t)) out.push({ t, why:'batchim' });
+  }
+  return out;
+}
+
+/* ---------- 문제 만들기 ---------- */
+function quizPool(){
+  const mine = S.data.words.filter(w => w.kidId === S.kidId && w.term && w.meaning);
+  const pick = w => ({ id:w.id, term:w.term, meaning:w.meaning, emoji:w.emoji || '', example:w.example || '', qz:w.qz });
+  return {
+    en: mine.filter(w => w.lang !== 'ko' && /[a-z]/i.test(w.term) && !/[가-힣]/.test(w.term)).map(pick),
+    ko: mine.filter(w => w.lang === 'ko' && /[가-힣]/.test(w.term)).map(pick),
+    enX: QZ_EN.map(([term, meaning, emoji, example]) => ({ id:'', term, meaning, emoji, example })),
+    koX: QZ_KO.map(([term, meaning, emoji]) => ({ id:'', term, meaning, emoji, example:'' }))
+  };
+}
+function qzShuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); const x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+function qzWeight(w){ const q = w.qz || {}; return (q.no || 0) * 2 - (q.ok || 0) + Math.random() * 1.5; }   // 틀렸던 낱말이 먼저
+function qzTop(list, n){ return list.slice().sort((a, b) => qzWeight(b) - qzWeight(a)).slice(0, n); }
+function qzOptions(right, pool, key, n){
+  const seen = new Set([String(right[key]).toLowerCase()]), others = [];
+  for (const x of qzShuffle(pool)){ const v = String(x[key]); if (!seen.has(v.toLowerCase())){ seen.add(v.toLowerCase()); others.push(v); } if (others.length >= n - 1) break; }
+  return qzShuffle([right[key]].concat(others)).map(t => ({ t, ok:t === right[key] }));
+}
+function quizBuild(type, n){
+  n = n || 8;
+  const P = quizPool();
+  const enAll = P.en.concat(P.en.length < 4 ? P.enX.filter(x => !P.en.some(y => y.term.toLowerCase() === x.term)) : []);
+  const koAll = P.ko.concat(P.ko.length < 4 ? P.koX.filter(x => !P.ko.some(y => y.term === x.term)) : []);
+  const kinds = type === 'mix' ? ['blank', 'e2k', 'k2e', 'spell'] : [type];
+  const nOpt = kidStyle(curKid()).pace === 'careful' ? 4 : 3;           // 꼼꼼한 아이는 보기 하나 더
+  const qs = [], used = new Set();
+  for (let guard = 0; qs.length < n && guard < 80; guard++){
+    const kind = kinds[guard % kinds.length];
+    if (kind === 'spell'){
+      const cand = qzTop(koAll.filter(w => !used.has(w)), 8).find(w => koVariants(w.term).length >= 2);
+      if (!cand){ if (type === 'spell') break; continue; }
+      used.add(cand);
+      const vars = koVariants(cand.term).slice(0, nOpt - 1);
+      qs.push({ kind, word:cand, prompt:`${cand.emoji || '✏️'} ${cand.meaning}`, sub:'바르게 쓴 낱말은 무엇일까요?', answer:cand.term,
+        options:qzShuffle([{ t:cand.term, ok:true }].concat(vars.map(v => ({ t:v.t, ok:false, why:v.why })))) });
+      continue;
+    }
+    const w = qzTop(enAll.filter(x => !used.has(x)), 5)[0];
+    if (!w){ if (type !== 'mix') break; continue; }
+    used.add(w);
+    if (kind === 'e2k') qs.push({ kind, word:w, prompt:w.term, say:w.term, sub:'무슨 뜻일까요?', options:qzOptions(w, enAll, 'meaning', 4), answer:w.meaning });
+    else if (kind === 'k2e') qs.push({ kind, word:w, prompt:`${w.emoji || ''} ${w.meaning}`.trim(), sub:'영어로 뭘까요?', options:qzOptions(w, enAll, 'term', 4), answer:w.term });
+    else {                                  // 빈칸 — 예문이 있으면 문장 속 빈칸, 없으면 글자 하나 빈칸
+      const re = new RegExp(`\\b${w.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+      if (w.example && re.test(w.example)){
+        qs.push({ kind, word:w, prompt:w.example.replace(re, '＿＿＿'), sub:`${w.meaning} — 빈칸에 들어갈 단어는?`, say:w.example,
+          options:qzOptions(w, enAll, 'term', 4), answer:w.term });
+      } else {
+        const letters = [...w.term], vow = letters.map((c, i) => /[aeiou]/i.test(c) && i > 0 ? i : -1).filter(i => i > 0);
+        const at = vow.length ? vow[Math.floor(Math.random() * vow.length)] : Math.min(1, letters.length - 1);
+        const right = letters[at].toLowerCase();
+        const pool = 'aeioursltnm'.split('').filter(c => c !== right);
+        qs.push({ kind, word:w, prompt:letters.map((c, i) => i === at ? '＿' : c).join(''), sub:`${w.meaning} — 빈칸에 들어갈 글자는?`,
+          say:w.term, full:w.term, answer:right, options:qzShuffle([right].concat(qzShuffle(pool).slice(0, 3))).map(t => ({ t, ok:t === right })) });
+      }
+    }
+  }
+  return qzShuffle(qs).slice(0, n);
+}
+
+/* ---------- 화면 ---------- */
+function quizMenu(){
+  const P = quizPool();
+  return `<h3>🧩 단어 퀴즈</h3>
+    <p class="muted" style="margin:0 0 12px">단어 가방에 담은 낱말로 문제를 내요.
+      ${P.en.length < 4 || P.ko.length < 4 ? '낱말이 아직 적은 쪽은 뚜뚜 추천 낱말도 섞을게요. ' : ''}틀려도 괜찮아요!</p>
+    <div class="stack" style="gap:9px">${QZ_TYPES.map(([id, label]) =>
+      `<button class="btn ghost wide" data-qztype="${id}" style="justify-content:flex-start">${label}</button>`).join('')}</div>
+    <p class="muted" style="margin:10px 0 0;font-size:13px">내 단어 가방 — 영어 ${P.en.length}개 · 한글 ${P.ko.length}개</p>`;
+}
+function qzCheer(k){
+  const l = ['딩동댕! 정답이에요!', '우와, 맞았어요! 최고!', '척척박사네요!', '멋져요! 너무 잘하고 있어요!'];
+  return l[Math.floor(Math.random() * l.length)] + (kidStyle(k).pace === 'quick' ? ' 한 번 더 확인한 덕분이에요!' : '');
+}
+function qzGentle(q, picked){
+  if (q.kind === 'blank' && q.full) return `괜찮아요! ‘${q.full}’ — 빈칸에는 ‘${q.answer}’가 들어가요. 틀린 낱말은 다음에 또 나와서 더 잘 기억나요!`;
+  let s = `괜찮아요! 정답은 ‘${q.answer}’${hasJong(q.answer) ? '이에요' : '예요'}.`;
+  if (q.kind === 'spell' && picked && picked.why) s += ` ${QZ_WHY[picked.why]}`;
+  return s + ' 틀린 낱말은 다음에 또 나와서 더 잘 기억나요!';
+}
+function quizSheet(){
+  const Z = S.view.quiz;
+  if (Z.done) return quizDone();
+  const q = Z.qs[Z.i], k = curKid(), quick = kidStyle(k).pace === 'quick', shown = Z.answered;
+  const picked = Z.pick != null ? q.options[Z.pick] : null;
+  const big = q.kind === 'e2k' || (q.kind === 'blank' && q.full);
+  const opt = (o, i) => {
+    let st = '';
+    if (shown){ if (o.ok) st = 'background:var(--mint-soft);border-color:var(--mint-deep)'; else if (Z.pick === i) st = 'background:var(--berry-soft);border-color:var(--berry)'; }
+    else if (Z.pick === i) st = 'background:var(--butter);border-color:var(--butter-deep)';
+    return `<button class="matchbtn" data-qz="${i}" style="${st};font-size:${q.kind === 'e2k' ? 16 : 20}px" ${shown ? 'disabled' : ''}>${shown && o.ok ? '✅ ' : ''}${esc(o.t)}</button>`;
+  };
+  return `<div class="row" style="margin-bottom:8px;padding-right:48px"><h3 class="grow" style="margin:0">🧩 ${Z.i + 1} / ${Z.qs.length}</h3><span class="muted">⭐ ${Z.ok}</span></div>
+    <div class="card" style="text-align:center;margin-bottom:12px">
+      <div style="font-family:var(--display);font-size:${big ? 36 : 24}px;line-height:1.3;word-break:keep-all">${esc(q.prompt)}</div>
+      <div class="muted" style="margin-top:6px">${esc(q.sub)}</div>
+      ${q.say ? `<button class="btn ghost sm" data-say="${esc(q.say)}" data-lang="en" style="margin-top:8px">🔊 들어보기</button>` : ''}
+    </div>
+    <div style="display:grid;grid-template-columns:${q.options.length > 3 ? '1fr 1fr' : '1fr'};gap:9px">${q.options.map(opt).join('')}</div>
+    ${shown ? `<div class="banner ${picked && picked.ok ? 'info' : 'warn'}" style="margin-top:12px"><span>${picked && picked.ok ? '🎉' : '🤗'}</span>
+        <span>${esc(picked && picked.ok ? qzCheer(k) : qzGentle(q, picked))}</span></div>
+      <button class="btn wide" id="qzNext" style="margin-top:12px">${Z.i + 1 >= Z.qs.length ? '결과 보기 🎉' : '다음 문제 ▶'}</button>`
+    : (quick && Z.pick != null ? `<p class="muted" style="text-align:center;margin:12px 0 6px">한 번 더 확인해 볼까요? 🔍</p>
+        <button class="btn mint wide" id="qzOk">✔ 이걸로 할래요</button>` : '')}`;
+}
+function quizDone(){
+  const Z = S.view.quiz, n = Z.qs.length, ok = Z.ok, wrong = Z.results.filter(r => !r.ok).length;
+  return `<div style="text-align:center">
+    <div style="font-size:54px">${ok === n ? '🏆' : '🎉'}</div>
+    <h3>${n}문제 중 ${ok}개 맞혔어요!</h3>
+    <div class="tt-stars" style="font-size:34px">${'⭐'.repeat(Math.max(1, Math.min(5, ok)))}</div>
+    <p class="muted" style="margin:6px 0 14px">${ok === n ? '완벽해요! 척척박사 인정! 🎓' : '끝까지 푼 게 제일 멋져요. 틀린 낱말은 다음에 또 만나요!'}</p>
+    <div class="stack" style="gap:9px">
+      ${wrong ? '<button class="btn wide" id="qzAgainWrong">🔁 틀린 것만 다시 풀기</button>' : ''}
+      <button class="btn ghost wide" id="qzMenu">🧩 다른 퀴즈</button>
+      <button class="btn ghost wide sm" data-close="1">끝내기</button>
+    </div></div>`;
+}
+function quizStart(type, qs){
+  qs = qs || quizBuild(type);
+  if (!qs.length){ toast('문제를 만들 낱말이 아직 없어요. 사전에서 낱말을 담아볼까요?'); return; }
+  S.view.quiz = { type, qs, i:0, pick:null, answered:false, ok:0, results:[], done:false };
+  openModal(quizSheet());
+  if (qs[0].kind === 'e2k') speak(qs[0].say, 'en');
+}
+function quizReveal(){
+  const Z = S.view.quiz, q = Z.qs[Z.i], o = q.options[Z.pick];
+  Z.answered = true;
+  const ok = !!(o && o.ok);
+  if (ok){ Z.ok++; ttChime(); }
+  Z.results.push({ q, ok });
+  openModal(quizSheet());
+  if (q.kind !== 'spell') speak(q.full || q.word.term, 'en');            // 정답 낱말을 한 번 들려준다
+}
+async function quizFinish(){
+  const Z = S.view.quiz; Z.done = true;
+  openModal(quizSheet()); confetti();
+  if (Z.ok) awardStars(Z.ok);
+  const per = {};
+  for (const r of Z.results){ const id = r.q.word.id; if (!id) continue; per[id] = per[id] || { ok:0, no:0 }; per[id][r.ok ? 'ok' : 'no']++; }
+  for (const [id, v] of Object.entries(per)){
+    const w = S.data.words.find(x => x.id === id); if (!w) continue;
+    const q = w.qz || {};
+    await Store.update('words', id, { qz:{ ok:(q.ok || 0) + v.ok, no:(q.no || 0) + v.no, at:new Date().toISOString() } });
+  }
+}
+/* 퀴즈 단추 — 처리했으면 true */
+function quizClick(t, d){
+  if (t.id === 'quizGo' || t.id === 'qzMenu'){ nvUnlock(); openModal(quizMenu()); return true; }
+  if (d.qztype){ nvUnlock(); quizStart(d.qztype); return true; }
+  const Z = S.view.quiz; if (!Z) return false;
+  if (d.qz != null && d.qz !== '' && !Z.answered){
+    const i = +d.qz;
+    if (kidStyle(curKid()).pace === 'quick' && Z.pick !== i){ Z.pick = i; openModal(quizSheet()); return true; }   // 한 번 더 확인
+    Z.pick = i; quizReveal(); return true;
+  }
+  if (t.id === 'qzOk' && Z.pick != null && !Z.answered){ quizReveal(); return true; }
+  if (t.id === 'qzNext'){
+    Z.i++; Z.pick = null; Z.answered = false;
+    if (Z.i >= Z.qs.length){ quizFinish(); return true; }
+    openModal(quizSheet());
+    const q = Z.qs[Z.i]; if (q.kind === 'e2k') speak(q.say, 'en');
+    return true;
+  }
+  if (t.id === 'qzAgainWrong'){
+    quizStart(Z.type, qzShuffle(Z.results.filter(r => !r.ok).map(r => ({ ...r.q, options:qzShuffle(r.q.options) }))));
+    return true;
+  }
+  return false;
 }
 
 /* ---------- 복습 ---------- */
@@ -3851,7 +6199,7 @@ function reviewSheet(){
       <button class="btn ghost sm" data-say="${esc(w.term)}" data-lang="${w.lang==='ko'?'ko':'en'}">🔊 들어보기</button>
     </div>
     ${st.show
-      ? `<div class="row" style="gap:9px"><button class="btn ghost grow" id="revAgain">아직이요</button>
+      ? `<div class="row" style="gap:9px"><button class="btn ghost grow" id="revAgain">아직이요 (괜찮아요!)</button>
          <button class="btn mint grow" id="revKnow">알아요!</button></div>`
       : `<button class="btn wide" id="revShow">뜻 보기</button>`}`;
 }
@@ -3872,11 +6220,11 @@ async function uploadCover(file){
       const up = await S.sb.storage.from('covers').upload(path, file, { contentType:file.type, upsert:false });
       if (up.error) throw up.error;
       return { coverUrl:S.sb.storage.from('covers').getPublicUrl(path).data.publicUrl, coverAssetId:'' };
-    } catch(e){ console.warn('표지 올리기 실패', e); toast('사진을 올리지 못했어요'); return null; }
+    } catch(e){ console.warn('표지 올리기 실패', e); toast('사진을 올리지 못했어요. 괜찮아요, 사진 없이도 책장에 들어가요!'); return null; }
   }
   if (S.assets){
     try { const r = await S.assets.upload(file); return { coverUrl:'', coverAssetId:r.id }; }
-    catch(e){ console.warn('표지 올리기 실패', e); toast('사진을 올리지 못했어요'); return null; }
+    catch(e){ console.warn('표지 올리기 실패', e); toast('사진을 올리지 못했어요. 괜찮아요, 사진 없이도 책장에 들어가요!'); return null; }
   }
   return null;
 }
@@ -3891,7 +6239,7 @@ async function removeCoverFile(b){
 
 async function saveBook(){
   const w = S.view.wiz;
-  if (!w.title){ toast('책 제목을 적어주세요'); return; }
+  if (!w.title){ toast('책 제목을 적어줄래요? 📚'); return; }
   w.uploading = !!w.coverFile;
   openModal(bookWizard());
 
@@ -4027,9 +6375,12 @@ async function seedSample(){
 }
 
 async function clearSample(){
-  for (const coll of ['todos','books','words','sessions']){
+  for (const coll of ['todos','books','words','sessions','scripts']){
     for (const r of S.data[coll].filter(x => x.sample)) await Store.remove(coll, r.id);
   }
+  // 예시 원고로 한 진도도 함께
+  const alive = new Set(S.data.scripts.map(x => x.id));
+  for (const p of S.data.speech.filter(x => !alive.has(x.scriptId))) await Store.remove('speech', p.id);
   await Store.saveSettings({ sampleLoaded:false });
 }
 
@@ -4088,6 +6439,19 @@ setInterval(() => {
     S.view.game = null; stopStars(); render();     // 시간이 끝나면 자동으로 잠김
   }
 }, 1000);
+
+/* 다른 앱으로 가거나 화면이 꺼지면 녹음과 뚜뚜 목소리를 멈춘다 */
+document.addEventListener('visibilitychange', () => {
+  if (!TT) return;
+  if (document.visibilityState === 'hidden'){
+    if (TT.step === 'rec' || TT.step === 'run' || TT.step === 'count'){
+      recCancel(); clearInterval(TT.tick); clearInterval(TT.cd);
+      TT.step = TT.kind === 'stage' ? 'ready' : 'speak';
+      TT.say = '잠깐 쉬었다 왔구나! 괜찮아, 다시 해보자.';
+    }
+    hush(); playStop(); ttMouth(false); ttLayer();
+  } else wakeOn();
+});
 
 /* ============================================================
    시작
