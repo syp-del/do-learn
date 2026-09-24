@@ -68,6 +68,7 @@ package.json    type: module (Vercel 함수가 ESM), 의존성은 @anthropic-ai/
 `index.html` 상단의 `SB_URL`, `SB_KEY`가 그 프로젝트를 가리킨다.
 
 여행·그림일기 사진을 가족 모든 기기에서 보려면 비공개 버킷 `memories`가 필요하다(아래 ‘데이터가 보호되는 방식’).
+지금 프로젝트에는 이미 만들어 두었다. 새 프로젝트라면 `supabase/memories.sql`을 SQL Editor에서 한 번 실행한다(여러 번 실행해도 된다).
 버킷이 없으면 사진은 찍은 기기(IndexedDB `dolearn-photos`)에만 저장되고, 나머지 기록은 그대로 동기화된다.
 
 ---
