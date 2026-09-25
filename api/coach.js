@@ -238,6 +238,8 @@ const TTS_STYLES = {
 const TTS_KO = new Set(['ko', 'dict']);
 const TTS_MODELS = ['gemini-3.8-flash-tts', 'gemini-3.8-flash-lite-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-flash-preview-tts'];
 let ttsGood = null;                                   // 한 번 되는 모델을 찾으면 기억한다
+// 무료 등급은 목소리 모델마다 하루 한도가 따로다(예: 하루 10번). 한도에 걸린(429) 모델은 10분 쉬게 하고 다음 모델로 만든다
+const ttsTired = new Map();                              // 모델 → 다시 써 볼 시각
 const ttsCache = new Map();                           // 같은 서버가 살아 있는 동안 같은 말은 다시 만들지 않는다
 
 // 응답 어딘가에 들어 있는 오디오(base64)를 찾는다 — 새 방식·예전 방식 둘 다
@@ -297,6 +299,7 @@ async function tts(p, body) {
   const order = [...new Set([env, ttsGood, ...TTS_MODELS].filter(Boolean))];
   let last = null;
   for (const model of order) {
+    if ((ttsTired.get(model) || 0) > Date.now()) continue;
     try {
       const audio = await ttsCall(p, model, text, voice, style, TTS_KO.has(body.style));
       ttsGood = model;
@@ -305,11 +308,13 @@ async function tts(p, body) {
       return { status: 200, json: { audio, mime: 'audio/wav', voice, model } };
     } catch (e) {
       last = e;
-      // 모델이 없거나(404) 이 방식을 모르면(400) 다음 모델로. 한도·키 문제는 바로 멈춘다.
+      // 한도에 걸리면(429) 그 모델만 쉬고 다음 모델로 — 모델마다 한도가 따로다
+      if (e instanceof GeminiError && e.status === 429) { ttsTired.set(model, Date.now() + 10 * 60000); if (ttsGood === model) ttsGood = null; continue; }
+      // 모델이 없거나(404) 이 방식을 모르면(400) 다음 모델로. 키 문제 등은 바로 멈춘다.
       if (!(e instanceof GeminiError) || ![400, 404].includes(e.status)) throw e;
     }
   }
-  throw last;
+  throw last || new GeminiError(429, { error: { message: '목소리 모델이 모두 오늘 한도를 넘었어요', status: 'RESOURCE_EXHAUSTED' } });
 }
 
 /* ============================================================

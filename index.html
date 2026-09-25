@@ -1494,7 +1494,7 @@ const Store = {
 async function sbAllItems(){
   const all = [];
   for (let from = 0; from < 50000; from += 1000){
-    const r = await S.sb.from('items').select('id,coll,data').neq('coll', 'vclip').order('id').range(from, from + 999);   // 🎤 음성은 누를 때만 받는다
+    const r = await S.sb.from('items').select('id,coll,data').not('coll', 'in', '(vclip,ttsclip)').order('id').range(from, from + 999);   // 🎤 음성 메시지·🗂 AI 목소리는 쓸 때만 받는다
     if (r.error) throw r.error;
     const rows = r.data || [];
     all.push(...rows);
@@ -4247,8 +4247,9 @@ function hush(){
    뚜뚜가 할 말만 서버(/api/coach)로 보내 사람처럼 자연스러운 목소리로 받는다. 아이 목소리는 보내지 않는다.
    같은 말은 한 번 만들어 이 기기(IndexedDB)에 저장하고 다시 쓴다. 안 되면 기기 목소리로 바로 넘어간다. */
 const NV_VOICES = [['Sulafat','따뜻한'], ['Achernar','부드러운'], ['Vindemiatrix','다정한'], ['Leda','앳된'], ['Aoede','산뜻한'], ['Autonoe','밝은']];
-const NV = { el:null, unlocked:false, fails:0, offUntil:0, mem:new Map(), cur:null, curEnd:null, silent:'' };
-function nvOn(){ return S.settings.ttNatural !== false && !window.claude && location.protocol.startsWith('http') && !(NV.offUntil > Date.now()); }
+const NV = { el:null, unlocked:false, fails:0, offUntil:0, mem:new Map(), inflight:new Map(), cur:null, curEnd:null, silent:'' };
+function nvOn(){ return S.settings.ttNatural !== false && !window.claude && location.protocol.startsWith('http'); }
+function nvRest(){ return NV.offUntil > Date.now(); }       // 서버가 새 목소리를 못 만들 때(한도·키) — 이미 만든 목소리(이 기기·가족 저장)는 계속 쓴다
 function nvVoice(){ const v = S.settings.ttNvVoice; return NV_VOICES.some(x => x[0] === v) ? v : 'Sulafat'; }
 function nvEl(){ if (!NV.el){ NV.el = new Audio(); NV.el.setAttribute('playsinline', ''); NV.el.preload = 'auto'; } return NV.el; }
 /* 누른 순간에 한 번 — 아이패드가 나중에(목소리를 받아 온 뒤에) 소리를 내도록 허락받는다 */
@@ -4264,31 +4265,88 @@ function nvUnlock(){
   if (!NV.silent) NV.silent = 'data:audio/wav;base64,' + wavBase64(new Float32Array(800), 16000);
   try { a.src = NV.silent; const p = a.play(); if (p && p.then) p.then(() => { NV.unlocked = true; }).catch(() => {}); else NV.unlocked = true; } catch(e){}
 }
-async function nvFetch(text, style){
+function nvFetch(text, style){
   // 한국어(ko·dict)는 아나운서 말투로 바꿨다(v2) — 예전에 받아 둔 한국어 목소리는 다시 쓰지 않는다. 영어는 그대로라 예전 것을 쓴다
   const k = `${style === 'ko' || style === 'dict' ? 'v2|' : ''}${nvVoice()}|${style}|${text}`;
-  if (NV.mem.has(k)) return NV.mem.get(k);
-  try { const hit = await AudioBox.ttsGet(k); if (hit && hit.data){ const b = new Blob([hit.data], { type:'audio/wav' }); NV.mem.set(k, b); return b; } } catch(e){}
-  const j = await ttAsk({ task:'tts', text, voice:nvVoice(), style }, 20000);
-  const bin = atob(j.audio || ''), u8 = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
-  if (u8.length < 100) throw new Error('empty');
+  if (NV.mem.has(k)) return Promise.resolve(NV.mem.get(k));
+  // 미리 받기와 누르기가 겹쳐도 같은 말은 한 번만 만든다(무료 등급은 하루에 만들 수 있는 수가 적다)
+  if (NV.inflight.has(k)) return NV.inflight.get(k);
+  const job = nvFetchNow(k, text, style).then(b => { NV.inflight.delete(k); return b; }, e => { NV.inflight.delete(k); throw e; });
+  NV.inflight.set(k, job);
+  return job;
+}
+async function nvFetchNow(k, text, style){
+  try { const hit = await AudioBox.ttsGet(k); if (hit && hit.data){ const b = new Blob([hit.data], { type:'audio/wav' }); NV.mem.set(k, b); nvShareUp(k, hit.data); return b; } } catch(e){}
+  let u8 = null;
+  try { u8 = await nvShareGet(k); } catch(e){ u8 = null; }  // 🗂 다른 기기가 만들어 가족 저장에 둔 목소리
+  const shared = !!u8;
+  if (!u8){
+    if (nvRest()){ const e = new Error('rest'); e.code = 'rest'; throw e; }   // 서버가 쉬는 중 — 새로 만들지 않는다
+    const j = await ttAsk({ task:'tts', text, voice:nvVoice(), style }, 20000);
+    const bin = atob(j.audio || ''); u8 = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    if (u8.length < 100) throw new Error('empty');
+  }
   const blob = new Blob([u8], { type:'audio/wav' });
   NV.mem.set(k, blob); if (NV.mem.size > 40) NV.mem.delete(NV.mem.keys().next().value);
   AudioBox.ttsPut({ k, at:Date.now(), data:u8.buffer }).catch(() => {});
+  if (!shared) nvShareUp(k, u8.buffer);
   return blob;
+}
+/* 🗂 가족이 함께 쓰는 AI 목소리 — 한 번 만든 목소리를 가족 데이터의 따로 칸(coll 'ttsclip' {k, b64, at})에 둔다.
+   무료 등급은 목소리를 모델마다 하루 10번쯤만 새로 만들 수 있어서, 기기마다 따로 만들면 금방 모자랐다(갤럭시 탭은 아이패드가 만든 걸 못 썼다).
+   id는 가족 ID + 키를 섞은 값이라 같은 말은 한 줄만 생긴다. 5초 동기화에서는 빼고(sbAllItems) 필요할 때만 받아 온다.
+   이 기기에만 있던 목소리도 틀 때 가족 저장에 없으면 올린다(하나씩). 120일이 지난 건 지운다(원고가 바뀌면 안 쓰는 목소리가 쌓여서). */
+const NVS = { have:new Set(), miss:new Set(), upQ:[], upBusy:false, cleaned:false };
+async function nvShareId(k){
+  const d = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(S.familyId + '|' + k)));
+  let h = ''; for (let i = 0; i < 16; i++) h += (d[i] < 16 ? '0' : '') + d[i].toString(16);
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20, 32)}`;
+}
+function nvShareOk(){ return !!(S.sb && S.familyId && window.crypto && crypto.subtle && !window.claude); }
+async function nvShareGet(k){
+  if (!nvShareOk()) return null;
+  const id = await nvShareId(k); if (NVS.miss.has(id)) return null;
+  const r = await S.sb.from('items').select('data').eq('id', id).maybeSingle();
+  const d = r && r.data && r.data.data;
+  if (!d || !d.b64){ NVS.miss.add(id); return null; }
+  NVS.have.add(id);
+  const bin = atob(d.b64), u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  return u8.length < 100 ? null : u8;
+}
+function nvShareUp(k, buf){
+  if (!nvShareOk() || !buf || buf.byteLength < 100) return;
+  NVS.upQ.push([k, buf]); nvShareRun();
+}
+async function nvShareRun(){
+  if (NVS.upBusy) return; NVS.upBusy = true;
+  while (NVS.upQ.length){
+    const [k, buf] = NVS.upQ.shift();
+    try {
+      const id = await nvShareId(k); if (NVS.have.has(id)) continue;
+      const r = await S.sb.from('items').select('id').eq('id', id).maybeSingle();
+      if (!(r && r.data)){
+        const w = await S.sb.from('items').upsert({ id, family_id:S.familyId, coll:'ttsclip', data:{ k, b64:bytesBase64(new Uint8Array(buf)), at:new Date().toISOString() } }, { onConflict:'id', ignoreDuplicates:true });
+        if (w && w.error) continue;
+      }
+      NVS.have.add(id); NVS.miss.delete(id);
+    } catch(e){}
+  }
+  NVS.upBusy = false;
+  if (!NVS.cleaned && S.sb){ NVS.cleaned = true; try { await S.sb.from('items').delete().eq('coll', 'ttsclip').lt('data->>at', new Date(Date.now() - 120 * 86400000).toISOString()); } catch(e){} }
 }
 /* 🔧 기기 목소리로 들린 까닭(NV.last) — 부모님께 알려 준다 */
 function nvWhyText(L){
   const w = String((L && L.why) || '');
   if (w === 'timeout') return `AI 목소리를 받는 데 ${Math.round(((L && L.ms) || 0) / 1000)}초가 넘게 걸렸어요(인터넷이 느린지 봐 주세요)`;
-  if (w === 'fetch:busy') return 'AI가 지금 붐벼요 — 잠시 뒤에 다시 해 보세요';
+  if (w === 'fetch:busy') return 'AI 목소리를 새로 만드는 한도를 다 썼어요(무료 등급은 모델마다 하루 10번쯤) — 이미 만든 문장은 AI 목소리로 나와요. 내일 다시 만들 수 있어요';
   if (w === 'fetch:no_key') return '서버에 AI 키가 없어요';
   if (w === 'fetch:no_family') return '우리 가족 주소로 열어 주세요';
   if (/^fetch:/.test(w)) return `서버에서 AI 목소리를 받지 못했어요(${w.slice(6)})`;
   if (w === 'play:NotAllowedError') return '이 브라우저가 소리 틀기를 막았어요 — 크롬으로 열거나, 사이트 설정에서 소리·자동 재생을 허용해 주세요';
   if (/^play:/.test(w)) return `이 기기에서 AI 목소리 파일을 틀지 못했어요(${w.slice(5)})`;
-  if (w === 'rest') return 'AI 목소리가 두 번 연달아 안 돼서 잠깐(30분) 쉬는 중이에요';
+  if (w === 'rest') return 'AI 목소리 만들기가 잠깐 쉬는 중이에요(한도·오류) — 이미 만든 문장만 AI 목소리로 나와요';
   if (w === 'off') return '자연스러운 목소리가 꺼져 있어요(위의 켜짐/꺼짐)';
   if (w === 'device') return '이 기기는 📱 기기 목소리로 정해져 있어요';
   return '기기 목소리로 들려드렸어요';
@@ -4321,6 +4379,7 @@ ACTS.sndCheck = async () => {
     const L = NV.last || {};
     add(L.how === 'ai' ? '✅' : '⚠️', '🎙 AI 목소리 — ' + (L.how === 'ai' ? `받는 데 ${(L.ms / 1000).toFixed(1)}초 · 틀었어요${/^webaudio/.test(L.why) ? '(두 번째 방법 Web Audio로)' : ''}` : nvWhyText(L)));
   }
+  try { const c = await S.sb.from('items').select('id', { count:'exact', head:true }).eq('coll', 'ttsclip'); if (c && typeof c.count === 'number') add('🗂', `가족이 함께 쓰는 AI 목소리 ${c.count}개 — 한 기기에서 만든 목소리를 다른 기기도 써요`); } catch(e){}
   add('💡', `이 기기의 한국어 목소리: ${koMode() === 'ai' ? '🎙 AI 목소리' : '📱 기기 목소리'} — 두 소리가 똑같이 들리면 AI 목소리가 안 나고 기기 목소리로 바뀐 거예요. 위 결과를 알려 주세요.`);
   out.busy = false; parentShow();
 };
@@ -4336,7 +4395,7 @@ function nvPrefetch(text, lang, rate){
 }
 async function nvPrefetchRun(){
   if (NVQ.busy) return; NVQ.busy = true;
-  while (NVQ.q.length && nvOn()){ const [text, style] = NVQ.q.shift(); try { await nvFetch(text, style); } catch(e){ break; } }
+  while (NVQ.q.length && nvOn()){ const [text, style] = NVQ.q.shift(); try { await nvFetch(text, style); } catch(e){ if (!(e && e.code === 'rest')) break; } }
   NVQ.busy = false;
 }
 /* 끝나면 true, 못 하면 false (그때는 기기 목소리로) */
@@ -4362,6 +4421,7 @@ function nvPlay(text, { style = 'en', rate = 1, onstart, onprogress, wait = 6000
       if (!blob){ NV.last = { how:'device', why:'timeout', ms:Date.now() - t0 }; end(false); return; }
     }
     catch(e){
+      if (e && e.code === 'rest'){ NV.last = { how:'device', why:'rest', ms:Date.now() - t0 }; end(false); return; }
       NV.fails++;
       NV.last = { how:'device', why:'fetch:' + ((e && e.code) || 'error'), ms:Date.now() - t0 };
       if (e && (e.code === 'no_key' || e.code === 'busy' || e.code === 'no_family' || NV.fails >= 2))
@@ -4422,7 +4482,7 @@ async function voice(text, { lang = 'en', rate, onword, onprogress, onstart, sty
     // 한국어를 천천히(받아쓰기) 읽을 때는 'dict', 그 나라 인사말은 부르는 쪽이 style:'hello'
     const st = nvStyleFor(lang, rate, style);
     if (await nvPlay(clean, { style:st, rate:nvRate || 1, onstart, onprogress, wait })) return true;
-  } else NV.last = { how:'device', why:koDevice ? 'device' : (NV.offUntil > Date.now() ? 'rest' : 'off'), ms:0 };
+  } else NV.last = { how:'device', why:koDevice ? 'device' : 'off', ms:0 };
   return say(text, { lang, rate, onword, onstart });
 }
 
@@ -7589,7 +7649,7 @@ async function ttParentClick(t, d){
     nvUnlock(); NV.offUntil = 0; NV.fails = 0;
     await Store.saveSettings({ ttNvVoice:d.ttnv }); parentShow();
     const ok = await voice(koMode() === 'ai' ? '안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?' : 'Hello! I am Ttuttu. Let’s practice together!', { lang:koMode() === 'ai' ? 'ko' : 'en' });
-    if (!nvOn()) toast('자연스러운 목소리를 지금은 쓸 수 없어서 기기 목소리로 들려드렸어요');
+    if (NV.last && NV.last.how !== 'ai') toast(`📱 ${nvWhyText(NV.last)} — 이번엔 기기 목소리로 들려드렸어요`);
     return true;
   }
   return false;
@@ -13754,7 +13814,7 @@ function resetCard(){
     <h3 class="sub" style="margin:0">🧹 새로 시작하기</h3>
     <p class="muted" style="margin:0;font-size:13px">아이별 기록을 모두 지우고 처음부터 다시 쌓아요. 샘플 데이터도 함께 지워요.</p>
     <div style="font-size:14px"><b>🗑 지워요</b> — ${list.length ? list.map(([c, n]) => `${RESET_LABEL[c]} ${n}`).join(' · ') : '지울 기록이 없어요'}${samples ? ` · 샘플 원고·급수표 ${samples}` : ''} · 별 · 🐣 마음 친구 · 예전 놀이 기록(풀숲 친구·숨바꼭질·새총·생각 놀이 단계)</div>
-    <div style="font-size:14px"><b>✅ 남아요</b> — ${keepScripts.length ? `스피치 원고(${keepScripts.map(esc).join(', ')}) · ` : ''}받아쓰기 급수표 · 아이 이름·그림·성향·영어 이름·AR·그림 비밀번호 · 부모님 계정 · 설정</div>
+    <div style="font-size:14px"><b>✅ 남아요</b> — ${keepScripts.length ? `스피치 원고(${keepScripts.map(esc).join(', ')}) · ` : ''}받아쓰기 급수표 · 아이 이름·그림·성향·영어 이름·AR·그림 비밀번호 · 부모님 계정 · 설정 · 만들어 둔 AI 목소리</div>
     <p class="muted" style="margin:0;font-size:13px">되돌릴 수 없어요. 먼저 위의 💾 전체 기록 내보내기로 저장해 두세요.</p>
     ${busy ? '<p class="muted" style="margin:0;text-align:center">🧹 지우는 중이에요…</p>'
       : ask ? `<div class="pd-row pd-ask" style="flex-wrap:wrap"><div class="grow"><b>정말 모두 지울까요?</b><div class="muted" style="font-size:13px">아래 칸에 <b>지우기</b>라고 적어 주세요.</div></div>

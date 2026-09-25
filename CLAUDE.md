@@ -94,6 +94,10 @@
     - 한국어 속 숫자는 `koNumSpeak()`로 우리말로 바꿔 읽는다("3번"을 "쓰리번"으로 읽었다): 세는 말 앞은 한·두·세(`koNative`), 나머지는 일·이·삼(`koSino`), 달은 유월·시월. 뚜뚜가 말하는 몇 번째는 `koOrd(n)`("두 번째 문장이야").
     - 🔇 아이패드: 녹음하면 기기가 '녹음+재생' 모드가 되어 녹음 뒤에 뚜뚜 목소리·내 목소리가 안 났다. `recRelease`가 `audioSessionPlay()`로 `navigator.audioSession.type = 'playback'`, 소리 크기를 재던 AudioContext를 닫고, 뚜뚜 목소리 칸은 다음에 누를 때 새로 만든다(`NV.needFresh` → `nvUnlock`). 소리를 내는 단추에서는 늘 `nvUnlock()`을 먼저 부른다.
     - 자연스러운 목소리는 문장을 열 때 미리 받아 둔다(`nvPrefetch`, 하나씩 — 한국어는 `koNumSpeak`을 거친 글로). 6초(`nvPlay`의 `wait`) 넘게 걸리면 이번엔 기기 목소리로 읽고, 받아 온 건 다음에 쓴다. 서버는 한 문장에 5초쯤 걸린다 — 그래서 처음 쓰는 기기(갤럭시 탭)는 AI 목소리를 골라도 기기 목소리가 나기 쉬웠다. 이 기기가 AI 목소리면 받아쓰기를 열 때 문장을 미리 받아 둔다(`dtOpen`).
+    - ⚠️ **Gemini 무료 등급은 목소리 모델마다 하루 10번쯤만 새로 만든다**(서버 기록: "limit: 10 requests per day on Free Tier"). 그래서:
+      - 서버(`api/coach.js` `tts`)는 한도(429)에 걸린 모델을 10분 쉬게 하고(`ttsTired`) 다음 모델(`TTS_MODELS`)로 만든다. 모두 한도면 busy.
+      - 🗂 한 번 만든 목소리는 가족 데이터의 따로 칸 `ttsclip` {k, b64, at}에 올려 모든 기기가 같이 쓴다(`nvShareGet`/`nvShareUp`, id = SHA-256(가족 ID + 키)로 만든 uuid). 5초 동기화에서는 뺀다(`sbAllItems`). 이 기기에만 있던 목소리도 틀 때 없으면 올린다. 120일 지난 건 지운다.
+      - 같은 말을 미리 받기·누르기가 겹쳐도 한 번만 만든다(`NV.inflight`). 서버가 쉬는 중(`nvRest`, 한도·오류)에도 만들어 둔 목소리(이 기기·가족 저장)는 AI 목소리로 튼다 — 새로 만들지만 않는다.
     - `<audio>`로 못 틀면(브라우저가 막음·파일을 못 읽음) Web Audio로 한 번 더 튼다(`nvPlayWA`), 그래도 안 되면 기기 목소리. 어떤 목소리로 났는지는 `NV.last` {how:'ai'|'device', why, ms}, 부모님께는 `nvWhyText`로 알려 준다. 부모님 화면 → 스피치의 🔊 들어보기(AI면 20초까지 기다린다)와 🔧 이 기기 소리 점검(`ACTS.sndCheck`, `sndEnv`: 브라우저·기기 목소리·AI 목소리 결과를 줄로 보여 준다).
     - 기기 목소리 고르기(`pickVoice`/`voiceScore`): 안드로이드(갤럭시)는 목소리 목록이 늦게 와서 비어 있으면 잠깐 기다린다(`voicesReady`). 기기에 깔린 목소리(local)를 인터넷 목소리보다 먼저, 고른 목소리의 말 표시(`ko_KR`)를 `u.lang`에 맞춘다. 목록이 늦게 오면(`voiceschanged`) 설정 화면의 빈 목록을 다시 그린다.
     - 🇰🇷 한국어 목소리는 **기기마다** 고른다(부모님 화면 → 스피치): 📱 기기 목소리 / 🎙 AI 목소리(`koMode()`, localStorage `dolearn.koMode` — 없으면 예전 가족 설정 `settings.koVoice`), 목소리(`dolearn.koVoice`), 빠르기·높이(`dolearn.koRate`·`koPitch`, `KO_RATES`·`KO_PITCHES`). 갤럭시 탭처럼 한 기기만 어색할 때 그 기기만 바꾼다. 안드로이드 목소리 이름(`ko-kr-x-ism-local`)은 "목소리 1 · 기기에 저장됨"으로 보인다(`koVoiceLabel`).
