@@ -694,6 +694,14 @@
   .pet-feel span{font-size:30px;}
   .pet-dot{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid #6B4A52;margin-right:4px;vertical-align:-2px;}
   /* 🔐 그림 비밀번호 */
+  .pa-who{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px;}
+  .pa-who-b{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;border-radius:18px;border:3px solid var(--blush);background:var(--surface);
+    cursor:pointer;font-family:inherit;color:var(--cocoa);}
+  .pa-who-b .avatar{width:52px;height:52px;font-size:30px;background:#FFF1D0;}
+  .pa-who-b b{font-family:var(--display);font-size:18px;}
+  .pa-who-b small{font-size:12px;color:var(--cocoa-soft);}
+  .pa-who-b.add{border-style:dashed;}
+  .pa-who-b.add[aria-pressed="true"]{border-color:var(--berry);border-style:solid;background:#FFF6F8;}
   .kp-dots{display:flex;gap:12px;justify-content:center;margin:6px 0 10px;}
   .kp-dots i{width:18px;height:18px;border-radius:50%;border:3px solid var(--blush);}
   .kp-dots i.on{background:var(--berry);border-color:var(--berry);}
@@ -1749,6 +1757,48 @@ function parentsTab(){
   </div>` : `<p class="muted" style="font-size:13px;text-align:center">부모님 추가·삭제는 대표 관리자 ${esc(ownerNick())}만 할 수 있어요.</p>`}`;
 }
 function paPinTaken(pin, exceptId){ const p = parentByPin(pin); return !!p && p.id !== exceptId; }
+/* 👪 누구세요? — 처음 정한(대표) 비밀번호로 부모님 화면·대화방에 들어오면 내 닉네임을 고르거나, 새 닉네임을 만든다.
+   새 닉네임은 따로 비밀번호를 정하고(두 번), 다음부터는 그 비밀번호로 바로 들어온다(이 창 없이). 비밀번호 칸은 kv에 담지 않는다. */
+function parentWhoSheet(){
+  const v = S.view.paWho || (S.view.paWho = { add:false, av:'👩', next:'parent' }), list = parentList();
+  return `<h3>👪 누구세요?</h3>
+    <p class="muted" style="margin:0 0 10px">처음 정한 비밀번호로 들어왔어요. 내 닉네임을 고르거나, 새 닉네임을 만들어요.</p>
+    <div class="pa-who">${list.map(p => `<button class="pa-who-b" data-act="paWho" data-arg="${esc(p.id)}"><span class="avatar">${esc(p.avatar)}</span><b>${esc(p.nick)}</b><small>${p.role === 'owner' ? '⭐ 대표 관리자' : '부모님'}</small></button>`).join('')}
+      <button class="pa-who-b add" data-act="paWhoAdd" aria-pressed="${v.add}"><span class="avatar">➕</span><b>새 닉네임</b><small>내 비밀번호 따로</small></button></div>
+    ${v.add ? `<div class="stack" style="gap:8px;margin-top:12px">
+      <input class="field" id="pwNick" maxlength="10" placeholder="닉네임 (예: 뚜뚜엄마)" value="${esc(kv('pwNick'))}" data-keep="pwNick" autocomplete="off">
+      <div class="chips">${PARENT_AVATARS.map(a => `<button class="chip" data-act="paWhoAv" data-arg="${a}" aria-pressed="${v.av === a}" style="font-size:20px">${a}</button>`).join('')}</div>
+      <input class="field" id="pwPin1" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="내 비밀번호 (숫자 4자리)">
+      <input class="field" id="pwPin2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="한 번 더 입력">
+      <p class="muted" id="pwMsg" style="margin:0;min-height:18px;font-size:13px">다음부터는 이 비밀번호로 바로 들어와요.</p>
+      <button class="btn wide" data-act="paWhoSave">만들고 들어가기</button></div>` : ''}`;
+}
+function paWhoGo(id, hello){
+  const v = S.view.paWho || {}, next = v.next || 'parent';
+  S.parentId = id; S.view.paWho = null; kvClear('pw');
+  toast(hello); continueAfterPin(next === 'parent' ? '' : next);
+}
+ACTS.paWho = (arg) => { const p = parentList().find(x => x.id === arg); if (!p || !S.view.paWho) return; paWhoGo(p.id, `${p.nick} 님, 반가워요! 😊`); };
+ACTS.paWhoAdd = () => { const v = S.view.paWho; if (!v) return; v.add = !v.add; openModal(parentWhoSheet()); if (v.add) setTimeout(() => { const i = $('#pwNick'); if (i) i.focus(); }, 60); };
+ACTS.paWhoAv = (arg) => {
+  const v = S.view.paWho; if (!v) return;
+  const a = ($('#pwPin1') || {}).value || '', b = ($('#pwPin2') || {}).value || '';
+  v.av = arg; openModal(parentWhoSheet());
+  const i1 = $('#pwPin1'), i2 = $('#pwPin2'); if (i1) i1.value = a; if (i2) i2.value = b;
+};
+ACTS.paWhoSave = async () => {
+  const v = S.view.paWho; if (!v) return;
+  const nick = String(kv('pwNick') || (($('#pwNick') || {}).value || '')).trim().slice(0, 10), p1 = (($('#pwPin1') || {}).value || '').trim(), p2 = (($('#pwPin2') || {}).value || '').trim();
+  const say = t => { const m = $('#pwMsg'); if (m){ m.textContent = t; m.style.color = 'var(--berry-deep)'; } };
+  if (!nick){ say('닉네임을 적어 주세요.'); return; }
+  if (parentList().some(p => p.nick === nick)){ say('같은 닉네임이 벌써 있어요. 위에서 골라 주세요.'); return; }
+  if (!/^\d{4}$/.test(p1)){ say('비밀번호는 숫자 4자리예요.'); return; }
+  if (p1 !== p2){ say('두 번 누른 비밀번호가 달라요. 다시 확인해 주세요.'); return; }
+  if (p1 === '1234' || paPinTaken(p1, '')){ say('다른 부모님과 겹치지 않는 숫자로 정해 주세요.'); return; }
+  const id = uid().slice(0, 8);
+  await Store.saveSettings({ parents:(S.settings.parents || []).concat({ id, nick, avatar:v.av || '👩', pinHash:parentPinHash(id, p1), at:new Date().toISOString() }) });
+  paWhoGo(id, `${nick} 님, 반가워요! 다음부터는 내 비밀번호로 바로 들어와요 👪`);
+};
 ACTS.paNickSave = async () => {
   const me = parentMe(); if (!me) return;
   const nick = (($('#paNick') || {}).value || '').trim().slice(0, 10); if (!nick){ toast('닉네임을 적어 주세요'); return; }
@@ -1867,7 +1917,7 @@ ACTS.notiOk = async (arg, btn) => {
    💬 대화방 — 오른쪽 위 💬 단추 → 오른쪽에서 열린다. 누구를 초대하느냐에 따라 단체방을 여러 개 만든다.
    👪 우리 가족방(모두)은 늘 있다. ➕ 새 방: 초대할 사람(아이들·엄마 아빠)을 고르고 이름·그림을 정한다 — 컬렉션 chatrooms {name, emoji, members[], createdBy, at}.
    글은 chat {room, from:아이 id | 'parent', text, at}, 칭찬 스티커는 kudos {from, to, reason, room, at}(배움기록·왕관이 센다). room 이 없으면 가족방.
-   아이는 들어와 있는 아이로만 쓴다. 엄마 아빠로 쓰려면 부모님 비밀번호(대화방을 닫으면 끝). 안전을 위해 엄마 아빠는 모든 방을 볼 수 있다.
+   아이는 들어와 있는 아이로만 쓴다. 엄마 아빠로 쓰려면 부모님 비밀번호(대화방을 닫으면 끝). 방에 없는 사람은 누구든(엄마 아빠도) 그 방에 들어가거나 글을 볼 수 없다.
    안 읽은 수는 방마다(아이 profile.noti.chatSeen, 부모님은 이 기기 localStorage), 💬 빨간 숫자는 내 방을 모두 더한 것.
    부모님의 예전 쪽지(settings.parentNote)는 가족방 맨 위에 📌. 5초 동기화 때는 보고 있는 목록만 다시 그려서 쓰던 글은 그대로 남는다.
    ============================================================ */
@@ -1881,15 +1931,15 @@ function chatWho(id){
 function chatFamily(){ return { id:'family', name:'우리 가족', emoji:'👪', members:kids().map(k => k.id).concat(parentList().map(p => 'p:' + p.id)), fixed:true }; }
 /* 방에 있는 사람 — 예전 'parent'는 부모님 모두 */
 function chatMembers(r){ const out = []; (r.members || []).forEach(id => { if (id === 'parent') parentList().forEach(p => out.push('p:' + p.id)); else out.push(id); }); return Array.from(new Set(out)); }
-/* 내가 볼 수 있는 방 — 아이는 초대받은 방만, 엄마 아빠는 모두 */
+/* 내가 볼 수 있는 방 — 초대받은 방만(엄마 아빠도 같다). 방에 없는 사람은 들어가지도, 글을 보지도 못한다 */
 function chatRooms(me){
-  const list = S.data.chatrooms.filter(r => Array.isArray(r.members) && (isParentId(me) || chatMembers(r).indexOf(me) >= 0))
+  const list = S.data.chatrooms.filter(r => Array.isArray(r.members) && chatMembers(r).indexOf(me) >= 0)
     .map(r => ({ id:r.id, name:r.name || '우리 방', emoji:r.emoji || '💬', members:chatMembers(r), createdBy:r.createdBy, at:r.at }));
   return [chatFamily()].concat(list.sort((a, b) => String(chatLastAt(b.id) || b.at || '').localeCompare(String(chatLastAt(a.id) || a.at || ''))));
 }
 function chatRoom(id){ if (id === 'family' || !id) return chatFamily(); const r = S.data.chatrooms.find(x => x.id === id); return r ? { id:r.id, name:r.name || '우리 방', emoji:r.emoji || '💬', members:chatMembers(r), createdBy:r.createdBy } : null; }
 function chatInRoom(me, room){ return !!room && room.members.indexOf(me) >= 0; }          // 말할 수 있는 사람 — 방에 있는 사람
-function chatCanSee(me, room){ return !!room && (isParentId(me) || room.members.indexOf(me) >= 0); }   // 볼 수 있는 사람 — 부모님은 모든 방
+function chatCanSee(me, room){ return !!room && room.members.indexOf(me) >= 0; }   // 볼 수 있는 사람 — 방에 있는 사람만(엄마 아빠도)
 function chatAll(){
   const a = S.data.chat.map(x => ({ id:x.id, kind:x.kind === 'voice' ? 'voice' : 'msg', room:x.room || 'family', from:x.from, text:x.kind === 'voice' ? '🎤 음성 메시지' : String(x.text || ''), clip:x.clip || '', secs:x.secs || 0, at:String(x.at || '') }));
   const b = S.data.kudos.map(x => ({ id:x.id, kind:'kudo', room:x.room || 'family', from:x.from, to:x.to, text:String(x.reason || ''), at:String(x.at || '') }));
@@ -1949,7 +1999,7 @@ function chatRoomsHtml(){
   }).join('');
   return `<div class="chat-rooms">${rows}
     ${me ? '<button class="btn ghost wide" data-act="chatNew" style="margin-top:6px">➕ 새 방 만들기</button>' : ''}
-    ${isParentId(me) ? '<p class="muted" style="font-size:12px;text-align:center;margin:6px 0 0">👀 부모님은 모든 방을 볼 수 있어요</p>' : ''}</div>`;
+    <p class="muted" style="font-size:12px;text-align:center;margin:6px 0 0">🔒 초대받은 방만 보이고 들어갈 수 있어요</p></div>`;
 }
 /* ---------- 새 방 만들기 — 초대할 사람 고르기 ---------- */
 function chatNewHtml(){
@@ -1965,14 +2015,14 @@ function chatNewHtml(){
     <input class="field" id="chatRoomName" maxlength="16" placeholder="${esc(auto)}" autocomplete="off">
     <div class="muted" style="font-size:14px;margin:10px 0 4px">방 그림</div>
     <div class="chips">${CHAT_EMOJI.map(e => `<button class="chip" data-act="chatEmoji" data-arg="${e}" aria-pressed="${CHAT.emoji === e}" style="font-size:20px">${e}</button>`).join('')}</div>
-    ${!isParentId(me) ? '<p class="muted" style="font-size:12px;margin:8px 0 0">👀 부모님은 모든 방을 볼 수 있어요</p>' : ''}
+    <p class="muted" style="font-size:12px;margin:8px 0 0">🔒 초대한 사람만 이 방을 보고 들어올 수 있어요</p>
     <div class="row" style="gap:8px;margin-top:12px"><button class="btn ghost grow" data-act="chatList">그만두기</button><button class="btn grow" data-act="chatCreate" ${picked.size >= 2 ? '' : 'disabled'}>방 만들기</button></div>
   </div>`;
 }
 function chatListHtml(){
   const me = chatMe(), room = CHAT.room, items = chatItems(room), note = S.settings.parentNote;
   let day = '', out = '';
-  if (room === 'family' && note && String(note.text || '').trim()) out += `<div class="chat-pin">📌 <b>엄마 아빠의 쪽지</b> ${esc(note.text)}</div>`;
+  if (room === 'family' && note && String(note.text || '').trim()) out += `<div class="chat-pin">📌 <b>엄마 아빠의 쪽지</b> ${esc(note.text)}${isParentId(me) ? ' <button class="btn ghost sm" data-act="chatNoteOff" style="min-height:30px;padding:2px 10px">떼기</button>' : ''}</div>`;
   if (!items.length) out += `<div class="chat-empty">💬 아직 아무 말도 없어요.<br>“안녕!” 하고 먼저 말을 걸어 볼까요? 칭찬 스티커 🎁도 보낼 수 있어요.</div>`;
   for (const x of items){
     const d = chatDay(x.at); if (d !== day){ day = d; out += `<div class="chat-date">${esc(d)}</div>`; }
@@ -2042,6 +2092,8 @@ function chatHeadHtml(){
 }
 function chatDraw(keepInput, first){
   const w = document.getElementById('chatWrap'); if (!w) return;
+  const me0 = chatMe();
+  if (CHAT.view === 'room' && me0 && !chatCanSee(me0, chatRoom(CHAT.room))) CHAT.room = 'family';
   const keep = keepInput ? (($('#chatIn') || {}).value || '') : '';
   const body = CHAT.view === 'list' ? chatRoomsHtml() : (CHAT.view === 'new' ? chatNewHtml() : chatListHtml());
   w.innerHTML = `<div class="chat-dim" data-act="chatClose"></div>
@@ -2081,7 +2133,7 @@ function chatClose(){
 function chatRefresh(){
   if (!CHAT.open) return;
   const sig = chatSig(); if (sig === CHAT.sig) return;
-  if (CHAT.view === 'room' && !chatRoom(CHAT.room)){ CHAT.room = 'family'; chatDraw(true); return; }   // 방이 지워졌으면 가족방으로
+  if (CHAT.view === 'room' && (!chatRoom(CHAT.room) || (chatMe() && !chatCanSee(chatMe(), chatRoom(CHAT.room))))){ CHAT.room = 'family'; chatDraw(true); return; }   // 방이 지워졌거나 방에서 빠졌으면 가족방으로
   if (CHAT.view !== 'room'){ if (CHAT.view === 'list') chatDraw(true); CHAT.sig = sig; return; }
   CHAT.sig = sig;
   const l = document.getElementById('chatList'); if (!l) return;
@@ -2093,8 +2145,13 @@ function chatRefresh(){
 function chatFootRedraw(){ const f = document.getElementById('chatFoot'), keep = ($('#chatIn') || {}).value || ''; if (f){ f.innerHTML = chatComposeHtml(); const i = $('#chatIn'); if (i) i.value = keep; } }
 ACTS.chatOpen = () => { nvUnlock(); chatOpen(); };
 ACTS.chatClose = () => chatClose();
+ACTS.chatNoteOff = async () => { if (!isParentId(chatMe())) return; await Store.saveSettings({ parentNote:null }); toast('예전 쪽지를 뗐어요'); chatDraw(true); };
 ACTS.chatList = () => { CHAT.view = 'list'; CHAT.tray = false; chatDraw(false); };
-ACTS.chatGo = (arg) => { const r = chatRoom(arg); if (!r) return; CHAT.room = r.id; CHAT.view = 'room'; CHAT.tray = false; chatDraw(false); };
+ACTS.chatGo = (arg) => {
+  const r = chatRoom(arg), me = chatMe(); if (!r) return;
+  if (!me || !chatCanSee(me, r)){ toast('그 방은 초대받은 사람만 들어갈 수 있어요 🔒'); return; }
+  CHAT.room = r.id; CHAT.view = 'room'; CHAT.tray = false; chatDraw(false);
+};
 ACTS.chatNew = () => { CHAT.view = 'new'; CHAT.pick = []; CHAT.emoji = CHAT_EMOJI[Math.floor(Math.random() * CHAT_EMOJI.length)]; chatDraw(false); };
 ACTS.chatPick = (arg) => { const i = CHAT.pick.indexOf(arg); if (i >= 0) CHAT.pick.splice(i, 1); else CHAT.pick.push(arg); const nm = ($('#chatRoomName') || {}).value || ''; chatDraw(false); const f = $('#chatRoomName'); if (f) f.value = nm; };
 ACTS.chatEmoji = (arg) => { CHAT.emoji = arg; const nm = ($('#chatRoomName') || {}).value || ''; chatDraw(false); const f = $('#chatRoomName'); if (f) f.value = nm; };
@@ -2155,7 +2212,6 @@ ACTS.chatKudo = async (arg) => {
 };
 ACTS.chatAsKid = (arg) => { chatClose(); kidEnter(arg, () => chatOpen()); };
 ACTS.chatAsParent = () => { chatClose(); S.view.pin = ''; S.view.pinError = ''; S.view.pinPurpose = 'chat'; openModal(pinSheet('부모님으로 말하기', '내 부모님 비밀번호를 누르면 내 닉네임으로 말해요.')); };
-ACTS.chatParent = () => { closeModal(); CHAT.as = 'p:' + (S.parentId || 'owner'); chatOpen('family'); };   // 부모님 화면(비밀번호를 이미 넣음)에서 바로
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'chatIn' && !e.isComposing){ e.preventDefault(); ACTS.chatSend(); } });
 
 /* ---------- 🎤 음성 메시지 — 대화방에서 목소리를 녹음해 보낸다 ----------
@@ -3378,6 +3434,8 @@ const PD_THINK = {
   diary:{ t:x => `🖍 ${x.title || '그림일기'}`, s:x => x.text || '', f:[['title', '제목', 'text', 40], ['text', '일기', 'area', 400]] }
 };
 const byAtDesc = k => (a, b) => String(b[k] || '').localeCompare(String(a[k] || ''));
+/* 기록 관리에서도 — 이 부모님이 들어 있는 방의 글만 (방에 없는 사람은 열람할 수 없다) */
+function pdRoomOk(room){ const me = 'p:' + (S.parentId || 'owner'); return chatCanSee(me, chatRoom(room || 'family')); }
 const PD_KINDS = [
   { id:'todos', ico:'📋', label:'할 일', coll:'todos', list:k => S.data.todos.filter(x => x.kidId === k.id && !x.archived),
     t:x => `${x.icon || '📌'} ${x.title}`,
@@ -3411,9 +3469,9 @@ const PD_KINDS = [
     f:() => [['place', '어디', 'text', 30], ['why', '가고 싶은 까닭', 'area', 100], ['todo', '하고 싶은 것', 'text', 80], ['with', '누구랑', 'text', 40], ['when', '언제', 'text', 30], ['pack', '챙길 것', 'text', 60]] },
   { id:'stamps', ico:'🛂', label:'여권 도장', coll:'stamps', list:k => S.data.stamps.filter(x => x.kidId === k.id).sort(byAtDesc('at')),
     t:x => `${wFlag(x.code)} ${wName(x.code)}`, s:x => `${pdDate(x.date || x.at)} · ${x.kind === 'found' ? '진짜 지구본에서 찾았어요' : '오늘의 나라를 배웠어요'}` },
-  { id:'kudos', ico:'💌', label:'받은 칭찬', coll:'kudos', list:k => S.data.kudos.filter(x => x.to === k.id).sort(byAtDesc('at')),
+  { id:'kudos', ico:'💌', label:'받은 칭찬', coll:'kudos', list:k => S.data.kudos.filter(x => x.to === k.id && pdRoomOk(x.room)).sort(byAtDesc('at')),
     t:x => x.reason || '칭찬 스티커', s:x => `${pdDate(x.at)} · ${subj(chatWho(x.from).name)} 보냈어요` },
-  { id:'chat', ico:'💬', label:'대화', coll:'chat', list:k => S.data.chat.filter(x => x.from === k.id).sort(byAtDesc('at')),
+  { id:'chat', ico:'💬', label:'대화', coll:'chat', list:k => S.data.chat.filter(x => x.from === k.id && pdRoomOk(x.room)).sort(byAtDesc('at')),
     t:x => { const r = chatRoom(x.room || 'family'); return `${r ? r.emoji + ' ' + r.name : '💬 지운 방'} · ${pdDate(x.at)}`; }, s:x => x.kind === 'voice' ? `🎤 음성 메시지 (${vcTime(x.secs)})` : (x.text || ''),
     del:async x => { if (x.clip) await vcDelete([x.clip]); await Store.remove('chat', x.id); } },
   { id:'goals', ico:'🎯', label:'이번 주 약속', coll:'goals', list:k => S.data.goals.filter(x => x.kidId === k.id).sort(byAtDesc('week')),
@@ -3581,14 +3639,7 @@ function parentSheet(){
     </div>`).join('') + `<button class="btn ghost wide" id="addKid">+ 친구 추가</button>`;
   }
   if (t === 'settings'){
-    const noteText = (S.settings.parentNote && S.settings.parentNote.text) || '';
     body = `<div class="card stack">
-      <div>
-        <div class="muted">💌 아이들에게 쪽지·칭찬 스티커 — 이제 💬 우리 가족 대화방에서 보내요</div>
-        <button class="btn mint wide" data-act="chatParent" style="margin-top:6px">💬 대화방에서 엄마 아빠로 말하기</button>
-        <p class="muted" style="margin:5px 0 0;font-size:13px">보낸 말은 아이 화면 오른쪽에 살짝 떠올라요. 시작 화면 메모지에는 ✨ 긍정 한마디가 넘어가요.${noteText ? ' 예전 쪽지는 대화방 맨 위에 📌로 남아 있어요.' : ''}</p>
-        ${noteText ? '<button class="btn ghost sm" id="clearNote" style="margin-top:6px">📌 예전 쪽지 떼기</button>' : ''}
-      </div>
       <div><div class="muted">놀이 시간 (분)</div>
         <input class="field" type="number" min="5" max="120" id="setGameMin" value="${S.settings.gameMinutes}"></div>
       <div><div class="muted">이번 주 함께 읽기 목표 (권)</div>
@@ -12631,7 +12682,6 @@ document.addEventListener('click', async (e) => {
     if (cb) await cb(v);
     return;
   }
-  if (t.id === 'clearNote'){ await Store.saveSettings({ parentNote:null }); toast('예전 쪽지를 뗐어요'); openModal(parentSheet()); return; }
   if (t.id === 'confirmOk'){
     const cb = S.view.confirmCb; S.view.confirmCb = null;
     closeModal();
@@ -12774,6 +12824,9 @@ function checkPin(){
       openModal(pinSetSheet('처음 비밀번호는 누구나 알 수 있어요. 아이들이 모르는 숫자로 바꿔야 들어갈 수 있어요.'));
       setTimeout(() => { const i = $('#newPin1'); if (i) i.focus(); }, 60);
       return;
+    }
+    if (who.role === 'owner' && (purpose === 'parent' || purpose === '' || purpose === 'chat')){   // 처음 정한 비밀번호 — 누구인지 고르기
+      S.view.paWho = { add:false, av:'👩', next:purpose || 'parent' }; kvClear('pw'); openModal(parentWhoSheet()); return;
     }
     if (purpose === 'chat' || purpose.startsWith('kidin:')){ continueAfterPin(purpose); return; }
     if (purpose.startsWith('globe:')){ closeModal(); worldFound(purpose.slice(6)); render(); }
