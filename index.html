@@ -512,7 +512,8 @@
   .chat-wrap{position:fixed;inset:0;z-index:59;display:flex;justify-content:flex-end;}
   .chat-dim{position:absolute;inset:0;background:rgba(74,48,54,.28);}
   .chat-panel{position:relative;width:min(420px,100vw);height:100%;background:var(--cream);display:flex;flex-direction:column;
-    box-shadow:-10px 0 30px rgba(74,48,54,.25);animation:chat-in .28s ease-out;padding-top:env(safe-area-inset-top,0px);}
+    box-shadow:-10px 0 30px rgba(74,48,54,.25);padding-top:env(safe-area-inset-top,0px);}
+  .chat-panel.anim{animation:chat-in .28s ease-out;}
   @keyframes chat-in{from{transform:translateX(100%)}to{transform:none}}
   .chat-head{display:flex;align-items:center;gap:8px;padding:12px 12px 10px 16px;border-bottom:2px solid var(--blush);background:var(--surface);}
   .chat-head b{font-family:var(--display);font-size:19px;flex:1;}
@@ -544,6 +545,45 @@
   .chat-st{border:2px solid #FFD98E;background:#fff;border-radius:14px;padding:8px 6px;font-size:14px;font-family:inherit;color:var(--cocoa);cursor:pointer;text-align:left;}
   .chat-st:active{transform:scale(.96);}
   .chat-who{text-align:center;}
+  .chat-list.plain{gap:6px;}
+  .chat-title{font-family:var(--display);font-size:18px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .chat-room-av{display:inline-flex;gap:2px;flex:none;}
+  .chat-rooms{display:flex;flex-direction:column;gap:8px;}
+  .chat-room{display:flex;gap:10px;align-items:center;background:var(--surface);border:2px solid var(--blush);border-radius:18px;padding:10px 12px;font-family:inherit;color:var(--cocoa);text-align:left;cursor:pointer;width:100%;}
+  .chat-room b{font-family:var(--display);font-size:17px;}
+  .chat-room-ico{font-size:30px;flex:none;}
+  .chat-room-last{font-size:13px;color:var(--cocoa-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+  .chat-room-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none;}
+  .chat-room-side small{font-size:11px;color:var(--cocoa-soft);}
+  .chat-badge.in{position:static;box-shadow:none;}
+  .chat-new{background:var(--surface);border:2px solid var(--blush);border-radius:18px;padding:12px;}
+  /* 🤝 같이 놀기 */
+  .vs-row{display:flex;gap:10px;align-items:center;background:var(--surface);border:2px solid var(--blush);border-radius:18px;padding:10px 12px;}
+  .vs-row.in{border-color:#9CDDBE;background:#F2FCF7;}
+  .vs-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;}
+  .vs-tags span{font-size:13px;border-radius:999px;padding:2px 9px;background:#F3ECEE;color:var(--cocoa-soft);}
+  .vs-tags span.ok{background:#E2F7EF;color:#23795F;}
+  .vs-games{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .vs-game{display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;border:3px solid var(--blush);background:var(--surface);border-radius:18px;padding:10px 8px;font-family:inherit;color:var(--cocoa);cursor:pointer;}
+  .vs-game b{font-family:var(--display);font-size:17px;}
+  .vs-game small{font-size:12px;color:var(--cocoa-soft);line-height:1.3;}
+  .vs-game[aria-pressed="true"]{border-color:var(--berry);background:#FFF0F4;box-shadow:0 0 0 3px rgba(255,143,168,.3);}
+  .vs-invite{position:fixed;right:12px;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:58;width:min(360px,calc(100vw - 24px));display:flex;gap:10px;align-items:center;
+    background:#FFFDF8;border:3px solid #9CDDBE;border-radius:20px;padding:10px 12px;box-shadow:0 10px 26px rgba(107,74,82,.22);animation:noti-in .55s cubic-bezier(.2,1.4,.4,1) both;}
+  .vs-score{display:flex;align-items:center;justify-content:center;gap:16px;}
+  .vs-score > div{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .vs-num{font-family:var(--display);font-size:40px;line-height:1;}
+  .vs-num small{font-size:16px;color:var(--cocoa-soft);}
+  .vs-vs{font-family:var(--display);font-size:22px;color:var(--berry-deep);}
+  .sd-hud{display:flex;gap:14px;background:var(--surface);border-radius:16px;padding:9px 12px;box-shadow:var(--shadow);margin-bottom:8px;}
+  .sd-pics{display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .sd-pics.land{flex-direction:row;justify-content:center;}
+  .sd-pic{position:relative;border-radius:18px;overflow:hidden;border:3px solid #6B4A52;touch-action:manipulation;cursor:pointer;flex:none;user-select:none;-webkit-user-select:none;}
+  .sd-o{position:absolute;line-height:1;pointer-events:none;}
+  .sd-marks{position:absolute;inset:0;pointer-events:none;}
+  .sd-ring{position:absolute;transform:translate(-50%,-50%);border:4px solid #E5484D;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.8);animation:stamp-in2 .35s cubic-bezier(.2,1.6,.4,1) both;}
+  @keyframes stamp-in2{from{transform:translate(-50%,-50%) scale(1.8);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+  .sd-x{position:absolute;transform:translate(-50%,-50%);color:#8C8C8C;font-style:normal;font-weight:900;font-size:22px;}
   /* 🔐 그림 비밀번호 */
   .kp-dots{display:flex;gap:12px;justify-content:center;margin:6px 0 10px;}
   .kp-dots i{width:18px;height:18px;border-radius:50%;border:3px solid var(--blush);}
@@ -1007,7 +1047,7 @@
 const SB_URL = 'https://xirclohwurvtschwrtxw.supabase.co';
 const SB_KEY = 'sb_publishable_97VPBM0syPSyG2r1S6ScMg_azkVXgdN';
 
-const COLLS = ['profiles','books','words','todos','sessions','unlocks','dict','requests','scripts','speech','kudos','chat',
+const COLLS = ['profiles','books','words','todos','sessions','unlocks','dict','requests','scripts','speech','kudos','chat','chatrooms',
   'dlists','dprog','spell','think','goals','trips','wishes','stamps'];
 const DEFAULT_CATS = ['그림책','동화책','영어책','지식책','만화','시'];
 const KID_COLORS = [
@@ -1052,7 +1092,7 @@ const CHEERS = [
 ];
 /* 다꾸 메모지 — 부모님이 직접 쓴 응원이 있으면 그걸 보여주고, 없으면 오늘의 응원 문구 */
 function memoNote(){
-  const recent = S.data.chat.filter(x => x.from === 'parent' && x.at && Date.now() - new Date(x.at).getTime() < 7 * 86400000)
+  const recent = S.data.chat.filter(x => x.from === 'parent' && (x.room || 'family') === 'family' && x.at && Date.now() - new Date(x.at).getTime() < 7 * 86400000)
     .sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
   const note = recent ? { text:recent.text, at:recent.at } : S.settings.parentNote;
   const hasNote = note && String(note.text || '').trim();
@@ -1558,16 +1598,17 @@ function notiPending(k){
   const st = notiState(k), out = [], note = S.settings.parentNote;
   if (note && String(note.text || '').trim() && note.at && note.at > st.noteAt && note.at > st.since)
     out.push({ key:'note:' + note.at, kind:'note', text:String(note.text) });
-  const after = st.chatAt && st.chatAt > st.since ? st.chatAt : st.since;          // 대화방을 연 뒤의 것만
-  chatItems().filter(x => x.from !== k.id && x.at > after && st.seen.indexOf(x.id) < 0 && (x.kind === 'msg' || x.to === k.id))
-    .forEach(x => out.push({ key:x.id, kind:x.kind === 'kudo' ? 'kudo' : 'msg', text:x.text || '💖 칭찬 스티커', from:x.from }));
+  const mine = new Set(chatRooms(k.id).filter(r => r.members.indexOf(k.id) >= 0).map(r => r.id));
+  chatAll().filter(x => mine.has(x.room) && x.from !== k.id && x.at > chatSeenAt(k.id, x.room) && x.at > st.since && st.seen.indexOf(x.id) < 0 && (x.kind === 'msg' || x.to === k.id))
+    .forEach(x => out.push({ key:x.id, kind:x.kind === 'kudo' ? 'kudo' : 'msg', text:x.text || '💖 칭찬 스티커', from:x.from, room:x.room }));
   return out;
 }
 function notiWho(x){ return x.from === 'parent' ? '엄마 아빠' : ((kid(x.from) || {}).name || '친구'); }
 function notiCard(x, more){
   const note = x.kind === 'note', msg = x.kind === 'msg';
   const ico = note ? '💌' : (msg ? '💬' : ((String(x.text).match(/^\S+/) || ['💖'])[0]));
-  const title = note ? '엄마 아빠가 쪽지를 남겼어요' : (msg ? `${subj(notiWho(x))} 말했어요` : (x.from === 'parent' ? '엄마 아빠가 칭찬 스티커를 붙여 줬어요!' : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요!`));
+  const rm = x.room && x.room !== 'family' ? chatRoom(x.room) : null;
+  const title = note ? '엄마 아빠가 쪽지를 남겼어요' : (msg ? `${subj(notiWho(x))} 말했어요${rm ? ` · ${rm.emoji} ${rm.name}` : ''}` : (x.from === 'parent' ? '엄마 아빠가 칭찬 스티커를 붙여 줬어요!' : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요!`));
   const body = note || msg ? `“${x.text}”` : String(x.text).replace(/^\S+\s/, '');
   return `<div class="noti-card ${note ? 'note' : 'kudo'}" data-key="${esc(x.key)}" role="status">
     <div class="noti-ico" aria-hidden="true">${esc(ico)}</div>
@@ -1607,7 +1648,7 @@ ACTS.notiSay = (arg) => {
   nvUnlock();
   voice(x.kind === 'note' ? `엄마 아빠가 쪽지를 남겼어요. ${x.text}` : (x.kind === 'msg' ? `${subj(notiWho(x))} 말했어요. ${x.text}` : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요. ${String(x.text).replace(/^\S+\s/, '')}`), { lang:'ko' });
 };
-ACTS.notiChat = async (arg, btn) => { await ACTS.notiOk(arg, btn); chatOpen(); };
+ACTS.notiChat = async (arg, btn) => { const x = notiFind(arg); await ACTS.notiOk(arg, btn); chatOpen((x && x.room) || 'family'); };
 ACTS.notiOk = async (arg, btn) => {
   const k = curKid(); if (!k) return;
   const x = notiFind(arg), st = notiState(k);
@@ -1620,33 +1661,52 @@ ACTS.notiOk = async (arg, btn) => {
 };
 
 /* ============================================================
-   💬 우리 가족 대화방 — 오른쪽 위 💬 단추 → 오른쪽에서 열리는 대화방
-   아이들·엄마 아빠가 글과 💌 칭찬 스티커를 주고받는다. 흩어져 있던 쪽지·칭찬 스티커를 여기 하나로 모았다.
-   글은 컬렉션 chat {from:아이 id | 'parent', text, at}, 칭찬 스티커는 예전처럼 kudos {from, to, reason, at}(배움기록·왕관이 센다).
-   아이는 지금 들어와 있는 아이로만 쓴다(그림 비밀번호로 들어온 아이). 엄마 아빠로 쓰려면 부모님 비밀번호(대화방을 닫으면 끝).
-   안 읽은 글은 💬 단추에 빨간 숫자로. 대화방을 열면 읽은 걸로 — 아이는 profile.noti.chatAt, 부모님은 이 기기에만(localStorage).
-   부모님의 예전 쪽지(settings.parentNote)는 맨 위에 📌로 보여 준다. 5초 동기화 때는 글 목록만 다시 그려서 쓰던 글은 그대로 남는다.
+   💬 대화방 — 오른쪽 위 💬 단추 → 오른쪽에서 열린다. 누구를 초대하느냐에 따라 단체방을 여러 개 만든다.
+   👪 우리 가족방(모두)은 늘 있다. ➕ 새 방: 초대할 사람(아이들·엄마 아빠)을 고르고 이름·그림을 정한다 — 컬렉션 chatrooms {name, emoji, members[], createdBy, at}.
+   글은 chat {room, from:아이 id | 'parent', text, at}, 칭찬 스티커는 kudos {from, to, reason, room, at}(배움기록·왕관이 센다). room 이 없으면 가족방.
+   아이는 들어와 있는 아이로만 쓴다. 엄마 아빠로 쓰려면 부모님 비밀번호(대화방을 닫으면 끝). 안전을 위해 엄마 아빠는 모든 방을 볼 수 있다.
+   안 읽은 수는 방마다(아이 profile.noti.chatSeen, 부모님은 이 기기 localStorage), 💬 빨간 숫자는 내 방을 모두 더한 것.
+   부모님의 예전 쪽지(settings.parentNote)는 가족방 맨 위에 📌. 5초 동기화 때는 보고 있는 목록만 다시 그려서 쓰던 글은 그대로 남는다.
    ============================================================ */
-const CHAT = { open:false, as:'', tray:false, to:'', sig:'' };
+const CHAT = { open:false, as:'', tray:false, to:'', sig:'', room:'family', view:'room', pick:[], emoji:'🌈' };
+const CHAT_EMOJI = ['🌈', '🐰', '🐻', '🍓', '⭐', '🎈', '🚀', '🌻'];
 function chatMe(){ if (CHAT.as === 'parent') return 'parent'; return S.kidId && curKid() ? S.kidId : ''; }
 function chatWho(id){
   if (id === 'parent') return { name:'엄마 아빠', avatar:'👪', bg:'#FFF1D0' };
   const k = kid(id); return k ? { name:k.name, avatar:k.avatar || '🐰', bg:kidColor(k).bg } : { name:'친구', avatar:'🙂', bg:'#EEE' };
 }
-function chatItems(){
-  const a = S.data.chat.map(x => ({ id:x.id, kind:'msg', from:x.from, text:String(x.text || ''), at:String(x.at || '') }));
-  const b = S.data.kudos.map(x => ({ id:x.id, kind:'kudo', from:x.from, to:x.to, text:String(x.reason || ''), at:String(x.at || '') }));
-  return a.concat(b).filter(x => x.at).sort((p, q) => p.at.localeCompare(q.at)).slice(-200);
+function chatFamily(){ return { id:'family', name:'우리 가족', emoji:'👪', members:kids().map(k => k.id).concat('parent'), fixed:true }; }
+/* 내가 볼 수 있는 방 — 아이는 초대받은 방만, 엄마 아빠는 모두 */
+function chatRooms(me){
+  const list = S.data.chatrooms.filter(r => Array.isArray(r.members) && (me === 'parent' || r.members.indexOf(me) >= 0))
+    .map(r => ({ id:r.id, name:r.name || '우리 방', emoji:r.emoji || '💬', members:r.members, createdBy:r.createdBy, at:r.at }));
+  return [chatFamily()].concat(list.sort((a, b) => String(chatLastAt(b.id) || b.at || '').localeCompare(String(chatLastAt(a.id) || a.at || ''))));
 }
-function chatSeenAt(me){
-  if (me === 'parent') return lsGet('dolearn.chatAt.parent') || '';
-  const k = kid(me); return (k && k.noti && k.noti.chatAt) || notiState(k).since;
+function chatRoom(id){ if (id === 'family' || !id) return chatFamily(); const r = S.data.chatrooms.find(x => x.id === id); return r ? { id:r.id, name:r.name || '우리 방', emoji:r.emoji || '💬', members:r.members || [], createdBy:r.createdBy } : null; }
+function chatInRoom(me, room){ return !!room && (me === 'parent' || room.members.indexOf(me) >= 0); }
+function chatAll(){
+  const a = S.data.chat.map(x => ({ id:x.id, kind:'msg', room:x.room || 'family', from:x.from, text:String(x.text || ''), at:String(x.at || '') }));
+  const b = S.data.kudos.map(x => ({ id:x.id, kind:'kudo', room:x.room || 'family', from:x.from, to:x.to, text:String(x.reason || ''), at:String(x.at || '') }));
+  return a.concat(b).filter(x => x.at).sort((p, q) => p.at.localeCompare(q.at));
 }
-/* 나에게 온 새 글 — 남이 쓴 글, 나에게 온 칭찬 스티커(부모님은 아이들 사이 칭찬도) */
+function chatItems(roomId){ const id = roomId || 'family'; return chatAll().filter(x => x.room === id).slice(-200); }
+function chatLastAt(roomId){ const it = chatItems(roomId); return it.length ? it[it.length - 1].at : ''; }
+function chatSeenMap(me){
+  if (me === 'parent'){ try { return JSON.parse(lsGet('dolearn.chatSeen.parent') || '{}') || {}; } catch(e){ return {}; } }
+  const k = kid(me), n = (k && k.noti) || {};
+  const m = Object.assign({}, n.chatSeen || {});
+  if (!m.family && n.chatAt) m.family = n.chatAt;                         // 예전(방이 하나일 때) 기록
+  return m;
+}
+function chatSeenAt(me, roomId){ const m = chatSeenMap(me); return m[roomId] || (me === 'parent' ? '' : notiState(kid(me)).since); }
+/* 방마다 나에게 온 새 글 — 남이 쓴 글, 나에게 온 칭찬 스티커(엄마 아빠는 방 안의 모든 칭찬) */
+function chatUnreadIn(me, roomId){
+  const seen = chatSeenAt(me, roomId);
+  return chatItems(roomId).filter(x => x.at > seen && x.from !== me && (x.kind === 'msg' || x.to === me || me === 'parent'));
+}
 function chatUnread(me){
   if (!me) return [];
-  const seen = chatSeenAt(me);
-  return chatItems().filter(x => x.at > seen && x.from !== me && (x.kind === 'msg' || x.to === me || me === 'parent'));
+  return chatRooms(me).filter(r => r.members.indexOf(me) >= 0).reduce((acc, r) => acc.concat(chatUnreadIn(me, r.id)), []);
 }
 function chatBadge(){
   const b = document.getElementById('chatBtn'); if (!b) return;
@@ -1655,23 +1715,58 @@ function chatBadge(){
   if (el){ el.hidden = !n; el.textContent = n > 9 ? '9+' : String(n); }
 }
 async function chatMarkRead(){
-  const me = chatMe(), items = chatItems(); if (!me || !items.length) return;
-  const last = items[items.length - 1].at;
-  if (me === 'parent'){ if ((lsGet('dolearn.chatAt.parent') || '') < last) lsSet('dolearn.chatAt.parent', last); chatBadge(); return; }
+  const me = chatMe(); if (!me || CHAT.view !== 'room') return;
+  const room = CHAT.room, last = chatLastAt(room), note = S.settings.parentNote;
+  if (me === 'parent'){ const m = chatSeenMap('parent'); if (last && (m[room] || '') < last){ m[room] = last; lsSet('dolearn.chatSeen.parent', JSON.stringify(m)); } chatBadge(); return; }
   const k = kid(me); if (!k) return;
-  const st = notiState(k), note = S.settings.parentNote;
-  const noteNew = note && note.at && note.at > (st.noteAt || '');          // 📌 쪽지도 대화방 맨 위에서 봤다
-  if ((st.chatAt || '') >= last && !noteNew) return;
-  if ((st.chatAt || '') < last) st.chatAt = last;
+  const st = notiState(k), m = chatSeenMap(me);
+  const noteNew = room === 'family' && note && note.at && note.at > (st.noteAt || '');   // 📌 쪽지도 가족방 맨 위에서 봤다
+  if ((!last || (m[room] || '') >= last) && !noteNew) return;
+  if (last && (m[room] || '') < last) m[room] = last;
+  st.chatSeen = m; if (m.family) st.chatAt = m.family;
   if (noteNew) st.noteAt = note.at;
   await Store.update('profiles', k.id, { noti:st });
 }
 function chatDay(at){ const d = new Date(at); return `${d.getMonth() + 1}월 ${d.getDate()}일 ${DAYNAMES[d.getDay()]}요일`; }
 function chatTime(at){ const d = new Date(at), h = d.getHours(); return `${h < 12 ? '오전' : '오후'} ${h % 12 || 12}:${String(d.getMinutes()).padStart(2, '0')}`; }
+function chatAvatars(members){ return members.map(id => { const w = chatWho(id); return `<span class="cb-av sm" style="background:${w.bg}" title="${esc(w.name)}">${esc(w.avatar)}</span>`; }).join(''); }
+/* ---------- 방 목록 ---------- */
+function chatRoomsHtml(){
+  const me = chatMe();
+  const rows = chatRooms(me).map(r => {
+    const it = chatItems(r.id), last = it[it.length - 1], n = me && r.members.indexOf(me) >= 0 ? chatUnreadIn(me, r.id).length : 0;
+    const prev = last ? (last.kind === 'kudo' ? `🎁 ${chatWho(last.from).name} → ${chatWho(last.to).name} 칭찬 스티커` : `${chatWho(last.from).name}: ${last.text}`) : '아직 아무 말도 없어요';
+    return `<button class="chat-room" data-act="chatGo" data-arg="${esc(r.id)}"><span class="chat-room-ico">${esc(r.emoji)}</span>
+      <div class="grow" style="min-width:0"><div class="row" style="gap:6px"><b>${esc(r.name)}</b><span class="chat-room-av">${chatAvatars(r.members)}</span></div>
+        <div class="chat-room-last">${esc(prev)}</div></div>
+      <div class="chat-room-side">${last ? `<small>${chatTime(last.at)}</small>` : ''}${n ? `<span class="chat-badge in">${n > 9 ? '9+' : n}</span>` : ''}</div></button>`;
+  }).join('');
+  return `<div class="chat-rooms">${rows}
+    ${me ? '<button class="btn ghost wide" data-act="chatNew" style="margin-top:6px">➕ 새 방 만들기</button>' : ''}
+    ${me === 'parent' ? '<p class="muted" style="font-size:12px;text-align:center;margin:6px 0 0">👀 엄마 아빠는 모든 방을 볼 수 있어요</p>' : ''}</div>`;
+}
+/* ---------- 새 방 만들기 — 초대할 사람 고르기 ---------- */
+function chatNewHtml(){
+  const me = chatMe(), all = kids().map(k => k.id).concat('parent');
+  const picked = new Set(CHAT.pick.concat(me));
+  const auto = Array.from(picked).map(id => chatWho(id).name).join('·');
+  return `<div class="chat-new">
+    <h3 class="sub" style="margin:0 0 6px">➕ 새 방 만들기</h3>
+    <div class="muted" style="font-size:14px;margin-bottom:6px">누구를 초대할까요?</div>
+    <div class="chips">${all.map(id => { const w = chatWho(id), mine = id === me;
+      return `<button class="chip" data-act="chatPick" data-arg="${esc(id)}" aria-pressed="${picked.has(id)}" ${mine ? 'disabled' : ''}>${esc(w.avatar)} ${esc(w.name)}${mine ? ' (나)' : ''}</button>`; }).join('')}</div>
+    <div class="muted" style="font-size:14px;margin:10px 0 4px">방 이름</div>
+    <input class="field" id="chatRoomName" maxlength="16" placeholder="${esc(auto)}" autocomplete="off">
+    <div class="muted" style="font-size:14px;margin:10px 0 4px">방 그림</div>
+    <div class="chips">${CHAT_EMOJI.map(e => `<button class="chip" data-act="chatEmoji" data-arg="${e}" aria-pressed="${CHAT.emoji === e}" style="font-size:20px">${e}</button>`).join('')}</div>
+    ${me !== 'parent' && !picked.has('parent') ? '<p class="muted" style="font-size:12px;margin:8px 0 0">👀 엄마 아빠는 모든 방을 볼 수 있어요</p>' : ''}
+    <div class="row" style="gap:8px;margin-top:12px"><button class="btn ghost grow" data-act="chatList">그만두기</button><button class="btn grow" data-act="chatCreate" ${picked.size >= 2 ? '' : 'disabled'}>방 만들기</button></div>
+  </div>`;
+}
 function chatListHtml(){
-  const me = chatMe(), items = chatItems(), note = S.settings.parentNote;
+  const me = chatMe(), room = CHAT.room, items = chatItems(room), note = S.settings.parentNote;
   let day = '', out = '';
-  if (note && String(note.text || '').trim()) out += `<div class="chat-pin">📌 <b>엄마 아빠의 쪽지</b> ${esc(note.text)}</div>`;
+  if (room === 'family' && note && String(note.text || '').trim()) out += `<div class="chat-pin">📌 <b>엄마 아빠의 쪽지</b> ${esc(note.text)}</div>`;
   if (!items.length) out += `<div class="chat-empty">💬 아직 아무 말도 없어요.<br>“안녕!” 하고 먼저 말을 걸어 볼까요? 칭찬 스티커 🎁도 보낼 수 있어요.</div>`;
   for (const x of items){
     const d = chatDay(x.at); if (d !== day){ day = d; out += `<div class="chat-date">${esc(d)}</div>`; }
@@ -1688,18 +1783,19 @@ function chatListHtml(){
   }
   return out;
 }
-/* 칭찬 스티커 고르기 — 아이는 형제에게(하루 3번까지), 부모님은 고른 아이에게 */
+/* 칭찬 스티커 — 이 방에 있는 다른 아이에게 (아이끼리는 하루 3번까지) */
+function chatKudoTargets(){ const me = chatMe(), r = chatRoom(CHAT.room); return r ? r.members.filter(id => id !== me && id !== 'parent' && kid(id)) : []; }
+function chatReasons(me){ return me === 'parent' ? KUDOS.concat(['😇 착한 일을 했어요', '🌟 끝까지 해냈어요']) : KUDOS; }
 function chatTrayHtml(){
   const me = chatMe(); if (!me) return '';
-  const others = kids().filter(k => k.id !== me);
-  if (!others.length) return '<div class="chat-tray"><p class="muted" style="margin:0">칭찬 스티커를 보낼 친구가 아직 없어요.</p></div>';
-  if (!others.some(k => k.id === CHAT.to)) CHAT.to = others[0].id;
+  const others = chatKudoTargets();
+  if (!others.length) return '<div class="chat-tray"><p class="muted" style="margin:0">이 방에는 칭찬 스티커를 보낼 친구가 없어요.</p></div>';
+  if (others.indexOf(CHAT.to) < 0) CHAT.to = others[0];
   const left = me === 'parent' ? 99 : 3 - kudosToday(me);
-  const reasons = me === 'parent' ? KUDOS.concat(['😇 착한 일을 했어요', '🌟 끝까지 해냈어요']) : KUDOS;
   return `<div class="chat-tray">
-    ${others.length > 1 ? `<div class="chips" style="margin-bottom:6px">${others.map(k => `<button class="chip" data-act="chatTo" data-arg="${k.id}" aria-pressed="${CHAT.to === k.id}">${esc(k.avatar || '')} ${esc(k.name)}</button>`).join('')}</div>`
+    ${others.length > 1 ? `<div class="chips" style="margin-bottom:6px">${others.map(id => `<button class="chip" data-act="chatTo" data-arg="${id}" aria-pressed="${CHAT.to === id}">${esc(chatWho(id).avatar)} ${esc(chatWho(id).name)}</button>`).join('')}</div>`
       : `<div class="muted" style="font-size:13px;margin-bottom:6px">🎁 ${esc(chatWho(CHAT.to).name)}에게 칭찬 스티커 보내기${me === 'parent' ? '' : ` (오늘 ${Math.max(0, left)}번 남았어요)`}</div>`}
-    ${left > 0 ? `<div class="chat-stickers">${reasons.map((r, i) => `<button class="chat-st" data-act="chatKudo" data-arg="${i}">${esc(r)}</button>`).join('')}</div>`
+    ${left > 0 ? `<div class="chat-stickers">${chatReasons(me).map((r, i) => `<button class="chat-st" data-act="chatKudo" data-arg="${i}">${esc(r)}</button>`).join('')}</div>`
       : '<p class="muted" style="margin:0;font-size:13px">오늘은 칭찬 스티커를 다 보냈어요. 내일 또 보내요! 글로 고마운 마음을 전해도 좋아요 💕</p>'}
   </div>`;
 }
@@ -1708,30 +1804,56 @@ function chatComposeHtml(){
   if (!me) return `<div class="chat-who"><div class="muted" style="font-size:14px;margin-bottom:6px">누구로 말할까요?</div>
     <div class="chips" style="justify-content:center">${kids().map(k => `<button class="chip" data-act="chatAsKid" data-arg="${k.id}">${esc(k.avatar || '')} ${esc(k.name)}</button>`).join('')}
       <button class="chip" data-act="chatAsParent">👪 엄마 아빠</button></div></div>`;
+  if (CHAT.view !== 'room') return '';
+  const room = chatRoom(CHAT.room);
+  if (!chatInRoom(me, room)) return '<p class="muted" style="text-align:center;margin:0">이 방의 친구만 말할 수 있어요</p>';
   return `${CHAT.tray ? chatTrayHtml() : ''}
     <div class="chat-compose">
-      <button class="btn ghost sm chat-gift" data-act="chatTray" aria-pressed="${CHAT.tray}" aria-label="칭찬 스티커">🎁</button>
-      <input class="field grow" id="chatIn" maxlength="200" placeholder="${me === 'parent' ? '아이들에게 한마디 (쪽지)' : '가족에게 하고 싶은 말'}" enterkeyhint="send" autocomplete="off">
+      ${chatKudoTargets().length ? `<button class="btn ghost sm chat-gift" data-act="chatTray" aria-pressed="${CHAT.tray}" aria-label="칭찬 스티커">🎁</button>` : ''}
+      <input class="field grow" id="chatIn" maxlength="200" placeholder="${me === 'parent' ? '아이들에게 한마디 (쪽지)' : '하고 싶은 말'}" enterkeyhint="send" autocomplete="off">
       ${srOk() ? '<button class="btn ghost sm" data-act="chatMic" aria-label="말로 쓰기">🎙</button>' : ''}
       <button class="btn sm" data-act="chatSend">보내기</button>
     </div>`;
 }
-function chatOpen(){
-  CHAT.open = true; CHAT.tray = false;
-  let w = document.getElementById('chatWrap');
-  if (!w){ w = document.createElement('div'); w.id = 'chatWrap'; w.className = 'chat-wrap'; document.body.appendChild(w); }
-  const me = chatMe(), who = me ? chatWho(me) : null;
+function chatHeadHtml(){
+  const me = chatMe(), who = me ? chatWho(me) : null, r = chatRoom(CHAT.room);
+  if (CHAT.view === 'room' && r){
+    const canDel = !r.fixed && (me === 'parent' || r.createdBy === me), canLeave = !r.fixed && me && me !== 'parent' && r.members.indexOf(me) >= 0;
+    return `<button class="ttl-x" data-act="chatList" aria-label="방 목록">◀</button>
+      <b class="chat-title">${esc(r.emoji)} ${esc(r.name)}</b><span class="chat-room-av">${chatAvatars(r.members)}</span>
+      ${canDel ? '<button class="btn ghost sm" data-act="chatDel" aria-label="방 지우기">🗑</button>' : (canLeave ? '<button class="btn ghost sm" data-act="chatLeave">나가기</button>' : '')}
+      <button class="ttl-x" data-act="chatClose" aria-label="대화방 닫기">✕</button>`;
+  }
+  return `<b class="chat-title">💬 대화방</b>${who ? `<span class="chat-me"><span class="cb-av sm" style="background:${who.bg}">${esc(who.avatar)}</span>${esc(who.name)}</span>` : ''}
+    <button class="ttl-x" data-act="chatClose" aria-label="대화방 닫기">✕</button>`;
+}
+function chatDraw(keepInput, first){
+  const w = document.getElementById('chatWrap'); if (!w) return;
+  const keep = keepInput ? (($('#chatIn') || {}).value || '') : '';
+  const body = CHAT.view === 'list' ? chatRoomsHtml() : (CHAT.view === 'new' ? chatNewHtml() : chatListHtml());
   w.innerHTML = `<div class="chat-dim" data-act="chatClose"></div>
-    <aside class="chat-panel" role="dialog" aria-label="우리 가족 대화방">
-      <div class="chat-head"><b>💬 우리 가족 대화방</b>
-        ${who ? `<span class="chat-me"><span class="cb-av sm" style="background:${who.bg}">${esc(who.avatar)}</span>${esc(who.name)}</span>` : ''}
-        <button class="ttl-x" data-act="chatClose" aria-label="대화방 닫기">✕</button></div>
-      <div class="chat-list" id="chatList">${chatListHtml()}</div>
+    <aside class="chat-panel${first ? ' anim' : ''}" role="dialog" aria-label="대화방">
+      <div class="chat-head">${chatHeadHtml()}</div>
+      <div class="chat-list${CHAT.view === 'room' ? '' : ' plain'}" id="chatList">${body}</div>
       <div class="chat-foot" id="chatFoot">${chatComposeHtml()}</div>
     </aside>`;
-  CHAT.sig = chatItems().length + '|' + ((chatItems().slice(-1)[0] || {}).id || '');
-  const l = document.getElementById('chatList'); if (l) l.scrollTop = l.scrollHeight;
-  chatMarkRead(); chatBadge();
+  const i = $('#chatIn'); if (i && keep) i.value = keep;
+  const l = document.getElementById('chatList'); if (l && CHAT.view === 'room') l.scrollTop = l.scrollHeight;
+  CHAT.sig = chatSig();
+  if (CHAT.view === 'room') chatMarkRead();
+  chatBadge();
+}
+function chatSig(){ const all = chatAll(); return [CHAT.view, CHAT.room, all.length, (all[all.length - 1] || {}).id || '', S.data.chatrooms.length, JSON.stringify(S.settings.parentNote || null).length].join('|'); }
+function chatOpen(room){
+  CHAT.open = true; CHAT.tray = false;
+  const me = chatMe();
+  let r = chatRoom(room || CHAT.room);
+  if (!r || (me && !chatInRoom(me, r))) r = chatFamily();
+  CHAT.room = r.id; CHAT.view = 'room';
+  let w = document.getElementById('chatWrap');
+  const first = !w;
+  if (!w){ w = document.createElement('div'); w.id = 'chatWrap'; w.className = 'chat-wrap'; document.body.appendChild(w); }
+  chatDraw(false, first);                                  // 처음 열 때만 오른쪽에서 스르륵
   const box = document.getElementById('notiBox'); if (box) box.innerHTML = '';   // 알림 카드는 대화방 안에서 다 보인다
 }
 function chatClose(){
@@ -1739,38 +1861,75 @@ function chatClose(){
   const w = document.getElementById('chatWrap'); if (w) w.remove();
   chatBadge(); setTimeout(notiCheck, 60);
 }
-/* 동기화로 새 글이 오면 목록만 다시 — 아래를 보고 있었으면 계속 아래로 */
+/* 동기화로 새 글이 오면 — 방 안이면 목록만, 아래를 보고 있었으면 계속 아래로 */
 function chatRefresh(){
   if (!CHAT.open) return;
-  const items = chatItems(), sig = items.length + '|' + ((items[items.length - 1] || {}).id || '') + '|' + JSON.stringify(S.settings.parentNote || null).length;
-  if (sig === CHAT.sig) return;
+  const sig = chatSig(); if (sig === CHAT.sig) return;
+  if (CHAT.view === 'room' && !chatRoom(CHAT.room)){ CHAT.room = 'family'; chatDraw(true); return; }   // 방이 지워졌으면 가족방으로
+  if (CHAT.view !== 'room'){ if (CHAT.view === 'list') chatDraw(true); CHAT.sig = sig; return; }
   CHAT.sig = sig;
   const l = document.getElementById('chatList'); if (!l) return;
   const atEnd = l.scrollHeight - l.scrollTop - l.clientHeight < 80;
   l.innerHTML = chatListHtml();
   if (atEnd) l.scrollTop = l.scrollHeight;
-  chatMarkRead();
+  chatMarkRead(); chatBadge();
 }
 function chatFootRedraw(){ const f = document.getElementById('chatFoot'), keep = ($('#chatIn') || {}).value || ''; if (f){ f.innerHTML = chatComposeHtml(); const i = $('#chatIn'); if (i) i.value = keep; } }
 ACTS.chatOpen = () => { nvUnlock(); chatOpen(); };
 ACTS.chatClose = () => chatClose();
+ACTS.chatList = () => { CHAT.view = 'list'; CHAT.tray = false; chatDraw(false); };
+ACTS.chatGo = (arg) => { const r = chatRoom(arg); if (!r) return; CHAT.room = r.id; CHAT.view = 'room'; CHAT.tray = false; chatDraw(false); };
+ACTS.chatNew = () => { CHAT.view = 'new'; CHAT.pick = []; CHAT.emoji = CHAT_EMOJI[Math.floor(Math.random() * CHAT_EMOJI.length)]; chatDraw(false); };
+ACTS.chatPick = (arg) => { const i = CHAT.pick.indexOf(arg); if (i >= 0) CHAT.pick.splice(i, 1); else CHAT.pick.push(arg); const nm = ($('#chatRoomName') || {}).value || ''; chatDraw(false); const f = $('#chatRoomName'); if (f) f.value = nm; };
+ACTS.chatEmoji = (arg) => { CHAT.emoji = arg; const nm = ($('#chatRoomName') || {}).value || ''; chatDraw(false); const f = $('#chatRoomName'); if (f) f.value = nm; };
+ACTS.chatCreate = async () => {
+  const me = chatMe(); if (!me) return;
+  const members = Array.from(new Set(CHAT.pick.concat(me))).filter(id => id === 'parent' || kid(id));
+  if (members.length < 2){ toast('함께할 사람을 한 명 더 골라 주세요'); return; }
+  const name = (($('#chatRoomName') || {}).value || '').trim().slice(0, 16) || members.map(id => chatWho(id).name).join('·');
+  const id = await Store.add('chatrooms', { name, emoji:CHAT.emoji || '💬', members, createdBy:me, at:new Date().toISOString() });
+  CHAT.room = id; CHAT.view = 'room'; chatDraw(false);
+  toast(`${name} 방을 만들었어요! 💬`);
+};
+ACTS.chatDel = () => {
+  const me = chatMe(), r = chatRoom(CHAT.room); if (!r || r.fixed || !(me === 'parent' || r.createdBy === me)) return;
+  const l = document.getElementById('chatList');
+  if (l) l.insertAdjacentHTML('afterbegin', `<div class="pd-row pd-ask" style="margin-bottom:8px"><div class="grow"><b>🗑 「${esc(r.name)}」 방을 지울까요?</b><div class="muted" style="font-size:13px">방 안의 글과 칭찬 스티커도 함께 지워져요.</div></div>
+    <div class="row" style="gap:6px"><button class="btn ghost sm" data-act="chatGo" data-arg="${esc(r.id)}">그만두기</button><button class="btn sm" data-act="chatDelOk" style="background:var(--berry-deep)">지우기</button></div></div>`);
+  if (l) l.scrollTop = 0;
+};
+ACTS.chatDelOk = async () => {
+  const r = chatRoom(CHAT.room); if (!r || r.fixed) return;
+  for (const x of S.data.chat.filter(m => m.room === r.id)) await Store.remove('chat', x.id);
+  for (const x of S.data.kudos.filter(m => m.room === r.id)) await Store.remove('kudos', x.id);
+  await Store.remove('chatrooms', r.id);
+  CHAT.room = 'family'; CHAT.view = 'list'; chatDraw(false); toast('방을 지웠어요');
+};
+ACTS.chatLeave = async () => {
+  const me = chatMe(), rec = S.data.chatrooms.find(x => x.id === CHAT.room); if (!rec || !me || me === 'parent') return;
+  const members = (rec.members || []).filter(id => id !== me);
+  if (members.length < 2){ for (const x of S.data.chat.filter(m => m.room === rec.id)) await Store.remove('chat', x.id); await Store.remove('chatrooms', rec.id); }
+  else await Store.update('chatrooms', rec.id, { members });
+  CHAT.room = 'family'; CHAT.view = 'list'; chatDraw(false); toast('방에서 나왔어요');
+};
 ACTS.chatTray = () => { CHAT.tray = !CHAT.tray; chatFootRedraw(); };
 ACTS.chatTo = (arg) => { CHAT.to = arg; chatFootRedraw(); };
 ACTS.chatSend = async () => {
-  const me = chatMe(), inp = $('#chatIn'); if (!me || !inp) return;
+  const me = chatMe(), inp = $('#chatIn'); if (!me || !inp || CHAT.view !== 'room') return;
   const text = inp.value.trim().slice(0, 200);
   if (!text){ inp.focus(); return; }
+  if (!chatInRoom(me, chatRoom(CHAT.room))) return;
   inp.value = '';
-  await Store.add('chat', { from:me, text, at:new Date().toISOString() });
+  await Store.add('chat', { room:CHAT.room, from:me, text, at:new Date().toISOString() });
   chatRefresh(); const l = document.getElementById('chatList'); if (l) l.scrollTop = l.scrollHeight;
   ttTone(880, 0, 0.08, 0.05);
 };
 ACTS.chatKudo = async (arg) => {
   const me = chatMe(); if (!me) return;
-  const to = CHAT.to, reasons = me === 'parent' ? KUDOS.concat(['😇 착한 일을 했어요', '🌟 끝까지 해냈어요']) : KUDOS;
-  if (!to || to === me || !kid(to)) return;
+  const to = CHAT.to, reasons = chatReasons(me);
+  if (!to || to === me || !kid(to) || chatKudoTargets().indexOf(to) < 0) return;
   if (me !== 'parent' && kudosToday(me) >= 3){ toast('오늘은 칭찬 스티커를 다 보냈어요. 내일 또 보내요!'); return; }
-  await Store.add('kudos', { from:me, to, reason:reasons[+arg] || KUDOS[4], at:new Date().toISOString() });
+  await Store.add('kudos', { from:me, to, reason:reasons[+arg] || KUDOS[4], room:CHAT.room, at:new Date().toISOString() });
   CHAT.tray = false; chatFootRedraw(); chatRefresh();
   const l = document.getElementById('chatList'); if (l) l.scrollTop = l.scrollHeight;
   confetti(); try { ttChime(); } catch(e){}
@@ -1779,7 +1938,7 @@ ACTS.chatKudo = async (arg) => {
 ACTS.chatMic = () => { thListen('chatMsg', () => { const i = $('#chatIn'); if (i){ i.value = ((i.value ? i.value + ' ' : '') + kv('chatMsg')).trim().slice(0, 200); kvSet('chatMsg', ''); i.focus(); } }); };
 ACTS.chatAsKid = (arg) => { chatClose(); kidEnter(arg, () => chatOpen()); };
 ACTS.chatAsParent = () => { chatClose(); S.view.pin = ''; S.view.pinError = ''; S.view.pinPurpose = 'chat'; openModal(pinSheet('엄마 아빠로 말하기')); };
-ACTS.chatParent = () => { closeModal(); CHAT.as = 'parent'; chatOpen(); };   // 부모님 화면(비밀번호를 이미 넣음)에서 바로
+ACTS.chatParent = () => { closeModal(); CHAT.as = 'parent'; chatOpen('family'); };   // 부모님 화면(비밀번호를 이미 넣음)에서 바로
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'chatIn' && !e.isComposing){ e.preventDefault(); ACTS.chatSend(); } });
 
 /* ============================================================
@@ -1868,6 +2027,7 @@ function draw(){
     tabs.hidden = true; who.hidden = true; home.hidden = true;
     screen.innerHTML = viewGate();
     notiCheck(); chatBadge(); chatRefresh();
+    if (VSN.ch) vsNetStop();
     return;
   }
 
@@ -1898,6 +2058,8 @@ function draw(){
   if (S.tab === 'world') worldMount();          // 지구본 캔버스는 하나를 계속 다시 붙여 쓴다
   hydratePhotos(screen);
   notiCheck(); chatBadge(); chatRefresh();
+  if (VSN.kid !== S.kidId) vsNetStart();
+  if (VS && VS.phase === 'lobby') vsRender();
 }
 
 function storageBanner(){
@@ -2460,7 +2622,9 @@ function viewGames(){
         ? '부모님 휴대폰으로 “승인해 주세요” 알림을 보내요.'
         : (list.length ? `오늘 할 일이 ${left}개 남았어요. 조금만 더 힘내요! 할 수 있어요 💪` : '오늘 할 일부터 정해볼까요?')}</p>
       <button class="btn wide" id="askUnlock" ${ready?'':'disabled'}>🔔 부모님께 승인 받기</button>
-    </div>`;
+    </div>
+    <div class="card row"><div class="grow"><b>🤝 같이 놀기 현황판</b><div class="muted" style="font-size:14px">${vsPeerLine()}</div></div>
+      <button class="btn ghost sm" data-act="vsOpenBtn">보기</button></div>`;
   }
 
   const left = (new Date(un.expiresAt).getTime() - Date.now())/1000;
@@ -2472,6 +2636,11 @@ function viewGames(){
     ${g ? `<button class="btn ghost sm" id="quitGame">그만하기</button>` : ''}
   </div>
   ${g ? gameBody(g) : `
+  <div class="card" style="background:linear-gradient(170deg,#FFFFFF,#FFF0F4)">
+    <div class="row"><div class="grow"><h3 class="sub" style="margin:0">🤝 같이 놀기 <span class="newtag">NEW</span></h3>
+      <div class="muted" style="font-size:14px">${vsPeerLine()}</div></div>
+      <button class="btn" data-act="vsOpenBtn">들어가기</button></div>
+  </div>
   <div class="card">
     <h3 class="sub">무슨 놀이 할까요?</h3>
     <div class="stack">
@@ -2879,6 +3048,8 @@ const PD_KINDS = [
     t:x => `${wFlag(x.code)} ${wName(x.code)}`, s:x => `${pdDate(x.date || x.at)} · ${x.kind === 'found' ? '진짜 지구본에서 찾았어요' : '오늘의 나라를 배웠어요'}` },
   { id:'kudos', ico:'💌', label:'받은 칭찬', coll:'kudos', list:k => S.data.kudos.filter(x => x.to === k.id).sort(byAtDesc('at')),
     t:x => x.reason || '칭찬 스티커', s:x => `${pdDate(x.at)} · ${subj(x.from === 'parent' ? '엄마 아빠' : ((kid(x.from) || {}).name || '친구'))} 보냈어요` },
+  { id:'chat', ico:'💬', label:'대화', coll:'chat', list:k => S.data.chat.filter(x => x.from === k.id).sort(byAtDesc('at')),
+    t:x => { const r = chatRoom(x.room || 'family'); return `${r ? r.emoji + ' ' + r.name : '💬 지운 방'} · ${pdDate(x.at)}`; }, s:x => x.text || '' },
   { id:'goals', ico:'🎯', label:'이번 주 약속', coll:'goals', list:k => S.data.goals.filter(x => x.kidId === k.id).sort(byAtDesc('week')),
     t:x => `${pdDate(x.week)} 주의 약속`, s:x => (x.picks || []).map(q => `${q.icon || ''} ${q.text || ''}`).join(' · ') || '고른 약속이 없어요' },
   { id:'dprog', ico:'✏️', label:'받아쓰기', coll:'dprog', list:k => S.data.dprog.filter(x => x.kidId === k.id),
@@ -7768,6 +7939,7 @@ ACTS.itBook = () => {
    ============================================================ */
 function bhTitle(){ return String(S.settings.hideTitle || '').trim().slice(0, 20) || '곰돌이 숨바꼭질'; }
 function bhParams(n){
+  if (BH && BH.vs) return { visible:1450, gap:560, maxOn:3, rabbit:0.22, target:9999, secs:BH.vs.secs || 60 };   // 🤝 대결 — 한 판 60초
   return { visible:Math.max(620, 1650 - 170 * (n - 1)), gap:Math.max(200, 650 - 70 * (n - 1)), maxOn:n <= 1 ? 2 : (n <= 3 ? 3 : (n <= 6 ? 4 : 5)),
     rabbit:Math.min(0.42, 0.18 + 0.04 * (n - 1)), target:15 + 5 * (n - 1), secs:60 };
 }
@@ -7862,18 +8034,20 @@ function bhCafe(h){                                        // 벽·바닥·가�
 
 /* ---------- 열고 닫기 · 화면 ---------- */
 let BH = null;
-function bearOpen(){
+function bearOpen(opt){
   if (BH) return;
   const k = curKid(); if (!k) return;
   nvUnlock(); audioCtx();
-  const save = k.bear || {};
+  const save = k.bear || {}, vs = opt && opt.vs;
   BH = { kidId:k.id, stage:1, score:0, total:0, runTrophies:0, trophies:save.trophies || 0, best:save.best || 0, bestScore:save.bestScore || 0,
-    running:false, phase:'start', pops:[], seq:0, last:null, raf:0, cd:0, nextT:0 };
+    running:false, phase:vs ? 'play' : 'start', pops:[], seq:0, last:null, raf:0, cd:0, nextT:0, vs:vs || null, rand:vs ? vsRand(vs.seed) : null };
   const el = document.createElement('div');
   el.className = 'ttl bh'; el.id = 'bhLayer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', bhTitle());
   document.body.appendChild(el); BH.el = el;
   bhRender();
+  if (vs) bhPlay(vs.secs * 1000);                           // 🤝 대결 — 3·2·1은 같이 놀기에서 이미 했다
 }
+function bhR(){ return BH && BH.rand ? BH.rand() : Math.random(); }   // 대결 때는 두 기기가 같은 순서로 튀어나오게
 function bearClose(msg){
   if (!BH) return;
   cancelAnimationFrame(BH.raf); clearInterval(BH.cd); clearTimeout(BH.nextT);
@@ -7931,7 +8105,8 @@ function bhCard(){
 function bhSetCard(){ const old = document.getElementById('bhCard'); if (old) old.remove(); const st = document.getElementById('bhStage'); if (st && BH.phase !== 'play') st.insertAdjacentHTML('beforeend', bhCard()); }
 function bhHud(){
   const b = BH, p = bhParams(b.stage), $s = document.getElementById('bhScore'), $t = document.getElementById('bhTotal'), bar = document.getElementById('bhBar'), chip = document.getElementById('bhChip');
-  if ($s) $s.textContent = `찾은 곰돌이 ${b.score} / ${p.target} 🎯`;
+  if ($s) $s.textContent = b.vs ? `🤝 대결 · 나 ${b.total}점` : `찾은 곰돌이 ${b.score} / ${p.target} 🎯`;
+  if (b.vs && $t){ const o = kid(b.vs.opp); $t.textContent = `${o ? o.name : '친구'} ${(VS && VS.scores[b.vs.opp]) || 0}점`; if (bar) bar.style.width = '100%'; return; }
   if ($t) $t.textContent = `점수 ${b.total} · 🏆 ${b.runTrophies}`;
   if (bar) bar.style.width = clamp(b.score / p.target * 100, 0, 100) + '%';
   if (chip) chip.textContent = `🧸 ${bhTitle()} · ${b.stage}단계`;
@@ -7972,7 +8147,7 @@ function bhLoop(){
   const sec = Math.ceil(left / 1000);
   if (sec !== b.lastSec){ b.lastSec = sec; bhClock(left); if (sec <= 5 && sec > 0) ttTone(880, 0, 0.05, 0.04); }
   b.pops.slice().forEach(o => { if (!o.done && now >= o.until) bhPopHide(o); });
-  if (left > 400 && b.pops.filter(o => !o.done).length < p.maxOn && now >= b.nextAt){ bhSpawn(now, p); b.nextAt = now + p.gap * (0.6 + Math.random() * 0.8); }
+  if (left > 400 && b.pops.filter(o => !o.done).length < p.maxOn && now >= b.nextAt){ bhSpawn(now, p); b.nextAt = now + p.gap * (0.6 + bhR() * 0.8); }
   if (left <= 0){ bhTimeUp(); return; }
   b.raf = requestAnimationFrame(bhLoop);
 }
@@ -7981,11 +8156,11 @@ function bhSpawn(now, p){
   const b = BH, s = b.size, box = document.getElementById('bhPops'); if (!box) return;
   let x = 0, y = 0, ok = false;
   for (let t = 0; t < 30 && !ok; t++){
-    x = s * 0.55 + Math.random() * (b.W - s * 1.1); y = b.H * 0.12 + s * 0.5 + Math.random() * (b.H * 0.88 - s * 1.05);
+    x = s * 0.55 + bhR() * (b.W - s * 1.1); y = b.H * 0.12 + s * 0.5 + bhR() * (b.H * 0.88 - s * 1.05);
     ok = b.pops.every(o => o.done || Math.hypot(o.x - x, o.y - y) > s * 1.05) && (!b.last || Math.hypot(b.last[0] - x, b.last[1] - y) > s * 1.2);
   }
-  const kind = Math.random() < p.rabbit ? 'rabbit' : (Math.random() < 0.08 ? 'gold' : 'bear');
-  const o = { id:++b.seq, x, y, kind, hit:false, done:false, until:now + p.visible * (kind === 'gold' ? 0.8 : (0.85 + Math.random() * 0.3)) };
+  const kind = bhR() < p.rabbit ? 'rabbit' : (bhR() < 0.08 ? 'gold' : 'bear');
+  const o = { id:++b.seq, x, y, kind, hit:false, done:false, until:now + p.visible * (kind === 'gold' ? 0.8 : (0.85 + bhR() * 0.3)) };
   b.last = [x, y]; b.pops.push(o);
   const el = document.createElement('button');
   el.className = `bh-pop ${kind}`; el.setAttribute('aria-label', kind === 'rabbit' ? '토끼 — 누르면 안 돼요' : '곰돌이');
@@ -8008,6 +8183,7 @@ function bhTap(o){
     if (o.el){ o.el.innerHTML = `<i class="bh-puff"></i>${bhRabbit(true)}`; o.el.classList.add('oops'); }
     ttTone(196, 0, 0.18, 0.09); ttTone(165, 0.1, 0.2, 0.08);
     bhFx(o, '-1 🐰', true); bhTip('앗! 토끼는 잡으면 안 돼요 🐰 곰돌이만 찾아요!', true); bhHud();
+    if (b.vs && b.vs.onScore) b.vs.onScore(b.total);
     setTimeout(() => { if (BH === b) bhPopHide(o); }, 420);
     return;
   }
@@ -8017,6 +8193,7 @@ function bhTap(o){
   if (o.kind === 'gold'){ [784, 988, 1175, 1568].forEach((f, k) => ttTone(f, k * 0.06, 0.18, 0.08)); } else { ttTone(880, 0, 0.1, 0.1); ttTone(1320, 0.06, 0.14, 0.08); }
   bhFx(o, o.kind === 'gold' ? '+2 ✨' : '+1');
   bhHud();
+  if (b.vs){ if (b.vs.onScore) b.vs.onScore(b.total); setTimeout(() => { if (BH === b) bhPopHide(o); }, 240); return; }
   setTimeout(() => { if (BH === b) bhPopHide(o); }, 240);
   if (b.score >= p.target) bhClear();                      // 목표를 채우면 바로 다음 단계
 }
@@ -8044,6 +8221,9 @@ function bhClear(){
 }
 function bhTimeUp(){
   const b = BH; bhStop();
+  if (b.vs){ b.phase = 'over'; bhClock(0); const c = document.getElementById('bhStage');
+    if (c) c.insertAdjacentHTML('beforeend', `<div class="bh-card" id="bhCard"><div class="bh-card-in"><div style="font-size:48px">⏰</div><h3 class="sub" style="margin:4px 0">시간 끝! 점수 ${b.total}</h3><p class="muted" style="margin:0">친구 점수를 기다리는 중…</p></div></div>`);
+    const f = b.vs.onDone; if (f) f(b.total); return; }
   b.phase = 'over'; b.bestScore = Math.max(b.bestScore, b.total);
   [659, 523, 440].forEach((f, k) => ttTone(f, k * 0.14, 0.22, 0.07));
   bhSave(); bhHud(); bhClock(0); bhSetCard();
@@ -8051,13 +8231,372 @@ function bhTimeUp(){
 ACTS.bhStart = () => { const b = BH; if (!b) return; nvUnlock(); audioCtx(); bhCountdown(() => bhPlay()); };
 ACTS.bhAgain = () => { const b = BH; if (!b) return; b.stage = 1; b.score = 0; b.total = 0; b.runTrophies = 0; bhHud(); bhClock(bhParams(1).secs * 1000); bhCountdown(() => bhPlay()); };
 ACTS.bhResume = () => { const b = BH; if (!b || b.phase !== 'pause') return; audioCtx(); const left = b.pausedLeft; bhCountdown(() => bhPlay(left)); };
-ACTS.bhExit = () => { bearClose(); };
+ACTS.bhExit = () => { if (BH && BH.vs){ vsClose(); return; } bearClose(); };
 /* 다른 앱으로 가면 멈춘다 — 돌아오면 "계속하기" */
 document.addEventListener('visibilitychange', () => {
-  const b = BH; if (!b || !document.hidden) return;
+  const b = BH; if (!b || !document.hidden || b.vs) return;   // 대결 중에는 멈추지 않는다(형제와 시간이 어긋나지 않게)
   if (b.running){ b.pausedLeft = Math.max(1000, b.endAt - performance.now()); bhStop(); b.phase = 'pause'; bhSetCard(); }
   else if (b.phase === 'count'){ clearInterval(b.cd); b.pausedLeft = bhParams(b.stage).secs * 1000; b.phase = 'pause'; bhSetCard(); }
 });
+
+/* ============================================================
+   🤝 같이 놀기 — 두 아이가 각자 기기에서 같은 놀이로 겨룬다
+   현황판: 아이마다 🔓 놀이 허락(부모님 승인) · ✅ 들어왔어요 · 👍 준비됐어요. 둘 다 들어와서 준비되면 3·2·1 같이 시작.
+   놀이: 🔍 틀린 그림 찾기(같은 그림 · 다른 곳 5개를 먼저 다 찾으면 이겨요) · 🧸 숨바꼭질 대결(같은 순서로 튀어나와요 · 60초 점수).
+   연결은 Supabase Realtime(방송 + 누가 있는지). 방 이름은 가족 ID를 섞은 값이라 우리 가족만 들어온다.
+   아이가 자기 공간에 들어오면 조용히 연결해 두고(VSN), 형제가 방에 들어오면 "같이 놀자고 기다려요!" 카드를 띄운다.
+   기록은 남기지 않고 별만 준다 — 이기면 2개, 비기거나 져도 1개(같이 논 것만으로도 멋지다). 틀린 그림 찾기는 혼자 연습도 된다.
+   ============================================================ */
+let VS = null;
+const VSN = { ch:null, kid:'', peers:{}, ok:false, invited:{} };
+const VS_GAMES = {
+  spot:{ ico:'🔍', name:'틀린 그림 찾기', note:'똑같은 두 그림에서 다른 곳 5개! 먼저 다 찾으면 이겨요' },
+  bear:{ ico:'🧸', name:'숨바꼭질 대결', note:'똑같은 순서로 곰돌이가 튀어나와요. 60초 동안 누가 더 많이 찾을까? 🐰 토끼는 -1' }
+};
+const SD_N = 5, SD_SECS = 90;
+function vsRand(seed){ let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+/* ---------- 연결 ---------- */
+async function vsNetStart(){
+  const k = S.kidId && curKid();
+  if (!k || !S.sb || window.claude){ vsNetStop(); return; }
+  if (VSN.ch && VSN.kid === k.id) return;
+  vsNetStop(); VSN.kid = k.id;
+  let h = ''; try { h = await famHash(); } catch(e){ h = ''; }
+  if (!h || VSN.kid !== k.id || VSN.ch) return;
+  const ch = S.sb.channel('dl-vs-' + h.slice(0, 24), { config:{ broadcast:{ self:false }, presence:{ key:k.id } } });
+  VSN.ch = ch;
+  ch.on('presence', { event:'sync' }, () => vsPeers());
+  ch.on('broadcast', { event:'vs' }, p => vsOnMsg((p && p.payload) || {}));
+  ch.subscribe(st => {
+    if (VSN.ch !== ch) return;
+    if (st === 'SUBSCRIBED'){ VSN.ok = true; VSN.where = ''; vsTrack(); vsState(); }
+    else if (st === 'CHANNEL_ERROR' || st === 'TIMED_OUT' || st === 'CLOSED'){
+      VSN.ok = false; if (VS && VS.phase === 'lobby') vsRender();
+      clearTimeout(VSN.retry);                                // 끊기면 잠깐 뒤에 다시 붙는다
+      VSN.retry = setTimeout(() => { if (VSN.ch === ch && S.kidId === VSN.kid){ const id = VSN.kid; vsNetStop(); VSN.kid = ''; if (S.kidId === id) vsNetStart(); } }, 2500);
+    }
+  });
+}
+function vsNetStop(){ clearTimeout(VSN.trackT); clearTimeout(VSN.retry); if (VSN.ch){ try { S.sb.removeChannel(VSN.ch); } catch(e){} } VSN.ch = null; VSN.kid = ''; VSN.peers = {}; VSN.ok = false; VSN.where = ''; const inv = document.getElementById('vsInvite'); if (inv) inv.remove(); }
+function vsWhere(){ return VS && !VS.solo ? (VS.phase === 'count' || VS.phase === 'play' ? 'play' : 'lobby') : 'app'; }
+function vsTrack(){
+  if (!VSN.ch || !VSN.ok) return;
+  const w = vsWhere();
+  if (w === VSN.where) return;
+  const wait = Math.max(0, (VSN.trackAt || 0) + 3000 - Date.now());
+  clearTimeout(VSN.trackT);
+  VSN.trackT = setTimeout(() => {
+    if (!VSN.ch || !VSN.ok) return;
+    const now = vsWhere(); if (now === VSN.where) return;
+    VSN.where = now; VSN.trackAt = Date.now();
+    try { VSN.ch.track({ kid:VSN.kid, where:now, at:Date.now() }); } catch(e){}
+  }, wait);
+}
+/* 준비됐어요·고른 놀이는 방송으로 (접속 표시는 느리게만 바꾼다) */
+function vsState(){ if (!VSN.ch || !VSN.ok) return; vsSend({ t:'st', where:vsWhere(), ready:!!(VS && VS.ready), game:VS ? VS.game : '' }); vsTrack(); }
+function vsPeers(){
+  const st = VSN.ch ? VSN.ch.presenceState() : {}, out = {};
+  let fresh = false;
+  Object.keys(st).forEach(key => { const arr = st[key] || [], last = arr[arr.length - 1]; if (!last || !last.kid || last.kid === VSN.kid) return;
+    const old = VSN.peers[last.kid]; if (!old) fresh = true;
+    out[last.kid] = Object.assign({}, old || {}, { kid:last.kid, where:(old && old.stAt > (last.at || 0)) ? old.where : last.where }); });
+  VSN.peers = out;
+  if (fresh && Date.now() - (VSN.helloAt || 0) > 1500){ VSN.helloAt = Date.now(); vsState(); }   // 새로 온 형제에게 내 상태를 알려 준다
+  vsPeersChanged();
+}
+function vsPeersChanged(){ if (VS){ if (VS.phase === 'lobby') vsRender(); vsMaybeStart(); vsResendStart(); } else vsInviteCheck(); }
+function vsSend(msg){ if (VSN.ch && VSN.ok) try { VSN.ch.send({ type:'broadcast', event:'vs', payload:Object.assign({ from:VSN.kid, at:Date.now() }, msg) }); } catch(e){} }
+/* 형제가 방에 들어오면 — 오른쪽 아래에 초대 카드 */
+function vsInviteCheck(){
+  const inv0 = document.getElementById('vsInvite');
+  const peer = Object.values(VSN.peers).find(p => p.where === 'lobby');
+  if (!peer || VS || !S.kidId){ if (inv0) inv0.remove(); return; }
+  if (VSN.invited[peer.kid] && VSN.invited[peer.kid] > Date.now() - 90000) return;
+  const k = kid(peer.kid); if (!k || inv0) return;
+  const d = document.createElement('div'); d.id = 'vsInvite'; d.className = 'vs-invite';
+  d.innerHTML = `<span style="font-size:32px">🤝</span><div class="grow"><b>${esc(subj(k.name))} 같이 놀자고 기다려요!</b><div class="muted" style="font-size:13px">${esc((VS_GAMES[peer.game] || VS_GAMES.spot).name)}</div></div>
+    <button class="btn sm" data-act="vsJoin">들어가기</button><button class="ttl-x" data-act="vsNo" aria-label="닫기" style="width:36px;height:36px">✕</button>`;
+  document.body.appendChild(d);
+  try { ttChime(); } catch(e){}
+}
+ACTS.vsJoin = () => { const d = document.getElementById('vsInvite'); if (d) d.remove(); if (S.tab !== 'games'){ S.tab = 'games'; S.view.game = null; render(); } vsOpen(); };
+ACTS.vsNo = () => { const p = Object.values(VSN.peers).find(x => x.where === 'lobby'); if (p) VSN.invited[p.kid] = Date.now(); const d = document.getElementById('vsInvite'); if (d) d.remove(); };
+/* ---------- 방 ---------- */
+function vsOpen(solo){
+  if (VS) return;
+  const k = curKid(); if (!k) return;
+  if (!solo && (!S.sb || window.claude)){ toast('같이 놀기는 인터넷에 연결된 앱에서만 할 수 있어요'); return; }
+  nvUnlock(); audioCtx();
+  VS = { kidId:k.id, game:'spot', ready:false, phase:'lobby', scores:{}, done:{}, solo:!!solo, el:null };
+  const el = document.createElement('div'); el.className = 'ttl vs'; el.id = 'vsLayer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', '같이 놀기');
+  document.body.appendChild(el); VS.el = el;
+  const inv = document.getElementById('vsInvite'); if (inv) inv.remove();
+  if (solo){ vsBegin('spot', Math.floor(Math.random() * 2147483647), Date.now() + 2400, ''); return; }
+  vsNetStart(); vsState(); vsRender();
+}
+function vsClose(msg){
+  const v = VS; if (!v) return;
+  clearInterval(v.cd); clearInterval(v.tick); clearTimeout(v.waitT);
+  if (BH && BH.vs) bearClose();
+  if (!v.solo) vsSend({ t:'leave' });
+  v.el.remove(); VS = null; vsState(); render(); if (msg) toast(msg);
+}
+function vsOther(){ const v = VS; return kids().find(k => k.id !== (v ? v.kidId : S.kidId)) || null; }
+function vsRender(){
+  const v = VS; if (!v) return;
+  if (v.phase === 'play' && v.game === 'spot'){ sdRender(); return; }
+  if (v.phase === 'play' && v.game === 'bear') return;       // 숨바꼭질 층이 위에 있다
+  const top = `<div class="ttl-top"><button class="ttl-x" data-act="vsExit" aria-label="그만하기">✕</button>
+    <div class="ttl-dots"><span class="ttl-chip">🤝 같이 놀기</span></div><span style="width:48px"></span></div>`;
+  let card = '';
+  if (v.phase === 'lobby') card = vsLobbyHtml();
+  else if (v.phase === 'count') card = `<div class="tt-card" style="text-align:center"><div class="tt-count" id="vsCount">3</div>
+      <p style="margin:0;font-family:var(--display);font-size:22px">${esc((VS_GAMES[v.game] || {}).ico || '')} ${esc((VS_GAMES[v.game] || {}).name || '')} — 준비!</p></div>`;
+  else if (v.phase === 'result') card = vsResultHtml();
+  v.el.innerHTML = `${top}<div class="ttl-body">${card}</div>`;
+}
+function vsLobbyHtml(){
+  const v = VS, me = v.kidId, other = vsOther();
+  const rows = kids().map(k => {
+    const un = activeUnlock(k.id), mine = k.id === me, p = mine ? { where:'lobby', ready:v.ready } : VSN.peers[k.id];
+    const inRoom = !!(p && p.where === 'lobby'), inApp = !!p, pend = pendingRequests().some(r => r.kidId === k.id);
+    return `<div class="vs-row${inRoom ? ' in' : ''}"><span class="avatar" style="background:${kidColor(k).bg};width:44px;height:44px;font-size:26px">${esc(k.avatar || '')}</span>
+      <div class="grow"><b style="font-family:var(--display);font-size:20px">${esc(k.name)}${mine ? ' <small class="muted">(나)</small>' : ''}</b>
+        <div class="vs-tags"><span class="${un ? 'ok' : 'no'}">${un ? `🔓 놀이 허락 · ${fmtClock((new Date(un.expiresAt).getTime() - Date.now()) / 1000)} 남음` : (pend ? '⏳ 부모님 허락 기다리는 중' : '🔒 아직 허락 전')}</span>
+          <span class="${inRoom ? 'ok' : 'no'}">${inRoom ? '✅ 들어왔어요' : (inApp ? '📱 앱에 있어요' : '⏳ 아직 안 들어왔어요')}</span>
+          ${inRoom && p.ready ? '<span class="ok">👍 준비됐어요</span>' : ''}</div></div></div>`;
+  }).join('');
+  const meOk = !!activeUnlock(me), op = other && VSN.peers[other.id], opIn = !!(op && op.where === 'lobby'), opOk = !!(other && activeUnlock(other.id));
+  const pend = pendingRequests().some(r => r.kidId === me);
+  let note = '';
+  if (!VSN.ok) note = '📡 가족 방에 연결하는 중이에요…';
+  else if (!other) note = '같이 놀 친구가 아직 없어요. 부모님 화면에서 친구를 추가해요.';
+  else if (!opIn) note = `⏳ ${esc(subj(other.name))} 들어오길 기다려요. ${esc(other.name)}의 기기에서 놀이 → 🤝 같이 놀기를 눌러요!`;
+  else if (!opOk) note = `${esc(topic(other.name))} 아직 놀이 허락 전이에요. 부모님께 부탁해 볼까요?`;
+  else if (!meOk) note = '나도 놀이 허락을 받아야 같이 할 수 있어요!';
+  else if (!(v.ready && op.ready)) note = '둘 다 👍 준비됐어요를 누르면 바로 시작해요!';
+  else note = '곧 시작해요! 두근두근 💓';
+  return `<div class="tt-card stack">
+    <h3 class="sub" style="margin:0;text-align:center">🤝 같이 놀기 현황판</h3>
+    <div class="stack" style="gap:8px">${rows}</div>
+    <div class="muted" style="text-align:center;font-size:14px">${note}</div>
+    <div><div class="muted" style="margin-bottom:6px">무슨 놀이로 겨룰까요?</div>
+      <div class="vs-games">${Object.keys(VS_GAMES).map(id => { const g = VS_GAMES[id]; return `<button class="vs-game" data-act="vsPick" data-arg="${id}" aria-pressed="${v.game === id}"><span style="font-size:34px">${g.ico}</span><b>${esc(g.name)}</b><small>${esc(g.note)}</small></button>`; }).join('')}</div></div>
+    <div class="tt-foot">
+      ${meOk ? `<button class="btn ${v.ready ? 'mint' : ''}" data-act="vsReady" aria-pressed="${v.ready}">${v.ready ? '👍 준비됐어요! (누르면 취소)' : '👍 준비됐어요!'}</button>`
+        : (pend ? '<button class="btn ghost" disabled>⏳ 부모님께 알렸어요</button>' : '<button class="btn" data-act="vsAsk">🔔 부모님께 허락 받기</button>')}
+      <button class="btn ghost" data-act="vsSolo">🔍 혼자 연습하기</button>
+    </div>
+    <p class="muted" style="margin:0;font-size:12px;text-align:center">각자 자기 기기에서 들어와요. 이기면 ⭐2, 비기거나 져도 ⭐1 — 같이 논 것만으로도 멋져요!</p>
+  </div>`;
+}
+ACTS.vsExit = () => vsClose();
+ACTS.vsOpenBtn = () => vsOpen();
+function vsPeerLine(){
+  const o = kids().find(k => k.id !== S.kidId); if (!o) return '형제·친구와 같은 놀이로 겨뤄요';
+  const p = VSN.peers[o.id], un = activeUnlock(o.id);
+  return `${esc(o.name)}: ${p ? (p.where === 'lobby' ? '✅ 같이 놀기 방에 들어왔어요!' : '📱 앱에 있어요') : '⏳ 아직 안 들어왔어요'} · ${un ? '🔓 놀이 허락' : '🔒 허락 전'}`;
+}
+ACTS.vsPick = (arg) => { const v = VS; if (!v || v.phase !== 'lobby' || !VS_GAMES[arg]) return; v.game = arg; v.ready = false; vsSend({ t:'pick', game:arg }); vsState(); vsRender(); };
+ACTS.vsReady = () => { const v = VS; if (!v || v.phase !== 'lobby') return; if (!activeUnlock(v.kidId)) return; v.ready = !v.ready; vsState(); vsRender(); vsMaybeStart(); };
+ACTS.vsAsk = async () => { await requestUnlock(); toast('부모님께 알렸어요! 조금만 기다려요 ⏳'); vsRender(); };
+ACTS.vsSolo = () => { const was = VS; if (was){ vsClose(); } vsOpen(true); };
+function vsMaybeStart(){
+  const v = VS; if (!v || v.phase !== 'lobby' || v.solo) return;
+  const other = vsOther(); if (!other) return;
+  const op = VSN.peers[other.id];
+  if (!(v.ready && op && op.where === 'lobby' && op.ready && activeUnlock(v.kidId) && activeUnlock(other.id))) return;
+  if (v.kidId > other.id) return;                          // 아이 id가 앞서는 쪽이 시작 신호를 보낸다(둘이 동시에 보내지 않게)
+  const seed = Math.floor(Math.random() * 2147483647), at = Date.now() + 3400;
+  v.startMsg = { t:'start', game:v.game, seed, startAt:at };
+  vsSend(v.startMsg);
+  vsBegin(v.game, seed, at, other.id);
+}
+function vsResendStart(){
+  const v = VS; if (!v || !v.startMsg || (v.phase !== 'count' && v.phase !== 'play')) return;
+  const op = VSN.peers[v.opp];
+  if (op && op.where === 'lobby' && op.ready && Date.now() - (v.resentAt || 0) > 1500 && Date.now() - v.startMsg.startAt < 20000){ v.resentAt = Date.now(); vsSend(v.startMsg); }
+}
+function vsOnMsg(m){
+  if (m.t === 'st' && m.from && m.from !== VSN.kid){
+    VSN.peers[m.from] = Object.assign({}, VSN.peers[m.from] || {}, { kid:m.from, where:m.where, ready:!!m.ready, game:m.game || '', stAt:m.at || Date.now() });
+    vsPeersChanged(); return;
+  }
+  const v = VS; if (!v || v.solo) return;
+  if (m.t === 'pick' && v.phase === 'lobby' && VS_GAMES[m.game]){ v.game = m.game; v.ready = false; vsState(); vsRender(); }
+  else if (m.t === 'start' && v.phase === 'lobby'){ vsBegin(VS_GAMES[m.game] ? m.game : 'spot', m.seed, m.startAt, m.from); }
+  else if (m.t === 'score' && m.from === v.opp){ v.scores[m.from] = m.n; vsScoreUi(); }
+  else if (m.t === 'done' && m.from === v.opp){ v.done[m.from] = { n:m.n, ms:m.ms }; v.scores[m.from] = m.n; vsScoreUi(); vsCheckEnd(); }
+  else if (m.t === 'leave' && m.from === v.opp && v.phase === 'play'){ v.done[m.from] = v.done[m.from] || { n:v.scores[m.from] || 0, left:true }; vsCheckEnd(true); }
+}
+/* 3·2·1 — 시작 시각(startAt)에 맞춰 둘이 같이 */
+function vsBegin(game, seed, startAt, opp){
+  const v = VS; if (!v) return;
+  v.game = game; v.seed = seed >>> 0; v.opp = opp || ''; v.scores = {}; v.done = {}; v.phase = 'count'; clearTimeout(v.waitT); v.waitT = 0;
+  vsRender(); if (!v.solo) vsState();
+  const tick = () => {
+    if (VS !== v || v.phase !== 'count') return;
+    const left = startAt - Date.now(), c = document.getElementById('vsCount');
+    if (left <= 0){ clearInterval(v.cd); if (c) c.textContent = '시작!'; ttTone(990, 0, 0.2, 0.1); setTimeout(() => { if (VS === v) vsGo(); }, 250); return; }
+    const n = Math.min(3, Math.ceil(left / 1000));
+    if (c && c.textContent !== String(n)){ c.textContent = String(n); ttTone(660, 0, 0.12, 0.08); }
+  };
+  clearInterval(v.cd); v.cd = setInterval(tick, 100); tick();
+}
+function vsGo(){
+  const v = VS; v.phase = 'play'; v.t0 = performance.now();
+  if (v.game === 'spot'){ v.sd = sdMake(v.seed); v.found = []; v.miss = []; v.endAt = performance.now() + SD_SECS * 1000; sdRender();
+    clearInterval(v.tick); v.tick = setInterval(sdTick, 250); return; }
+  bearOpen({ vs:{ seed:v.seed, secs:60, opp:v.opp,
+    onScore:n => { vsSend({ t:'score', n }); },
+    onDone:n => { v.done[v.kidId] = { n, ms:60000 }; v.scores[v.kidId] = n; vsSend({ t:'done', n, ms:60000 }); vsCheckEnd(); } } });
+}
+function vsScoreUi(){
+  const v = VS; if (!v) return;
+  const n = v.scores[v.opp] || 0, el = document.getElementById('vsOpp');
+  if (el){ el.textContent = String(n); const bar = document.getElementById('vsOppBar'); if (bar) bar.style.width = (v.game === 'spot' ? n / SD_N * 100 : Math.min(100, n * 4)) + '%'; }
+  if (BH && BH.vs) bhHud();
+}
+function vsCheckEnd(force){
+  const v = VS; if (!v || v.phase !== 'play') return;
+  const dm = v.done[v.kidId], dop = v.done[v.opp];
+  const full = v.game === 'spot' && [dm, dop].some(d => d && d.n >= SD_N);
+  if (v.solo || full || (dm && dop) || force){ vsFinish(); return; }
+  if (dm && !v.waitT) v.waitT = setTimeout(() => { if (VS === v) vsFinish(); }, 4000);   // 형제 결과를 조금 기다린다
+}
+function vsFinish(){
+  const v = VS; if (!v || v.phase !== 'play') return;
+  clearInterval(v.tick); clearTimeout(v.waitT);
+  if (BH && BH.vs){ BH.vs = null; bearClose(); }
+  const me = v.kidId, op = v.opp;
+  const a = v.done[me] ? v.done[me].n : (v.scores[me] || (v.found ? v.found.length : 0)), b = v.done[op] ? v.done[op].n : (v.scores[op] || 0);
+  let win = '';
+  if (v.solo) win = a >= SD_N ? me : '';
+  else if (v.game === 'spot' && (a >= SD_N || b >= SD_N)){
+    if (a >= SD_N && b >= SD_N) win = (v.done[me].ms || 0) <= (v.done[op].ms || 0) ? me : op; else win = a >= SD_N ? me : op;
+  } else win = a > b ? me : (b > a ? op : '');
+  v.phase = 'result'; v.result = { a, b, win, left:!!(v.done[op] && v.done[op].left) };
+  awardStars(v.solo ? (a >= SD_N ? 2 : 1) : (win === me ? 2 : 1));
+  if (win === me || !win) confetti();
+  [523, 659, 784].forEach((f, k) => ttTone(f, k * 0.1, 0.2, 0.08));
+  v.ready = false; v.startMsg = null; vsState(); vsRender();
+}
+function vsResultHtml(){
+  const v = VS, r = v.result || {}, me = kid(v.kidId), op = kid(v.opp), g = VS_GAMES[v.game] || VS_GAMES.spot;
+  const unit = v.game === 'spot' ? `/${SD_N}` : '점';
+  if (v.solo) return `<div class="tt-card stack" style="text-align:center"><div style="font-size:52px">${r.win ? '🏆' : '🔍'}</div>
+      <h3 class="sub" style="margin:0">${r.win ? '다 찾았어요! 눈이 정말 좋아요 👀' : `${r.a}개 찾았어요! 다음엔 더 찾을 수 있어요 💪`}</h3>
+      <div class="tt-foot"><button class="btn" data-act="vsSolo">🔁 한 번 더</button><button class="btn ghost" data-act="vsExit">그만하기</button></div></div>`;
+  const title = r.left ? `${esc(op ? topic(op.name) : '친구는')} 먼저 나갔어요` : (r.win === v.kidId ? `🏆 ${esc(me.name)} 승리!` : (r.win ? `🏆 ${esc(op ? op.name : '')} 승리!` : '🤝 비겼어요!'));
+  const sub = r.win === v.kidId ? '정말 멋져요! 같이 놀아 준 친구에게도 박수 👏' : (r.win ? '아쉽지만 정말 잘했어요! 다음엔 이길 수 있어요 💪' : '둘 다 최고예요! 같이 노니까 더 재밌다 💕');
+  return `<div class="tt-card stack" style="text-align:center">
+    <div style="font-size:52px">${r.win === v.kidId ? '🏆' : (r.win ? '🌟' : '🤝')}</div>
+    <h3 class="sub" style="margin:0">${title}</h3>
+    <div class="vs-score"><div><span class="avatar" style="background:${kidColor(me).bg}">${esc(me.avatar || '')}</span><b>${esc(me.name)}</b><div class="vs-num">${r.a}<small>${unit}</small></div></div>
+      <div class="vs-vs">VS</div>
+      <div><span class="avatar" style="background:${kidColor(op).bg}">${esc((op || {}).avatar || '')}</span><b>${esc((op || {}).name || '')}</b><div class="vs-num">${r.b}<small>${unit}</small></div></div></div>
+    <p style="margin:0">${sub}</p>
+    <p class="muted" style="margin:0">${g.ico} ${esc(g.name)} · ⭐ +${r.win === v.kidId ? 2 : 1}</p>
+    <div class="tt-foot"><button class="btn" data-act="vsAgain">🔁 한 번 더</button><button class="btn ghost" data-act="vsExit">그만하기</button></div>
+  </div>`;
+}
+ACTS.vsAgain = () => { const v = VS; if (!v) return; v.phase = 'lobby'; v.ready = false; v.result = null; vsState(); vsRender(); };
+
+/* ---------- 🔍 틀린 그림 찾기 — 같은 씨앗(seed)이면 두 기기에 똑같은 그림이 나온다 ---------- */
+const SD_THEMES = [
+  { name:'정원', sky:'#DDF3FF', ground:'#C8EDC0', line:0.58, items:['🌳', '🌷', '🦋', '🐞', '🍄', '🐝', '🌼', '🐿️', '🌻', '🐦', '🐌', '🍓', '🐸', '🪺', '🌵', '🐇'] },
+  { name:'놀이방', sky:'#FFF1E6', ground:'#FFE0E8', line:0.62, items:['🧸', '🪀', '🎲', '🚂', '🧩', '🎈', '🪁', '🚗', '⚽', '🎨', '📚', '🎁', '🦖', '🎸', '🧃', '🤖'] },
+  { name:'바닷속', sky:'#D5EEFF', ground:'#A8DDF4', line:0.5, items:['🐠', '🐙', '🦀', '🐚', '🐬', '🪸', '🐡', '⭐', '🦑', '🐢', '⚓', '🐳', '🦐', '🐟', '🦈', '🫧'] }
+];
+function sdMake(seed){
+  const R = vsRand(seed), th = SD_THEMES[Math.floor(R() * SD_THEMES.length)];
+  const cols = 5, rows = 4, cells = [];
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) cells.push([c, r]);
+  for (let i = cells.length - 1; i > 0; i--){ const j = Math.floor(R() * (i + 1)); const t = cells[i]; cells[i] = cells[j]; cells[j] = t; }
+  const objs = cells.slice(0, 15).map(([c, r]) => ({ e:th.items[Math.floor(R() * th.items.length)], x:(c + 0.5 + (R() - 0.5) * 0.45) * 400 / cols,
+    y:(r + 0.5 + (R() - 0.5) * 0.4) * 300 / rows, s:34 + R() * 16, rot:Math.round((R() - 0.5) * 24), hue:0, flip:false }));
+  const right = objs.map(o => Object.assign({}, o));
+  const idx = objs.map((_, i) => i); for (let i = idx.length - 1; i > 0; i--){ const j = Math.floor(R() * (i + 1)); const t = idx[i]; idx[i] = idx[j]; idx[j] = t; }
+  const types = ['gone', 'swap', 'big', 'small', 'move', 'hue']; for (let i = types.length - 1; i > 0; i--){ const j = Math.floor(R() * (i + 1)); const t = types[i]; types[i] = types[j]; types[j] = t; }
+  const diffs = [];
+  for (let d = 0; d < SD_N; d++){
+    const i = idx[d], o = right[i], type = types[d];
+    if (type === 'gone') o.gone = true;
+    else if (type === 'swap'){ let e = o.e; while (e === o.e) e = th.items[Math.floor(R() * th.items.length)]; o.e = e; }
+    else if (type === 'big') o.s = Math.min(70, o.s * 1.55);
+    else if (type === 'small') o.s = o.s * 0.55;
+    else if (type === 'move'){ o.x = clamp(o.x + (R() < 0.5 ? -1 : 1) * 34, 22, 378); o.y = clamp(o.y + (R() < 0.5 ? -1 : 1) * 22, 22, 278); }
+    else if (type === 'hue') o.hue = 150;
+    diffs.push({ i, type, x:(objs[i].x + o.x) / 2, y:(objs[i].y + o.y) / 2, r:Math.max(30, Math.max(objs[i].s, o.s) * 0.75 + (type === 'move' ? 18 : 0)) });
+  }
+  return { th, objs, right, diffs };
+}
+function sdPic(list, th, id, pw){
+  const k = pw / 400;
+  return `<div class="sd-pic" id="${id}" style="width:${pw}px;height:${Math.round(pw * 0.75)}px;background:linear-gradient(180deg,${th.sky} 0 ${th.line * 100}%,${th.ground} ${th.line * 100}% 100%)">
+    ${list.filter(o => !o.gone).map(o => `<span class="sd-o" style="left:${(o.x * k).toFixed(1)}px;top:${(o.y * k).toFixed(1)}px;font-size:${(o.s * k).toFixed(1)}px;transform:translate(-50%,-50%) rotate(${o.rot}deg)${o.flip ? ' scaleX(-1)' : ''};${o.hue ? `filter:hue-rotate(${o.hue}deg) saturate(1.4);` : ''}">${o.e}</span>`).join('')}
+    <div class="sd-marks"></div></div>`;
+}
+function sdRender(){
+  const v = VS; if (!v || !v.sd) return;
+  const land = window.innerWidth > window.innerHeight;
+  const avail = Math.min(window.innerWidth - 28, 1100);
+  // 세로 화면은 위아래로 두 장(높이 0.75 × 2), 가로 화면은 나란히 두 장 — 한 화면에 둘 다 보이게
+  const pw = Math.round(land ? Math.min((avail - 12) / 2, (window.innerHeight - 190) / 0.75) : Math.min(avail, (window.innerHeight - 250) / 1.5));
+  v.pw = pw;
+  const op = kid(v.opp), me = kid(v.kidId);
+  v.el.innerHTML = `<div class="ttl-top"><button class="ttl-x" data-act="vsExit" aria-label="그만하기">✕</button>
+      <div class="ttl-dots"><span class="ttl-chip">🔍 틀린 그림 찾기 · ${esc(v.sd.th.name)}</span></div><span class="bh-time" id="sdTime">⏱ ${SD_SECS}</span></div>
+    <div class="ttl-body" style="max-width:1140px">
+      <div class="sd-hud"><div class="grow"><b>${esc(me.name)}</b> <span id="sdMe">${v.found.length}</span>/${SD_N}<div class="gauge" style="height:10px;margin-top:3px"><span id="sdMeBar" style="width:${v.found.length / SD_N * 100}%"></span></div></div>
+        ${v.solo ? '<div class="grow muted" style="font-size:13px;text-align:right">두 그림에서 다른 곳 5개를 찾아요!</div>' : `<div class="grow" style="text-align:right"><b>${esc(op ? op.name : '')}</b> <span id="vsOpp">${v.scores[v.opp] || 0}</span>/${SD_N}<div class="gauge" style="height:10px;margin-top:3px"><span id="vsOppBar" style="width:${(v.scores[v.opp] || 0) / SD_N * 100}%;background:var(--mint-deep)"></span></div></div>`}</div>
+      <div class="sd-pics${land ? ' land' : ''}">${sdPic(v.sd.objs, v.sd.th, 'sdL', pw)}${sdPic(v.sd.right, v.sd.th, 'sdR', pw)}</div>
+      <p class="muted" style="text-align:center;margin:6px 0 0;font-size:13px" id="sdTip">다른 곳을 찾으면 그림을 눌러요 👆 (어느 그림을 눌러도 돼요)</p>
+    </div>`;
+  ['sdL', 'sdR'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('pointerdown', sdTap); });
+  sdMarks();
+}
+function sdMarks(){
+  const v = VS, k = v.pw / 400;
+  const html = v.found.map(d => { const x = v.sd.diffs[d]; return `<i class="sd-ring" style="left:${(x.x * k).toFixed(0)}px;top:${(x.y * k).toFixed(0)}px;width:${(x.r * 2 * k).toFixed(0)}px;height:${(x.r * 2 * k).toFixed(0)}px"></i>`; }).join('')
+    + v.miss.map(m => `<i class="sd-x" style="left:${(m[0] * k).toFixed(0)}px;top:${(m[1] * k).toFixed(0)}px">✕</i>`).join('');
+  document.querySelectorAll('#vsLayer .sd-marks').forEach(el => { el.innerHTML = html; });
+}
+function sdTap(ev){
+  const v = VS; if (!v || v.phase !== 'play' || v.game !== 'spot') return;
+  ev.preventDefault();
+  const now = performance.now(); if (v.lock > now) return;
+  const r = ev.currentTarget.getBoundingClientRect(), k = v.pw / 400, x = (ev.clientX - r.left) / k, y = (ev.clientY - r.top) / k;
+  let hit = -1, best = 1e9;
+  v.sd.diffs.forEach((d, i) => { if (v.found.indexOf(i) >= 0) return; const dist = Math.hypot(d.x - x, d.y - y); if (dist <= d.r && dist < best){ best = dist; hit = i; } });
+  if (hit < 0){
+    v.miss.push([x, y]); v.lock = now + 700; ttTone(220, 0, 0.12, 0.06);
+    const tip = document.getElementById('sdTip'); if (tip) tip.textContent = '거기는 같아요! 천천히 두 그림을 비교해 봐요 👀';
+    sdMarks(); setTimeout(() => { if (VS === v){ v.miss.shift(); sdMarks(); } }, 700); return;
+  }
+  v.found.push(hit); [880, 1175].forEach((f, j) => ttTone(f, j * 0.07, 0.12, 0.08));
+  const tip = document.getElementById('sdTip'); if (tip) tip.textContent = ['찾았다! 👀', '우와, 눈이 정말 좋아요!', '또 찾았어요! ✨', '거의 다 왔어요!', '다 찾았어요! 🎉'][v.found.length - 1] || '찾았다!';
+  const n = v.found.length, me = document.getElementById('sdMe'), bar = document.getElementById('sdMeBar');
+  if (me) me.textContent = String(n); if (bar) bar.style.width = (n / SD_N * 100) + '%';
+  sdMarks();
+  if (!v.solo) vsSend({ t:'score', n });
+  if (n >= SD_N){
+    const ms = Math.round(performance.now() - v.t0);
+    v.done[v.kidId] = { n, ms }; v.scores[v.kidId] = n;
+    if (!v.solo) vsSend({ t:'done', n, ms });
+    vsCheckEnd();
+  }
+}
+function sdTick(){
+  const v = VS; if (!v || v.phase !== 'play' || v.game !== 'spot') return;
+  const left = Math.max(0, v.endAt - performance.now()), el = document.getElementById('sdTime');
+  if (el){ const s = Math.ceil(left / 1000); el.textContent = `⏱ ${s}`; el.classList.toggle('hurry', s <= 10); }
+  if (left <= 0 && !v.done[v.kidId]){
+    const n = v.found.length; v.done[v.kidId] = { n, ms:SD_SECS * 1000 }; v.scores[v.kidId] = n;
+    if (!v.solo) vsSend({ t:'done', n, ms:SD_SECS * 1000 });
+    vsCheckEnd();
+  }
+}
 
 /* ---------- 📘 AR 지수 — 영어책 난이도 (Renaissance ATOS) ----------
    아이의 최근 AR(STAR) 점수와 비교해 술술 책 · 딱 맞는 책 · 도전 책으로 보여준다. 모두 칭찬하는 말로. */
@@ -11430,7 +11969,9 @@ setInterval(() => {
   }
   if (OL && !activeUnlock(OL.kidId)) closeOneline('놀이 시간이 끝났어요. 내일 또 해요! 👋');
   if (IT && !activeUnlock(IT.kidId)) ittoClose('놀이 시간이 끝났어요. 친구들이 버블에서 기다릴게요! 👋');
-  if (BH && !activeUnlock(BH.kidId)) bearClose('놀이 시간이 끝났어요. 곰돌이가 또 놀자고 기다릴게요! 👋');
+  if (BH && !activeUnlock(BH.kidId) && !(BH.vs && VS && VS.solo)) { if (BH.vs) vsClose('놀이 시간이 끝났어요. 또 같이 놀아요! 👋'); else bearClose('놀이 시간이 끝났어요. 곰돌이가 또 놀자고 기다릴게요! 👋'); }
+  if (VS && !VS.solo && VS.phase === 'play' && !activeUnlock(VS.kidId)) vsClose('놀이 시간이 끝났어요. 또 같이 놀아요! 👋');
+  if (VS && VS.solo && VS.phase === 'play' && !activeUnlock(VS.kidId)) vsClose('놀이 시간이 끝났어요. 내일 또 해요! 👋');
 
   // 기다리던 쪽지·칭찬 카드 (응원 팝업이 닫힌 뒤 등) — 3초마다 한 번 살펴본다
   if (S.kidId && Date.now() % 3000 < 1000) notiCheck();

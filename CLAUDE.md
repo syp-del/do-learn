@@ -59,7 +59,7 @@
   - 창(모달) 안 입력칸은 `data-keep="키"`를 달면 칠 때마다 `kv(키)`에 담긴다 → 창을 다시 그려도 글자가 남는다(`kvField`).
   - 동기화: 내가 쓰는 중(`SYNC`)에 받아 온 옛 기록은 버린다. 방금 쓴 답이 몇 초 동안 사라져 보이던 문제를 막는다.
   - 📒 배움기록: `weekStatsAt`(이번 주·지난주), `crownPlan`(반짝 왕관 나누기), 💌 칭찬 스티커(`kudos` 컬렉션)
-  - 💬 우리 가족 대화방 `chat*`(오른쪽 위 💬 → 오른쪽에서 열림, `#chatWrap`): 글은 컬렉션 `chat` {from: 아이 id | 'parent', text, at}, 칭찬 스티커는 `kudos`(배움기록·왕관이 센다). 아이는 들어와 있는 아이로만 쓰고, 엄마 아빠로 쓰려면 부모님 비밀번호(`pinPurpose 'chat'`, 닫으면 끝). 안 읽은 수는 💬 빨간 숫자(아이 `profile.noti.chatAt`, 부모님은 이 기기 localStorage). 5초 동기화 때는 글 목록만 다시 그린다(`chatRefresh`). 시작 화면 메모지는 엄마 아빠가 일주일 안에 쓴 가장 최근 말. 예전 쪽지(`settings.parentNote`)는 📌.
+  - 💬 대화방 `chat*`(오른쪽 위 💬 → 오른쪽에서 열림, `#chatWrap`): 👪 우리 가족방(모두, `id 'family'`)은 늘 있고, ➕ 새 방은 초대할 사람을 골라 만든다(컬렉션 `chatrooms` {name, emoji, members[아이 id | 'parent'], createdBy}). 글은 `chat` {room, from, text, at}, 칭찬 스티커는 `kudos` {…, room}(배움기록·왕관이 센다). room 이 없으면 가족방. 아이는 초대받은 방만 보고, 엄마 아빠는 모든 방을 본다(안전). 엄마 아빠로 쓰려면 부모님 비밀번호(`pinPurpose 'chat'`, 닫으면 끝). 안 읽은 수는 방마다(아이 `profile.noti.chatSeen`, 부모님 localStorage), 💬 숫자는 합. 5초 동기화 때는 보고 있는 목록만 다시 그린다(`chatRefresh`). 시작 화면 메모지는 가족방에서 엄마 아빠가 일주일 안에 쓴 말. 예전 쪽지(`settings.parentNote`)는 가족방 📌.
   - 🔐 그림 비밀번호 `kp*`/`kidEnter`: 시작 화면에서 아이를 고르면 그림 9개 중 4개를 순서대로(`KPIN_PICS`). 처음이면 아이가 정하고(두 번), `profile.kpin`에는 섞은 값(`kpinHash`). 잊으면 부모님 비밀번호(`kidin:아이id`). 부모님 화면 → 아이에서 지운다. 다른 아이 공간에 들어가지 못하게 — 배움기록·대화방은 함께 본다.
   - 💮 참 잘했어요 도장 `stampSvg()`: 할 일을 끝내면 줄 오른쪽과 이번 주 칸에 찍힌다(예전 🍓 대신).
   - 💌 쪽지·칭찬 알림 `noti*`: 부모님 쪽지(`settings.parentNote`)와 받은 칭찬 스티커가 받는 아이 화면 오른쪽에 카드로 뜬다(`#notiBox`, 창·놀이 층 아래 z 58). "고마워요"를 누르면 `profile.noti`(`since`·`seen`·`noteAt`)에 기억한다. 처음 쓰는 날엔 지난 하루 것만. 창·층이 열려 있으면 닫힌 뒤에 띄운다. 폰은 1장, 아이패드는 2장씩.
@@ -90,6 +90,8 @@
       - 키즈카페 아무 데서나(`bhSpawn`, 겹치지 않게 무작위) 곰돌이가 뿅! 나왔다 숨는다. 빠르게 눌러야 해서 `pointerdown`으로 받는다. 반짝 곰돌이는 +2.
       - 🐰 토끼는 잡으면 안 된다(누르면 -1, 0 밑으로는 안 내려간다). 단계가 오를수록 자주 나온다(`bhParams().rabbit`).
       - 한 단계 60초, 목표 15·20·25…. 목표를 채우면 바로 🏆 + 다음 단계(더 빨리·더 많이). 시간 안에 못 채우면 끝. 트로피·최고 단계는 `profile.bear`. 화면을 숨기면 멈춘다. 세로로 긴 화면은 무대도 길게(`bhCafe(h)`).
+    - 🤝 같이 놀기 `vs*`(층 `#vsLayer`, 상태 `VS`): 두 아이가 각자 기기에서 겨룬다. 현황판 — 아이마다 🔓 놀이 허락(`activeUnlock`) · ✅ 들어왔어요 · 👍 준비됐어요. 둘 다 준비되면 방장(아이 id가 앞서는 쪽)이 `start` {game, seed, startAt}을 보내고 3·2·1 같이 시작. 🔍 틀린 그림 찾기(`sd*`, 같은 seed면 같은 그림 · 다른 곳 5개 · 90초) · 🧸 숨바꼭질 대결(`bearOpen({vs})`, `bhR()` 씨앗 난수 · 60초 점수). 이기면 ⭐2, 비기거나 져도 ⭐1. 틀린 그림 찾기는 혼자 연습도 된다.
+      - 연결은 Supabase Realtime 채널 `dl-vs-<가족 해시>`(`VSN`). 아이가 자기 공간에 들어오면 조용히 붙고, 형제가 방에 들어오면 초대 카드(`#vsInvite`). 접속 표시(presence)는 '어디 있는지'만 바뀔 때 3초에 한 번 — 자주 보내면 서버가 "presence rate limit"으로 채널을 닫는다. 준비·고른 놀이는 방송(`st`)으로. 끊기면 2.5초 뒤 다시 붙고, 시작 신호를 놓친 형제에게는 다시 보낸다.
     - 다른 회사 캐릭터(포켓몬스터·시나모롤 같은)는 그리지 않는다. 비슷한 느낌의 새 캐릭터를 이 앱 그림체로 만든다.
   - 📘 AR: `arParse`(글자에서 점수 읽기), `arBand`(술술·딱 맞는·도전), `arShelfCard`(책장 카드)
   - ✏️ 받아쓰기: 급수표 `dlists`, 아이×급수표 진도 `dprog`(문장마다 `items[i].last`가 false면 🔁 오답 노트).
@@ -122,7 +124,7 @@
 - **`api/book.js`, `notify.js`, `telegram-*.js`**: 책 찾기, 텔레그램 알림.
 - **데이터**: Supabase `items`(`coll` + `data` jsonb), `settings`.
   - 뚜뚜가 쓰는 컬렉션: `scripts`(원고), `speech`(아이×원고 진도 1줄).
-  - 새 컬렉션: `dlists`·`dprog`·`spell`(받아쓰기·철자), `think`·`goals`(생각), `trips`·`wishes`·`stamps`(세계), `chat`(가족 대화방).
+  - 새 컬렉션: `dlists`·`dprog`·`spell`(받아쓰기·철자), `think`·`goals`(생각), `trips`·`wishes`·`stamps`(세계), `chat`·`chatrooms`(대화방).
   - 사진 저장소: 비공개 버킷 `memories` + 정책 3개(select·insert·delete, 폴더 = `encode(digest(x-family-id,'sha256'),'hex')`) + `memories_ready()`.
   - 녹음과 뚜뚜 목소리는 기기의 IndexedDB `dolearn-audio`에만 둔다.
 
