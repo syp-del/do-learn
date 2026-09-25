@@ -965,6 +965,24 @@
   .globe-legend{display:flex;gap:6px 12px;flex-wrap:wrap;justify-content:center;margin-top:10px;font-size:13px;color:var(--cocoa-soft);}
   .globe-legend span{display:inline-flex;align-items:center;gap:4px;}
   .globe-legend i{width:13px;height:13px;border-radius:4px;display:inline-block;border:1px solid rgba(0,0,0,.08);}
+  /* 아이패드 — 왼쪽 지구본, 오른쪽 나라 이야기 탭 (폰은 위아래로) */
+  .w-split{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start;}
+  .w-left,.w-right{min-width:0;}
+  .w-right,.w-panel{display:flex;flex-direction:column;gap:12px;}
+  .w-tabs{display:flex;gap:6px;background:var(--surface);border:3px solid var(--blush);border-radius:22px;padding:5px;box-shadow:var(--shadow);scroll-margin-top:92px;}
+  .w-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:60px;border:0;background:none;border-radius:16px;
+    padding:6px 4px;font-family:var(--display);font-size:16px;color:var(--cocoa-soft);cursor:pointer;white-space:nowrap;}
+  .w-tab span{font-size:24px;line-height:1.1;}
+  .w-tab small{font-size:12px;line-height:1.5;background:var(--blush);color:var(--cocoa);border-radius:999px;padding:0 7px;}
+  .w-tab[aria-selected="true"]{background:linear-gradient(170deg,#FFF6F8,#FFE3EA);color:var(--berry-deep);box-shadow:inset 0 0 0 2px var(--berry);}
+  .w-hint{background:linear-gradient(170deg,#FFFFFF,#EEF7FF);font-family:var(--display);font-size:18px;text-align:center;line-height:1.4;}
+  .w-selbox{border:3px solid var(--berry);}
+  @media (min-width:760px){
+    .w-split{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+    .w-left{position:-webkit-sticky;position:sticky;top:92px;}          /* 위쪽 머리줄(붙어 있다) 아래에 */
+  }
+  @media (min-width:1000px){ .wrap.wide{max-width:1160px;} .w-split{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;} }
+  @media (max-width:400px){ .w-tab{font-size:14px;} .w-tab span{font-size:21px;} }
   .w-today{display:flex;gap:14px;align-items:flex-start;margin-top:10px;}
   .w-flag{font-size:64px;line-height:1;flex:none;}
   @media (max-width:430px){ .w-flag{font-size:48px;} }
@@ -2339,7 +2357,7 @@ function draw(){
   const others = pendingRequests().filter(r => r.kidId !== S.kidId);
 
   const views = { today:viewToday, shelf:viewShelf, words:viewWords, write:viewWrite, speech:viewSpeech, think:viewThink, world:viewWorld, versus:viewVersus, games:viewGames };
-  screen.innerHTML = `<div class="wrap stack">${storageBanner()}${others.map(askCard).join('')}${(views[S.tab]||viewToday)()}</div>`;
+  screen.innerHTML = `<div class="wrap stack${S.tab === 'world' ? ' wide' : ''}">${storageBanner()}${others.map(askCard).join('')}${(views[S.tab]||viewToday)()}</div>`;
 
   if (S.tab === 'shelf') requestAnimationFrame(fitSpines);
   if (S.tab === 'world') worldMount();          // 지구본 캔버스는 하나를 계속 다시 붙여 쓴다
@@ -11798,7 +11816,15 @@ function globeBind(c){
   });
   const up = ev => {
     const d = G.drag; G.drag = null; if (!d) return;
-    if (d.moved < 8){ const code = globePick(d.x0, d.y0); if (code){ S.view.wSel = code; ttTone(784, 0, 0.12, 0.08); render(); } return; }
+    if (d.moved < 8){
+      const code = globePick(d.x0, d.y0);
+      if (code){
+        S.view.wSel = code; ttTone(784, 0, 0.12, 0.08); render();
+        const tabs = document.querySelector('.w-tabs');                 // 폰 — 지구본 아래 탭과 나라 이야기가 보이게
+        if (tabs && window.innerWidth < 760 && tabs.scrollIntoView) tabs.scrollIntoView({ behavior:'smooth', block:'start' });
+      }
+      return;
+    }
     // 손을 떼면 조금 더 굴러가다 멈춘다
     const glide = () => {
       if (G.drag || !G.canvas.isConnected) return;
@@ -11838,10 +11864,15 @@ function wCenter(a2){
   const c = G.cent && G.cent[a2]; return c ? [c[1], c[0]] : null;
 }
 
-/* ---------- 탭 화면 ---------- */
+/* ---------- 탭 화면 ----------
+   아이패드처럼 넓으면 왼쪽에 지구본(스크롤해도 따라온다), 오른쪽에 나라 이야기 탭 셋.
+   폰처럼 좁으면 지구본 아래에 같은 탭이 온다. 지구본에서 나라를 누르면 탭마다 맨 위에 그 나라 이야기가 나온다. */
+const W_TABS = [['study', '🌏', '나라 공부'], ['trip', '✈️', '여행 기록'], ['wish', '⭐', '가고 싶은 곳']];
 function viewWorld(){
-  const sel = S.view.wSel;
-  return `<div class="card" style="text-align:center">
+  const sel = S.view.wSel, tab = W_TABS.some(x => x[0] === S.view.wTab) ? S.view.wTab : 'study';
+  const cnt = { trip:tripsFor(S.kidId).length, wish:wishesOf(S.kidId).length };
+  return `<div class="w-split">
+    <div class="w-left"><div class="card" style="text-align:center">
       <div class="row" style="text-align:left"><h3 class="sub grow" style="margin:0">🌏 지구본</h3>
         <button class="btn ghost sm" data-act="wHome">🇰🇷 우리나라</button></div>
       <div id="globeSlot" class="globe-slot">${G.error ? '<p class="muted">지구본을 불러오지 못했어요. 인터넷을 확인하고 다시 열어 볼까요?</p><button class="btn ghost sm" data-act="wRetry">다시 해 보기</button>'
@@ -11849,13 +11880,38 @@ function viewWorld(){
       <div class="globe-legend"><span><i style="background:${kidColor(curKid()).bar}"></i>가 본 곳</span>
         <span><i style="background:#E4D2F3"></i>집 지구본에서 찾은 곳</span><span>⭐ 오늘의 나라</span><span>📍 여행한 곳</span></div>
       <p class="muted" style="margin:6px 0 0;font-size:13px">손가락으로 돌리고, 나라를 눌러 보세요!</p>
+    </div></div>
+    <div class="w-right">
+      <div class="w-tabs" role="tablist" aria-label="나라 이야기">${W_TABS.map(([id, ico, label]) => `<button class="w-tab" role="tab" data-act="wTab" data-arg="${id}" aria-selected="${tab === id}"><span>${ico}</span>${label}${cnt[id] ? ` <small>${cnt[id]}</small>` : ''}</button>`).join('')}</div>
+      <div class="w-panel" role="tabpanel">${tab === 'trip' ? wTripTab(sel) : tab === 'wish' ? wWishTab(sel) : wStudyTab(sel)}</div>
     </div>
-    ${sel ? wSelCard(sel) : ''}
-    ${wTodayCard()}
-    ${wPassCard()}
-    ${wTripCard()}
-    ${wWishCard()}`;
+  </div>`;
 }
+/* 🌏 나라 공부 — 고른 나라 이야기(없으면 안내) + 오늘의 나라 */
+function wStudyTab(sel){
+  return (sel ? wSelCard(sel) : '<div class="card w-hint">🌏 지구본에서 나라를 눌러 보세요! 그 나라의 인사말·수도·먹을거리를 알려 줄게요.</div>') + wTodayCard();
+}
+/* ✈️ 여행 기록 — 고른 나라에 간 여행 + 나의 여권 + 여행 목록 */
+function wTripTab(sel){
+  const here = sel ? tripsFor(S.kidId).filter(t => t.code === sel) : [];
+  const top = sel ? `<div class="card w-selbox">
+      <div class="row"><span style="font-size:32px;line-height:1">${wFlag(sel)}</span><b class="grow" style="font-family:var(--display);font-size:20px">${esc(wName(sel))} 여행</b>
+        <button class="btn sm" data-act="wTripNew" data-arg="${esc(sel)}">+ 기록하기</button></div>
+      ${here.length ? `<div class="chips" style="margin-top:8px">${here.map(t => `<button class="chip" data-act="wTripShow" data-arg="${esc(t.id)}">${esc(t.emoji || '✈️')} ${esc(t.place || wName(t.code))} ${esc(String(t.date || '').slice(0, 7))}</button>`).join('')}</div>`
+        : `<p class="muted" style="margin:8px 0 0">${esc(eunNeun(wName(sel)))} 아직 여행 기록이 없어요. 가 봤다면 기록해 볼까요?</p>`}</div>` : '';
+  return top + wPassCard() + wTripCard();
+}
+/* ⭐ 가고 싶은 곳 — 고른 나라를 가고 싶은 곳에 넣기 + 목록 */
+function wWishTab(sel){
+  const w = sel && wishesOf(S.kidId).find(x => x.code === sel), i = sel && wInfo(sel);
+  const top = sel ? `<div class="card w-selbox">
+      <div class="row"><span style="font-size:32px;line-height:1">${wFlag(sel)}</span>
+        <div class="grow"><b style="font-family:var(--display);font-size:20px">${esc(wName(sel))}</b>${i && i.tz ? `<div class="muted" style="font-size:13px">${esc(wPlaceNow(i))}</div>` : ''}</div>
+        ${w ? `<button class="btn ghost sm" data-act="wWishShow" data-arg="${esc(w.id)}">⭐ 계획 보기</button>` : `<button class="btn sm" data-act="wWishNew" data-arg="${esc(sel)}">⭐ 가고 싶어요</button>`}</div>
+      ${w && w.why ? `<p class="muted" style="margin:8px 0 0">💭 ${esc(w.why)}</p>` : ''}</div>` : '';
+  return top + wWishCard();
+}
+ACTS.wTab = (arg) => { S.view.wTab = W_TABS.some(x => x[0] === arg) ? arg : 'study'; ttTone(700, 0, 0.08, 0.05); render(); };
 function wSelCard(a2){
   const i = wInfo(a2), trips = tripsFor(S.kidId).filter(t => t.code === a2), wish = wishesOf(S.kidId).find(w => w.code === a2);
   const found = stampsOf(S.kidId, 'found').some(s => s.code === a2);
@@ -12007,7 +12063,7 @@ ACTS.wTripSave = async () => {
   for (const ref of (f.keep || [])) if (!data.photos.includes(ref)) await photoDel(ref);
   kvClear('wt'); S.view.wTrip = null; closeModal();
   if (!f.id){ awardStars(2); confetti(); }
-  S.view.wSel = f.code; if (ll) globeFly(ll[0], ll[1]);
+  S.view.wSel = f.code; S.view.wTab = 'trip'; if (ll) globeFly(ll[0], ll[1]);
   cheerPopup({ emoji:'✈️', title:f.id ? '여행 기록을 고쳤어요!' : '여권에 도장 쾅!', sub:`${wFlag(f.code)} ${wName(f.code)} — 소중한 추억이 남았어요` });
 };
 ACTS.wTripShow = (arg) => {
@@ -12066,7 +12122,7 @@ ACTS.wWishSave = async () => {
     with:kv('wwWith').trim().slice(0, 40), when:kv('wwWhen').trim().slice(0, 30), pack:kv('wwPack').trim().slice(0, 60) };
   if (f.id) await Store.update('wishes', f.id, data);
   else { await Store.add('wishes', { kidId:S.kidId, ...data, at:new Date().toISOString() }); awardStars(1); }
-  kvClear('ww'); S.view.wWish = null; closeModal(); S.view.wSel = f.code;
+  kvClear('ww'); S.view.wWish = null; closeModal(); S.view.wSel = f.code; S.view.wTab = 'wish';
   const c = wCenter(f.code); if (c) globeFly(c[0], c[1]);
   cheerPopup({ emoji:'⭐', title:'꿈의 여행지!', sub:`${wFlag(f.code)} ${wName(f.code)} — 언젠가 꼭 가 봐요!` });
 };
