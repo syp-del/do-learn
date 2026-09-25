@@ -604,6 +604,9 @@
   .vs-game small{font-size:12px;color:var(--cocoa-soft);line-height:1.3;}
   .vs-game[aria-pressed="true"]{border-color:var(--berry);background:#FFF0F4;box-shadow:0 0 0 3px rgba(255,143,168,.3);}
   .vs-modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .snd-check{background:#F7FBFF;border:2px dashed #CBDDF7;border-radius:14px;padding:10px 12px;}
+  .snd-lines{list-style:none;margin:8px 0 0;padding:0;font-size:14px;line-height:1.5;display:flex;flex-direction:column;gap:4px;}
+  .snd-lines li{display:flex;gap:6px;align-items:flex-start;}
   .vs-mode{display:flex;align-items:center;justify-content:center;gap:8px;border:3px solid var(--blush);background:var(--surface);border-radius:18px;padding:10px 8px;font-family:inherit;color:var(--cocoa);cursor:pointer;min-height:64px;}
   .vs-mode span{display:flex;flex-direction:column;align-items:flex-start;line-height:1.2;}
   .vs-mode b{font-family:var(--display);font-size:19px;}
@@ -4275,11 +4278,57 @@ async function nvFetch(text, style){
   AudioBox.ttsPut({ k, at:Date.now(), data:u8.buffer }).catch(() => {});
   return blob;
 }
+/* 🔧 기기 목소리로 들린 까닭(NV.last) — 부모님께 알려 준다 */
+function nvWhyText(L){
+  const w = String((L && L.why) || '');
+  if (w === 'timeout') return `AI 목소리를 받는 데 ${Math.round(((L && L.ms) || 0) / 1000)}초가 넘게 걸렸어요(인터넷이 느린지 봐 주세요)`;
+  if (w === 'fetch:busy') return 'AI가 지금 붐벼요 — 잠시 뒤에 다시 해 보세요';
+  if (w === 'fetch:no_key') return '서버에 AI 키가 없어요';
+  if (w === 'fetch:no_family') return '우리 가족 주소로 열어 주세요';
+  if (/^fetch:/.test(w)) return `서버에서 AI 목소리를 받지 못했어요(${w.slice(6)})`;
+  if (w === 'play:NotAllowedError') return '이 브라우저가 소리 틀기를 막았어요 — 크롬으로 열거나, 사이트 설정에서 소리·자동 재생을 허용해 주세요';
+  if (/^play:/.test(w)) return `이 기기에서 AI 목소리 파일을 틀지 못했어요(${w.slice(5)})`;
+  if (w === 'rest') return 'AI 목소리가 두 번 연달아 안 돼서 잠깐(30분) 쉬는 중이에요';
+  if (w === 'off') return '자연스러운 목소리가 꺼져 있어요(위의 켜짐/꺼짐)';
+  if (w === 'device') return '이 기기는 📱 기기 목소리로 정해져 있어요';
+  return '기기 목소리로 들려드렸어요';
+}
+/* 🔧 이 기기 소리 점검(부모님 화면 → 스피치) — 브라우저 · 기기 목소리 · AI 목소리가 이 기기에서 어떻게 나는지 한 번에 */
+function sndEnv(){
+  const ua = navigator.userAgent || '', m = (re) => (ua.match(re) || [])[1] || '';
+  const br = /SamsungBrowser/.test(ua) ? '삼성 인터넷 ' + m(/SamsungBrowser\/(\d+)/) : /EdgA?\//.test(ua) ? '엣지' : /CriOS/.test(ua) ? '크롬(아이폰·아이패드)'
+    : /Chrome\//.test(ua) ? '크롬 ' + m(/Chrome\/(\d+)/) : /Safari/.test(ua) ? '사파리' : '브라우저';
+  const os = /Android/.test(ua) ? '안드로이드 ' + m(/Android (\d+)/) : (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) ? '아이패드' : /iPhone/.test(ua) ? '아이폰' : /Mac/.test(ua) ? '맥' : /Windows/.test(ua) ? '윈도우' : '';
+  return br + (os ? ' · ' + os : '');
+}
+ACTS.sndCheck = async () => {
+  if (S.view.snd && S.view.snd.busy) return;
+  nvUnlock();
+  const out = S.view.snd = { busy:true, lines:[['🧭', '이 기기: ' + sndEnv()]] };
+  const add = (ico, txt) => { out.lines.push([ico, txt]); parentShow(); };
+  parentShow();
+  // ① 📱 기기 목소리
+  const kos = voiceList().filter(v => /^ko/i.test(String(v.lang || ''))), v = pickVoice('ko');
+  let started = false;
+  const ok = await say('안녕하세요. 소리 점검을 하고 있어요.', { lang:'ko', onstart:() => { started = true; } });
+  add(started && ok ? '✅' : '⚠️', `📱 기기 목소리 — 한국어 목소리 ${kos.length}개 · ${v ? koVoiceLabel(v, kos) : '고른 목소리 없음(기기가 알아서 골라요)'} · 빠르기 ${koRateMul()} · 높이 ${koPitch()} · ${started ? (ok ? '끝까지 읽었어요' : '읽다가 멈췄어요') : '소리가 시작되지 않았어요'}`);
+  // ② 🎙 AI 목소리 — 쉬는 중이어도 점검은 한 번 해 본다
+  NV.offUntil = 0; NV.fails = 0;
+  if (S.settings.ttNatural === false) add('⚠️', '🎙 AI 목소리 — ' + nvWhyText({ why:'off' }));
+  else if (!nvOn()) add('⚠️', '🎙 AI 목소리 — 이 주소(앱 밖)에서는 쓸 수 없어요');
+  else {
+    await nvPlay('안녕! 나는 뚜뚜야. 소리 점검을 하고 있어.', { style:'ko', wait:20000 });
+    const L = NV.last || {};
+    add(L.how === 'ai' ? '✅' : '⚠️', '🎙 AI 목소리 — ' + (L.how === 'ai' ? `받는 데 ${(L.ms / 1000).toFixed(1)}초 · 틀었어요${/^webaudio/.test(L.why) ? '(두 번째 방법 Web Audio로)' : ''}` : nvWhyText(L)));
+  }
+  add('💡', `이 기기의 한국어 목소리: ${koMode() === 'ai' ? '🎙 AI 목소리' : '📱 기기 목소리'} — 두 소리가 똑같이 들리면 AI 목소리가 안 나고 기기 목소리로 바뀐 거예요. 위 결과를 알려 주세요.`);
+  out.busy = false; parentShow();
+};
 /* 문장을 열면 미리 받아 둔다 — 누르면 바로 들린다. 한 번에 하나씩, 이미 있으면 그냥 넘어간다 */
 const NVQ = { q:[], busy:false, seen:new Set() };
 function nvStyleFor(lang, rate, style){ return style || (lang === 'ko' ? (rate && rate <= 0.85 ? 'dict' : 'ko') : (rate && rate <= 0.65 ? 'slow' : (rate >= 1 ? 'speech' : 'en'))); }
 function nvPrefetch(text, lang, rate){
-  const clean = speechText(text);
+  const clean = speechText(lang === 'ko' ? koNumSpeak(text) : text);   // voice()와 같은 글로 — 숫자가 든 한국어도 받아 둔 걸 쓰게
   if (!clean || !nvOn() || (lang === 'ko' && koMode() !== 'ai') || (lang !== 'ko' && ttHasName(clean))) return;
   const style = nvStyleFor(lang, rate), key = style + '|' + clean;
   if (NVQ.seen.has(key)) return; NVQ.seen.add(key);
@@ -4291,9 +4340,10 @@ async function nvPrefetchRun(){
   NVQ.busy = false;
 }
 /* 끝나면 true, 못 하면 false (그때는 기기 목소리로) */
-function nvPlay(text, { style = 'en', rate = 1, onstart, onprogress } = {}){
+function nvPlay(text, { style = 'en', rate = 1, onstart, onprogress, wait = 6000 } = {}){
   if (NV.curEnd) NV.curEnd(true);                     // 하던 말은 끝낸 걸로
   const me = {}; NV.cur = me;
+  const t0 = Date.now();
   return new Promise(async done => {
     let fin = false, url = '';
     const a = nvEl();
@@ -4306,34 +4356,62 @@ function nvPlay(text, { style = 'en', rate = 1, onstart, onprogress } = {}){
     NV.curEnd = end;
     let blob;
     try {
-      // 6초가 넘게 걸리면 이번엔 기기 목소리로 — 받아 오던 목소리는 다음에 쓴다
+      // 6초(wait)가 넘게 걸리면 이번엔 기기 목소리로 — 받아 오던 목소리는 다음에 쓴다
       const job = nvFetch(text, style); job.catch(() => {});
-      blob = await Promise.race([job, new Promise(ok => setTimeout(() => ok(null), 6000))]);
-      if (!blob){ end(false); return; }
+      blob = await Promise.race([job, new Promise(ok => setTimeout(() => ok(null), wait))]);
+      if (!blob){ NV.last = { how:'device', why:'timeout', ms:Date.now() - t0 }; end(false); return; }
     }
     catch(e){
       NV.fails++;
+      NV.last = { how:'device', why:'fetch:' + ((e && e.code) || 'error'), ms:Date.now() - t0 };
       if (e && (e.code === 'no_key' || e.code === 'busy' || e.code === 'no_family' || NV.fails >= 2))
         NV.offUntil = Date.now() + (e.code === 'busy' ? 10 : 30) * 60000;
       end(false); return;
     }
     if (NV.cur !== me || fin){ end(true); return; }     // 그 사이 다른 말을 시작했으면 조용히 끝
     NV.fails = 0;
+    const got = Date.now() - t0;
     url = URL.createObjectURL(blob);
+    let wa = false;
+    const toWA = err => { if (wa || fin) return; wa = true; a.onerror = null; nvPlayWA(blob, rate, end, got, err, () => NV.cur === me && !fin); };
     a.onended = () => end(true);
-    a.onerror = () => end(false);
+    a.onerror = () => toWA({ name:'decode' });
     a.ontimeupdate = onprogress ? () => { if (a.duration) onprogress(a.currentTime / a.duration); } : null;
     a.src = url; a.playbackRate = rate || 1;
     try { a.preservesPitch = true; a.webkitPreservesPitch = true; } catch(e){}
-    let p; try { p = a.play(); } catch(e){ end(false); return; }
+    NV.last = { how:'ai', why:'', ms:got };
+    let p; try { p = a.play(); } catch(e){ toWA(e); return; }
     if (onstart) onstart();
-    if (p && p.catch) p.catch(() => end(false));
+    if (p && p.catch) p.catch(toWA);
   });
 }
-function nvStop(){ const e = NV.curEnd; NV.cur = null; NV.curEnd = null; if (NV.el){ try { NV.el.pause(); } catch(x){} } if (e) e(true); }
+/* <audio>로 못 틀면(브라우저가 소리 틀기를 막거나 파일을 못 읽으면) Web Audio로 한 번 더 — 그래도 안 되면 기기 목소리.
+   안드로이드(갤럭시)에서 AI 목소리를 골라도 기기 목소리만 나던 까닭 가운데 하나 */
+function nvPlayWA(blob, rate, end, got, err, alive){
+  const why = 'play:' + ((err && err.name) || 'error');
+  const fail = () => { if (!alive()) return; NV.last = { how:'device', why, ms:got }; end(false); };
+  try {
+    const c = audioCtx(); if (!c){ fail(); return; }
+    const go = () => {
+      if (c.state !== 'running'){ fail(); return; }
+      new Response(blob).arrayBuffer().then(ab => c.decodeAudioData(ab, buf => {
+        if (!alive()) return;                                   // 그 사이 다른 말을 시작했다
+        try {
+          const src = c.createBufferSource(); src.buffer = buf; src.playbackRate.value = rate || 1; src.connect(c.destination);
+          NV.waSrc = src;
+          src.onended = () => { if (NV.waSrc === src) NV.waSrc = null; end(true); };
+          src.start(0);
+          NV.last = { how:'ai', why:'webaudio:' + why, ms:got };
+        } catch(e){ fail(); }
+      }, fail)).catch(fail);
+    };
+    if (c.state === 'running') go(); else c.resume().then(go, fail);
+  } catch(e){ fail(); }
+}
+function nvStop(){ const e = NV.curEnd; NV.cur = null; NV.curEnd = null; if (NV.el){ try { NV.el.pause(); } catch(x){} } if (NV.waSrc){ try { NV.waSrc.onended = null; NV.waSrc.stop(); } catch(x){} NV.waSrc = null; } if (e) e(true); }
 /* 뚜뚜 목소리 — 자연스러운 목소리를 먼저, 안 되면 기기 목소리.
    rate: 0.6 천천히 · 0.8 보통 · 1 대회 속도 (자연스러운 목소리는 말투로, 기기 목소리는 빠르기로) */
-async function voice(text, { lang = 'en', rate, onword, onprogress, onstart, style, nvRate } = {}){
+async function voice(text, { lang = 'en', rate, onword, onprogress, onstart, style, nvRate, wait } = {}){
   if (lang === 'ko') text = koNumSpeak(text);                 // 한국어 속 숫자는 우리말로
   const clean = speechText(text);
   if (!clean) return false;
@@ -4343,8 +4421,8 @@ async function voice(text, { lang = 'en', rate, onword, onprogress, onstart, sty
   if (nvOn() && !koDevice){
     // 한국어를 천천히(받아쓰기) 읽을 때는 'dict', 그 나라 인사말은 부르는 쪽이 style:'hello'
     const st = nvStyleFor(lang, rate, style);
-    if (await nvPlay(clean, { style:st, rate:nvRate || 1, onstart, onprogress })) return true;
-  }
+    if (await nvPlay(clean, { style:st, rate:nvRate || 1, onstart, onprogress, wait })) return true;
+  } else NV.last = { how:'device', why:koDevice ? 'device' : (NV.offUntil > Date.now() ? 'rest' : 'off'), ms:0 };
   return say(text, { lang, rate, onword, onstart });
 }
 
@@ -7321,6 +7399,10 @@ function speechTab(){
         아이패드는 설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성 → 한국어에서 고품질 목소리(예: 유나 향상됨)를 받아 두세요.
         갤럭시 탭은 설정 → 일반 → 텍스트 음성 변환(TTS)에서 기본 엔진(삼성 또는 Google)을 고르고, 엔진 옆 ⚙ → 음성 데이터 설치 → 한국어를 받은 뒤 앱을 새로 고쳐 주세요.
         그래도 어색하면 <b>이 기기만 🎙 AI 목소리</b>로 바꿔 보세요 — 다른 기기는 그대로예요. 영어는 지금처럼 자연스러운 목소리로 읽어요.</p></div>
+    <div class="snd-check"><div class="row" style="gap:8px;align-items:flex-start"><div class="grow"><b>🔧 이 기기 소리 점검</b>
+        <div class="muted" style="font-size:13px">기기 목소리와 AI 목소리를 한 번씩 틀어 보고, 이 기기에서 어떻게 났는지 보여 줘요. 소리가 이상하면 이 결과를 알려 주세요.</div></div>
+        <button class="chip" data-act="sndCheck" ${S.view.snd && S.view.snd.busy ? 'disabled' : ''}>${S.view.snd && S.view.snd.busy ? '점검 중…' : '점검하기'}</button></div>
+      ${S.view.snd ? `<ul class="snd-lines">${S.view.snd.lines.map(([i, t]) => `<li><span>${i}</span> ${esc(t)}</li>`).join('')}</ul>` : ''}</div>
     <div><div class="muted">기기 영어 목소리 (자연스러운 목소리를 못 쓸 때)</div>
       <div class="row" style="gap:8px">
         <select class="field grow" id="ttVoice">
@@ -7491,7 +7573,10 @@ async function ttParentClick(t, d){
   if (d.ttkov){
     nvUnlock();
     if (d.ttkov !== 'test'){ lsSet('dolearn.koMode', d.ttkov === 'ai' ? 'ai' : 'device'); parentShow(); }   // 이 기기에만
-    voice('안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?', { lang:'ko' });
+    const ai = koMode() === 'ai';
+    if (ai){ NV.offUntil = 0; NV.fails = 0; toast('🎙 AI 목소리를 받아 오는 중이에요… 처음엔 5초쯤 걸려요'); }
+    await voice('안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?', { lang:'ko', wait:ai ? 20000 : undefined });
+    if (ai) toast(NV.last && NV.last.how === 'ai' ? '🎙 AI 목소리로 들려드렸어요' : `📱 ${nvWhyText(NV.last)} — 이번엔 기기 목소리로 들려드렸어요`);
     return true;
   }
   if (d.korate || d.kopitch){                                  // 🇰🇷 기기 목소리 빠르기·높이 — 이 기기에만
@@ -10481,6 +10566,7 @@ function dtOpen(kind){
   DT = { kidId:k.id, listId:l.id, title:l.title, lines:l.lines.slice(), mode:kind === 'note' ? 'note' : 'type', once:kind === 'once', wrongOnly,
     q, qi:0, step:'intro', res:[], marks:{}, fb:null, retried:false, confirm:false, mood:'happy', say:'', typed:'',
     prog:JSON.parse(JSON.stringify(saved || { kidId:k.id, listId:l.id, best:0, runs:0, items:{}, days:{} })), t0:Date.now() };
+  q.forEach(i => nvPrefetch(DT.lines[i], 'ko', 0.8));        // 🎙 이 기기가 AI 목소리면 받아쓰기 문장을 미리 받아 둔다(기기 목소리면 그냥 넘어간다)
   DT.say = wrongOnly ? `오답 노트 시간! ${callName(k.name)}, 다시 쓰면 오래오래 기억나.`
     : DT.mode === 'note' ? `공책이랑 연필 준비됐지? 뚜뚜가 한 문장씩 두 번 읽어 줄게!`
     : DT.once ? `도전! 이번엔 딱 한 번만 읽어 줄게. ${callName(k.name)}, 집중해 볼까?`
