@@ -397,6 +397,19 @@
     text-wrap:balance;}
   .memo-sign{font-family:var(--display);font-size:17px;color:var(--cocoa-soft);text-align:center;
     line-height:30px;margin-top:2px;}
+  /* ✨ 긍정 한마디 슬라이드 */
+  .aff-slide{display:block;width:100%;min-height:60px;background:none;border:0;padding:0;margin:0;cursor:pointer;
+    font:inherit;color:inherit;touch-action:pan-y;user-select:none;-webkit-user-select:none;}
+  .aff-slide.in{animation:aff-in .45s ease;}
+  .aff-slide.back{animation:aff-back .45s ease;}
+  @keyframes aff-in{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
+  @keyframes aff-back{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+  .aff-say{position:absolute;top:10px;right:12px;width:40px;height:40px;border-radius:50%;border:2px solid var(--blush);
+    background:#fff;font-size:18px;cursor:pointer;box-shadow:0 2px 6px rgba(190,120,140,.15);}
+  .aff-dots{display:flex;justify-content:center;gap:5px;height:30px;align-items:center;}
+  .aff-dots i{width:7px;height:7px;border-radius:4px;background:#F0D5DC;transition:width .3s, background .3s;}
+  .aff-dots i.on{width:18px;background:var(--berry);}
+  @media (prefers-reduced-motion:reduce){ .aff-slide.in, .aff-slide.back{animation:none;} }
 
   /* 인사 카드를 붙여둔 마스킹테이프 */
   .hero{position:relative;}
@@ -597,6 +610,11 @@
   .vs-num{font-family:var(--display);font-size:40px;line-height:1;}
   .vs-num small{font-size:16px;color:var(--cocoa-soft);}
   .vs-vs{font-family:var(--display);font-size:22px;color:var(--berry-deep);}
+  .vs-rrow{display:flex;align-items:center;gap:10px;background:var(--surface);border:2px solid var(--blush);border-radius:16px;padding:8px 12px;}
+  .vs-rrow.me{border-color:var(--berry);background:#FFF5F7;}
+  .vs-rrow b{font-family:var(--display);font-size:18px;}
+  .vs-sum{font-family:var(--display);font-size:20px;}
+  .vs-sum b{font-size:32px;color:var(--mint-deep);}
   .sd-hud{display:flex;gap:14px;background:var(--surface);border-radius:16px;padding:9px 12px;box-shadow:var(--shadow);margin-bottom:8px;}
   .sd-pics{display:flex;flex-direction:column;align-items:center;gap:10px;}
   .sd-pics.land{flex-direction:row;justify-content:center;}
@@ -606,6 +624,75 @@
   .sd-ring{position:absolute;transform:translate(-50%,-50%);border:4px solid #E5484D;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.8);animation:stamp-in2 .35s cubic-bezier(.2,1.6,.4,1) both;}
   @keyframes stamp-in2{from{transform:translate(-50%,-50%) scale(1.8);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
   .sd-x{position:absolute;transform:translate(-50%,-50%);color:#8C8C8C;font-style:normal;font-weight:900;font-size:22px;}
+  /* 🐣 마음 친구 키우기 */
+  .petl .pet-wrap{max-width:620px;}
+  .pet-room{position:relative;height:clamp(240px,40vh,360px);border-radius:24px;overflow:hidden;border:3px solid #6B4A52;
+    background:linear-gradient(180deg,#FFF3F6 0 62%,#FFE3C9 62% 100%);display:grid;place-items:center;transition:background .6s;}
+  .pet-room.sm{height:170px;}
+  .pet-room.night{background:linear-gradient(180deg,#2B2F5E 0 62%,#3B3F75 62% 100%);}
+  .pet-room.night::before{content:'🌙 ✨ ⭐';position:absolute;top:12px;right:16px;font-size:26px;}
+  .pet-hero{width:min(230px,56vw);aspect-ratio:1;background:none;border:0;padding:0;touch-action:none;cursor:pointer;animation:pet-bob 2.4s ease-in-out infinite;user-select:none;-webkit-user-select:none;}
+  .pet-room.sm .pet-hero{width:150px;}
+  .pet-svg{width:100%;height:100%;display:block;}
+  .pet-svg .pet-body{transform-box:fill-box;transform-origin:50% 100%;}
+  .pet-hero.squish .pet-body{animation:pet-squish .9s ease;}
+  .pet-hero.hint .pet-body{animation:pet-squish .6s ease 2;}
+  .pet-hero.wob .pet-body{animation:pet-wob .5s ease;}
+  @keyframes pet-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  @keyframes pet-squish{0%{transform:scale(1)}40%{transform:scale(1.12,.88)}70%{transform:scale(.95,1.05)}100%{transform:scale(1)}}
+  @keyframes pet-wob{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+  .pet-mood{position:absolute;top:10px;left:12px;font-size:30px;}
+  .pet-fx{position:absolute;inset:0;pointer-events:none;}
+  .pet-fx span{position:absolute;top:40%;font-size:26px;animation:pet-up 1.3s ease-out forwards;}
+  @keyframes pet-up{to{transform:translate(var(--dx),-120px);opacity:0}}
+  .pet-bub{position:absolute;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,rgba(190,230,255,.6));
+    border:1px solid rgba(255,255,255,.9);transform:translate(-50%,-50%);animation:pet-bubup .9s ease-out forwards;}
+  @keyframes pet-bubup{to{transform:translate(-50%,-60px) scale(1.4);opacity:0}}
+  .pet-ball{position:absolute;left:40%;top:30%;width:60px;height:60px;font-size:42px;border:0;background:none;cursor:pointer;transition:left .45s ease, top .45s ease;z-index:2;}
+  .pet-bars{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0;}
+  .pet-bar{display:flex;align-items:center;gap:4px;font-size:18px;}
+  .pet-bar .gauge{flex:1;}
+  .pet-acts{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+  .pet-act{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:30px;background:var(--surface);border:3px solid var(--blush);border-radius:18px;padding:8px 4px;
+    font-family:inherit;color:var(--cocoa);cursor:pointer;}
+  .pet-act b{font-family:var(--display);font-size:14px;white-space:nowrap;}
+  .pet-act:active{transform:scale(.95);}
+  .pet-act.big{flex-direction:row;justify-content:center;gap:8px;background:#FFF5E8;border-color:#FFD98E;font-size:26px;}
+  .pet-act.big.good{background:#F1FBF5;border-color:#9BE0C8;}
+  .pet-learn{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+  @media (max-width:430px){ .pet-act{font-size:24px;padding:6px 2px;} .pet-act b{font-size:12px;} .pet-act.big{font-size:22px;gap:4px;} .pet-act.big b{font-size:13px;} }
+  .pet-path{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:3px solid var(--blush);border-radius:18px;padding:10px 12px;margin-top:10px;}
+  .pet-steps{display:flex;align-items:center;gap:4px;}
+  .pet-steps i{flex:1;height:4px;border-radius:2px;background:var(--blush);}
+  .pet-steps i.done{background:var(--mint-deep);}
+  .pet-step{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:#F6EEF0;opacity:.5;filter:grayscale(.8);}
+  .pet-step.done{opacity:1;filter:none;background:#E9F8F1;}
+  .pet-step.now{opacity:1;filter:none;background:#FFF0F4;box-shadow:0 0 0 3px #FF8FA8;}
+  .pet-need{display:flex;align-items:center;gap:8px;font-size:14px;flex-wrap:wrap;}
+  .pet-need b{font-family:var(--display);font-size:16px;}
+  .pet-need .gauge{flex:1;min-width:90px;}
+  .pet-goods{display:flex;gap:6px;flex-wrap:wrap;}
+  .pet-good{font-family:inherit;font-size:14px;border-radius:999px;padding:5px 11px;border:2px dashed #E8C9D1;background:none;color:var(--cocoa-soft);cursor:pointer;}
+  .pet-good.on{border-style:solid;border-color:#9BE0C8;background:#E9F8F1;color:var(--cocoa);}
+  .pet-good.new{animation:pet-pop .7s ease 3;}
+  @keyframes pet-pop{50%{transform:scale(1.18)}}
+  .pet-tag{align-self:center;font-family:var(--display);font-size:15px;background:#F1FBF5;border:2px solid #9BE0C8;border-radius:999px;padding:3px 12px;}
+  .pet-hero.grow .pet-body{animation:pet-grow 1.2s ease;}
+  @keyframes pet-grow{0%{transform:scale(.7)}45%{transform:scale(1.2)}70%{transform:scale(.95)}100%{transform:scale(1)}}
+  .pet-room.grad{background:linear-gradient(180deg,#FFF7D6 0 62%,#FFE3C9 62% 100%);}
+  .pet-room.grad::before{content:'🌸 🏫 🌸';position:absolute;top:8px;left:0;right:0;text-align:center;font-size:22px;}
+  .pet-cert{border:3px double #FFC21A;background:#FFFDF3;}
+  .pet-album{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .pet-album div{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .pet-album b{font-family:var(--display);font-size:13px;}
+  .pet-album small{font-size:12px;color:var(--cocoa-soft);}
+  .pet-foods{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px;}
+  .pet-story{font-family:var(--display);font-size:20px;line-height:1.4;}
+  .pet-feels{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .pet-feel{display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--display);font-size:18px;background:var(--surface);border:3px solid var(--blush);
+    border-radius:18px;padding:12px 8px;cursor:pointer;color:var(--cocoa);}
+  .pet-feel span{font-size:30px;}
+  .pet-dot{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid #6B4A52;margin-right:4px;vertical-align:-2px;}
   /* 🔐 그림 비밀번호 */
   .kp-dots{display:flex;gap:12px;justify-content:center;margin:6px 0 10px;}
   .kp-dots i{width:18px;height:18px;border-radius:50%;border:3px solid var(--blush);}
@@ -1089,47 +1176,6 @@ const WEATHERS = [
   { icon:'🌧', label:'비' },  { icon:'⛈', label:'천둥비' },    { icon:'❄️', label:'눈' },
   { icon:'🌫', label:'안개' }, { icon:'🌬', label:'바람' }
 ];
-// 오늘의 응원 문구 — 날짜로 고르므로 하루 동안 바뀌지 않는다
-const CHEERS = [
-  '오늘도 한 뼘 자라는 날이에요',
-  '천천히 가도 괜찮아요. 멈추지만 않으면 돼요',
-  '어제보다 한 글자 더 읽으면 그게 성공이에요',
-  '모르는 낱말을 만나면 오히려 좋아요. 하나 배우니까요',
-  '작은 일을 끝낸 사람이 큰 일도 해내요',
-  '오늘 읽은 책 한 권이 내일의 이야기가 돼요',
-  '틀려도 괜찮아요. 해 본 사람만 틀릴 수 있어요',
-  '집중한 10분이 흘려보낸 1시간보다 길어요',
-  '책장에 책이 한 권씩 쌓이는 소리가 들려요',
-  '오늘의 나는 어제의 나보다 조금 더 멋져요',
-  '둘이 함께라서 두 배로 즐거운 하루예요',
-  '궁금한 게 많은 건 똑똑해지고 있다는 뜻이에요',
-  '어려운 것도 한 번 더 하면 쉬워져요',
-  '오늘 배운 낱말 하나가 내일의 이야기가 돼요',
-  '천천히 또박또박, 그게 제일 멋진 속도예요',
-  '실수는 배우는 중이라는 반짝 신호예요',
-  '끝까지 해 보는 마음이 제일 큰 힘이에요',
-  '웃으면서 하면 공부도 놀이가 돼요',
-  '오늘도 나를 칭찬해 주는 날이에요',
-  '작은 별이 모이면 큰 별자리가 돼요'
-];
-/* 다꾸 메모지 — 부모님이 직접 쓴 응원이 있으면 그걸 보여주고, 없으면 오늘의 응원 문구 */
-function memoNote(){
-  const recent = S.data.chat.filter(x => isParentId(x.from) && x.kind !== 'voice' && (x.room || 'family') === 'family' && x.at && Date.now() - new Date(x.at).getTime() < 7 * 86400000)
-    .sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
-  const note = recent ? { text:recent.text, at:recent.at } : S.settings.parentNote;
-  const hasNote = note && String(note.text || '').trim(), who = recent ? chatWho(recent.from).name : '엄마 아빠';
-  return `<div class="memo" role="note">
-    <div class="memo-head">${hasNote ? `💌 ${esc(subj(who))} 남긴 쪽지` : '✏️ 오늘의 응원'}</div>
-    <p class="memo-text">${esc(hasNote ? note.text : cheerOfDay())}</p>
-    ${hasNote ? `<div class="memo-sign">— 사랑하는 ${esc(subj(who))}</div>` : ''}
-  </div>`;
-}
-
-function cheerOfDay(){
-  const d = new Date();
-  const n = Math.floor((d - new Date(d.getFullYear(),0,0)) / 86400000);
-  return CHEERS[n % CHEERS.length];
-}
 function greetOfHour(){
   const h = new Date().getHours();
   if (h < 6)  return '아직 이른 새벽이에요';
@@ -2256,7 +2302,7 @@ function draw(){
     tabs.hidden = true; who.hidden = true; home.hidden = true;
     screen.innerHTML = viewGate();
     notiCheck(); chatBadge(); chatRefresh();
-    if (VSN.ch) vsNetStop();
+    if (VSN.ch && !VS) vsNetStop();
     return;
   }
 
@@ -2287,7 +2333,7 @@ function draw(){
   if (S.tab === 'world') worldMount();          // 지구본 캔버스는 하나를 계속 다시 붙여 쓴다
   hydratePhotos(screen);
   notiCheck(); chatBadge(); chatRefresh();
-  if (VSN.kid !== S.kidId) vsNetStart();
+  if (!VS && VSN.me !== S.kidId) vsNetStart();
   if (VS && VS.phase === 'lobby') vsRender();
 }
 
@@ -2327,6 +2373,65 @@ function viewSetup(){
   </div></div>`;
 }
 
+/* ✨ 긍정 한마디 — 시작 화면 메모지에 한 장씩 넘어가는 슬라이드(예전 '엄마 아빠 쪽지' 자리).
+   날마다 다른 말부터 시작해 AFF_MS마다 넘어간다. 누르면 다음 장, 옆으로 밀면 앞뒤로, 🔊는 읽어 준다.
+   5초 동기화가 화면을 다시 그려도 보던 장(AFF.i)에서 이어지고, 넘길 때는 글자만 바꾼다. */
+const AFFIRMS = [
+  ['💪', '나는 할 수 있어!'],
+  ['🌱', '나는 날마다 조금씩 자라고 있어'],
+  ['🙆', '틀려도 괜찮아, 다시 하면 돼'],
+  ['💖', '나는 소중하고 사랑받는 사람이야'],
+  ['🐢', '천천히 해도 괜찮아, 끝까지 하면 돼'],
+  ['🦁', '나는 용기 있는 어린이야'],
+  ['🤝', '나는 친구를 도와줄 수 있어'],
+  ['💡', '내 생각은 참 소중해'],
+  ['🔁', '어려워도 한 번 더 해 볼래'],
+  ['😊', '웃으면 힘이 솟아'],
+  ['🌈', '실수는 배우고 있다는 반짝 신호야'],
+  ['⭐', '나는 나를 믿어'],
+  ['🎯', '하나씩 하면 다 해낼 수 있어'],
+  ['🌻', '오늘도 멋진 하루가 될 거야'],
+  ['🙏', '고마운 일이 참 많아'],
+  ['🧡', '나는 착하고 바른 마음을 가졌어']
+];
+const AFF = { i:-1, t:0, x0:null, swiped:0 }, AFF_MS = 6000;
+function affIndex(){
+  if (AFF.i < 0){ const d = new Date(); AFF.i = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000) % AFFIRMS.length; }
+  return AFF.i;
+}
+const affDots = i => AFFIRMS.map((x, j) => `<i class="${j === i ? 'on' : ''}"></i>`).join('');
+function affirmHtml(){
+  const i = affIndex(), a = AFFIRMS[i];
+  affTimer();
+  return `<div class="memo aff" id="affBox" role="region" aria-label="긍정 한마디">
+    <div class="memo-head">✨ 오늘의 긍정 한마디</div>
+    <button class="aff-say" data-act="affSay" aria-label="소리 내어 듣기">🔊</button>
+    <button class="aff-slide" data-act="affNext" aria-label="다음 말 보기"><span class="memo-text" id="affText">${a[0]} ${esc(a[1])}</span></button>
+    <div class="aff-dots" id="affDots" aria-hidden="true">${affDots(i)}</div>
+  </div>`;
+}
+function affTimer(reset){
+  if (reset){ clearInterval(AFF.t); AFF.t = 0; }
+  if (AFF.t) return;
+  AFF.t = setInterval(() => { if (!document.hidden && document.getElementById('affBox')) affGo(1); }, AFF_MS);
+}
+function affGo(d){
+  AFF.i = (affIndex() + d + AFFIRMS.length) % AFFIRMS.length;
+  const t = document.getElementById('affText'), dots = document.getElementById('affDots'); if (!t) return;
+  const a = AFFIRMS[AFF.i], sl = t.parentNode;
+  t.textContent = `${a[0]} ${a[1]}`; if (dots) dots.innerHTML = affDots(AFF.i);
+  sl.classList.remove('in', 'back'); void sl.offsetWidth; sl.classList.add(d < 0 ? 'back' : 'in');
+}
+ACTS.affNext = () => { if (Date.now() - AFF.swiped < 500) return; affGo(1); affTimer(true); };
+ACTS.affSay = () => { nvUnlock(); voice(AFFIRMS[affIndex()][1], { lang:'ko' }); affTimer(true); };
+/* 옆으로 밀어서 넘기기 — 화면을 다시 그려도 되도록 문서에 한 번만 단다 */
+document.addEventListener('pointerdown', e => { AFF.x0 = e.target.closest && e.target.closest('.aff-slide') ? e.clientX : null; }, true);
+document.addEventListener('pointerup', e => {
+  if (AFF.x0 == null) return;
+  const dx = e.clientX - AFF.x0; AFF.x0 = null;
+  if (Math.abs(dx) > 40){ AFF.swiped = Date.now(); affGo(dx < 0 ? 1 : -1); affTimer(true); }
+}, true);
+
 function viewGate(){
   const w = todayWeather();
   const pend = pendingRequests();
@@ -2345,7 +2450,7 @@ function viewGate(){
       </div>
     </div>
 
-    ${memoNote()}
+    ${affirmHtml()}
 
     <h2 class="sec" style="margin:0">누가 공부할까요?</h2>
     <div class="kidpick">${kids().map(k=>{
@@ -2873,8 +2978,9 @@ function viewGames(){
   <div class="card">
     <h3 class="sub">무슨 놀이 할까요?</h3>
     <div class="stack">
-      <button class="btn wide ghost" data-game="itto" style="justify-content:flex-start">🌱 이또 — 풀숲 친구 찾기 <span class="newtag">NEW</span></button>
-      <button class="btn wide ghost" data-game="bear" style="justify-content:flex-start">🧸 ${esc(bhTitle())} <span class="newtag">NEW</span></button>
+      <button class="btn wide ghost" data-game="pet" style="justify-content:flex-start">🐣 마음 친구 키우기 <span class="newtag">NEW</span> <span class="muted" style="font-size:14px">착한 언니로 쑥쑥!</span></button>
+      <div class="row" style="gap:6px"><button class="btn wide ghost grow" data-game="itto" style="justify-content:flex-start">🌱 이또 — 풀숲 친구 찾기</button><button class="btn ghost sm" data-act="vsWith" data-arg="itto" aria-label="풀숲 친구 찾기를 같이 하기">🤝 같이</button></div>
+      <div class="row" style="gap:6px"><button class="btn wide ghost grow" data-game="bear" style="justify-content:flex-start">🧸 ${esc(bhTitle())}</button><button class="btn ghost sm" data-act="vsWith" data-arg="bearTeam" aria-label="숨바꼭질을 같이 하기">🤝 같이</button></div>
       <button class="btn wide ghost" data-game="memory" style="justify-content:flex-start">🐰 같은 그림 찾기</button>
       <button class="btn wide ghost" data-game="stars" style="justify-content:flex-start">⭐ 별똥별 받기</button>
       <button class="btn wide ghost" data-game="match" style="justify-content:flex-start">🫧 단어 짝 맞추기 <span class="muted" style="font-size:14px">별 2배!</span></button>
@@ -3450,7 +3556,7 @@ function parentSheet(){
       <div>
         <div class="muted">💌 아이들에게 쪽지·칭찬 스티커 — 이제 💬 우리 가족 대화방에서 보내요</div>
         <button class="btn mint wide" data-act="chatParent" style="margin-top:6px">💬 대화방에서 엄마 아빠로 말하기</button>
-        <p class="muted" style="margin:5px 0 0;font-size:13px">보낸 말은 아이 화면 오른쪽에 살짝 떠오르고, 시작 화면 메모지에도 보여요.${noteText ? ' 예전 쪽지는 대화방 맨 위에 📌로 남아 있어요.' : ''}</p>
+        <p class="muted" style="margin:5px 0 0;font-size:13px">보낸 말은 아이 화면 오른쪽에 살짝 떠올라요. 시작 화면 메모지에는 ✨ 긍정 한마디가 넘어가요.${noteText ? ' 예전 쪽지는 대화방 맨 위에 📌로 남아 있어요.' : ''}</p>
         ${noteText ? '<button class="btn ghost sm" id="clearNote" style="margin-top:6px">📌 예전 쪽지 떼기</button>' : ''}
       </div>
       <div><div class="muted">놀이 시간 (분)</div>
@@ -3510,7 +3616,9 @@ function parentSheet(){
   }
   if (t === 'unlock'){
     const pend = pendingRequests();
-    body = `${pend.length ? `<div class="stack" style="margin-bottom:12px">${pend.map(askCard).join('')}</div>` : ''}
+    body = `<div class="card row" style="margin-bottom:12px;background:linear-gradient(170deg,#FFFFFF,#FFF0F4)"><div class="grow"><b>🤝 아이들과 같이 놀기</b>
+        <div class="muted" style="font-size:13px">내 기기에서 들어가 아이들과 같은 놀이를 해요 (2~4명)</div></div><button class="btn sm" data-act="vsParent">들어가기</button></div>
+    ${pend.length ? `<div class="stack" style="margin-bottom:12px">${pend.map(askCard).join('')}</div>` : ''}
     <div class="card stack">
       ${ks.map(k=>{
         const un = activeUnlock(k.id);
@@ -3826,7 +3934,7 @@ function koNumSpeak(t){
   return String(t || '')
     .replace(/(\d{1,2})월\s*(\d{1,2})일/g, (m, a, b) => (KO_MONTH[+a] || koSino(+a) + '월') + ' ' + koSino(+b) + '일')
     .replace(/(\d{1,2})월/g, (m, a) => KO_MONTH[+a] || koSino(+a) + '월')
-    .replace(/(\d+)\s*(개|명|마리|권|번|가지|장|문장|살|시간|군데|곳|사람|송이|그루|켤레|잔|판)/g, (m, d, u) => `${koNative(+d)} ${u}`)
+    .replace(/(\d+)\s*(개|명|마리|권|번|가지|장|문장|살|시간|군데|곳|사람|송이|그루|켤레|잔|판|시)/g, (m, d, u) => `${koNative(+d)} ${u}`)
     .replace(/(\d+)\s*(분|초|점|단계|월|일|년|쪽|층|주|회|등|퍼센트|%)/g, (m, d, u) => `${koSino(+d)}${u === '%' ? ' 퍼센트' : ' ' + u}`)
     .replace(/\d+/g, d => d.length > 8 ? d : koSino(+d));
 }
@@ -7819,7 +7927,8 @@ function itGarden(first){
       </div>
       <div class="it-park"><div class="it-carbox" id="itCar">${itCarSvg(I.car, -1)}</div>
         <div class="stack" style="gap:6px;align-items:center"><button class="btn" data-act="itGo" id="itGo" ${I.car.length ? '' : 'disabled'}>🚗 출발!</button>
-          <span class="muted" id="itCount" style="font-size:13px;text-align:center"></span></div></div>
+          <span class="muted" id="itCount" style="font-size:13px;text-align:center"></span>
+          <button class="btn ghost sm" data-act="vsWith" data-arg="itto">🤝 친구랑 같이 찾기</button></div></div>
     </div>`;
   const cv = document.getElementById('itGrass'), dpr = Math.min(1.5, window.devicePixelRatio || 1);
   cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
@@ -8387,10 +8496,10 @@ function bhCafe(h){                                        // 벽·바닥·가�
 let BH = null;
 function bearOpen(opt){
   if (BH) return;
-  const k = curKid(); if (!k) return;
+  const k = curKid(), vs = opt && opt.vs; if (!k && !vs) return;
   nvUnlock(); audioCtx();
-  const save = k.bear || {}, vs = opt && opt.vs;
-  BH = { kidId:k.id, stage:1, score:0, total:0, runTrophies:0, trophies:save.trophies || 0, best:save.best || 0, bestScore:save.bestScore || 0,
+  const save = (k && k.bear) || {};
+  BH = { kidId:k ? k.id : null, stage:1, score:0, total:0, runTrophies:0, trophies:save.trophies || 0, best:save.best || 0, bestScore:save.bestScore || 0,
     running:false, phase:vs ? 'play' : 'start', pops:[], seq:0, last:null, raf:0, cd:0, nextT:0, vs:vs || null, rand:vs ? vsRand(vs.seed) : null };
   const el = document.createElement('div');
   el.className = 'ttl bh'; el.id = 'bhLayer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', bhTitle());
@@ -8441,7 +8550,8 @@ function bhCard(){
   if (b.phase === 'start') body = `<div style="font-size:52px;line-height:1">🧸🐰</div><h3 class="sub" style="margin:4px 0">${esc(bhTitle())}</h3>
       <p style="margin:0">곰돌이가 키즈카페 아무 데서나 뿅! 튀어나와요.<br>재빨리 눌러요! 반짝 곰돌이는 +2 ✨<br><b>🐰 토끼는 잡으면 안 돼요!</b> (누르면 -1)</p>
       <p class="muted" style="margin:6px 0 0">한 단계 ${p.secs}초 · 목표를 채우면 바로 다음 단계${b.best ? ` · 최고 ${b.best}단계` : ''}</p>${shelf}
-      <button class="btn wide" data-act="bhStart" style="margin-top:10px">시작하기 ▶</button>`;
+      <button class="btn wide" data-act="bhStart" style="margin-top:10px">시작하기 ▶</button>
+      <button class="btn ghost wide sm" data-act="vsWith" data-arg="bearTeam" style="margin-top:8px">🤝 친구랑 같이 하기 (힘을 합쳐 · 대결)</button>`;
   else if (b.phase === 'count') body = `<div class="tt-count" id="bhCount">3</div><p style="margin:0;font-family:var(--display);font-size:22px">${b.stage}단계 · 목표 ${p.target}개!${b.stage > 1 ? ' 더 빨라요!' : ''}</p>`;
   else if (b.phase === 'clear') body = `<div class="bh-trophy">🏆</div><h3 class="sub" style="margin:4px 0">${b.stage}단계 성공! 트로피 +1</h3>
       <p style="margin:0">눈이 정말 빨라요! 👀 바로 다음 단계로 가요!</p>${shelf}`;
@@ -8456,8 +8566,15 @@ function bhCard(){
 function bhSetCard(){ const old = document.getElementById('bhCard'); if (old) old.remove(); const st = document.getElementById('bhStage'); if (st && BH.phase !== 'play') st.insertAdjacentHTML('beforeend', bhCard()); }
 function bhHud(){
   const b = BH, p = bhParams(b.stage), $s = document.getElementById('bhScore'), $t = document.getElementById('bhTotal'), bar = document.getElementById('bhBar'), chip = document.getElementById('bhChip');
-  if ($s) $s.textContent = b.vs ? `🤝 대결 · 나 ${b.total}점` : `찾은 곰돌이 ${b.score} / ${p.target} 🎯`;
-  if (b.vs && $t){ const o = kid(b.vs.opp); $t.textContent = `${o ? o.name : '친구'} ${(VS && VS.scores[b.vs.opp]) || 0}점`; if (bar) bar.style.width = '100%'; return; }
+  if (b.vs){
+    const others = (b.vs.others || []), sc = id => (VS && VS.scores[id]) || 0, line = others.map(id => `${vsName(id)} ${sc(id)}`).join(' · ');
+    if (b.vs.team){
+      const goal = vsTeamTarget(others.length + 1), sum = b.total + others.reduce((a, id) => a + Math.max(0, sc(id)), 0);
+      if ($s) $s.textContent = `🤝 다 같이 ${sum} / ${goal} 🎯`; if ($t) $t.textContent = `나 ${b.total} · ${line}`; if (bar) bar.style.width = clamp(sum / goal * 100, 0, 100) + '%';
+    } else { if ($s) $s.textContent = `⚔️ 대결 · 나 ${b.total}점`; if ($t) $t.textContent = line; if (bar) bar.style.width = '100%'; }
+    return;
+  }
+  if ($s) $s.textContent = `찾은 곰돌이 ${b.score} / ${p.target} 🎯`;
   if ($t) $t.textContent = `점수 ${b.total} · 🏆 ${b.runTrophies}`;
   if (bar) bar.style.width = clamp(b.score / p.target * 100, 0, 100) + '%';
   if (chip) chip.textContent = `🧸 ${bhTitle()} · ${b.stage}단계`;
@@ -8591,30 +8708,37 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* ============================================================
-   🤝 같이 놀기 — 두 아이가 각자 기기에서 같은 놀이로 겨룬다
-   현황판: 아이마다 🔓 놀이 허락(부모님 승인) · ✅ 들어왔어요 · 👍 준비됐어요. 둘 다 들어와서 준비되면 3·2·1 같이 시작.
-   놀이: 🔍 틀린 그림 찾기(같은 그림 · 다른 곳 5개를 먼저 다 찾으면 이겨요) · 🧸 숨바꼭질 대결(같은 순서로 튀어나와요 · 60초 점수).
+   🤝 같이 놀기 — 가족이 각자 기기에서 같은 놀이를 함께 한다 (2~4명, 아이들 + 부모님)
+   현황판: 아이마다 🔓 놀이 허락(부모님 승인) · ✅ 들어왔어요 · 👍 준비됐어요. 들어온 사람이 모두 준비되면 3·2·1 같이 시작.
+   부모님은 부모님 화면 → 놀이 승인 → "🤝 아이들과 같이 놀기"로 들어온다(놀이 허락은 필요 없다).
+   놀이: 🔍 틀린 그림 찾기(대결) · 🌱 풀숲 친구 찾기(함께 찾기) · 🧸 숨바꼭질 힘을 합쳐(함께) · 🧸 숨바꼭질 대결.
    연결은 Supabase Realtime(방송 + 누가 있는지). 방 이름은 가족 ID를 섞은 값이라 우리 가족만 들어온다.
-   아이가 자기 공간에 들어오면 조용히 연결해 두고(VSN), 형제가 방에 들어오면 "같이 놀자고 기다려요!" 카드를 띄운다.
-   기록은 남기지 않고 별만 준다 — 이기면 2개, 비기거나 져도 1개(같이 논 것만으로도 멋지다). 틀린 그림 찾기는 혼자 연습도 된다.
+   아이가 자기 공간에 들어오면 조용히 연결해 두고(VSN), 누가 방에 들어오면 "같이 하자고 기다려요!" 카드를 띄운다.
+   기록은 남기지 않고 별만 준다 — 대결은 1등 ⭐2 · 나머지 ⭐1, 함께 놀이는 해내면 모두 ⭐2 · 아니어도 ⭐1.
    ============================================================ */
 let VS = null;
-const VSN = { ch:null, kid:'', peers:{}, ok:false, invited:{} };
+const VSN = { ch:null, me:'', peers:{}, ok:false, invited:{} };
+const VS_MAX = 4;
+function vsTeamTarget(n){ return 15 * Math.max(2, n || 2); }   // 🧸 힘을 합쳐 — 한 사람당 15마리
 const VS_GAMES = {
-  spot:{ ico:'🔍', name:'틀린 그림 찾기', note:'똑같은 두 그림에서 다른 곳 5개! 먼저 다 찾으면 이겨요' },
-  bear:{ ico:'🧸', name:'숨바꼭질 대결', note:'똑같은 순서로 곰돌이가 튀어나와요. 60초 동안 누가 더 많이 찾을까? 🐰 토끼는 -1' }
+  spot:{ ico:'🔍', name:'틀린 그림 찾기', note:'똑같은 두 그림에서 다른 곳 5개! 먼저 다 찾으면 1등', team:false },
+  itto:{ ico:'🌱', name:'풀숲 친구 찾기', note:'같은 풀숲을 다 같이 깎아요. 숨은 친구 6마리를 힘을 합쳐 찾아요!', team:true },
+  bearTeam:{ ico:'🧸', name:'숨바꼭질 힘을 합쳐', note:'다 같이 찾은 곰돌이를 모아 60초 안에 목표(한 사람당 15마리)! 🐰 토끼는 -1', team:true },
+  bear:{ ico:'🧸', name:'숨바꼭질 대결', note:'똑같은 순서로 곰돌이가 튀어나와요. 60초 동안 누가 더 많이 찾을까?', team:false }
 };
 const SD_N = 5, SD_SECS = 90;
 function vsRand(seed){ let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function vsColor(id){ const k = kid(id); return k ? kidColor(k).bar : '#F6C453'; }
+function vsName(id){ return chatWho(id).name; }
 /* ---------- 연결 ---------- */
-async function vsNetStart(){
-  const k = S.kidId && curKid();
-  if (!k || !S.sb || window.claude){ vsNetStop(); return; }
-  if (VSN.ch && VSN.kid === k.id) return;
-  vsNetStop(); VSN.kid = k.id;
+async function vsNetStart(asId){
+  const me = asId || (S.kidId && curKid() ? S.kidId : '');
+  if (!me || !S.sb || window.claude){ vsNetStop(); return; }
+  if (VSN.ch && VSN.me === me) return;
+  vsNetStop(); VSN.me = me;
   let h = ''; try { h = await famHash(); } catch(e){ h = ''; }
-  if (!h || VSN.kid !== k.id || VSN.ch) return;
-  const ch = S.sb.channel('dl-vs-' + h.slice(0, 24), { config:{ broadcast:{ self:false }, presence:{ key:k.id } } });
+  if (!h || VSN.me !== me || VSN.ch) return;
+  const ch = S.sb.channel('dl-vs-' + h.slice(0, 24), { config:{ broadcast:{ self:false }, presence:{ key:me } } });
   VSN.ch = ch;
   ch.on('presence', { event:'sync' }, () => vsPeers());
   ch.on('broadcast', { event:'vs' }, p => vsOnMsg((p && p.payload) || {}));
@@ -8624,12 +8748,13 @@ async function vsNetStart(){
     else if (st === 'CHANNEL_ERROR' || st === 'TIMED_OUT' || st === 'CLOSED'){
       VSN.ok = false; if (VS && VS.phase === 'lobby') vsRender();
       clearTimeout(VSN.retry);                                // 끊기면 잠깐 뒤에 다시 붙는다
-      VSN.retry = setTimeout(() => { if (VSN.ch === ch && S.kidId === VSN.kid){ const id = VSN.kid; vsNetStop(); VSN.kid = ''; if (S.kidId === id) vsNetStart(); } }, 2500);
+      VSN.retry = setTimeout(() => { if (VSN.ch === ch){ const id = VSN.me; vsNetStop(); if (id && (VS ? VS.me === id : S.kidId === id)) vsNetStart(id); } }, 2500);
     }
   });
 }
-function vsNetStop(){ clearTimeout(VSN.trackT); clearTimeout(VSN.retry); if (VSN.ch){ try { S.sb.removeChannel(VSN.ch); } catch(e){} } VSN.ch = null; VSN.kid = ''; VSN.peers = {}; VSN.ok = false; VSN.where = ''; const inv = document.getElementById('vsInvite'); if (inv) inv.remove(); }
+function vsNetStop(){ clearTimeout(VSN.trackT); clearTimeout(VSN.retry); if (VSN.ch){ try { S.sb.removeChannel(VSN.ch); } catch(e){} } VSN.ch = null; VSN.me = ''; VSN.peers = {}; VSN.ok = false; VSN.where = ''; const inv = document.getElementById('vsInvite'); if (inv) inv.remove(); }
 function vsWhere(){ return VS && !VS.solo ? (VS.phase === 'count' || VS.phase === 'play' ? 'play' : 'lobby') : 'app'; }
+/* 접속 표시(presence)는 '어디 있는지'만, 바뀔 때만, 3초에 한 번 — 자주 보내면 서버가 채널을 닫는다 */
 function vsTrack(){
   if (!VSN.ch || !VSN.ok) return;
   const w = vsWhere();
@@ -8640,150 +8765,178 @@ function vsTrack(){
     if (!VSN.ch || !VSN.ok) return;
     const now = vsWhere(); if (now === VSN.where) return;
     VSN.where = now; VSN.trackAt = Date.now();
-    try { VSN.ch.track({ kid:VSN.kid, where:now, at:Date.now() }); } catch(e){}
+    try { VSN.ch.track({ who:VSN.me, where:now, at:Date.now() }); } catch(e){}
   }, wait);
 }
-/* 준비됐어요·고른 놀이는 방송으로 (접속 표시는 느리게만 바꾼다) */
+/* 준비됐어요·고른 놀이는 방송으로 */
 function vsState(){ if (!VSN.ch || !VSN.ok) return; vsSend({ t:'st', where:vsWhere(), ready:!!(VS && VS.ready), game:VS ? VS.game : '' }); vsTrack(); }
 function vsPeers(){
   const st = VSN.ch ? VSN.ch.presenceState() : {}, out = {};
   let fresh = false;
-  Object.keys(st).forEach(key => { const arr = st[key] || [], last = arr[arr.length - 1]; if (!last || !last.kid || last.kid === VSN.kid) return;
-    const old = VSN.peers[last.kid]; if (!old) fresh = true;
-    out[last.kid] = Object.assign({}, old || {}, { kid:last.kid, where:(old && old.stAt > (last.at || 0)) ? old.where : last.where }); });
+  Object.keys(st).forEach(key => { const arr = st[key] || [], last = arr[arr.length - 1], who = last && (last.who || last.kid); if (!who || who === VSN.me) return;
+    const old = VSN.peers[who]; if (!old) fresh = true;
+    out[who] = Object.assign({}, old || {}, { who, where:(old && old.stAt > (last.at || 0)) ? old.where : last.where }); });
   VSN.peers = out;
-  if (fresh && Date.now() - (VSN.helloAt || 0) > 1500){ VSN.helloAt = Date.now(); vsState(); }   // 새로 온 형제에게 내 상태를 알려 준다
+  if (fresh && Date.now() - (VSN.helloAt || 0) > 1500){ VSN.helloAt = Date.now(); vsState(); }   // 새로 온 사람에게 내 상태를 알려 준다
   vsPeersChanged();
 }
 function vsPeersChanged(){ if (VS){ if (VS.phase === 'lobby') vsRender(); vsMaybeStart(); vsResendStart(); } else vsInviteCheck(); }
-function vsSend(msg){ if (VSN.ch && VSN.ok) try { VSN.ch.send({ type:'broadcast', event:'vs', payload:Object.assign({ from:VSN.kid, at:Date.now() }, msg) }); } catch(e){} }
-/* 형제가 방에 들어오면 — 오른쪽 아래에 초대 카드 */
+function vsSend(msg){ if (VSN.ch && VSN.ok) try { VSN.ch.send({ type:'broadcast', event:'vs', payload:Object.assign({ from:VSN.me, at:Date.now() }, msg) }); } catch(e){} }
+/* 누가 방에 들어오면 — 오른쪽 아래에 초대 카드 */
 function vsInviteCheck(){
   const inv0 = document.getElementById('vsInvite');
   const peer = Object.values(VSN.peers).find(p => p.where === 'lobby');
   if (!peer || VS || !S.kidId){ if (inv0) inv0.remove(); return; }
-  if (VSN.invited[peer.kid] && VSN.invited[peer.kid] > Date.now() - 90000) return;
-  const k = kid(peer.kid); if (!k || inv0) return;
+  if (VSN.invited[peer.who] && VSN.invited[peer.who] > Date.now() - 90000) return;
+  if (inv0){ const g0 = VS_GAMES[peer.game] || VS_GAMES.spot, sm = inv0.querySelector('.muted'); if (sm) sm.textContent = `${g0.ico} ${g0.name}`; return; }
+  const g = VS_GAMES[peer.game] || VS_GAMES.spot;
   const d = document.createElement('div'); d.id = 'vsInvite'; d.className = 'vs-invite';
-  d.innerHTML = `<span style="font-size:32px">🤝</span><div class="grow"><b>${esc(subj(k.name))} 같이 놀자고 기다려요!</b><div class="muted" style="font-size:13px">${esc((VS_GAMES[peer.game] || VS_GAMES.spot).name)}</div></div>
+  d.innerHTML = `<span style="font-size:32px">🤝</span><div class="grow"><b>${esc(subj(vsName(peer.who)))} 같이 하자고 기다려요!</b><div class="muted" style="font-size:13px">${esc(g.ico)} ${esc(g.name)}</div></div>
     <button class="btn sm" data-act="vsJoin">들어가기</button><button class="ttl-x" data-act="vsNo" aria-label="닫기" style="width:36px;height:36px">✕</button>`;
   document.body.appendChild(d);
   try { ttChime(); } catch(e){}
 }
 ACTS.vsJoin = () => { const d = document.getElementById('vsInvite'); if (d) d.remove(); if (S.tab !== 'games'){ S.tab = 'games'; S.view.game = null; render(); } vsOpen(); };
-ACTS.vsNo = () => { const p = Object.values(VSN.peers).find(x => x.where === 'lobby'); if (p) VSN.invited[p.kid] = Date.now(); const d = document.getElementById('vsInvite'); if (d) d.remove(); };
+ACTS.vsNo = () => { const p = Object.values(VSN.peers).find(x => x.where === 'lobby'); if (p) VSN.invited[p.who] = Date.now(); const d = document.getElementById('vsInvite'); if (d) d.remove(); };
 /* ---------- 방 ---------- */
-function vsOpen(solo){
+function vsOpen(solo, game, asId){
   if (VS) return;
-  const k = curKid(); if (!k) return;
+  const k = curKid(), me = asId || (k ? k.id : ''); if (!me) return;
   if (!solo && (!S.sb || window.claude)){ toast('같이 놀기는 인터넷에 연결된 앱에서만 할 수 있어요'); return; }
   nvUnlock(); audioCtx();
-  VS = { kidId:k.id, game:'spot', ready:false, phase:'lobby', scores:{}, done:{}, solo:!!solo, el:null };
+  const peerGame = (Object.values(VSN.peers).find(p => p.where === 'lobby' && VS_GAMES[p.game]) || {}).game;   // 먼저 온 사람이 고른 놀이로
+  VS = { me, kidId:isParentId(me) ? null : me, game:VS_GAMES[game] ? game : (peerGame || 'spot'), ready:false, phase:'lobby', scores:{}, done:{}, solo:!!solo, el:null, players:[me], others:[] };
   const el = document.createElement('div'); el.className = 'ttl vs'; el.id = 'vsLayer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', '같이 놀기');
   document.body.appendChild(el); VS.el = el;
   const inv = document.getElementById('vsInvite'); if (inv) inv.remove();
-  if (solo){ vsBegin('spot', Math.floor(Math.random() * 2147483647), Date.now() + 2400, ''); return; }
-  vsNetStart(); vsState(); vsRender();
+  if (solo){ vsBegin('spot', Math.floor(Math.random() * 2147483647), Date.now() + 2400, [me]); return; }
+  vsNetStart(me); vsState(); vsRender();
+  if (game && VS_GAMES[game]) vsSend({ t:'pick', game });  // 고르고 들어왔으면 모두에게 알려 준다
 }
 function vsClose(msg){
   const v = VS; if (!v) return;
   clearInterval(v.cd); clearInterval(v.tick); clearTimeout(v.waitT);
   if (BH && BH.vs) bearClose();
   if (!v.solo) vsSend({ t:'leave' });
-  v.el.remove(); VS = null; vsState(); render(); if (msg) toast(msg);
+  v.el.remove(); VS = null;
+  if (isParentId(v.me)) vsNetStop(); else vsState();
+  render(); if (msg) toast(msg);
 }
-function vsOther(){ const v = VS; return kids().find(k => k.id !== (v ? v.kidId : S.kidId)) || null; }
+/* 방에 들어와 있는 사람(나 포함) — 아이 id가 앞서는 순서 */
+function vsPlayers(){
+  const v = VS, out = [{ id:v.me, ready:v.ready }];
+  Object.values(VSN.peers).forEach(p => { if (p.where === 'lobby') out.push({ id:p.who, ready:!!p.ready }); });
+  return out.sort((a, b) => a.id < b.id ? -1 : 1);
+}
 function vsRender(){
   const v = VS; if (!v) return;
   if (v.phase === 'play' && v.game === 'spot'){ sdRender(); return; }
-  if (v.phase === 'play' && v.game === 'bear') return;       // 숨바꼭질 층이 위에 있다
+  if (v.phase === 'play' && v.game === 'itto'){ gdRender(); return; }
+  if (v.phase === 'play') return;                            // 숨바꼭질 층이 위에 있다
   const top = `<div class="ttl-top"><button class="ttl-x" data-act="vsExit" aria-label="그만하기">✕</button>
     <div class="ttl-dots"><span class="ttl-chip">🤝 같이 놀기</span></div><span style="width:48px"></span></div>`;
   let card = '';
   if (v.phase === 'lobby') card = vsLobbyHtml();
   else if (v.phase === 'count') card = `<div class="tt-card" style="text-align:center"><div class="tt-count" id="vsCount">3</div>
-      <p style="margin:0;font-family:var(--display);font-size:22px">${esc((VS_GAMES[v.game] || {}).ico || '')} ${esc((VS_GAMES[v.game] || {}).name || '')} — 준비!</p></div>`;
+      <p style="margin:0;font-family:var(--display);font-size:22px">${esc((VS_GAMES[v.game] || {}).ico || '')} ${esc((VS_GAMES[v.game] || {}).name || '')} — 준비!</p>
+      <p class="muted" style="margin:6px 0 0">${v.players.map(id => esc(vsName(id))).join(' · ')}</p></div>`;
   else if (v.phase === 'result') card = vsResultHtml();
   v.el.innerHTML = `${top}<div class="ttl-body">${card}</div>`;
 }
+function vsRowHtml(id, p, mine){
+  const w = chatWho(id), parent = isParentId(id), un = parent ? null : activeUnlock(id), inRoom = mine || !!(p && p.where === 'lobby');
+  const pend = !parent && pendingRequests().some(r => r.kidId === id), ready = mine ? VS.ready : !!(p && p.ready);
+  return `<div class="vs-row${inRoom ? ' in' : ''}"><span class="avatar" style="background:${w.bg};width:44px;height:44px;font-size:26px">${esc(w.avatar)}</span>
+    <div class="grow"><b style="font-family:var(--display);font-size:20px">${esc(w.name)}${mine ? ' <small class="muted">(나)</small>' : ''}</b>
+      <div class="vs-tags">${parent ? '<span class="ok">👪 부모님</span>' : `<span class="${un ? 'ok' : 'no'}">${un ? `🔓 놀이 허락 · ${fmtClock((new Date(un.expiresAt).getTime() - Date.now()) / 1000)} 남음` : (pend ? '⏳ 부모님 허락 기다리는 중' : '🔒 아직 허락 전')}</span>`}
+        <span class="${inRoom ? 'ok' : 'no'}">${inRoom ? '✅ 들어왔어요' : (p ? '📱 앱에 있어요' : '⏳ 아직 안 들어왔어요')}</span>
+        ${inRoom && ready ? '<span class="ok">👍 준비됐어요</span>' : ''}</div></div></div>`;
+}
 function vsLobbyHtml(){
-  const v = VS, me = v.kidId, other = vsOther();
-  const rows = kids().map(k => {
-    const un = activeUnlock(k.id), mine = k.id === me, p = mine ? { where:'lobby', ready:v.ready } : VSN.peers[k.id];
-    const inRoom = !!(p && p.where === 'lobby'), inApp = !!p, pend = pendingRequests().some(r => r.kidId === k.id);
-    return `<div class="vs-row${inRoom ? ' in' : ''}"><span class="avatar" style="background:${kidColor(k).bg};width:44px;height:44px;font-size:26px">${esc(k.avatar || '')}</span>
-      <div class="grow"><b style="font-family:var(--display);font-size:20px">${esc(k.name)}${mine ? ' <small class="muted">(나)</small>' : ''}</b>
-        <div class="vs-tags"><span class="${un ? 'ok' : 'no'}">${un ? `🔓 놀이 허락 · ${fmtClock((new Date(un.expiresAt).getTime() - Date.now()) / 1000)} 남음` : (pend ? '⏳ 부모님 허락 기다리는 중' : '🔒 아직 허락 전')}</span>
-          <span class="${inRoom ? 'ok' : 'no'}">${inRoom ? '✅ 들어왔어요' : (inApp ? '📱 앱에 있어요' : '⏳ 아직 안 들어왔어요')}</span>
-          ${inRoom && p.ready ? '<span class="ok">👍 준비됐어요</span>' : ''}</div></div></div>`;
-  }).join('');
-  const meOk = !!activeUnlock(me), op = other && VSN.peers[other.id], opIn = !!(op && op.where === 'lobby'), opOk = !!(other && activeUnlock(other.id));
-  const pend = pendingRequests().some(r => r.kidId === me);
+  const v = VS, me = v.me, meParent = isParentId(me);
+  const kidRows = kids().map(k => vsRowHtml(k.id, VSN.peers[k.id], k.id === me)).join('');
+  const parentIds = Object.values(VSN.peers).filter(p => isParentId(p.who) && p.where === 'lobby').map(p => p.who);
+  const parentRows = (meParent ? [me] : []).concat(parentIds.filter(id => id !== me)).map(id => vsRowHtml(id, VSN.peers[id], id === me)).join('');
+  const present = vsPlayers(), meOk = meParent || !!activeUnlock(me), pend = !meParent && pendingRequests().some(r => r.kidId === me);
+  const notReady = present.filter(p => !p.ready).map(p => vsName(p.id)), noUnlock = present.filter(p => !isParentId(p.id) && !activeUnlock(p.id)).map(p => vsName(p.id));
   let note = '';
   if (!VSN.ok) note = '📡 가족 방에 연결하는 중이에요…';
-  else if (!other) note = '같이 놀 친구가 아직 없어요. 부모님 화면에서 친구를 추가해요.';
-  else if (!opIn) note = `⏳ ${esc(subj(other.name))} 들어오길 기다려요. ${esc(other.name)}의 기기에서 놀이 → 🤝 같이 놀기를 눌러요!`;
-  else if (!opOk) note = `${esc(topic(other.name))} 아직 놀이 허락 전이에요. 부모님께 부탁해 볼까요?`;
-  else if (!meOk) note = '나도 놀이 허락을 받아야 같이 할 수 있어요!';
-  else if (!(v.ready && op.ready)) note = '둘 다 👍 준비됐어요를 누르면 바로 시작해요!';
+  else if (present.length < 2) note = '⏳ 같이 할 사람을 기다려요. 각자 기기에서 놀이 → 🤝 같이 놀기를 눌러요! (부모님은 부모님 화면 → 놀이 승인)';
+  else if (present.length > VS_MAX) note = `한 번에 ${VS_MAX}명까지 같이 할 수 있어요. 먼저 온 ${VS_MAX}명이 시작해요.`;
+  else if (noUnlock.length) note = `${noUnlock.map(n => esc(topic(n))).join(', ')} 아직 놀이 허락 전이에요. 부모님께 부탁해 볼까요?`;
+  else if (notReady.length) note = `${present.length}명이 모였어요! 모두 👍 준비됐어요를 누르면 바로 시작해요`;
   else note = '곧 시작해요! 두근두근 💓';
   return `<div class="tt-card stack">
     <h3 class="sub" style="margin:0;text-align:center">🤝 같이 놀기 현황판</h3>
-    <div class="stack" style="gap:8px">${rows}</div>
+    <div class="stack" style="gap:8px">${kidRows}${parentRows}</div>
     <div class="muted" style="text-align:center;font-size:14px">${note}</div>
-    <div><div class="muted" style="margin-bottom:6px">무슨 놀이로 겨룰까요?</div>
-      <div class="vs-games">${Object.keys(VS_GAMES).map(id => { const g = VS_GAMES[id]; return `<button class="vs-game" data-act="vsPick" data-arg="${id}" aria-pressed="${v.game === id}"><span style="font-size:34px">${g.ico}</span><b>${esc(g.name)}</b><small>${esc(g.note)}</small></button>`; }).join('')}</div></div>
+    <div><div class="muted" style="margin-bottom:6px">무슨 놀이를 같이 할까요?</div>
+      <div class="vs-games">${Object.keys(VS_GAMES).map(id => { const g = VS_GAMES[id]; return `<button class="vs-game" data-act="vsPick" data-arg="${id}" aria-pressed="${v.game === id}"><span style="font-size:34px">${g.ico}</span><b>${esc(g.name)}</b><small>${g.team ? '🤝 함께 · ' : '⚔️ 대결 · '}${esc(g.note)}</small></button>`; }).join('')}</div></div>
     <div class="tt-foot">
       ${meOk ? `<button class="btn ${v.ready ? 'mint' : ''}" data-act="vsReady" aria-pressed="${v.ready}">${v.ready ? '👍 준비됐어요! (누르면 취소)' : '👍 준비됐어요!'}</button>`
         : (pend ? '<button class="btn ghost" disabled>⏳ 부모님께 알렸어요</button>' : '<button class="btn" data-act="vsAsk">🔔 부모님께 허락 받기</button>')}
-      <button class="btn ghost" data-act="vsSolo">🔍 혼자 연습하기</button>
+      ${meParent ? '' : '<button class="btn ghost" data-act="vsSolo">🔍 혼자 연습하기</button>'}
     </div>
-    <p class="muted" style="margin:0;font-size:12px;text-align:center">각자 자기 기기에서 들어와요. 이기면 ⭐2, 비기거나 져도 ⭐1 — 같이 논 것만으로도 멋져요!</p>
+    <p class="muted" style="margin:0;font-size:12px;text-align:center">각자 자기 기기에서 들어와요 · 2~${VS_MAX}명 · 대결은 1등 ⭐2 나머지 ⭐1, 함께 놀이는 해내면 모두 ⭐2</p>
   </div>`;
 }
 ACTS.vsExit = () => vsClose();
 ACTS.vsOpenBtn = () => vsOpen();
+ACTS.vsWith = (arg) => {                                     // 놀이에서 바로 — 그 놀이를 골라 둔 채로 방을 연다
+  if (IT) ittoClose(); if (BH && !BH.vs) bearClose();
+  if (S.tab !== 'games'){ S.tab = 'games'; S.view.game = null; render(); }
+  vsOpen(false, arg);
+};
+ACTS.vsParent = () => { closeModal(); vsOpen(false, '', 'p:' + (S.parentId || 'owner')); };
 function vsPeerLine(){
-  const o = kids().find(k => k.id !== S.kidId); if (!o) return '형제·친구와 같은 놀이로 겨뤄요';
-  const p = VSN.peers[o.id], un = activeUnlock(o.id);
-  return `${esc(o.name)}: ${p ? (p.where === 'lobby' ? '✅ 같이 놀기 방에 들어왔어요!' : '📱 앱에 있어요') : '⏳ 아직 안 들어왔어요'} · ${un ? '🔓 놀이 허락' : '🔒 허락 전'}`;
+  const others = Object.values(VSN.peers);
+  if (!others.length) return '각자 기기에서 들어오면 같은 놀이를 같이 해요 (2~4명)';
+  return others.slice(0, 3).map(p => `${esc(vsName(p.who))} ${p.where === 'lobby' ? '✅ 방에 들어왔어요' : '📱 앱에 있어요'}${!isParentId(p.who) ? (activeUnlock(p.who) ? ' 🔓' : ' 🔒') : ''}`).join(' · ');
 }
 ACTS.vsPick = (arg) => { const v = VS; if (!v || v.phase !== 'lobby' || !VS_GAMES[arg]) return; v.game = arg; v.ready = false; vsSend({ t:'pick', game:arg }); vsState(); vsRender(); };
-ACTS.vsReady = () => { const v = VS; if (!v || v.phase !== 'lobby') return; if (!activeUnlock(v.kidId)) return; v.ready = !v.ready; vsState(); vsRender(); vsMaybeStart(); };
+ACTS.vsReady = () => { const v = VS; if (!v || v.phase !== 'lobby') return; if (!isParentId(v.me) && !activeUnlock(v.me)) return; v.ready = !v.ready; vsState(); vsRender(); vsMaybeStart(); };
 ACTS.vsAsk = async () => { await requestUnlock(); toast('부모님께 알렸어요! 조금만 기다려요 ⏳'); vsRender(); };
 ACTS.vsSolo = () => { const was = VS; if (was){ vsClose(); } vsOpen(true); };
 function vsMaybeStart(){
   const v = VS; if (!v || v.phase !== 'lobby' || v.solo) return;
-  const other = vsOther(); if (!other) return;
-  const op = VSN.peers[other.id];
-  if (!(v.ready && op && op.where === 'lobby' && op.ready && activeUnlock(v.kidId) && activeUnlock(other.id))) return;
-  if (v.kidId > other.id) return;                          // 아이 id가 앞서는 쪽이 시작 신호를 보낸다(둘이 동시에 보내지 않게)
+  const present = vsPlayers().slice(0, VS_MAX);
+  if (present.length < 2 || present.some(p => !p.ready) || present.some(p => !isParentId(p.id) && !activeUnlock(p.id))) return;
+  const ids = present.map(p => p.id);
+  if (ids[0] !== v.me) return;                               // 맨 앞 사람(방장)이 시작 신호를 보낸다(여럿이 동시에 보내지 않게)
   const seed = Math.floor(Math.random() * 2147483647), at = Date.now() + 3400;
-  v.startMsg = { t:'start', game:v.game, seed, startAt:at };
+  v.startMsg = { t:'start', game:v.game, seed, startAt:at, players:ids };
   vsSend(v.startMsg);
-  vsBegin(v.game, seed, at, other.id);
+  vsBegin(v.game, seed, at, ids);
 }
 function vsResendStart(){
   const v = VS; if (!v || !v.startMsg || (v.phase !== 'count' && v.phase !== 'play')) return;
-  const op = VSN.peers[v.opp];
-  if (op && op.where === 'lobby' && op.ready && Date.now() - (v.resentAt || 0) > 1500 && Date.now() - v.startMsg.startAt < 20000){ v.resentAt = Date.now(); vsSend(v.startMsg); }
+  const late = v.others.some(id => { const p = VSN.peers[id]; return p && p.where === 'lobby' && p.ready; });
+  if (late && Date.now() - (v.resentAt || 0) > 1500 && Date.now() - v.startMsg.startAt < 20000){ v.resentAt = Date.now(); vsSend(v.startMsg); }
 }
 function vsOnMsg(m){
-  if (m.t === 'st' && m.from && m.from !== VSN.kid){
-    VSN.peers[m.from] = Object.assign({}, VSN.peers[m.from] || {}, { kid:m.from, where:m.where, ready:!!m.ready, game:m.game || '', stAt:m.at || Date.now() });
+  if (m.t === 'st' && m.from && m.from !== VSN.me){
+    VSN.peers[m.from] = Object.assign({}, VSN.peers[m.from] || {}, { who:m.from, where:m.where, ready:!!m.ready, game:m.game || '', stAt:m.at || Date.now() });
     vsPeersChanged(); return;
   }
   const v = VS; if (!v || v.solo) return;
-  if (m.t === 'pick' && v.phase === 'lobby' && VS_GAMES[m.game]){ v.game = m.game; v.ready = false; vsState(); vsRender(); }
-  else if (m.t === 'start' && v.phase === 'lobby'){ vsBegin(VS_GAMES[m.game] ? m.game : 'spot', m.seed, m.startAt, m.from); }
-  else if (m.t === 'score' && m.from === v.opp){ v.scores[m.from] = m.n; vsScoreUi(); }
-  else if (m.t === 'done' && m.from === v.opp){ v.done[m.from] = { n:m.n, ms:m.ms }; v.scores[m.from] = m.n; vsScoreUi(); vsCheckEnd(); }
-  else if (m.t === 'leave' && m.from === v.opp && v.phase === 'play'){ v.done[m.from] = v.done[m.from] || { n:v.scores[m.from] || 0, left:true }; vsCheckEnd(true); }
+  if (m.t === 'pick' && v.phase === 'lobby' && VS_GAMES[m.game]){ v.game = m.game; v.ready = false; vsState(); vsRender(); return; }
+  if (m.t === 'start' && v.phase === 'lobby'){ const ps = Array.isArray(m.players) ? m.players : [m.from, v.me]; if (ps.indexOf(v.me) >= 0) vsBegin(VS_GAMES[m.game] ? m.game : 'spot', m.seed, m.startAt, ps); return; }
+  if (v.players.indexOf(m.from) < 0) return;
+  if (m.t === 'score'){ v.scores[m.from] = m.n; vsScoreUi(); }
+  else if (m.t === 'done'){ v.done[m.from] = { n:m.n, ms:m.ms }; v.scores[m.from] = m.n; vsScoreUi(); vsCheckEnd(); }
+  else if (m.t === 'mow' && v.phase === 'play' && v.game === 'itto' && v.gd && Array.isArray(m.s)){
+    m.s.forEach(sg => { if (Array.isArray(sg) && sg.length === 4){ gdErase(sg); v.gd.segs.push(sg); } });
+    gdCheck(m.from);
+  }
+  else if (m.t === 'found' && v.phase === 'play' && v.game === 'itto' && v.gd){ gdReveal(+m.i, m.from, false); }
+  else if (m.t === 'leave' && v.phase === 'play'){ v.done[m.from] = v.done[m.from] || { n:v.scores[m.from] || 0, left:true }; vsCheckEnd(v.players.filter(id => id !== m.from && !v.done[id]).length <= 1 && v.players.length <= 2); }
 }
-/* 3·2·1 — 시작 시각(startAt)에 맞춰 둘이 같이 */
-function vsBegin(game, seed, startAt, opp){
+/* 3·2·1 — 시작 시각(startAt)에 맞춰 다 같이 */
+function vsBegin(game, seed, startAt, players){
   const v = VS; if (!v) return;
-  v.game = game; v.seed = seed >>> 0; v.opp = opp || ''; v.scores = {}; v.done = {}; v.phase = 'count'; clearTimeout(v.waitT); v.waitT = 0;
+  v.game = game; v.seed = seed >>> 0; v.players = (players && players.length ? players : [v.me]).slice(0, VS_MAX);
+  v.others = v.players.filter(id => id !== v.me); v.opp = v.others[0] || '';
+  v.scores = {}; v.done = {}; v.phase = 'count'; clearTimeout(v.waitT); v.waitT = 0;
   vsRender(); if (!v.solo) vsState();
   const tick = () => {
     if (VS !== v || v.phase !== 'count') return;
@@ -8798,60 +8951,196 @@ function vsGo(){
   const v = VS; v.phase = 'play'; v.t0 = performance.now();
   if (v.game === 'spot'){ v.sd = sdMake(v.seed); v.found = []; v.miss = []; v.endAt = performance.now() + SD_SECS * 1000; sdRender();
     clearInterval(v.tick); v.tick = setInterval(sdTick, 250); return; }
-  bearOpen({ vs:{ seed:v.seed, secs:60, opp:v.opp,
-    onScore:n => { vsSend({ t:'score', n }); },
-    onDone:n => { v.done[v.kidId] = { n, ms:60000 }; v.scores[v.kidId] = n; vsSend({ t:'done', n, ms:60000 }); vsCheckEnd(); } } });
+  if (v.game === 'itto'){ v.gd = gdMake(v.seed); gdRender(); clearInterval(v.tick); v.tick = setInterval(gdFlush, 150); return; }
+  bearOpen({ vs:{ seed:v.seed, secs:60, team:v.game === 'bearTeam', others:v.others, opp:v.opp,
+    onScore:n => { v.scores[v.me] = n; vsSend({ t:'score', n }); },
+    onDone:n => { v.done[v.me] = { n, ms:60000 }; v.scores[v.me] = n; vsSend({ t:'done', n, ms:60000 }); vsCheckEnd(); } } });
 }
 function vsScoreUi(){
   const v = VS; if (!v) return;
-  const n = v.scores[v.opp] || 0, el = document.getElementById('vsOpp');
-  if (el){ el.textContent = String(n); const bar = document.getElementById('vsOppBar'); if (bar) bar.style.width = (v.game === 'spot' ? n / SD_N * 100 : Math.min(100, n * 4)) + '%'; }
+  if (v.game === 'spot') v.others.forEach(id => { const n = v.scores[id] || 0, el = document.getElementById('vsN-' + id), bar = document.getElementById('vsB-' + id); if (el) el.textContent = String(n); if (bar) bar.style.width = (n / SD_N * 100) + '%'; });
   if (BH && BH.vs) bhHud();
 }
 function vsCheckEnd(force){
-  const v = VS; if (!v || v.phase !== 'play') return;
-  const dm = v.done[v.kidId], dop = v.done[v.opp];
-  const full = v.game === 'spot' && [dm, dop].some(d => d && d.n >= SD_N);
-  if (v.solo || full || (dm && dop) || force){ vsFinish(); return; }
-  if (dm && !v.waitT) v.waitT = setTimeout(() => { if (VS === v) vsFinish(); }, 4000);   // 형제 결과를 조금 기다린다
+  const v = VS; if (!v || v.phase !== 'play' || v.game === 'itto') return;   // 함께 찾기는 모두 찾으면 끝
+  const dm = v.done[v.me], allDone = v.players.every(id => v.done[id]);
+  const full = v.game === 'spot' && v.players.some(id => v.done[id] && v.done[id].n >= SD_N);
+  if (v.solo || full || allDone || force){ vsFinish(); return; }
+  if (dm && !v.waitT) v.waitT = setTimeout(() => { if (VS === v) vsFinish(); }, 4000);   // 다른 사람 결과를 조금 기다린다
 }
 function vsFinish(){
   const v = VS; if (!v || v.phase !== 'play') return;
   clearInterval(v.tick); clearTimeout(v.waitT);
   if (BH && BH.vs){ BH.vs = null; bearClose(); }
-  const me = v.kidId, op = v.opp;
-  const a = v.done[me] ? v.done[me].n : (v.scores[me] || (v.found ? v.found.length : 0)), b = v.done[op] ? v.done[op].n : (v.scores[op] || 0);
-  let win = '';
-  if (v.solo) win = a >= SD_N ? me : '';
-  else if (v.game === 'spot' && (a >= SD_N || b >= SD_N)){
-    if (a >= SD_N && b >= SD_N) win = (v.done[me].ms || 0) <= (v.done[op].ms || 0) ? me : op; else win = a >= SD_N ? me : op;
-  } else win = a > b ? me : (b > a ? op : '');
-  v.phase = 'result'; v.result = { a, b, win, left:!!(v.done[op] && v.done[op].left) };
-  awardStars(v.solo ? (a >= SD_N ? 2 : 1) : (win === me ? 2 : 1));
-  if (win === me || !win) confetti();
+  const g = VS_GAMES[v.game] || VS_GAMES.spot, me = v.me;
+  const score = id => v.done[id] ? v.done[id].n : (v.scores[id] || (id === me && v.found ? v.found.length : 0));
+  let per, success = false, sum = 0, rankMe = 1;
+  if (v.game === 'itto'){
+    per = v.players.map(id => ({ id, n:v.gd.fr.filter(f => f.by === id).length }));
+    sum = v.gd.fr.filter(f => f.by).length; success = v.gd.fr.every(f => f.by);
+    gdSaveBook();
+  } else if (g.team){
+    per = v.players.map(id => ({ id, n:score(id) }));
+    sum = per.reduce((s, p) => s + Math.max(0, p.n), 0); success = sum >= vsTeamTarget(v.players.length);
+  } else {
+    per = v.players.map(id => ({ id, n:score(id), ms:(v.done[id] && v.done[id].ms) || 9e9, full:v.game === 'spot' && score(id) >= SD_N }))
+      .sort((a, b) => (b.full - a.full) || (a.full && b.full ? a.ms - b.ms : b.n - a.n));
+    let rank = 0, prev = null;
+    per.forEach((p, i) => { const key = p.full ? 'f' + p.ms : 'n' + p.n; if (key !== prev){ rank = i + 1; prev = key; } p.rank = rank; });
+    rankMe = (per.find(p => p.id === me) || {}).rank || 1;
+  }
+  v.phase = 'result'; v.result = { per, team:!!g.team, success, sum, left:v.others.filter(id => v.done[id] && v.done[id].left) };
+  const stars = v.solo ? (score(me) >= SD_N ? 2 : 1) : (g.team ? (success ? 2 : 1) : (rankMe === 1 ? 2 : 1));
+  awardStars(stars); v.result.stars = stars;
+  if ((g.team && success) || (!g.team && rankMe === 1)) confetti();
   [523, 659, 784].forEach((f, k) => ttTone(f, k * 0.1, 0.2, 0.08));
   v.ready = false; v.startMsg = null; vsState(); vsRender();
 }
 function vsResultHtml(){
-  const v = VS, r = v.result || {}, me = kid(v.kidId), op = kid(v.opp), g = VS_GAMES[v.game] || VS_GAMES.spot;
-  const unit = v.game === 'spot' ? `/${SD_N}` : '점';
-  if (v.solo) return `<div class="tt-card stack" style="text-align:center"><div style="font-size:52px">${r.win ? '🏆' : '🔍'}</div>
-      <h3 class="sub" style="margin:0">${r.win ? '다 찾았어요! 눈이 정말 좋아요 👀' : `${r.a}개 찾았어요! 다음엔 더 찾을 수 있어요 💪`}</h3>
-      <div class="tt-foot"><button class="btn" data-act="vsSolo">🔁 한 번 더</button><button class="btn ghost" data-act="vsExit">그만하기</button></div></div>`;
-  const title = r.left ? `${esc(op ? topic(op.name) : '친구는')} 먼저 나갔어요` : (r.win === v.kidId ? `🏆 ${esc(me.name)} 승리!` : (r.win ? `🏆 ${esc(op ? op.name : '')} 승리!` : '🤝 비겼어요!'));
-  const sub = r.win === v.kidId ? '정말 멋져요! 같이 놀아 준 친구에게도 박수 👏' : (r.win ? '아쉽지만 정말 잘했어요! 다음엔 이길 수 있어요 💪' : '둘 다 최고예요! 같이 노니까 더 재밌다 💕');
+  const v = VS, r = v.result || {}, g = VS_GAMES[v.game] || VS_GAMES.spot, me = v.me;
+  const unit = v.game === 'spot' ? `/${SD_N}` : (v.game === 'itto' ? '마리' : '점');
+  if (v.solo){ const n = (r.per && r.per[0] && r.per[0].n) || (v.found ? v.found.length : 0);
+    return `<div class="tt-card stack" style="text-align:center"><div style="font-size:52px">${n >= SD_N ? '🏆' : '🔍'}</div>
+      <h3 class="sub" style="margin:0">${n >= SD_N ? '다 찾았어요! 눈이 정말 좋아요 👀' : `${n}개 찾았어요! 다음엔 더 찾을 수 있어요 💪`}</h3>
+      <div class="tt-foot"><button class="btn" data-act="vsSolo">🔁 한 번 더</button><button class="btn ghost" data-act="vsExit">그만하기</button></div></div>`; }
+  const MED = ['🥇', '🥈', '🥉', '🏅'];
+  const rows = (r.per || []).map(p => { const w = chatWho(p.id);
+    return `<div class="vs-rrow${p.id === me ? ' me' : ''}">${r.team ? '<span style="font-size:22px">🤝</span>' : `<span style="font-size:26px">${MED[Math.min(3, (p.rank || 1) - 1)]}</span>`}
+      <span class="avatar" style="background:${w.bg}">${esc(w.avatar)}</span><b class="grow">${esc(w.name)}${p.id === me ? ' <small class="muted">(나)</small>' : ''}</b>
+      <span class="vs-num" style="font-size:28px">${p.n}<small>${unit}</small></span></div>`; }).join('');
+  let title, sub;
+  if (r.team){
+    const goal = v.game === 'itto' ? `${(v.gd && v.gd.fr.length) || GD_N}마리` : `${vsTeamTarget(v.players.length)}마리`;
+    title = r.success ? '🎉 다 같이 힘을 합쳐 해냈어요!' : `💪 다 같이 ${r.sum}${v.game === 'itto' ? '마리' : '점'}을 모았어요!`;
+    sub = r.success ? `목표 ${goal}를 채웠어요. 같이 하니까 더 재밌다! 💕` : `목표는 ${goal}였어요. 괜찮아요, 다음엔 꼭 해낼 수 있어요!`;
+  } else {
+    const top = (r.per || []).filter(p => p.rank === 1).map(p => vsName(p.id));
+    title = top.length > 1 ? `🏆 ${top.map(esc).join('·')} 공동 1등!` : `🏆 ${esc(top[0] || '')} 1등!`;
+    sub = '모두 정말 잘했어요! 같이 놀아 줘서 고마워요 👏';
+  }
+  if (r.left && r.left.length) sub += ` (${r.left.map(id => esc(vsName(id))).join('·')}은 먼저 나갔어요)`;
   return `<div class="tt-card stack" style="text-align:center">
-    <div style="font-size:52px">${r.win === v.kidId ? '🏆' : (r.win ? '🌟' : '🤝')}</div>
+    <div style="font-size:48px">${r.team ? (r.success ? '🎉' : '🌟') : '🏆'}</div>
     <h3 class="sub" style="margin:0">${title}</h3>
-    <div class="vs-score"><div><span class="avatar" style="background:${kidColor(me).bg}">${esc(me.avatar || '')}</span><b>${esc(me.name)}</b><div class="vs-num">${r.a}<small>${unit}</small></div></div>
-      <div class="vs-vs">VS</div>
-      <div><span class="avatar" style="background:${kidColor(op).bg}">${esc((op || {}).avatar || '')}</span><b>${esc((op || {}).name || '')}</b><div class="vs-num">${r.b}<small>${unit}</small></div></div></div>
+    ${r.team ? `<div class="vs-sum">🤝 합계 <b>${r.sum}</b>${unit}</div>` : ''}
+    <div class="stack" style="gap:6px;text-align:left">${rows}</div>
     <p style="margin:0">${sub}</p>
-    <p class="muted" style="margin:0">${g.ico} ${esc(g.name)} · ⭐ +${r.win === v.kidId ? 2 : 1}</p>
+    <p class="muted" style="margin:0">${g.ico} ${esc(g.name)}${isParentId(me) ? '' : ` · ⭐ +${r.stars || 1}`}</p>
     <div class="tt-foot"><button class="btn" data-act="vsAgain">🔁 한 번 더</button><button class="btn ghost" data-act="vsExit">그만하기</button></div>
   </div>`;
 }
-ACTS.vsAgain = () => { const v = VS; if (!v) return; v.phase = 'lobby'; v.ready = false; v.result = null; vsState(); vsRender(); };
+ACTS.vsAgain = () => { const v = VS; if (!v) return; v.phase = 'lobby'; v.ready = false; v.result = null; v.gd = null; vsState(); vsRender(); };
+
+/* ---------- 🌱 풀숲 친구 찾기 — 함께 찾기 ----------
+   같은 씨앗(seed)이면 두 기기에 같은 친구가 같은 자리(가로·세로 0~1 비율)에 숨는다. 한 아이가 풀을 깎으면
+   깎은 자국(비율 좌표)을 0.15초마다 모아 보내서 다른 아이 화면에서도 똑같이 깎인다(기기 크기가 달라도 같은 곳).
+   친구가 나타나면 누가 찾았는지 이름표·색 테두리. 다 찾으면 둘 다 ⭐2, 찾은 친구는 각자 이또 도감(profile.itto.found)에 들어간다.
+   겨루지 않고 힘을 합친다 — 결과는 "다 같이 N마리". 2~4명 모두 같은 풀숲에서. */
+const GD_N = 6;
+function gdRoll(R){ const tot = IT_FRIENDS.reduce((s, f) => s + (f.w || 1), 0); let r = R() * tot; for (const f of IT_FRIENDS){ r -= (f.w || 1); if (r <= 0) return f.id; } return IT_FRIENDS[0].id; }
+function gdMake(seed){
+  const R = vsRand(seed), fr = [];
+  for (let guard = 0; fr.length < GD_N && guard < 900; guard++){
+    const x = 0.1 + R() * 0.8, y = 0.14 + R() * 0.72;
+    if (fr.some(f => Math.hypot(f.x - x, (f.y - y) * 0.7) < 0.2)) continue;
+    fr.push({ x, y, type:gdRoll(R), by:'' });
+  }
+  return { fr, segs:[], out:[], last:null };
+}
+function gdRender(){
+  const v = VS, gd = v.gd; if (!gd) return;
+  const W = Math.round(Math.min(660, Math.max(280, window.innerWidth - 28))), H = Math.round(W * 0.7), size = Math.round(clamp(W * 0.2, 62, 118));
+  gd.W = W; gd.H = H; gd.size = size;
+  const others = v.others.map(id => `<span style="color:${vsColor(id)}">${esc(vsName(id))} <b id="gdN-${esc(id)}">0</b></span>`).join(' · ');
+  v.el.innerHTML = `<div class="ttl-top"><button class="ttl-x" data-act="vsExit" aria-label="그만하기">✕</button>
+      <div class="ttl-dots"><span class="ttl-chip" style="background:var(--mint-soft);color:#215a49">🌱 풀숲 친구 찾기 · 함께 찾기</span></div><span style="width:48px"></span></div>
+    <div class="ttl-body it-body">
+      <div class="sd-hud"><div class="grow"><b>🤝 함께 찾은 친구 <span id="gdAll">0</span>/${gd.fr.length}</b>
+        <div class="gauge" style="height:12px;margin-top:4px"><span id="gdBar" style="width:0%;background:var(--mint-deep)"></span></div>
+        <div class="muted" style="font-size:13px;margin-top:3px"><span style="color:${vsColor(v.me)}">나 <b id="gdMe">0</b></span> · ${others}</div></div></div>
+      <div class="it-say" id="gdSay">다 같이 풀숲을 쓱쓱 깎아요! 다른 사람이 깎은 풀도 여기서 같이 깎여요 🌿</div>
+      <div class="it-garden" id="gdGarden" style="width:${W}px;height:${H}px">
+        <div class="it-lawn"></div>
+        ${gd.fr.map((f, i) => `<div class="it-fr${f.by ? ' show' : ''}" id="gdF${i}" style="left:${(f.x * W).toFixed(0)}px;top:${(f.y * H).toFixed(0)}px;width:${size}px;height:${size}px${f.by ? `;box-shadow:0 0 0 4px ${vsColor(f.by)};border-radius:50%` : ''}">${itSvg(f.type)}</div>`).join('')}
+        <canvas class="it-grass" id="gdGrass" aria-label="풀숲 — 손가락으로 문질러 깎아요"></canvas>
+        <div class="it-parts" id="itParts"></div>
+      </div>
+    </div>`;
+  const cv = document.getElementById('gdGrass'), dpr = Math.min(1.5, window.devicePixelRatio || 1);
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  gd.g = cv.getContext('2d'); gd.dpr = dpr; gd.brush = Math.max(34, W * 0.12) * dpr;
+  itDrawGrass(gd.g, cv.width, cv.height, dpr);
+  gd.segs.forEach(sg => gdErase(sg));                        // 다시 그릴 때 — 지금까지 깎은 자리를 그대로
+  gdHud();
+  let last = null;
+  const pos = ev => { const r = cv.getBoundingClientRect(); return [(ev.clientX - r.left) / r.width, (ev.clientY - r.top) / r.height]; };
+  cv.addEventListener('pointerdown', ev => { if (!VS || VS.phase !== 'play') return; ev.preventDefault(); last = pos(ev); try { cv.setPointerCapture(ev.pointerId); } catch(e){} gdMow(last, last); });
+  cv.addEventListener('pointermove', ev => { if (!last || !VS || VS.phase !== 'play') return; const p = pos(ev); gdMow(last, p); last = p; });
+  const up = () => { if (last) gdCheck(v.me); last = null; };
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+}
+/* 깎기 — 자국은 비율 좌표 [ax, ay, bx, by] */
+function gdErase(sg){
+  const gd = VS && VS.gd; if (!gd || !gd.g) return;
+  const g = gd.g, w = g.canvas.width, h = g.canvas.height;
+  g.save(); g.globalCompositeOperation = 'destination-out'; g.lineCap = 'round'; g.lineJoin = 'round'; g.lineWidth = gd.brush;
+  g.beginPath(); g.moveTo(sg[0] * w, sg[1] * h); g.lineTo(sg[2] * w + 0.01, sg[3] * h); g.stroke(); g.restore();
+}
+function gdMow(a, b){
+  const v = VS, gd = v.gd, r3 = x => Math.round(x * 1000) / 1000;
+  const sg = [r3(a[0]), r3(a[1]), r3(b[0]), r3(b[1])];
+  gdErase(sg); gd.segs.push(sg); gd.out.push(sg);
+  const now = performance.now();
+  if (now - (gd.snd || 0) > 120){ gd.snd = now; itNoise(0.06, 0.03); }
+  if (now - (gd.part || 0) > 60){ gd.part = now; itBits(b[0] * gd.W, b[1] * gd.H); }
+  if (now - (gd.chk || 0) > 150){ gd.chk = now; gdCheck(v.me); }
+}
+function gdFlush(){
+  const v = VS; if (!v || v.phase !== 'play' || v.game !== 'itto' || !v.gd) return;
+  const out = v.gd.out; if (!out.length) return;
+  vsSend({ t:'mow', s:out.splice(0, 60) });
+}
+/* 친구 둘레의 풀이 반 넘게 깎이면 뿅 — who 가 찾은 걸로 (형제가 깎은 자국이면 형제) */
+function gdCheck(who){
+  const v = VS, gd = v && v.gd; if (!gd || !gd.g || v.phase !== 'play') return;
+  const cw = gd.g.canvas.width, ch = gd.g.canvas.height, d = gd.dpr;
+  gd.fr.forEach((f, i) => {
+    if (f.by) return;
+    const w = Math.max(4, Math.min(cw, ch, Math.round(gd.size * 0.76 * d)));
+    const x0 = clamp(Math.round((f.x * gd.W - gd.size * 0.38) * d), 0, cw - w), y0 = clamp(Math.round((f.y * gd.H - gd.size * 0.38) * d), 0, ch - w);
+    let px; try { px = gd.g.getImageData(x0, y0, w, w).data; } catch(e){ return; }
+    let clear = 0, tot = 0;
+    for (let yy = 0; yy < w; yy += 5) for (let xx = 0; xx < w; xx += 5){ tot++; if (px[(yy * w + xx) * 4 + 3] < 70) clear++; }
+    if (tot && clear / tot >= 0.55) gdReveal(i, who, who === v.me);
+  });
+}
+function gdReveal(i, who, tell){
+  const v = VS, gd = v.gd, f = gd.fr[i]; if (!f || f.by) return;
+  f.by = who;
+  const el = document.getElementById('gdF' + i), fr = itFriend(f.type), nm = vsName(who);
+  if (el){ el.classList.add('show'); el.style.boxShadow = `0 0 0 4px ${vsColor(who)}`; el.style.borderRadius = '50%'; }
+  itPop();
+  const box = document.getElementById('gdGarden');
+  if (box){ const t = document.createElement('span'); t.className = 'it-tag'; t.textContent = `${subj(nm)} 찾았다! ${fr.name}`; t.style.left = (f.x * gd.W).toFixed(0) + 'px'; t.style.top = Math.max(4, f.y * gd.H - gd.size * 0.64).toFixed(0) + 'px'; box.appendChild(t); setTimeout(() => t.remove(), 1900); }
+  const say = document.getElementById('gdSay'); if (say) say.textContent = `${subj(nm)} ${fr.name}${hasJong(fr.name) ? '을' : '를'} 찾았어요! 🎉 ${gd.fr.filter(x => !x.by).length ? '다른 친구도 같이 찾아요!' : ''}`;
+  if (tell) vsSend({ t:'found', i });
+  gdHud();
+  if (gd.fr.every(x => x.by)){ gdFlush(); setTimeout(() => { if (VS === v && v.phase === 'play') vsFinish(); }, 900); }
+}
+function gdHud(){
+  const v = VS, gd = v.gd; if (!gd) return;
+  const all = gd.fr.filter(f => f.by).length, mine = gd.fr.filter(f => f.by === v.me).length;
+  const set = (id, t) => { const e = document.getElementById(id); if (e) e.textContent = String(t); };
+  set('gdAll', all); set('gdMe', mine); v.others.forEach(id => set('gdN-' + id, gd.fr.filter(f => f.by === id).length));
+  const bar = document.getElementById('gdBar'); if (bar) bar.style.width = (all / gd.fr.length * 100) + '%';
+}
+/* 함께 찾은 친구는 각자 이또 도감에 — 차·개미집은 그대로 둔다 */
+function gdSaveBook(){
+  const v = VS, gd = v && v.gd, k = v && kid(v.kidId); if (!gd || !k) return;
+  const it = JSON.parse(JSON.stringify(k.itto || {})); it.found = it.found || {};
+  gd.fr.filter(f => f.by).forEach(f => { it.found[f.type] = (it.found[f.type] || 0) + 1; });
+  Store.update('profiles', k.id, { itto:it });
+}
 
 /* ---------- 🔍 틀린 그림 찾기 — 같은 씨앗(seed)이면 두 기기에 똑같은 그림이 나온다 ---------- */
 const SD_THEMES = [
@@ -8895,12 +9184,12 @@ function sdRender(){
   // 세로 화면은 위아래로 두 장(높이 0.75 × 2), 가로 화면은 나란히 두 장 — 한 화면에 둘 다 보이게
   const pw = Math.round(land ? Math.min((avail - 12) / 2, (window.innerHeight - 190) / 0.75) : Math.min(avail, (window.innerHeight - 250) / 1.5));
   v.pw = pw;
-  const op = kid(v.opp), me = kid(v.kidId);
+  const me = chatWho(v.me);
   v.el.innerHTML = `<div class="ttl-top"><button class="ttl-x" data-act="vsExit" aria-label="그만하기">✕</button>
       <div class="ttl-dots"><span class="ttl-chip">🔍 틀린 그림 찾기 · ${esc(v.sd.th.name)}</span></div><span class="bh-time" id="sdTime">⏱ ${SD_SECS}</span></div>
     <div class="ttl-body" style="max-width:1140px">
       <div class="sd-hud"><div class="grow"><b>${esc(me.name)}</b> <span id="sdMe">${v.found.length}</span>/${SD_N}<div class="gauge" style="height:10px;margin-top:3px"><span id="sdMeBar" style="width:${v.found.length / SD_N * 100}%"></span></div></div>
-        ${v.solo ? '<div class="grow muted" style="font-size:13px;text-align:right">두 그림에서 다른 곳 5개를 찾아요!</div>' : `<div class="grow" style="text-align:right"><b>${esc(op ? op.name : '')}</b> <span id="vsOpp">${v.scores[v.opp] || 0}</span>/${SD_N}<div class="gauge" style="height:10px;margin-top:3px"><span id="vsOppBar" style="width:${(v.scores[v.opp] || 0) / SD_N * 100}%;background:var(--mint-deep)"></span></div></div>`}</div>
+        ${v.solo ? '<div class="grow muted" style="font-size:13px;text-align:right">두 그림에서 다른 곳 5개를 찾아요!</div>' : v.others.map(id => `<div class="grow" style="text-align:right"><b>${esc(vsName(id))}</b> <span id="vsN-${esc(id)}">${v.scores[id] || 0}</span>/${SD_N}<div class="gauge" style="height:10px;margin-top:3px"><span id="vsB-${esc(id)}" style="width:${(v.scores[id] || 0) / SD_N * 100}%;background:${vsColor(id)}"></span></div></div>`).join('')}</div>
       <div class="sd-pics${land ? ' land' : ''}">${sdPic(v.sd.objs, v.sd.th, 'sdL', pw)}${sdPic(v.sd.right, v.sd.th, 'sdR', pw)}</div>
       <p class="muted" style="text-align:center;margin:6px 0 0;font-size:13px" id="sdTip">다른 곳을 찾으면 그림을 눌러요 👆 (어느 그림을 눌러도 돼요)</p>
     </div>`;
@@ -8933,7 +9222,7 @@ function sdTap(ev){
   if (!v.solo) vsSend({ t:'score', n });
   if (n >= SD_N){
     const ms = Math.round(performance.now() - v.t0);
-    v.done[v.kidId] = { n, ms }; v.scores[v.kidId] = n;
+    v.done[v.me] = { n, ms }; v.scores[v.me] = n;
     if (!v.solo) vsSend({ t:'done', n, ms });
     vsCheckEnd();
   }
@@ -8942,12 +9231,540 @@ function sdTick(){
   const v = VS; if (!v || v.phase !== 'play' || v.game !== 'spot') return;
   const left = Math.max(0, v.endAt - performance.now()), el = document.getElementById('sdTime');
   if (el){ const s = Math.ceil(left / 1000); el.textContent = `⏱ ${s}`; el.classList.toggle('hurry', s <= 10); }
-  if (left <= 0 && !v.done[v.kidId]){
-    const n = v.found.length; v.done[v.kidId] = { n, ms:SD_SECS * 1000 }; v.scores[v.kidId] = n;
+  if (left <= 0 && !v.done[v.me]){
+    const n = v.found.length; v.done[v.me] = { n, ms:SD_SECS * 1000 }; v.scores[v.me] = n;
     if (!v.solo) vsSend({ t:'done', n, ms:SD_SECS * 1000 });
     vsCheckEnd();
   }
 }
+
+/* ============================================================
+   🐣 마음 친구 키우기 — 아이마다 한 마리, 이 앱에서 새로 그린 친구(다른 회사 캐릭터가 아니다)
+   알에서 태어나 🍼 아기 → 🧸 꼬마 → 🖍️ 유치원생 → 🎒 초등학생 언니까지만 자란다. '착하고 바른 멋진 언니'로 크는 이야기.
+   ① 알을 톡톡 두드려 깨우고, 모양·색·이름을 아이가 직접 고른다(스스로 고르기).
+   ② 돌보기: 🍎 밥 · 🫧 씻기(문질러서) · 🎾 놀기(공 잡기) · 🌙 재우기(자장가) · 🤗 안아 주기(꾹 누르기) → 🌱 쑥쑥 점수(xp).
+      하루에 자라는 만큼은 PET_DAY_XP까지 — 몰아서 하기보다 하루하루 돌본다. 할 일을 다 한 날엔 조금 더 큰다.
+   ③ 🌟 바른 마음 가르쳐 주기(PET_GOOD): 친구가 겪은 일에서 착하고 바른 행동을 골라 알려 주고, "왜 그럴까?"까지 생각한다.
+      아쉬운 쪽을 골라도 "그러면 ○○할 것 같아. 이렇게 해 볼까?" — 혼내지 않는다. 까닭은 셋 다 좋은 생각이다.
+      단계마다 배울 바른 마음이 있고, 쑥쑥 점수가 차고 바른 마음을 다 배워야 다음으로 자란다(점수는 다음 단계 문턱에서 멈춘다).
+   ④ 💭 마음 알아맞히기: 친구가 겪은 일을 듣고 기분을 고른 뒤, 도와줄 방법을 고른다(감정 낱말·위로하는 법). 하루 3번까지 ⭐.
+   ⑤ 죽거나 아프지 않는다. 오래 안 오면 "보고 싶었어!"라고만 하고, 게이지는 10 밑으로 내려가지 않는다.
+   ⑥ 🎒 초등학생 언니가 되면 입학 카드(자란 날·배운 바른 마음·함께 돌본 날)를 준다. 그 뒤로는 더 자라지 않고, 멋진 언니 수업을 하며 계속 같이 논다.
+   profile.pet = { name, kind, color, xp, st:{food, clean, fun, sleep, love}, last, born, days, xpDay, xpToday,
+                   good:{바른 마음: 연습한 횟수}, goodAt, seenSt(축하한 단계), grew:{단계: 날짜}, grownAt, emoDay, emoN, emoAll, cheerDay }
+   화면 위 층(#petLayer)에서 한다. 놀이 시간이 끝나면 닫힌다.
+   ============================================================ */
+let PET = null;
+const PET_KINDS = [['mochi', '🐰 말랑 토끼'], ['bori', '🐻 동글 곰'], ['piyo', '🐤 뽀송 병아리']];
+const PET_COLORS = [['#FFC9D5', '딸기'], ['#C3EEDD', '민트'], ['#FFE8A6', '바나나'], ['#DCD0F8', '라벤더'], ['#CFE8FF', '하늘']];
+const PET_NAMES = ['뽀짝이', '몽글이', '토닥이', '방울이', '콩콩이', '말랑이'];
+const PET_STATS = [['food', '🍎', '배부름'], ['clean', '🫧', '깨끗함'], ['fun', '🎾', '즐거움'], ['sleep', '🌙', '기운'], ['love', '💗', '사랑']];
+const PET_DECAY = { food:5, clean:3, fun:5, sleep:4, love:2 };   // 한 시간에 줄어드는 만큼 (10 밑으로는 안 내려간다)
+/* 자라는 길 — [쑥쑥 점수, 이름, 그림, 이때 배우는 바른 마음, 이 단계가 됐을 때 하는 말({n} = 친구 이름 + 이/가)]
+   마지막 단계(초등학생 언니)의 바른 마음은 다 큰 뒤에 이어지는 '멋진 언니 수업'이다. */
+const PET_STAGES = [
+  [0, '아기', '🍼', ['hello', 'thanks'], ''],
+  [18, '꼬마', '🧸', ['sorry', 'share', 'tidy'], '우와! {n} 꼬마가 됐어요! 🧸 이제 인사도 잘하고, 고맙다는 말도 할 줄 알아요.'],
+  [45, '유치원생', '🖍️', ['turn', 'help', 'honest', 'promise'], '우와! {n} 유치원생이 됐어요! 🖍️ 미안하다는 말도 하고, 나눠 쓰고, 정리도 척척 해요.'],
+  [80, '초등학생 언니', '🎒', ['yield', 'praise', 'sister', 'brave', 'save', 'self'], '']
+];
+const PET_TOP = PET_STAGES.length - 1, PET_DAY_XP = 12;
+/* 🌟 바른 마음 — [그림, 이름, 친구가 겪은 일, 좋은 행동, 아쉬운 행동, 아쉬운 쪽을 고르면 하는 말, 까닭 3개(모두 좋은 생각), 배운 뒤 하는 말] */
+const PET_GOOD = {
+  hello:  ['🙇', '인사하기', '아침에 옆집 할머니를 만났어.', '“안녕하세요!” 하고 인사해요', '모른 척 지나가요',
+    '그러면 할머니가 조금 서운하실 것 같아.', ['만나면 서로 반가우니까', '인사하면 기분이 좋아지니까', '예의 바른 어린이니까'], '이제 나도 먼저 인사할 수 있어! 안녕하세요!'],
+  thanks: ['🙏', '고마워', '친구가 내가 떨어뜨린 지우개를 주워 줬어.', '“고마워!” 하고 말해요', '말없이 받기만 해요',
+    '그러면 친구가 도와준 마음을 모를 수도 있어.', ['친구가 나를 도와줬으니까', '고마운 마음은 말해야 알 수 있으니까', '서로 기분이 좋아지니까'], '고마울 땐 고맙다고 꼭 말할게!'],
+  sorry:  ['💬', '미안해', '뛰어가다가 친구랑 쿵 부딪혔어.', '“미안해, 괜찮아?” 하고 물어봐요', '모르는 척 계속 뛰어가요',
+    '그러면 친구가 아프고 속상할 것 같아.', ['친구가 다쳤을 수도 있으니까', '실수는 누구나 하니까 사과하면 되니까', '다시 사이좋게 놀 수 있으니까'], '실수했을 땐 먼저 미안하다고 말할게!'],
+  share:  ['🤝', '나눠 쓰기', '친구가 내 크레파스를 같이 쓰고 싶대.', '“같이 쓰자!” 하고 나눠 써요', '“내 거야!” 하고 숨겨요',
+    '그러면 친구가 속상하고, 같이 그리는 재미도 없어질 것 같아.', ['같이 쓰면 더 재밌으니까', '친구도 그림을 그리고 싶으니까', '나누면 마음이 따뜻해지니까'], '좋은 건 친구랑 나눠 쓸래!'],
+  tidy:   ['🧺', '정리하기', '신나게 놀았더니 장난감이 방에 가득해.', '제자리에 쏙쏙 정리해요', '그대로 두고 나가요',
+    '그러면 다음에 장난감을 찾기 어렵고, 밟으면 다칠 수도 있어.', ['다음에 찾기 쉬우니까', '방이 깨끗하면 기분이 좋으니까', '밟아서 다치지 않으니까'], '다 놀고 나면 스스로 정리할 거야!'],
+  turn:   ['⏳', '차례 지키기', '미끄럼틀 앞에 친구들이 줄을 서 있어.', '줄 끝에 서서 기다려요', '앞으로 쏙 끼어들어요',
+    '그러면 기다리던 친구들이 속상할 것 같아.', ['모두 기다리고 있으니까', '차례를 지키면 공평하니까', '안전하게 놀 수 있으니까'], '나도 줄을 서서 차례를 기다릴게!'],
+  help:   ['🤗', '도와주기', '친구가 무거운 짐을 들고 끙끙대고 있어.', '“같이 들어 줄게!” 하고 도와요', '그냥 지나가요',
+    '그러면 친구 혼자 많이 힘들 것 같아.', ['친구가 힘들어 보이니까', '같이 하면 금방 끝나니까', '나도 도움을 받으면 고마우니까'], '힘든 친구가 있으면 먼저 도와줄게!'],
+  honest: ['🌈', '솔직하게', '실수로 엄마가 아끼는 컵을 깨뜨렸어.', '“제가 그랬어요. 죄송해요” 하고 말해요', '몰래 숨겨요',
+    '그러면 깨진 조각에 누가 다칠 수도 있고, 내 마음도 계속 무거울 것 같아.', ['솔직하면 마음이 가벼워지니까', '깨진 조각에 다칠 수 있으니까', '엄마가 나를 믿을 수 있으니까'], '실수해도 솔직하게 말하는 용기를 낼게!'],
+  promise:['🤙', '약속 지키기', '친구랑 놀이터에서 세 시에 만나기로 했어.', '시간에 맞춰 가요', '깜빡 잊고 안 가요',
+    '그러면 친구가 혼자 오래 기다릴 것 같아.', ['친구가 기다리니까', '약속은 소중하니까', '그래야 서로 믿을 수 있으니까'], '약속은 꼭 지키는 친구가 될게!'],
+  yield:  ['🌷', '양보하기', '버스에 할머니가 타셨는데 앉을 자리가 없어.', '“여기 앉으세요!” 하고 자리를 양보해요', '못 본 척 앉아 있어요',
+    '그러면 할머니가 서 계시느라 많이 힘드실 것 같아.', ['할머니가 힘드시니까', '양보하면 모두 기분이 좋으니까', '멋진 언니니까'], '힘드신 분께는 자리를 양보할게!'],
+  praise: ['👏', '칭찬하기', '친구가 열심히 그린 그림을 보여 줬어.', '“우와, 정말 멋지다!” 하고 칭찬해요', '“별로야” 하고 말해요',
+    '그러면 열심히 그린 친구가 속상할 것 같아.', ['친구가 열심히 했으니까', '칭찬을 들으면 힘이 나니까', '좋은 점을 찾으면 나도 기쁘니까'], '친구의 좋은 점을 찾아서 칭찬해 줄게!'],
+  sister: ['🧡', '동생 챙기기', '동생이 신발 끈을 못 묶어서 울먹이고 있어.', '“언니가 도와줄게!” 하고 알려 줘요', '“혼자 해!” 하고 가 버려요',
+    '그러면 동생이 더 속상해서 울 것 같아.', ['동생은 아직 어려우니까', '알려 주면 동생도 할 수 있게 되니까', '나도 처음엔 어려웠으니까'], '동생을 잘 챙기는 멋진 언니가 될게!'],
+  brave:  ['🦁', '용기 내기', '새로 온 친구랑 같이 놀고 싶은데 조금 떨려.', '용기 내서 “같이 놀자!” 하고 말해요', '그냥 혼자 있어요',
+    '그러면 새 친구도 나도 조금 심심할 것 같아.', ['새 친구도 친구가 필요하니까', '용기 내면 더 즐거워지니까', '떨려도 해 보면 괜찮으니까'], '떨려도 용기 내서 먼저 말해 볼게!'],
+  save:   ['💧', '아껴 쓰기', '이를 닦는 동안 물이 콸콸 흐르고 있어.', '컵에 물을 받아서 써요', '계속 틀어 둬요',
+    '그러면 소중한 물이 그냥 버려질 것 같아.', ['물은 소중하니까', '지구를 지킬 수 있으니까', '아껴 쓰면 모두 함께 쓸 수 있으니까'], '물도 전기도 아껴 쓰는 멋진 언니가 될게!'],
+  self:   ['💪', '스스로 하기', '아침에 일어났더니 이불이 엉망이야.', '내가 스스로 이불을 개요', '누가 해 줄 때까지 기다려요',
+    '그러면 방이 계속 어질러져 있을 것 같아.', ['스스로 하면 뿌듯하니까', '이제 할 수 있으니까', '가족을 도울 수 있으니까'], '내 일은 스스로 하는 멋진 언니가 될게!']
+};
+/* 마음 알아맞히기 — [친구가 겪은 일, 정답 기분, 도와주는 말 3개, 친구의 대답] */
+const PET_EMO = [
+  ['블록 탑을 높이 쌓았는데 와르르 무너졌어…', 'sad', ['토닥토닥, 괜찮아', '같이 다시 쌓아 보자!', '숨을 크게 후~ 쉬어 보자'], '고마워. 다시 해 보니까 더 높이 쌓을 수 있을 것 같아!'],
+  ['친구가 내 그림을 보고 멋지다고 칭찬해 줬어!', 'happy', ['나도 같이 기뻐!', '하이파이브! ✋', '그림 또 보여 줘!'], '헤헤, 같이 기뻐해 줘서 더 기뻐!'],
+  ['밤에 천둥이 쿵! 하고 울렸어.', 'scared', ['내가 옆에 있어 줄게', '꼭 안아 줄게', '천둥은 금방 지나가'], '네가 옆에 있으니까 하나도 안 무서워!'],
+  ['동생이 내 장난감을 말도 안 하고 가져갔어.', 'angry', ['화날 만해, 이해해', '숨을 세 번 쉬고 말해 보자', '“돌려줄래?” 하고 부탁해 보자'], '숨을 쉬니까 마음이 차분해졌어. 부드럽게 말해 볼게!'],
+  ['놀이터에 갔는데 아무도 없었어.', 'lonely', ['내가 같이 놀아 줄게', '같이 친구 찾으러 가자', '꼭 안아 줄게'], '너랑 같이 있으니까 하나도 안 외로워!'],
+  ['내일 처음 가는 곳이라 가슴이 두근두근해.', 'worried', ['처음엔 누구나 떨려', '같이 심호흡하자', '넌 잘할 수 있어!'], '응원해 줘서 용기가 생겼어!'],
+  ['달리기에서 넘어졌는데 끝까지 뛰었어!', 'proud', ['끝까지 한 거 정말 멋져!', '다친 데는 괜찮아?', '하이파이브! ✋'], '끝까지 해낸 내가 좋아! 칭찬해 줘서 고마워!'],
+  ['아끼던 풍선이 하늘로 날아가 버렸어…', 'sad', ['많이 아쉬웠겠다', '풍선이 하늘 여행을 가나 봐', '같이 새 풍선 그려 볼까?'], '위로해 줘서 마음이 따뜻해졌어.'],
+  ['생일이라고 가족이 깜짝 파티를 해 줬어!', 'excited', ['우와, 정말 신났겠다!', '생일 축하해! 🎂', '어떤 선물 받았어?'], '같이 축하해 줘서 두 배로 행복해!'],
+  ['친구랑 다퉈서 마음이 무거워.', 'sad', ['마음이 불편했겠다', '먼저 “미안해” 해 볼까?', '마음이 풀릴 때까지 기다려 줄게'], '용기 내서 먼저 말해 볼게. 고마워!'],
+  ['비가 그치고 커다란 무지개가 떴어!', 'wonder', ['우와, 정말 신기하다!', '무지개는 몇 가지 색일까?', '같이 사진 찍자!'], '너랑 같이 보니까 더 예뻐!'],
+  ['밤늦게까지 놀았더니 눈이 자꾸 감겨…', 'sleepy', ['이불 덮어 줄게', '자장가 불러 줄게', '내일 또 놀자'], '고마워… 쿨쿨… 좋은 꿈 꿀게.'],
+  ['어려운 퍼즐을 드디어 다 맞췄어!', 'proud', ['포기하지 않은 게 대단해!', '어떻게 맞췄는지 알려 줘!', '하이파이브! ✋'], '끝까지 하니까 되더라! 너도 할 수 있어!'],
+  ['엄마가 늦게 온대서 기다리고 있어.', 'lonely', ['기다리는 동안 같이 있어 줄게', '같이 그림 그리면서 기다리자', '금방 오실 거야'], '같이 기다리니까 시간이 금방 가!'],
+  ['내가 만든 쿠키를 모두가 맛있다고 했어!', 'happy', ['정말 뿌듯하겠다!', '나도 먹어 보고 싶어!', '다음엔 같이 만들자!'], '다음엔 너랑 같이 만들래!']
+];
+const PET_FEEL = {   // [얼굴, 고르는 말, 친구가 말할 때(반말)]
+  happy:['😊', '기뻐요', '기뻐'], sad:['😢', '속상해요', '속상해'], scared:['😨', '무서워요', '무서웠어'], angry:['😠', '화나요', '화가 났어'], lonely:['🥺', '외로워요', '외로웠어'],
+  worried:['😟', '걱정돼요', '걱정돼'], proud:['😎', '뿌듯해요', '뿌듯해'], excited:['🤩', '신나요', '신나'], wonder:['😮', '신기해요', '신기해'], sleepy:['😴', '졸려요', '졸려']
+};
+/* 다 큰 언니가 반갑게 하는 말 */
+const PET_SIS_HI = ['오늘 하루는 어땠어? 나는 학교에서 친구를 도와줬어! 🎒', '오늘도 우리 같이 멋진 언니 해 보자! 💪', '너랑 같이 학교 다니는 것 같아서 신나!'];
+function petNow(){ return Date.now(); }
+/* 지금 단계 — 쑥쑥 점수가 문턱을 넘고, 그 전 단계의 바른 마음을 다 배웠을 때만 한 단계씩 오른다 */
+function petStage(p){
+  const good = (p && p.good) || {};
+  let s = 0;
+  while (s < PET_TOP && ((p && p.xp) || 0) >= PET_STAGES[s + 1][0] && PET_STAGES[s][3].every(v => good[v])) s++;
+  return s;
+}
+/* 쑥쑥 — 하루 PET_DAY_XP까지(extra는 한도 밖 몫). 다음 단계 문턱에서 멈춘다. 오늘 처음 돌보면 '함께 돌본 날'이 하루 는다. */
+function petGrow(p, xp, extra){
+  const st = petStage(p);
+  if (p.xpDay !== todayKey()){ p.xpDay = todayKey(); p.xpToday = 0; p.days = (p.days || 0) + 1; }
+  if (st >= PET_TOP || !xp) return false;
+  const room = extra ? xp : Math.max(0, PET_DAY_XP - (p.xpToday || 0));
+  const add = Math.max(0, Math.min(xp, room, PET_STAGES[st + 1][0] - (p.xp || 0)));
+  if (!extra) p.xpToday = (p.xpToday || 0) + add;
+  p.xp = (p.xp || 0) + add;
+  return petStage(p) > st;
+}
+/* 오랜만에 오면 — 시간만큼 조금씩 줄어 있다(10 밑으로는 안 간다) */
+function petDecay(p){
+  const hrs = Math.max(0, (petNow() - (p.last || petNow())) / 3600000);
+  Object.keys(PET_DECAY).forEach(k => { p.st[k] = clamp(Math.round((p.st[k] == null ? 70 : p.st[k]) - PET_DECAY[k] * hrs), 10, 100); });
+  p.last = petNow();
+  return hrs;
+}
+function petMood(p){
+  const s = p.st;
+  if (s.sleep < 30) return 'sleepy';
+  if (s.food < 35) return 'hungry';
+  if (s.love < 35) return 'lonely';
+  if (s.fun < 35) return 'bored';
+  if (s.clean < 35) return 'itchy';
+  return Math.min(s.food, s.clean, s.fun, s.sleep, s.love) > 75 ? 'excited' : 'happy';
+}
+const PET_MOODLINE = { sleepy:['😴', '졸려… 재워 줄래?'], hungry:['😋', '배고파~ 맛있는 거 줄래?'], lonely:['🥺', '꼭 안아 줄래?'], bored:['🙂', '심심해~ 같이 놀자!'],
+  itchy:['😣', '근질근질~ 씻고 싶어!'], excited:['🤩', '오늘 기분 최고야!'], happy:['😊', '네가 와서 좋아!'] };
+/* ---------- 그림 — 둥근 몸 + 모양마다 귀·볏, 기분마다 얼굴, 자랄수록 커지고 옷차림이 바뀐다 ---------- */
+function petSvg(p, face, stage){
+  const c = p.color || PET_COLORS[0][0], L = 'stroke="#6B4A52" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"';
+  const st = stage != null ? stage : petStage(p), S = [0.72, 0.82, 0.92, 1][st] || 1;
+  const ears = p.kind === 'mochi' ? `<path d="M68 52 C58 18 66 6 76 10 C86 16 84 38 82 54 Z" fill="${c}" ${L}/><path d="M112 54 C112 30 118 10 128 10 C138 14 136 34 128 56 Z" fill="${c}" ${L}/>
+      <path d="M73 46 C68 26 71 17 76 18 C80 22 80 36 79 48 Z" fill="#FFB3C4"/><path d="M118 48 C118 32 122 20 126 20 C130 24 128 38 124 50 Z" fill="#FFB3C4"/>`
+    : p.kind === 'bori' ? `<circle cx="62" cy="62" r="17" fill="${c}" ${L}/><circle cx="134" cy="62" r="17" fill="${c}" ${L}/><circle cx="62" cy="62" r="8" fill="#FFB3C4"/><circle cx="134" cy="62" r="8" fill="#FFB3C4"/>`
+    : `<path d="M96 44 C90 28 96 20 102 22 C100 30 106 30 110 26 C112 36 106 44 98 48 Z" fill="${c}" ${L}/><path d="M40 116 C30 110 30 96 42 94" fill="none" ${L}/><path d="M156 116 C166 110 166 96 154 94" fill="none" ${L}/>`;
+  const eye = { happy:'<path d="M78 104 Q84 96 90 104 M106 104 Q112 96 118 104" fill="none" stroke="#3A2A2E" stroke-width="4" stroke-linecap="round"/>',
+    excited:'<path d="M84 94 l2.6 5.6 6 .6 -4.6 4 1.4 6 -5.4 -3 -5.4 3 1.4 -6 -4.6 -4 6 -.6 z M112 94 l2.6 5.6 6 .6 -4.6 4 1.4 6 -5.4 -3 -5.4 3 1.4 -6 -4.6 -4 6 -.6 z" fill="#3A2A2E"/>',
+    sleepy:'<path d="M78 104 Q84 110 90 104 M106 104 Q112 110 118 104" fill="none" stroke="#3A2A2E" stroke-width="4" stroke-linecap="round"/>',
+    sad:'<ellipse cx="84" cy="102" rx="5" ry="6" fill="#3A2A2E"/><ellipse cx="112" cy="102" rx="5" ry="6" fill="#3A2A2E"/><path d="M76 94 L90 98 M120 94 L106 98" stroke="#3A2A2E" stroke-width="3" stroke-linecap="round"/><path d="M79 112 q-3 8 0 10 q3 -2 0 -10" fill="#8FD0FF"/>',
+    wow:'<circle cx="84" cy="102" r="7" fill="#3A2A2E"/><circle cx="112" cy="102" r="7" fill="#3A2A2E"/><circle cx="86" cy="100" r="2.4" fill="#fff"/><circle cx="114" cy="100" r="2.4" fill="#fff"/>',
+    dot:'<ellipse cx="84" cy="102" rx="5" ry="6.5" fill="#3A2A2E"/><ellipse cx="112" cy="102" rx="5" ry="6.5" fill="#3A2A2E"/><circle cx="86" cy="99.5" r="2" fill="#fff"/><circle cx="114" cy="99.5" r="2" fill="#fff"/>' };
+  const mouth = { happy:'<path d="M90 116 Q98 128 106 116 Z" fill="#E85C7C" stroke="#6B4A52" stroke-width="2.6" stroke-linejoin="round"/>',
+    small:'<path d="M92 118 Q98 123 104 118" fill="none" stroke="#6B4A52" stroke-width="3" stroke-linecap="round"/>',
+    sad:'<path d="M91 122 Q98 115 105 122" fill="none" stroke="#6B4A52" stroke-width="3" stroke-linecap="round"/>',
+    o:'<ellipse cx="98" cy="120" rx="5" ry="6" fill="#E85C7C" stroke="#6B4A52" stroke-width="2.4"/>',
+    munch:'<path d="M88 116 Q98 130 108 116 Q98 122 88 116 Z" fill="#E85C7C" stroke="#6B4A52" stroke-width="2.6" stroke-linejoin="round"/>' };
+  const F = { happy:['happy', 'happy'], excited:['excited', 'happy'], sleepy:['sleepy', 'small'], sad:['sad', 'sad'], lonely:['sad', 'sad'], hungry:['dot', 'o'], bored:['dot', 'small'],
+    itchy:['dot', 'sad'], wow:['wow', 'o'], munch:['happy', 'munch'], love:['happy', 'happy'] }[face] || ['dot', 'small'];
+  /* 자라면서 — 🍼 머리 한 가닥·턱받이 · 🧸 리본 · 🖍️ 노란 유치원 모자·꽃 이름표 · 🎒 책가방·리본·1학년 이름표 */
+  const bow = col => `<g transform="translate(124 67) rotate(-14)"><path d="M0 0 L-15 -10 Q-19 0 -15 10 Z M0 0 L15 -10 Q19 0 15 10 Z" fill="${col}" ${L}/><circle r="5" fill="${col}" ${L}/></g>`;
+  const strap = d => `<path d="${d}" fill="none" stroke="#6B4A52" stroke-width="10" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#9D88E6" stroke-width="4.6" stroke-linecap="round"/>`;
+  const back = st === 3 ? `<rect x="28" y="86" width="140" height="66" rx="24" fill="#B7A6F0" ${L}/>` : '';
+  const acc = st === 0 ? (p.kind === 'piyo' ? '' : '<path d="M99 64 C96 54 102 49 107 52 C111 55 107 61 103 58" fill="none" stroke="#6B4A52" stroke-width="3.2" stroke-linecap="round"/>')
+      + `<path d="M70 136 Q98 150 126 136 Q128 160 98 166 Q68 160 70 136 Z" fill="#fff" ${L}/><path d="M98 159 C90 153 90 146 95 146 C97 146 98 148 98 149 C98 148 99 146 101 146 C106 146 106 153 98 159 Z" fill="#FF8FA8"/>`
+    : st === 1 ? bow('#FF8FA8')
+    : st === 2 ? `<path d="M66 74 C66 44 130 44 130 74 Z" fill="#FFD84D" ${L}/><path d="M58 74 Q98 64 138 74 Q141 82 130 82 Q98 76 66 82 Q55 82 58 74 Z" fill="#FFC21A" ${L}/><circle cx="98" cy="51" r="4" fill="#FF8FA8" stroke="#6B4A52" stroke-width="2"/>`
+      + `<g transform="translate(122 148)">${[0, 72, 144, 216, 288].map(a => `<circle cx="${(Math.cos(a * Math.PI / 180) * 6).toFixed(1)}" cy="${(Math.sin(a * Math.PI / 180) * 6).toFixed(1)}" r="5" fill="#FFD84D" stroke="#6B4A52" stroke-width="1.6"/>`).join('')}<circle r="4.2" fill="#fff" stroke="#6B4A52" stroke-width="1.6"/></g>`
+    : strap('M58 90 Q48 120 60 152') + strap('M138 90 Q148 120 136 152') + bow('#FF8FA8')
+      + '<rect x="80" y="140" width="36" height="17" rx="5" fill="#fff" stroke="#6B4A52" stroke-width="2.2"/><text x="98" y="152.6" text-anchor="middle" font-size="10.5" font-weight="700" fill="#6B4A52">1학년</text>';
+  const shade = `<ellipse cx="98" cy="180" rx="${Math.round(46 * S + 2)}" ry="8" fill="rgba(107,74,82,.12)"/>`;
+  return `<svg viewBox="0 0 196 196" class="pet-svg" aria-hidden="true">${shade}<g transform="translate(98 178) scale(${S}) translate(-98 -178)"><g class="pet-body">${back}${ears}
+    <ellipse cx="98" cy="118" rx="58" ry="56" fill="${c}" ${L}/>
+    <ellipse cx="98" cy="134" rx="30" ry="22" fill="rgba(255,255,255,.55)"/>
+    <ellipse cx="70" cy="116" rx="9" ry="6" fill="#FF9BB0" opacity=".55"/><ellipse cx="126" cy="116" rx="9" ry="6" fill="#FF9BB0" opacity=".55"/>
+    ${eye[F[0]]}${mouth[F[1]]}${acc}
+    ${face === 'sleepy' ? '<text x="140" y="70" font-size="22" fill="#6B8ACB" font-family="sans-serif">z</text><text x="154" y="54" font-size="16" fill="#6B8ACB" font-family="sans-serif">z</text>' : ''}</g></g></svg>`;
+}
+function petEggSvg(cracks){
+  const L = 'stroke="#6B4A52" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"';
+  const crack = ['', '<path d="M84 96 l8 8 -6 8 8 8" fill="none" ' + L + '/>', '<path d="M84 96 l8 8 -6 8 8 8 M108 88 l-6 10 8 6 -4 10" fill="none" ' + L + '/>'][Math.min(2, cracks || 0)];
+  return `<svg viewBox="0 0 196 196" class="pet-svg" aria-hidden="true"><ellipse cx="98" cy="180" rx="44" ry="8" fill="rgba(107,74,82,.12)"/>
+    <g class="pet-body"><path d="M98 30 C140 30 158 96 156 124 C154 160 128 176 98 176 C68 176 42 160 40 124 C38 96 56 30 98 30 Z" fill="#FFF6E6" ${L}/>
+    <circle cx="76" cy="84" r="9" fill="#FFC9D5"/><circle cx="122" cy="110" r="12" fill="#C3EEDD"/><circle cx="88" cy="140" r="8" fill="#FFE8A6"/><circle cx="128" cy="72" r="6" fill="#DCD0F8"/>${crack}</g></svg>`;
+}
+/* ---------- 열고 닫기 ---------- */
+function petOpen(){
+  if (PET) return;
+  const k = curKid(); if (!k) return;
+  nvUnlock(); audioCtx();
+  const p = JSON.parse(JSON.stringify(k.pet || {}));
+  let missed = 0;
+  if (p.name){ p.st = p.st || {}; missed = petDecay(p); }
+  PET = { kidId:k.id, p, scene:p.name ? 'home' : 'egg', taps:0, pick:{ kind:PET_KINDS[0][0], color:PET_COLORS[0][0] }, busy:'', emo:null, lesson:null, saveT:0, quiet:false,
+    showSt:p.name ? Math.min(petStage(p), p.seenSt || 0) : 0 };   // 그림은 축하할 때 바뀐다
+  const el = document.createElement('div'); el.className = 'ttl petl'; el.id = 'petLayer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', '마음 친구 키우기');
+  document.body.appendChild(el); PET.el = el;
+  petRender();
+  if (p.name){
+    const m = petMood(p), done = allDoneToday(k.id), st = PET.showSt;
+    if (missed > 20){ p.st.love = Math.min(100, p.st.love + 10); petSay(`${callName(k.name)}! 보고 싶었어! 🥺 다시 와 줘서 정말 기뻐.`); }
+    else if (done && p.cheerDay !== todayKey()){
+      p.cheerDay = todayKey(); p.st.love = Math.min(100, p.st.love + 5);
+      const up = st < PET_TOP && (p.xp || 0) < PET_STAGES[st + 1][0];
+      petGrow(p, 4, true);
+      petSay(`오늘 할 일을 다 했다며? ${callName(k.name)}, 정말 멋져! ${up ? '덕분에 나도 쑥 컸어!' : '나도 신나!'} 🎉`); petSave();
+    }
+    else petSay(`${st === 0 ? '까꿍! ' : ''}${callName(k.name)}, 안녕! ${st >= PET_TOP && (m === 'happy' || m === 'excited') ? dtPick(PET_SIS_HI) : PET_MOODLINE[m][1]}`);
+    if (petStage(p) > (p.seenSt || 0)) PET.growT = setTimeout(petGrew, 2200);   // 지난번에 축하를 못 했으면 지금
+  } else petSay('동글동글 알이 있어요. 톡톡 두드려 볼까요? 🥚');
+}
+function petClose(msg){
+  if (!PET) return;
+  ['growT', 'faceT', 'ballT', 'sleepT', 'newT'].forEach(t => clearTimeout(PET[t]));
+  petSave(true); PET.el.remove(); PET = null; if (S.view.game === 'pet') S.view.game = null; render(); if (msg) toast(msg);
+}
+function petSave(now){
+  const P = PET; if (!P || !P.p.name) return;
+  clearTimeout(P.saveT);
+  const go = () => { const k = kid(P.kidId); if (k){ P.p.last = petNow(); Store.update('profiles', k.id, { pet:JSON.parse(JSON.stringify(P.p)) }); } };
+  if (now) go(); else P.saveT = setTimeout(go, 1200);
+}
+function petSay(text){
+  const P = PET; if (!P) return;
+  P.lastSay = text;
+  const b = document.getElementById('petSay'); if (b) b.textContent = text;
+  if (!P.quiet) voice(text, { lang:'ko' });
+}
+/* ---------- 화면 ---------- */
+function petRender(){
+  const P = PET; if (!P) return;
+  const p = P.p, sg = PET_STAGES[P.showSt] || PET_STAGES[0], top = `<div class="ttl-top"><button class="ttl-x" data-act="petExit" aria-label="그만하기">✕</button>
+    <div class="ttl-dots"><span class="ttl-chip" style="background:#FFF0F4;color:#B0476A">${p.name ? `${sg[2]} ${esc(p.name)} · ${esc(sg[1])}` : '🐣 마음 친구 키우기'}</span></div>
+    <button class="ttl-x" data-act="petQuiet" aria-label="목소리 ${P.quiet ? '켜기' : '끄기'}">${P.quiet ? '🔇' : '🔈'}</button></div>`;
+  let body = '';
+  if (P.scene === 'egg') body = `<div class="pet-room"><button class="pet-hero pet-egg${P.taps ? ' wob' : ''}" data-act="petTap" aria-label="알 두드리기">${petEggSvg(P.taps)}</button></div>
+      <p class="muted" style="text-align:center;margin:8px 0 0">알을 톡톡 세 번 두드려요 (${P.taps}/3)</p>`;
+  else if (P.scene === 'make'){
+    const k = kid(P.kidId), pv = { kind:P.pick.kind, color:P.pick.color, xp:0 };
+    body = `<div class="tt-card stack" style="text-align:center">
+      <div class="pet-room sm"><div class="pet-hero">${petSvg(pv, 'excited', 0)}</div></div>
+      <h3 class="sub" style="margin:0">우와, 알에서 아기가 태어났어요! 🎉</h3>
+      <div class="muted">잘 돌보고 바른 마음을 알려 주면 🎒 착하고 멋진 초등학생 언니로 자라요.</div>
+      <div><div class="muted" style="margin-bottom:4px">어떤 친구일까요?</div><div class="chips" style="justify-content:center">${PET_KINDS.map(([id, l]) => `<button class="chip" data-act="petKind" data-arg="${id}" aria-pressed="${P.pick.kind === id}">${l}</button>`).join('')}</div></div>
+      <div><div class="muted" style="margin-bottom:4px">무슨 색일까요?</div><div class="chips" style="justify-content:center">${PET_COLORS.map(([c, l]) => `<button class="chip" data-act="petColor" data-arg="${c}" aria-pressed="${P.pick.color === c}"><span class="pet-dot" style="background:${c}"></span>${l}</button>`).join('')}</div></div>
+      <div><div class="muted" style="margin-bottom:4px">이름을 지어 줘요</div>
+        <input class="field" id="petNameIn" maxlength="8" placeholder="${esc(PET_NAMES[0])}" value="${esc(kv('petName'))}" data-keep="petName" style="text-align:center">
+        <div class="chips" style="justify-content:center;margin-top:6px">${PET_NAMES.map(n => `<button class="chip" data-act="petNamePick" data-arg="${esc(n)}">${esc(n)}</button>`).join('')}</div></div>
+      <button class="btn wide" data-act="petMake">${esc(k ? k.name : '')}의 마음 친구로 정할래요 💕</button></div>`;
+  } else if (P.scene === 'emo') body = petEmoHtml();
+  else if (P.scene === 'good') body = petGoodHtml();
+  else if (P.scene === 'grad') body = petGradHtml();
+  else {
+    const m = petMood(p), face = P.face || m;
+    body = `<div class="pet-room${P.busy === 'sleep' ? ' night' : ''}" id="petRoom">
+        <div class="pet-mood">${PET_MOODLINE[m][0]}</div>
+        <div class="pet-hero${P.busy === 'hug' ? ' squish' : ''}" id="petHero" aria-label="${esc(p.name)} — 꾹 누르면 안아 줘요">${petSvg(p, face, P.showSt)}</div>
+        <div class="pet-fx" id="petFx"></div>${P.busy === 'play' ? '<button class="pet-ball" id="petBall" data-act="petBall" aria-label="공">🎾</button>' : ''}
+      </div>
+      <div class="pet-bars">${PET_STATS.map(([k2, ico, l]) => `<div class="pet-bar" title="${l}"><span>${ico}</span><div class="gauge" style="height:10px"><span style="width:${p.st[k2]}%;background:${p.st[k2] < 35 ? '#FF9BB0' : 'var(--mint-deep)'}"></span></div></div>`).join('')}</div>
+      <div class="pet-acts">
+        <button class="pet-act" data-act="petFeed">🍎<b>밥</b></button><button class="pet-act" data-act="petWash">🫧<b>씻기</b></button>
+        <button class="pet-act" data-act="petPlay">🎾<b>놀기</b></button><button class="pet-act" data-act="petSleep">🌙<b>재우기</b></button>
+        <button class="pet-act" data-act="petHugTip">🤗<b>안아 주기</b></button>
+      </div>
+      ${P.busy === 'feed' ? `<div class="pet-foods">${[['🍎', '사과'], ['🥕', '당근'], ['🍙', '주먹밥'], ['🍓', '딸기']].map(([f, n]) => `<button class="chip" data-act="petEat" data-arg="${f}">${f} ${n}</button>`).join('')}</div>` : ''}
+      <div class="pet-learn">
+        <button class="pet-act big good" data-act="petGood">🌟<b>바른 마음 알려 주기</b></button><button class="pet-act big" data-act="petEmo">💭<b>마음 알아맞히기</b></button>
+      </div>
+      ${petPathHtml()}
+      <p class="muted" style="text-align:center;margin:6px 0 0;font-size:13px">친구를 꾹 누르고 있으면 안아 줘요 🤗 · 씻을 때는 친구를 문질러요 🫧</p>`;
+  }
+  P.el.innerHTML = `${top}<div class="ttl-body pet-wrap"><div class="it-say" id="petSay">${esc(P.lastSay || '')}</div>${body}</div>`;
+  if (P.scene === 'home') petBindHero();
+}
+/* 자라는 길 — 🍼 → 🧸 → 🖍️ → 🎒, 다음 단계까지 쑥쑥 점수와 배울 바른 마음 */
+function petPathHtml(){
+  const P = PET, p = P.p, st = P.showSt, good = p.good || {};
+  const steps = PET_STAGES.map((s, i) => `${i ? `<i class="${i <= st ? 'done' : ''}"></i>` : ''}<span class="pet-step${i < st ? ' done' : i === st ? ' now' : ''}" title="${esc(s[1])}">${s[2]}</span>`).join('');
+  const chips = list => list.map(v => `<button class="pet-good${good[v] ? ' on' : ''}${P.newGood === v ? ' new' : ''}" data-act="petGood" data-arg="${v}">${good[v] ? '✔ ' : ''}${PET_GOOD[v][0]} ${esc(PET_GOOD[v][1])}</button>`).join('');
+  if (st >= PET_TOP) return `<div class="pet-path"><div class="pet-steps">${steps}</div>
+      <div class="pet-need"><b class="grow">💮 착하고 바른 멋진 언니가 됐어요!</b><button class="chip" data-act="petGrad">🎓 입학 카드</button></div>
+      <div class="pet-need">🌟 멋진 언니 수업</div><div class="pet-goods">${chips(PET_STAGES[PET_TOP][3])}</div></div>`;
+  const nx = PET_STAGES[st + 1], a = PET_STAGES[st][0], pct = Math.round(clamp(((p.xp || 0) - a) / (nx[0] - a), 0, 1) * 100);
+  const need = PET_STAGES[st][3].filter(v => !good[v]).length, full = p.xpDay === todayKey() && (p.xpToday || 0) >= PET_DAY_XP;
+  const msg = pct >= 100 ? (need ? `🌟 바른 마음을 ${need}개만 더 알려 주면 자라요!` : '✨ 곧 자라요!')
+    : full ? '🌙 오늘은 쑥쑥 많이 컸어요. 내일 또 자라요!' : '🌱 돌봐 주면 쑥쑥, 바른 마음을 알려 주면 무럭무럭!';
+  return `<div class="pet-path"><div class="pet-steps">${steps}</div>
+      <div class="pet-need"><b>${nx[2]} ${esc(nx[1])}${hasJong(nx[1]) ? '이' : '가'} 되려면</b></div>
+      <div class="pet-need">🌱 쑥쑥<div class="gauge" style="height:10px"><span style="width:${pct}%;background:linear-gradient(90deg,#9BE0C8,#5CC6A0)"></span></div></div>
+      <div class="pet-goods">${chips(PET_STAGES[st][3])}</div>
+      <small class="muted">${msg}</small></div>`;
+}
+/* 친구 몸 — 꾹 누르면 안아 주기, 씻을 때는 문지르기 */
+function petBindHero(){
+  const P = PET, el = document.getElementById('petHero'); if (!el) return;
+  let holdT = 0, rub = 0, last = null;
+  el.addEventListener('pointerdown', ev => {
+    ev.preventDefault(); last = [ev.clientX, ev.clientY];
+    try { el.setPointerCapture(ev.pointerId); } catch(e){}
+    if (P.busy === 'wash') return;
+    clearTimeout(holdT); holdT = setTimeout(() => petHug(), 900);
+  });
+  el.addEventListener('pointermove', ev => {
+    if (!last) return;
+    const d = Math.hypot(ev.clientX - last[0], ev.clientY - last[1]);
+    if (P.busy === 'wash' && d > 6){ last = [ev.clientX, ev.clientY]; rub++; petBubble(ev.clientX, ev.clientY); if (rub % 4 === 0) ttTone(900 + Math.random() * 400, 0, 0.05, 0.03); if (rub >= 26){ rub = 0; petWashed(); } }
+    else if (d > 14) clearTimeout(holdT);
+  });
+  const up = () => { clearTimeout(holdT); last = null; };
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+}
+function petFx(ico, n){
+  const box = document.getElementById('petFx'); if (!box) return;
+  for (let i = 0; i < (n || 4); i++){ const s = document.createElement('span'); s.textContent = ico; s.style.left = (38 + Math.random() * 24) + '%'; s.style.animationDelay = (i * 90) + 'ms'; s.style.setProperty('--dx', ((Math.random() - 0.5) * 120).toFixed(0) + 'px'); box.appendChild(s); setTimeout(() => s.remove(), 1400); }
+}
+function petBubble(x, y){
+  const box = document.getElementById('petFx'), r = box && box.getBoundingClientRect(); if (!r) return;
+  const s = document.createElement('i'); s.className = 'pet-bub'; s.style.left = (x - r.left) + 'px'; s.style.top = (y - r.top) + 'px'; box.appendChild(s); setTimeout(() => s.remove(), 900);
+}
+function petGain(stat, n, xp){ const p = PET.p; p.st[stat] = clamp((p.st[stat] || 0) + n, 10, 100); const grew = petGrow(p, xp || 0); petSave(); return grew; }
+function petPop(){ const h = PET && PET.el.querySelector('.pet-hero'); if (h){ h.classList.remove('grow'); void h.offsetWidth; h.classList.add('grow'); } }
+/* 한 단계 자랐을 때 — 그림은 이때 바뀐다. 다른 걸 하는 중이면 끝난 뒤에 축하한다. */
+function petGrew(){
+  const P = PET; if (!P) return;
+  const p = P.p, st = petStage(p);
+  if (st <= (p.seenSt || 0)) return;
+  if (P.scene !== 'home' || P.busy){ clearTimeout(P.growT); P.growT = setTimeout(petGrew, 1500); return; }
+  p.seenSt = st; P.showSt = st; p.grew = p.grew || {}; if (!p.grew[st]) p.grew[st] = new Date().toISOString();
+  confetti(); try { ttChime(); } catch(e){}
+  if (st >= PET_TOP){
+    const k = kid(P.kidId);
+    if (!p.grownAt) p.grownAt = new Date().toISOString();
+    awardStars(3); petSave(true);
+    P.scene = 'grad'; petRender(); petPop();
+    petSay(`나 이제 초등학생 언니야! 🎒 ${k ? callName(k.name) + ', ' : ''}태어날 때부터 지금까지 키워 줘서 정말 고마워. 착하고 멋진 언니가 될게!`);
+    return;
+  }
+  awardStars(2); petSave(true);
+  petRender(); petPop(); petFx('✨', 8);
+  petSay(PET_STAGES[st][4].replace('{n}', subj(p.name)) + ' 잘 키워 줘서 고마워 💕');
+}
+function petFace(face, ms){ const P = PET; if (!P) return; P.face = face; petRender(); clearTimeout(P.faceT); P.faceT = setTimeout(() => { if (PET === P){ P.face = ''; petRender(); } }, ms || 1600); }
+/* ---------- 돌보기 ---------- */
+ACTS.petExit = () => petClose();
+ACTS.petQuiet = () => { const P = PET; if (!P) return; P.quiet = !P.quiet; if (P.quiet) hush(); petRender(); };
+ACTS.petHome = () => { const P = PET; if (!P) return; P.scene = 'home'; P.lesson = null; petRender(); };
+ACTS.petGrad = () => { const P = PET; if (!P || !P.p.grownAt) return; P.scene = 'grad'; petRender(); petSay('우리가 함께 자란 이야기야. 다시 봐도 뿌듯해! 🎒'); };
+ACTS.petTap = () => {
+  const P = PET; if (!P || P.scene !== 'egg') return;
+  P.taps++; ttTone(520 + P.taps * 120, 0, 0.12, 0.08);
+  if (P.taps < 3){ petRender(); petSay(P.taps === 1 ? '톡! 알이 살짝 흔들려요!' : '톡톡! 금이 갔어요! 한 번 더!'); return; }
+  P.scene = 'make'; confetti(); try { ttChime(); } catch(e){}
+  kvSet('petName', ''); petRender(); petSay('뿅! 아기가 태어났어요! 어떤 친구인지 골라 줄래요?');
+};
+ACTS.petKind = (arg) => { PET.pick.kind = arg; petRender(); };
+ACTS.petColor = (arg) => { PET.pick.color = arg; petRender(); };
+ACTS.petNamePick = (arg) => { kvSet('petName', arg); petRender(); };
+ACTS.petMake = () => {
+  const P = PET; if (!P) return;
+  const name = (kv('petName') || (($('#petNameIn') || {}).value || '')).trim().slice(0, 8) || PET_NAMES[0];
+  P.p = { name, kind:P.pick.kind, color:P.pick.color, xp:0, st:{ food:70, clean:80, fun:70, sleep:80, love:70 }, last:petNow(), born:new Date().toISOString(),
+    days:1, xpDay:todayKey(), xpToday:0, good:{}, goodAt:{}, seenSt:0, grew:{}, emoDay:'', emoN:0, emoAll:0 };
+  kvClear('petName'); P.scene = 'home'; P.showSt = 0; petSave(true); awardStars(1);
+  petRender(); petSay(`나는 ${name}! 오늘부터 우리 친구야. 잘 키워 줘! 💕`);
+};
+ACTS.petFeed = () => { const P = PET; if (!P) return; if (P.p.st.food >= 95){ petFace('happy'); petSay('배불러~ 이따가 먹을래! 고마워 😊'); return; } P.busy = P.busy === 'feed' ? '' : 'feed'; petRender(); if (P.busy) petSay('뭐 먹을까? 골라 줘!'); };
+ACTS.petEat = (arg) => {
+  const P = PET; if (!P) return; P.busy = '';
+  const grew = petGain('food', 30, 2); petFace('munch', 1500); petFx(arg, 3); ttTone(660, 0, 0.08, 0.06); ttTone(880, 0.12, 0.08, 0.06);
+  petSay(dtPick(['냠냠, 맛있다! 고마워 😋', '와, 내가 좋아하는 거야! 냠냠', '배가 든든해졌어! 힘이 나!']));
+  if (grew){ clearTimeout(P.growT); P.growT = setTimeout(petGrew, 1600); }
+};
+ACTS.petWash = () => { const P = PET; if (!P) return; P.busy = P.busy === 'wash' ? '' : 'wash'; petRender(); if (P.busy) petSay('나를 손가락으로 쓱쓱 문질러 줘! 🫧'); };
+function petWashed(){
+  const P = PET; if (!P) return; P.busy = '';
+  const grew = petGain('clean', 40, 2); petFace('excited', 1800); petFx('✨', 5); petSay('뽀득뽀득! 반짝반짝 깨끗해졌어! 고마워 ✨');
+  if (grew){ clearTimeout(P.growT); P.growT = setTimeout(petGrew, 1800); }
+}
+ACTS.petPlay = () => {
+  const P = PET; if (!P) return;
+  if (P.p.st.sleep < 25){ petFace('sleepy'); petSay('너무 졸려서 못 놀겠어… 먼저 재워 줄래? 😴'); return; }
+  P.busy = 'play'; P.catch = 0; petRender(); petSay('공을 잡아 봐! 세 번 잡으면 이겨! 🎾'); petBallMove();
+};
+function petBallMove(){
+  const b = document.getElementById('petBall'), room = document.getElementById('petRoom'); if (!b || !room) return;
+  const r = room.getBoundingClientRect();
+  b.style.left = (8 + Math.random() * (r.width - 70)) + 'px'; b.style.top = (8 + Math.random() * (r.height - 70)) + 'px';
+  clearTimeout(PET.ballT); PET.ballT = setTimeout(petBallMove, 1300);
+}
+ACTS.petBall = () => {
+  const P = PET; if (!P || P.busy !== 'play') return;
+  P.catch++; ttTone(990, 0, 0.1, 0.08); petFx('⭐', 2);
+  if (P.catch < 3){ petSay(`잡았다! ${P.catch}번! 한 번 더!`); petBallMove(); return; }
+  clearTimeout(P.ballT); P.busy = ''; const grew = petGain('fun', 35, 3); petGain('sleep', -8, 0);
+  petFace('excited', 1800); petSay('와, 정말 재밌었어! 너랑 노는 게 제일 좋아! 🎾');
+  if (grew){ clearTimeout(P.growT); P.growT = setTimeout(petGrew, 1800); }
+};
+ACTS.petSleep = () => {
+  const P = PET; if (!P) return;
+  P.busy = 'sleep'; P.face = 'sleepy'; petRender(); petSay('잘 자, 좋은 꿈 꿔… 🌙');
+  [523, 440, 392, 440, 523, 587, 523].forEach((f, i) => ttTone(f, i * 0.45, 0.4, 0.05));   // 자장가
+  clearTimeout(P.sleepT);
+  P.sleepT = setTimeout(() => {
+    if (PET !== P) return; P.busy = ''; P.face = '';
+    const grew = petGain('sleep', 60, 2); petRender(); petFace('happy', 1500); petSay('푹 잤더니 기운이 펄펄 나! 고마워 ☀️');
+    if (grew){ clearTimeout(P.growT); P.growT = setTimeout(petGrew, 1500); }
+  }, 4200);
+};
+ACTS.petHugTip = () => { petSay('나를 꾹~ 누르고 있으면 안아 줄 수 있어! 🤗'); const h = document.getElementById('petHero'); if (h){ h.classList.remove('hint'); void h.offsetWidth; h.classList.add('hint'); } };
+function petHug(){
+  const P = PET; if (!P || P.scene !== 'home') return;
+  P.busy = 'hug'; petRender(); petFx('💗', 5); ttTone(660, 0, 0.12, 0.06); ttTone(880, 0.1, 0.16, 0.06);
+  const grew = petGain('love', 20, 2);
+  petSay(dtPick(['포근해~ 나도 네가 정말 좋아! 💗', '꼭 안아 줘서 마음이 따뜻해졌어!', '너랑 있으면 행복해! 💕']));
+  setTimeout(() => { if (PET === P){ P.busy = ''; petRender(); if (grew){ clearTimeout(P.growT); P.growT = setTimeout(petGrew, 300); } } }, 1100);
+}
+/* ---------- 🌟 바른 마음 알려 주기 ---------- */
+/* 다음에 배울 것 — 지금 단계에서 아직 안 배운 것 먼저, 다 배웠으면 배운 것 가운데 하나를 다시 연습 */
+function petGoodNext(p, st){
+  const good = p.good || {}, now = PET_STAGES[st][3].filter(v => !good[v]);
+  if (now.length) return { v:now[0], review:false };
+  const done = Object.keys(PET_GOOD).filter(v => good[v]);
+  return { v:done.length ? done[playRand(done.length)] : PET_STAGES[0][3][0], review:done.length > 0 };
+}
+/* 자는 중·공놀이 중에는 끝나고 하자고 한다 */
+function petBusyNow(){
+  const P = PET; if (!P) return true;
+  if (P.busy === 'sleep'){ petSay('쿨쿨… 다 자고 나서 하자! 😴'); return true; }
+  if (P.busy === 'play'){ petSay('공놀이 먼저 끝내자! 🎾'); return true; }
+  return P.busy === 'hug';
+}
+ACTS.petGood = (arg) => {
+  const P = PET; if (!P || P.scene !== 'home' || petBusyNow()) return;
+  const p = P.p, n = arg && PET_GOOD[arg] ? { v:arg, review:!!(p.good || {})[arg] } : petGoodNext(p, P.showSt);
+  P.busy = ''; P.lesson = { v:n.v, review:n.review, step:'pick', opts:Math.random() < 0.5 ? ['good', 'oops'] : ['oops', 'good'] };
+  P.scene = 'good'; petRender();
+  petSay(`있잖아, ${PET_GOOD[n.v][2]} 어떻게 하면 좋을까?`);
+};
+function petGoodHtml(){
+  const P = PET, L = P.lesson, v = PET_GOOD[L.v], p = P.p;
+  const room = face => `<div class="pet-room sm"><div class="pet-hero">${petSvg(p, face, P.showSt)}</div></div>`;
+  const tag = `<div class="pet-tag">${v[0]} ${esc(v[1])}${L.review ? ' · 다시 연습' : ''}</div>`;
+  if (L.step === 'pick') return `<div class="tt-card stack" style="text-align:center">${room('wow')}${tag}
+      <div class="pet-story">“${esc(v[2])}”</div>
+      <div class="muted">${esc(p.name)}에게 알려 줘요. 어떻게 하면 좋을까요?</div>
+      <div class="stack" style="gap:8px">${L.opts.map(o => `<button class="btn ghost wide" data-act="petGoodPick" data-arg="${o}">${esc(o === 'good' ? v[3] : v[4])}</button>`).join('')}</div>
+      <button class="btn ghost sm" data-act="petHome" style="align-self:center">다음에 할래요</button></div>`;
+  if (L.step === 'oops') return `<div class="tt-card stack" style="text-align:center">${room('sad')}${tag}
+      <div class="pet-story">${esc(v[5])}</div>
+      <div class="muted">이렇게 해 보면 어떨까요?</div>
+      <button class="btn wide" data-act="petGoodPick" data-arg="good">💡 ${esc(v[3])}</button></div>`;
+  return `<div class="tt-card stack" style="text-align:center">${room('happy')}${tag}
+      <div class="pet-story">${v[0]} ${esc(v[3])}</div>
+      <div class="muted">왜 그렇게 하면 좋을까요? 생각나는 걸 골라요</div>
+      <div class="stack" style="gap:8px">${v[6].map((r, j) => `<button class="btn ghost wide" data-act="petGoodWhy" data-arg="${j}">💬 ${esc(r)}</button>`).join('')}</div></div>`;
+}
+ACTS.petGoodPick = (arg) => {
+  const P = PET; if (!P || !P.lesson) return;
+  const L = P.lesson, v = PET_GOOD[L.v];
+  if (arg === 'good'){
+    const again = L.step === 'oops';
+    L.step = 'why'; petRender(); ttTone(880, 0, 0.12, 0.07);
+    petSay(`${again ? '좋아, 그렇게 해 보자!' : '맞아! 그렇게 하면 정말 좋겠다!'} 그런데 왜 그렇게 하면 좋을까?`);
+  } else {
+    L.step = 'oops'; petRender(); ttTone(520, 0, 0.12, 0.06);
+    petSay(`음… ${v[5]} 우리 이렇게 해 볼까?`);
+  }
+};
+ACTS.petGoodWhy = (arg) => {
+  const P = PET; if (!P || !P.lesson || P.lesson.step !== 'why') return;
+  const p = P.p, id = P.lesson.v, v = PET_GOOD[id], before = petStage(p);
+  p.good = p.good || {}; p.goodAt = p.goodAt || {};
+  const first = !p.good[id];
+  p.good[id] = (p.good[id] || 0) + 1; if (!p.goodAt[id]) p.goodAt[id] = new Date().toISOString();
+  P.lesson = null; P.scene = 'home';
+  petGain('love', 10, 3); petGain('fun', 5, 0);
+  if (first){ awardStars(1); P.newGood = id; clearTimeout(P.newT); P.newT = setTimeout(() => { if (PET === P) P.newGood = ''; }, 2600); try { ttChime(); } catch(e){} }
+  petRender(); petFace('love', 1800); petFx(first ? '🌟' : '💗', first ? 6 : 4);
+  petSay(`“${v[6][+arg] || v[6][0]}” 맞아, 정말 그래! ${first ? '' : '다시 해 봐도 좋다! '}${v[7]}`);
+  if (petStage(p) > before){ clearTimeout(P.growT); P.growT = setTimeout(petGrew, 2600); }
+};
+/* ---------- 🎒 입학 카드 — 다 컸을 때 ---------- */
+function petGradHtml(){
+  const P = PET, p = P.p, k = kid(P.kidId), good = p.good || {};
+  const md = iso => { const d = new Date(iso || ''); return isNaN(d.getTime()) ? '' : `${d.getMonth() + 1}월 ${d.getDate()}일`; };
+  const learned = Object.keys(PET_GOOD).filter(v => good[v]);
+  const kn = k ? k.name : '';
+  return `<div class="tt-card stack pet-cert" style="text-align:center">
+      <div class="pet-room sm grad"><div class="pet-hero">${petSvg(p, 'excited', PET_TOP)}</div></div>
+      <h3 class="sub" style="margin:0">🎒 입학을 축하해요!</h3>
+      <div class="pet-story">${esc(subj(p.name))} 착하고 바른<br>멋진 초등학생 언니가 됐어요!</div>
+      <div class="pet-album">${PET_STAGES.map((s, i) => `<div><span class="pet-step done">${s[2]}</span><b>${esc(s[1])}</b><small>${esc(i === 0 ? md(p.born) : md((p.grew || {})[i]))}</small></div>`).join('')}</div>
+      <div class="muted">🌟 ${esc(p.name)}에게 알려 준 바른 마음</div>
+      <div class="pet-goods" style="justify-content:center">${learned.map(v => `<span class="pet-good on">${PET_GOOD[v][0]} ${esc(PET_GOOD[v][1])}</span>`).join('')}</div>
+      <div class="muted">💗 ${kn ? esc(kn) + (hasJong(kn) ? '이랑' : '랑') + ' ' : ''}함께 돌본 날 ${p.days || 1}일 · 💭 마음 알아맞히기 ${p.emoAll || 0}번</div>
+      <button class="btn wide" data-act="petHome">💕 계속 같이 놀래요</button></div>`;
+}
+/* ---------- 💭 마음 알아맞히기 ---------- */
+ACTS.petEmo = () => {
+  const P = PET; if (!P || P.scene !== 'home' || petBusyNow()) return;
+  const i = playRand(PET_EMO.length), e = PET_EMO[i], ans = e[1];
+  const others = Object.keys(PET_FEEL).filter(k2 => k2 !== ans && !(ans === 'sad' && k2 === 'lonely') && !(ans === 'lonely' && k2 === 'sad') && !(ans === 'proud' && k2 === 'happy') && !(ans === 'happy' && (k2 === 'proud' || k2 === 'excited')) && !(ans === 'excited' && k2 === 'happy'));
+  const pick = []; while (pick.length < 3 && others.length){ pick.push(others.splice(playRand(others.length), 1)[0]); }
+  const opts = pick.concat(ans).sort(() => Math.random() - 0.5);
+  P.busy = ''; P.emo = { i, opts, step:'feel', chose:'' }; P.scene = 'emo'; petRender();
+  petSay(`있잖아… ${e[0]} 내 마음이 어떨 것 같아?`);
+};
+function petEmoHtml(){
+  const P = PET, e = PET_EMO[P.emo.i], p = P.p, face = { sad:'sad', lonely:'lonely', scared:'wow', angry:'itchy', worried:'sad', happy:'happy', proud:'excited', excited:'excited', wonder:'wow', sleepy:'sleepy' }[e[1]] || 'happy';
+  if (P.emo.step === 'feel') return `<div class="tt-card stack" style="text-align:center">
+      <div class="pet-room sm"><div class="pet-hero">${petSvg(p, face, P.showSt)}</div></div>
+      <div class="pet-story">“${esc(e[0])}”</div>
+      <div class="muted">${esc(p.name)}의 마음은 어떨까요?</div>
+      <div class="pet-feels">${P.emo.opts.map(k2 => `<button class="pet-feel" data-act="petFeel" data-arg="${k2}"><span>${PET_FEEL[k2][0]}</span>${PET_FEEL[k2][1]}</button>`).join('')}</div></div>`;
+  return `<div class="tt-card stack" style="text-align:center">
+      <div class="pet-room sm"><div class="pet-hero">${petSvg(p, face, P.showSt)}</div></div>
+      <div class="pet-story">${PET_FEEL[e[1]][0]} ${esc(p.name)}${hasJong(p.name) ? '은' : '는'} <b>${PET_FEEL[e[1]][1]}</b></div>
+      <div class="muted">뭐라고 말해 주면 좋을까요?</div>
+      <div class="stack" style="gap:8px">${e[2].map((h, j) => `<button class="btn ghost wide" data-act="petHelp" data-arg="${j}">💬 ${esc(h)}</button>`).join('')}</div></div>`;
+}
+ACTS.petFeel = (arg) => {
+  const P = PET; if (!P || !P.emo) return;
+  const e = PET_EMO[P.emo.i], ok = arg === e[1];
+  P.emo.step = 'help'; P.emo.ok = ok; petRender();
+  ttTone(ok ? 880 : 660, 0, 0.12, 0.07);
+  petSay(ok ? `맞아! 나는 ${PET_FEEL[e[1]][2]}. 내 마음을 알아줘서 고마워!` : `그럴 수도 있어! 그런데 나는 ${PET_FEEL[e[1]][2]}. 이제 알겠지?`);
+};
+ACTS.petHelp = (arg) => {
+  const P = PET; if (!P || !P.emo) return;
+  const e = PET_EMO[P.emo.i], p = P.p;
+  P.scene = 'home'; P.emo = null;
+  const grew = petGain('love', 15, 3); petGain('fun', 5, 0);
+  p.emoAll = (p.emoAll || 0) + 1;
+  if (p.emoDay !== todayKey()){ p.emoDay = todayKey(); p.emoN = 0; }
+  if ((p.emoN || 0) < 3){ p.emoN = (p.emoN || 0) + 1; awardStars(1); }
+  petRender(); petFace('love', 1800); petFx('💗', 4);
+  petSay(`“${e[2][+arg] || ''}” — ${e[3]}`);
+  if (grew){ clearTimeout(P.growT); P.growT = setTimeout(petGrew, 2000); }
+};
 
 /* ---------- 📘 AR 지수 — 영어책 난이도 (Renaissance ATOS) ----------
    아이의 최근 AR(STAR) 점수와 비교해 술술 책 · 딱 맞는 책 · 도전 책으로 보여준다. 모두 칭찬하는 말로. */
@@ -11427,6 +12244,7 @@ document.addEventListener('click', async (e) => {
   if (d.game === 'oneline'){ S.view.game = 'oneline'; openOneline(); return; }
   if (d.game === 'itto'){ S.view.game = 'itto'; ittoOpen(); return; }
   if (d.game === 'bear'){ S.view.game = 'bear'; bearOpen(); return; }
+  if (d.game === 'pet'){ S.view.game = 'pet'; petOpen(); return; }
   if (d.stk != null && d.stk !== ''){ stackTap(+d.stk); return; }
   if (t.id === 'stkNext'){ const st = S.view.stk; if (st){ st.q = stkMake(st.lv); st.pick = null; st.answered = false; render(); } return; }
   if (d.pz != null && d.pz !== ''){ pizzaTap(+d.pz); return; }
@@ -12329,9 +13147,9 @@ setInterval(() => {
   }
   if (OL && !activeUnlock(OL.kidId)) closeOneline('놀이 시간이 끝났어요. 내일 또 해요! 👋');
   if (IT && !activeUnlock(IT.kidId)) ittoClose('놀이 시간이 끝났어요. 친구들이 버블에서 기다릴게요! 👋');
-  if (BH && !activeUnlock(BH.kidId) && !(BH.vs && VS && VS.solo)) { if (BH.vs) vsClose('놀이 시간이 끝났어요. 또 같이 놀아요! 👋'); else bearClose('놀이 시간이 끝났어요. 곰돌이가 또 놀자고 기다릴게요! 👋'); }
-  if (VS && !VS.solo && VS.phase === 'play' && !activeUnlock(VS.kidId)) vsClose('놀이 시간이 끝났어요. 또 같이 놀아요! 👋');
-  if (VS && VS.solo && VS.phase === 'play' && !activeUnlock(VS.kidId)) vsClose('놀이 시간이 끝났어요. 내일 또 해요! 👋');
+  if (PET && !activeUnlock(PET.kidId)) petClose('놀이 시간이 끝났어요. 마음 친구가 또 기다릴게요! 💕');
+  if (BH && BH.kidId && !activeUnlock(BH.kidId) && !(BH.vs && VS && VS.solo)) { if (BH.vs) vsClose('놀이 시간이 끝났어요. 또 같이 놀아요! 👋'); else bearClose('놀이 시간이 끝났어요. 곰돌이가 또 놀자고 기다릴게요! 👋'); }
+  if (VS && VS.kidId && VS.phase === 'play' && !activeUnlock(VS.kidId)) vsClose(VS.solo ? '놀이 시간이 끝났어요. 내일 또 해요! 👋' : '놀이 시간이 끝났어요. 또 같이 놀아요! 👋');
 
   // 기다리던 쪽지·칭찬 카드 (응원 팝업이 닫힌 뒤 등) — 3초마다 한 번 살펴본다
   if (S.kidId && Date.now() % 3000 < 1000) notiCheck();
