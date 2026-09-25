@@ -61,6 +61,7 @@
   - 📒 배움기록: `weekStatsAt`(이번 주·지난주), `crownPlan`(반짝 왕관 나누기), 💌 칭찬 스티커(`kudos` 컬렉션)
   - 👪 부모님 계정 `parent*`(부모님 화면 → 👪 부모님): 대표 관리자(owner)는 처음 정한 부모님 비밀번호(`settings.pin`)의 주인이고 닉네임은 `settings.ownerNick`(비우면 "뚜뚜아빠"). 다른 부모님은 `settings.parents` [{id, nick, avatar, pinHash}] — 비밀번호는 섞은 값만(`parentPinHash`), 서로 겹치지 않게. 비밀번호를 누르면 누구인지 알아본다(`parentByPin` → `S.parentId`). 부모님 추가·삭제는 대표 관리자만.
     - 👪 누구세요?(`parentWhoSheet`): 처음 정한(대표) 비밀번호로 부모님 화면·대화방에 들어오면 닉네임을 고르거나(`paWho`) ➕ 새 닉네임을 만든다(따로 비밀번호 두 번, `paWhoSave` — 겹치는 숫자·1234는 안 된다). 자기 비밀번호로 들어오면 이 창 없이 바로. 승인·지구본 확인 같은 다른 용도도 이 창 없이.
+    - 들어온 상태(`parentOn`/`parentTouch`/`parentOff`, `S.parentId`+`S.parentAt`): 비밀번호로 누구인지 알아본 뒤 아무것도 안 하고 15분(`PARENT_TTL`)이 지날 때까지 기억한다. 그동안 대화방은 비밀번호 없이 그 닉네임으로 열린다(아이 공간이 열려 있으면 아이로 열리고, 부모님 칩을 누르면 바로 바뀐다). 아이가 그림 비밀번호로 들어가면(`kidEnterNow`) · 🔒 나가기(부모님 화면 `parentOut`, 대화방 `chatParentOut`)면 끝. 부모님 화면·놀이 승인·지구본 확인은 늘 비밀번호를 묻는다(아이가 스스로 허락하지 못하게).
     - 텔레그램 연결·알림은 대표 관리자만. 텔레그램 "열어주러 가기" 단추 주소에는 `&tg=1`이 붙고(`api/notify.js`), 그렇게 연 승인은 대표 관리자 비밀번호로만 된다(`S.fromTelegram`). 앱 안의 🔔 승인 카드·놀이 승인 탭은 모든 부모님이 할 수 있다.
     - 대화방·칭찬 스티커에서 부모님은 `from 'p:아이디'`(닉네임으로 보인다). 예전 `'parent'` 글은 "엄마 아빠"로, 방 멤버의 `'parent'`는 부모님 모두.
   - 💬 대화방 `chat*`(오른쪽 위 💬 → 오른쪽에서 열림, `#chatWrap`): 👪 우리 가족방(모두, `id 'family'`)은 늘 있고, ➕ 새 방은 초대할 사람을 골라 만든다(컬렉션 `chatrooms` {name, emoji, members[아이 id | 'parent'], createdBy}). 글은 `chat` {room, from, text, at}, 칭찬 스티커는 `kudos` {…, room}(배움기록·왕관이 센다). room 이 없으면 가족방. 방에 없는 사람은 누구든(엄마 아빠도) 그 방에 들어가거나 글을 볼 수 없다(`chatRooms`·`chatCanSee`·`chatGo`, 부모님 기록 관리의 대화·칭찬도 `pdRoomOk`로 같게). 엄마 아빠로 쓰려면 부모님 비밀번호(`pinPurpose 'chat'`, 닫으면 끝). 안 읽은 수는 방마다(아이 `profile.noti.chatSeen`, 부모님 localStorage), 💬 숫자는 합. 5초 동기화 때는 보고 있는 목록만 다시 그린다(`chatRefresh`). 예전 쪽지(`settings.parentNote`)는 가족방 📌 — 부모님만 옆의 '떼기'(`chatNoteOff`). 부모님 화면 → 설정의 쪽지 안내는 없앴다.
@@ -71,6 +72,7 @@
   - 💌 쪽지·칭찬 알림 `noti*`: 부모님 쪽지(`settings.parentNote`)와 받은 칭찬 스티커가 받는 아이 화면 오른쪽에 카드로 뜬다(`#notiBox`, 창·놀이 층 아래 z 58). "고마워요"를 누르면 `profile.noti`(`since`·`seen`·`noteAt`)에 기억한다. 처음 쓰는 날엔 지난 하루 것만. 창·층이 열려 있으면 닫힌 뒤에 띄운다. 폰은 1장, 아이패드는 2장씩.
   - 📚 책장: `book.status`가 `'toread'`면 📘 읽을 책(`addedAt`, `readAt` 없음), 아니면 📗 읽은 책(`bookRead(b)`, 예전 책은 status가 없다). 등록할 때 "다 읽었어요 / 읽을 예정이에요"를 고른다. 읽은 책만 별점 → 어려웠던 낱말 → 한 줄 느낌(`book.feel`)을 묻는다. 읽을 책장에 있던 책의 바코드를 다시 찍거나 "📗 다 읽었어요!"를 누르면 읽은 책이 된다. 한 주의 책 수는 읽은 책만 센다.
   - 📂 부모님 화면 → 기록 관리(`pdTab`, `PD_KINDS`): 위쪽 아이 탭(`pd-kidtab`)으로 아이를 고르고, 아이마다 할 일·한 일 기록·책장·단어·생각·여행·가고 싶은 곳·도장·칭찬·약속·받아쓰기·철자를 줄 안에서 ✏️ 고치고 🗑 지운다(비밀번호 화면을 떠나지 않게 줄 안에서 한 번 더 묻는다). 책 고치기는 `bookEditOpen(id, 'parent')`. 함께 간 여행은 그 아이만 뺀다. 별 개수는 아이 탭에서 고친다.
+  - 부모님 화면 → 할 일도 위쪽 아이 탭(`pd-kidtab` 모양, `S.view.todoKid`, `ACTS.todoKid`)으로 아이마다 따로 본다(탭에 할 일 수).
   - 🫧 단어 가방: 아이가 🗑로 직접 뺄 수 있다(`ACTS.wordDel`, 한 번 더 묻는다).
   - 주요 구역: `Store`(저장), `sbPull`(5초 동기화, 1000줄씩 나눠 읽기), `view*()`(화면), 이벤트 배선
   - 🦜 뚜뚜 스피치 교실: `tt*` 함수와 `TT` 상태(`kind`: `lesson` 수업 · `ecc` ECC speech 연습 · `stage` 처음부터 끝까지)

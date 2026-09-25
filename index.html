@@ -1723,6 +1723,13 @@ function parentByPin(pin){
 /* ~로/~으로 — 받침이 없거나 ㄹ 받침이면 '로' */
 function roEuro(w){ const s = String(w || ''), c = s.charCodeAt(s.length - 1) - 0xAC00, j = c >= 0 && c <= 11171 ? c % 28 : 0; return s + (j === 0 || j === 8 ? '로' : '으로'); }
 function parentMe(){ return S.parentId ? parentById('p:' + S.parentId) : null; }
+/* 부모님으로 들어온 상태 — 비밀번호로 누구인지 알아본 뒤, 아무것도 안 하고 15분이 지날 때까지 기억한다.
+   그동안 대화방에서는 비밀번호를 다시 묻지 않고 그 닉네임으로 말한다. 아이가 그림 비밀번호로 자기 공간에 들어가거나 🔒 나가기를 누르면 끝.
+   부모님 화면·놀이 승인·지구본 확인은 지금처럼 늘 비밀번호를 묻는다(아이가 스스로 허락하지 못하게). */
+const PARENT_TTL = 15 * 60000;
+function parentOn(){ return !!S.parentId && Date.now() - (S.parentAt || 0) < PARENT_TTL; }
+function parentTouch(){ if (S.parentId) S.parentAt = Date.now(); }
+function parentOff(){ S.parentId = null; S.parentAt = 0; if (isParentId(CHAT.as)) CHAT.as = ''; }
 function parentIsOwner(){ return S.parentId === 'owner'; }
 /* 부모님 화면 → 👪 부모님 */
 function parentsTab(){
@@ -1775,7 +1782,7 @@ function parentWhoSheet(){
 }
 function paWhoGo(id, hello){
   const v = S.view.paWho || {}, next = v.next || 'parent';
-  S.parentId = id; S.view.paWho = null; kvClear('pw');
+  S.parentId = id; S.parentAt = Date.now(); S.view.paWho = null; kvClear('pw');
   toast(hello); continueAfterPin(next === 'parent' ? '' : next);
 }
 ACTS.paWho = (arg) => { const p = parentList().find(x => x.id === arg); if (!p || !S.view.paWho) return; paWhoGo(p.id, `${p.nick} 님, 반가워요! 😊`); };
@@ -1827,6 +1834,8 @@ ACTS.paAdd = async () => {
   kvClear('paNew'); S.view.paAv = '';
   toast(`${nick} 님을 부모님으로 추가했어요 👪`); openModal(parentSheet());
 };
+ACTS.todoKid = (arg) => { S.view.todoKid = arg; openModal(parentSheet()); };
+ACTS.parentOut = () => { parentOff(); closeModal(); render(); toast('부모님 화면에서 나왔어요. 다음엔 비밀번호를 다시 물어봐요 🔒'); };
 ACTS.paDel = (arg) => { S.view.pa = { del:arg }; openModal(parentSheet()); };
 ACTS.paDelNo = () => { S.view.pa = { del:'' }; openModal(parentSheet()); };
 ACTS.paDelOk = async (arg) => {
@@ -2063,7 +2072,7 @@ function chatComposeHtml(){
   const me = chatMe();
   if (!me) return `<div class="chat-who"><div class="muted" style="font-size:14px;margin-bottom:6px">누구로 말할까요?</div>
     <div class="chips" style="justify-content:center">${kids().map(k => `<button class="chip" data-act="chatAsKid" data-arg="${k.id}">${esc(k.avatar || '')} ${esc(k.name)}</button>`).join('')}
-      <button class="chip" data-act="chatAsParent">👪 부모님 (비밀번호)</button></div></div>`;
+      <button class="chip" data-act="chatAsParent">${parentOn() && parentMe() ? `${esc(parentMe().avatar)} ${esc(parentMe().nick)}` : '👪 부모님 (비밀번호)'}</button></div></div>`;
   if (CHAT.view !== 'room') return '';
   const room = chatRoom(CHAT.room);
   if (!chatInRoom(me, room)) return '<p class="muted" style="text-align:center;margin:0">이 방의 친구만 말할 수 있어요</p>';
@@ -2085,9 +2094,11 @@ function chatHeadHtml(){
     return `<button class="ttl-x" data-act="chatList" aria-label="방 목록">◀</button>
       <b class="chat-title">${esc(r.emoji)} ${esc(r.name)}</b><span class="chat-room-av">${chatAvatars(r.members)}</span>
       ${canDel ? '<button class="btn ghost sm" data-act="chatDel" aria-label="방 지우기">🗑</button>' : (canLeave ? '<button class="btn ghost sm" data-act="chatLeave">나가기</button>' : '')}
+      ${isParentId(me) ? '<button class="btn ghost sm" data-act="chatParentOut" aria-label="부모님으로 말하기 마치기">🔒</button>' : ''}
       <button class="ttl-x" data-act="chatClose" aria-label="대화방 닫기">✕</button>`;
   }
   return `<b class="chat-title">💬 대화방</b>${who ? `<span class="chat-me"><span class="cb-av sm" style="background:${who.bg}">${esc(who.avatar)}</span>${esc(who.name)}</span>` : ''}
+    ${isParentId(me) ? '<button class="btn ghost sm" data-act="chatParentOut">🔒 나가기</button>' : ''}
     <button class="ttl-x" data-act="chatClose" aria-label="대화방 닫기">✕</button>`;
 }
 function chatDraw(keepInput, first){
@@ -2111,6 +2122,7 @@ function chatDraw(keepInput, first){
 function chatSig(){ const all = chatAll(); return [CHAT.view, CHAT.room, all.length, (all[all.length - 1] || {}).id || '', S.data.chatrooms.length, JSON.stringify(S.settings.parentNote || null).length].join('|'); }
 function chatOpen(room){
   CHAT.open = true; CHAT.tray = false;
+  if (!CHAT.as && !(S.kidId && curKid()) && parentOn()){ CHAT.as = 'p:' + S.parentId; parentTouch(); }   // 부모님으로 들어와 있으면 다시 묻지 않는다
   const me = chatMe();
   let r = chatRoom(room || CHAT.room);
   if (!r || (me && !chatCanSee(me, r))) r = chatFamily();
@@ -2211,7 +2223,11 @@ ACTS.chatKudo = async (arg) => {
   toast(isParentId(me) ? `${chatWho(to).name}에게 칭찬 스티커를 붙여 줬어요 😇` : `고마운 마음을 전하는 ${chatWho(me).name}, 정말 멋져요! 💌`);
 };
 ACTS.chatAsKid = (arg) => { chatClose(); kidEnter(arg, () => chatOpen()); };
-ACTS.chatAsParent = () => { chatClose(); S.view.pin = ''; S.view.pinError = ''; S.view.pinPurpose = 'chat'; openModal(pinSheet('부모님으로 말하기', '내 부모님 비밀번호를 누르면 내 닉네임으로 말해요.')); };
+ACTS.chatAsParent = () => {
+  if (parentOn()){ CHAT.as = 'p:' + S.parentId; parentTouch(); chatDraw(false); return; }   // 방금 비밀번호로 들어왔으면 다시 묻지 않는다
+  chatClose(); S.view.pin = ''; S.view.pinError = ''; S.view.pinPurpose = 'chat'; openModal(pinSheet('부모님으로 말하기', '내 부모님 비밀번호를 누르면 내 닉네임으로 말해요.'));
+};
+ACTS.chatParentOut = () => { parentOff(); chatDraw(false); toast('부모님으로 말하기를 마쳤어요. 다음엔 비밀번호를 다시 물어봐요 🔒'); };
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'chatIn' && !e.isComposing){ e.preventDefault(); ACTS.chatSend(); } });
 
 /* ---------- 🎤 음성 메시지 — 대화방에서 목소리를 녹음해 보낸다 ----------
@@ -2319,6 +2335,7 @@ function kidEnter(id, then){
 }
 function kidEnterNow(id){
   if (!kid(id)) return;
+  parentOff();                                               // 이 기기는 이제 아이가 쓴다 — 부모님으로 들어온 상태는 끝
   S.kidId = id; lsSet('dolearn.kid', id); S.tab = 'today'; closeModal(); render();
   const f = KP.then; KP.then = null; if (f) setTimeout(f, 80);
 }
@@ -3565,14 +3582,19 @@ ACTS.pdTodoEdit = (arg) => {
 
 /* ---------- 부모 화면 ---------- */
 function parentSheet(){
+  parentTouch();
   const ks = kids();
   const t = S.view.parentTab || 'todos';
   const tabBtn = (id,label) => `<button class="chip" data-ptab="${id}" aria-pressed="${t===id}">${label}</button>`;
 
   let body = '';
   if (t === 'todos'){
+    // 아이마다 탭으로 나눈다 (기록 관리처럼) — 고른 아이의 할 일만
     const newDays = S.view.newTodoDays || (S.view.newTodoDays = {});
-    body = ks.map(k=>{
+    const tk = ks.find(k => k.id === S.view.todoKid) || ks[0];
+    const tabs = ks.length > 1 ? `<div class="pd-kidtabs" role="tablist" aria-label="아이 고르기">${ks.map(x => { const n = S.data.todos.filter(y => y.kidId === x.id && !y.archived).length;
+      return `<button class="pd-kidtab" role="tab" data-act="todoKid" data-arg="${x.id}" aria-selected="${!!tk && x.id === tk.id}"><span class="avatar" style="background:${kidColor(x).bg}">${esc(x.avatar || '')}</span><b>${esc(x.name)}</b>${n ? ` <small class="muted">${n}</small>` : ''}</button>`; }).join('')}</div>` : '';
+    body = tabs + (tk ? [tk] : []).map(k=>{
       const list = S.data.todos.filter(x=>x.kidId===k.id && !x.archived);
       const picked = newDays[k.id] || [];
       return `<div class="card" style="margin-bottom:12px">
@@ -3716,7 +3738,8 @@ function parentSheet(){
 
   if (t === 'settings' && PB.bucket == null) photoBucketOk().then(() => { const el = document.getElementById('pbStatus'); if (el) el.textContent = `📷 여행·그림일기 사진: ${PB.bucket ? '🔒 가족 사진 저장소에 저장돼요 (우리 가족만 볼 수 있어요)' : '📱 지금은 사진을 찍은 기기에만 저장돼요'}`; });
   const pm = parentMe();
-  return `<h3>부모님 화면${pm ? ` <small class="muted" style="font-size:15px">· ${esc(pm.avatar)} ${esc(pm.nick)}${pm.role === 'owner' ? ' (대표 관리자)' : ''}</small>` : ''}</h3>
+  return `<div class="row" style="gap:8px;padding-right:44px"><h3 class="grow" style="margin:0">부모님 화면${pm ? ` <small class="muted" style="font-size:15px">· ${esc(pm.avatar)} ${esc(pm.nick)}${pm.role === 'owner' ? ' (대표 관리자)' : ''}</small>` : ''}</h3>
+      <button class="btn ghost sm" data-act="parentOut">🔒 나가기</button></div>
     <div class="chips" style="margin:8px 0 14px">
       ${tabBtn('todos','할 일')}${tabBtn('data','📂 기록 관리')}${tabBtn('speech','🦜 스피치')}${tabBtn('dict','✏️ 받아쓰기')}${tabBtn('think','💭 생각')}${tabBtn('kids','아이')}${tabBtn('parents','👪 부모님')}${tabBtn('notify','알림')}${tabBtn('unlock','놀이 승인' +
       (pendingRequests().length ? `<span class="dot-badge">${pendingRequests().length}</span>` : ''))}${tabBtn('settings','설정')}
@@ -12208,6 +12231,7 @@ async function worldFound(code){
    이벤트 배선
    ============================================================ */
 document.addEventListener('click', async (e) => {
+  if (CHAT.open && isParentId(CHAT.as)) parentTouch();
   const t = e.target.closest('[data-tab],[data-pick],[data-tick],[data-start],[data-stop],[data-deltodo],'+
     '[data-book],[data-mode],[data-say],[data-game],[data-mem],[data-ml],[data-mr],[data-cat],[data-stars],'+
     '[data-close],[data-pin],[data-pinclear],[data-pinback],[data-ptab],[data-addtodo],[data-parentdel],'+
@@ -12816,7 +12840,7 @@ function checkPin(){
     openModal(pinSheet(pinTitle())); return;
   }
   if (who){
-    S.parentId = who.id;                                       // 지금 부모님 화면에 들어온 사람
+    S.parentId = who.id; S.parentAt = Date.now();              // 지금 부모님 화면에 들어온 사람
     const purpose = S.view.pinPurpose || '';
     S.view.pin = '';
     if (needsNewPin()){
@@ -12826,6 +12850,7 @@ function checkPin(){
       return;
     }
     if (who.role === 'owner' && (purpose === 'parent' || purpose === '' || purpose === 'chat')){   // 처음 정한 비밀번호 — 누구인지 고르기
+      S.parentId = null; S.parentAt = 0;                       // 고를 때까지는 들어온 걸로 치지 않는다
       S.view.paWho = { add:false, av:'👩', next:purpose || 'parent' }; kvClear('pw'); openModal(parentWhoSheet()); return;
     }
     if (purpose === 'chat' || purpose.startsWith('kidin:')){ continueAfterPin(purpose); return; }
