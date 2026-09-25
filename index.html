@@ -694,6 +694,15 @@
   .pet-feel span{font-size:30px;}
   .pet-dot{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid #6B4A52;margin-right:4px;vertical-align:-2px;}
   /* 🔐 그림 비밀번호 */
+  .topbar.pmode{background:linear-gradient(180deg,#FFF6E6,var(--cream));}
+  .whoami .wm-kid{display:inline-flex;align-items:center;gap:4px;margin-left:6px;padding-left:8px;border-left:2px solid var(--blush);font-size:14px;color:var(--cocoa-soft);}
+  .whoami .avatar.sm{width:26px;height:26px;font-size:16px;}
+  .whoami .wm-eye{font-style:normal;}
+  .whoami .wm-name{font-size:14px;}
+  @media (max-width:520px){ .topbar.pmode .whoami > b, .topbar.pmode .whoami .wm-name, .topbar.pmode .whoami .wm-eye{display:none;}
+    .topbar.pmode .whoami{gap:2px;} .topbar.pmode .whoami > .avatar{width:28px;height:28px;font-size:17px;}
+    .topbar.pmode .whoami .wm-kid{margin-left:2px;padding-left:4px;} }
+  .parent-page{padding-top:14px;}
   .pa-who{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px;}
   .pa-who-b{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;border-radius:18px;border:3px solid var(--blush);background:var(--surface);
     cursor:pointer;font-family:inherit;color:var(--cocoa);}
@@ -1241,6 +1250,8 @@ const S = {
   settings:{ pin:'1234', gameMinutes:20, weeklyGoal:20, cats:DEFAULT_CATS.slice(),
              kakaoKey:'', weather:null, geo:null },
   kidId:null, tab:'today',
+  parentId:null, parentAt:0,   // 비밀번호로 들어온 부모님과 마지막으로 쓴 때 (parentOn)
+  parentView:false,        // 👪 부모님 모드 — 담당 아이 화면 + 부모님 관리 탭
   running:null,           // {todoId, startedAt}
   freshBookId:null,
   view:{}                 // 화면별 임시 상태
@@ -1656,6 +1667,10 @@ let renderQueued = false, renderKeep = true;
    사용자가 직접 한 동작(저장 뒤 칸 비우기 등)으로 그릴 때는 지키지 않는다. */
 function render(opts){
   const keep = !!(opts && opts.keepInputs);
+  if (keep && S.parentView && S.tab === 'parent'){                // 👪 부모님 관리 탭에서 글을 쓰는 중이면 동기화로 다시 그리지 않는다
+    const a = document.activeElement, sc = $('#screen');
+    if (a && sc && sc.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && !a.id) return;
+  }
   if (renderQueued){ renderKeep = renderKeep && keep; return; }
   renderQueued = true; renderKeep = keep;
   // 숨겨진 탭(뒤에서 열린 알림 링크 등)에서는 requestAnimationFrame이 멈추므로 setTimeout으로 그린다
@@ -1705,7 +1720,7 @@ function ownerNick(){ return String(S.settings.ownerNick || '').trim().slice(0, 
 function parentList(){
   const owner = { id:'owner', nick:ownerNick(), avatar:S.settings.ownerAvatar || '👨', role:'owner' };
   const rest = (Array.isArray(S.settings.parents) ? S.settings.parents : []).filter(p => p && p.id && p.id !== 'owner')
-    .map(p => ({ id:String(p.id), nick:String(p.nick || '부모님').slice(0, 10), avatar:p.avatar || '🧑', role:'admin', pinHash:p.pinHash || '', at:p.at || '' }));
+    .map(p => ({ id:String(p.id), nick:String(p.nick || '부모님').slice(0, 10), avatar:p.avatar || '🧑', role:'admin', pinHash:p.pinHash || '', at:p.at || '', kid:p.kid || '' }));
   return [owner].concat(rest);
 }
 function isParentId(id){ return id === 'parent' || /^p:/.test(String(id || '')); }
@@ -1730,6 +1745,48 @@ const PARENT_TTL = 15 * 60000;
 function parentOn(){ return !!S.parentId && Date.now() - (S.parentAt || 0) < PARENT_TTL; }
 function parentTouch(){ if (S.parentId) S.parentAt = Date.now(); }
 function parentOff(){ S.parentId = null; S.parentAt = 0; if (isParentId(CHAT.as)) CHAT.as = ''; }
+/* ---------- 👪 부모님 모드 — 담당 아이와 똑같은 화면(아래 탭) + 맨 끝 👪 부모님 관리 탭 ----------
+   부모님 관리 → 비밀번호 → (대표 비밀번호면 누구세요?) → 담당 아이(처음 한 번 고르면 기억한다: settings.ownerKid / parents[].kid) → 그 아이 화면.
+   머리줄의 이름을 누르면 다른 아이로 바꾸고, 🏠·🔒 나가기면 끝. 들어온 상태(parentOn)가 끝나면(15분) 시작 화면으로 돌아간다.
+   아이의 알림 카드는 띄우지 않고, 같이 놀기 접속 표시도 하지 않는다(아이가 들어온 게 아니니까). */
+function parentKidOf(p){ const id = p && (p.role === 'owner' ? S.settings.ownerKid : p.kid); return id && kid(id) ? id : ''; }
+async function parentKidSave(kidId){
+  const me = parentMe(); if (!me || me.role === 'legacy' || parentKidOf(me) === kidId) return;
+  if (me.role === 'owner') await Store.saveSettings({ ownerKid:kidId });
+  else await Store.saveSettings({ parents:(S.settings.parents || []).map(p => p.id === me.id ? Object.assign({}, p, { kid:kidId }) : p) });
+}
+function parentStart(tab){
+  const ks = kids();
+  if (!ks.length){ openModal(parentSheet()); return; }                       // 아이가 아직 없으면 예전처럼 창으로
+  const quick = S.view.pmQuick; S.view.pmQuick = false;           // ➕ 사용자 추가 → 아이: 고르지 않고 바로 아이 칸으로
+  const k = parentKidOf(parentMe()) || (ks.length === 1 || quick ? ks[0].id : '');
+  if (k){ parentEnter(k, tab); return; }
+  S.view.pkNext = tab || 'parent'; openModal(parentKidSheet());
+}
+function parentEnter(kidId, tab){
+  if (!kid(kidId) || !S.parentId) return;
+  S.parentView = true; S.kidId = kidId; S.tab = tab || 'parent'; S.view.game = null; stopStars();
+  parentTouch(); parentKidSave(kidId);
+  if (VSN.ch && !VS) vsNetStop();
+  closeModal(); render();
+}
+function parentLeave(msg){
+  S.parentView = false; parentOff(); S.kidId = null; S.tab = 'today'; S.view.game = null; stopStars();
+  if (CHAT.open) chatClose();
+  closeModal(); render(); if (msg) toast(msg);
+}
+function parentKidSheet(){
+  return `<h3>👀 누구 화면을 볼까요?</h3>
+    <p class="muted" style="margin:0 0 10px">담당 아이를 고르면 그 아이와 똑같은 화면이 나와요. 맨 끝 👪 부모님 관리 탭에서 모두 관리해요. 머리줄의 이름을 누르면 언제든 바꿔요.</p>
+    <div class="pa-who">${kids().map(k => `<button class="pa-who-b" data-act="parentKid" data-arg="${k.id}"><span class="avatar" style="background:${kidColor(k).bg}">${esc(k.avatar || '🐰')}</span><b>${esc(k.name)}</b><small>${k.id === S.kidId && S.parentView ? '지금 보는 중' : ''}</small></button>`).join('')}</div>`;
+}
+/* 부모님 관리 화면 다시 그리기 — 부모님 모드면 👪 부모님 관리 탭에서(바로 그린다), 아니면 창으로 */
+function parentShow(){
+  if (S.parentView){ S.tab = 'parent'; if ($('#modalRoot .sheet')) closeModal(); renderQueued = false; draw(); return; }
+  openModal(parentSheet());
+}
+function parentVisible(){ return S.parentView ? S.tab === 'parent' : !!$('#modalRoot .sheet'); }
+function viewParentTab(){ return `<div class="card parent-page">${parentSheet()}</div>`; }
 function parentIsOwner(){ return S.parentId === 'owner'; }
 /* 부모님 화면 → 👪 부모님 */
 function parentsTab(){
@@ -1811,15 +1868,15 @@ ACTS.paNickSave = async () => {
   const nick = (($('#paNick') || {}).value || '').trim().slice(0, 10); if (!nick){ toast('닉네임을 적어 주세요'); return; }
   if (me.role === 'owner') await Store.saveSettings({ ownerNick:nick });
   else await Store.saveSettings({ parents:(S.settings.parents || []).map(p => p.id === me.id ? Object.assign({}, p, { nick }) : p) });
-  toast(`이제 ${roEuro(nick)} 보여요 😊`); openModal(parentSheet());
+  toast(`이제 ${roEuro(nick)} 보여요 😊`); parentShow();
 };
 ACTS.paAvatar = async (arg) => {
   const me = parentMe(); if (!me) return;
   if (me.role === 'owner') await Store.saveSettings({ ownerAvatar:arg });
   else await Store.saveSettings({ parents:(S.settings.parents || []).map(p => p.id === me.id ? Object.assign({}, p, { avatar:arg }) : p) });
-  openModal(parentSheet());
+  parentShow();
 };
-ACTS.paNewAv = (arg) => { S.view.paAv = arg; const pin = ($('#paNewPin') || {}).value || ''; openModal(parentSheet()); const i = $('#paNewPin'); if (i) i.value = pin; };
+ACTS.paNewAv = (arg) => { S.view.paAv = arg; const pin = ($('#paNewPin') || {}).value || ''; parentShow(); const i = $('#paNewPin'); if (i) i.value = pin; };
 ACTS.paAdd = async () => {
   if (!parentIsOwner()) return;
   const nick = String(kv('paNewNick') || (($('#paNewNick') || {}).value || '')).trim().slice(0, 10), pin = (($('#paNewPin') || {}).value || '').trim();
@@ -1832,16 +1889,35 @@ ACTS.paAdd = async () => {
   const list = (S.settings.parents || []).concat({ id, nick, avatar:S.view.paAv || '👩', pinHash:parentPinHash(id, pin), at:new Date().toISOString() });
   await Store.saveSettings({ parents:list });
   kvClear('paNew'); S.view.paAv = '';
-  toast(`${nick} 님을 부모님으로 추가했어요 👪`); openModal(parentSheet());
+  toast(`${nick} 님을 부모님으로 추가했어요 👪`); parentShow();
 };
-ACTS.todoKid = (arg) => { S.view.todoKid = arg; openModal(parentSheet()); };
-ACTS.parentOut = () => { parentOff(); closeModal(); render(); toast('부모님 화면에서 나왔어요. 다음엔 비밀번호를 다시 물어봐요 🔒'); };
-ACTS.paDel = (arg) => { S.view.pa = { del:arg }; openModal(parentSheet()); };
-ACTS.paDelNo = () => { S.view.pa = { del:'' }; openModal(parentSheet()); };
+ACTS.todoKid = (arg) => { S.view.todoKid = arg; parentShow(); };
+/* ➕ 사용자 추가 — 아이는 부모님 비밀번호로(부모님 관리 → 아이), 부모님은 대표 관리자 비밀번호로(새 닉네임·비밀번호) */
+function userAddSheet(){
+  return `<h3>➕ 누구를 추가할까요?</h3>
+    <p class="muted" style="margin:0 0 10px">추가는 부모님이 해요. 부모님 비밀번호가 필요해요.</p>
+    <div class="pa-who">
+      <button class="pa-who-b" data-act="userAdd" data-arg="kid"><span class="avatar">🧒</span><b>아이</b><small>같이 공부할 친구</small></button>
+      <button class="pa-who-b" data-act="userAdd" data-arg="parent"><span class="avatar">👪</span><b>부모님</b><small>닉네임·비밀번호 따로</small></button>
+    </div>`;
+}
+ACTS.userAdd = (arg) => {
+  S.view.pin = ''; S.view.pinError = '';
+  if (arg === 'parent'){ S.view.pinPurpose = 'addParent'; openModal(pinSheet('부모님 추가', `부모님 추가는 대표 관리자(${ownerNick()}) 비밀번호로 해요.`)); return; }
+  S.view.pinPurpose = 'parent'; S.view.parentTab = 'kids'; S.view.pmQuick = true; openModal(pinSheet('부모님, 아이를 추가할까요?'));
+};
+ACTS.parentKid = (arg) => { if (!kid(arg) || !S.parentId) return; parentEnter(arg, S.view.pkNext || (S.parentView ? S.tab : 'parent')); };
+ACTS.parentSwitch = () => { if (!S.parentView) return; S.view.pkNext = S.tab; openModal(parentKidSheet()); };
+ACTS.parentOut = () => {
+  if (S.parentView){ parentLeave('부모님 모드를 마쳤어요. 다음엔 비밀번호를 다시 물어봐요 🔒'); return; }
+  parentOff(); closeModal(); render(); toast('부모님 화면에서 나왔어요. 다음엔 비밀번호를 다시 물어봐요 🔒');
+};
+ACTS.paDel = (arg) => { S.view.pa = { del:arg }; parentShow(); };
+ACTS.paDelNo = () => { S.view.pa = { del:'' }; parentShow(); };
 ACTS.paDelOk = async (arg) => {
   if (!parentIsOwner() || arg === 'owner') return;
   await Store.saveSettings({ parents:(S.settings.parents || []).filter(p => p.id !== arg) });
-  S.view.pa = { del:'' }; toast('부모님 계정을 지웠어요'); openModal(parentSheet());
+  S.view.pa = { del:'' }; toast('부모님 계정을 지웠어요'); parentShow();
 };
 
 /* ---------- 💌 쪽지·칭찬 스티커 알림 — 화면 오른쪽에 살짝 떠오른다 ----------
@@ -1887,7 +1963,7 @@ function notiBox(){
 }
 function notiCheck(){
   const box = notiBox(), k = S.kidId && curKid();
-  if (!k){ box.innerHTML = ''; NOTI.kid = ''; return; }
+  if (!k || S.parentView){ box.innerHTML = ''; NOTI.kid = ''; return; }   // 부모님 모드에서는 아이의 알림을 띄우지 않는다
   if (NOTI.kid !== k.id){ box.innerHTML = ''; NOTI.kid = k.id; }
   const items = notiPending(k), show = items.slice(0, window.innerWidth < 600 ? 1 : 2), keys = new Set(show.map(x => x.key));   // 폰은 하나씩, 아이패드는 둘까지
   box.querySelectorAll('.noti-card').forEach(el => { if (!keys.has(el.dataset.key) && !el.classList.contains('out')) el.remove(); });
@@ -2122,7 +2198,7 @@ function chatDraw(keepInput, first){
 function chatSig(){ const all = chatAll(); return [CHAT.view, CHAT.room, all.length, (all[all.length - 1] || {}).id || '', S.data.chatrooms.length, JSON.stringify(S.settings.parentNote || null).length].join('|'); }
 function chatOpen(room){
   CHAT.open = true; CHAT.tray = false;
-  if (!CHAT.as && !(S.kidId && curKid()) && parentOn()){ CHAT.as = 'p:' + S.parentId; parentTouch(); }   // 부모님으로 들어와 있으면 다시 묻지 않는다
+  if (!CHAT.as && (S.parentView || !(S.kidId && curKid())) && parentOn()){ CHAT.as = 'p:' + S.parentId; parentTouch(); }   // 부모님으로 들어와 있으면 다시 묻지 않는다
   const me = chatMe();
   let r = chatRoom(room || CHAT.room);
   if (!r || (me && !chatCanSee(me, r))) r = chatFamily();
@@ -2227,7 +2303,10 @@ ACTS.chatAsParent = () => {
   if (parentOn()){ CHAT.as = 'p:' + S.parentId; parentTouch(); chatDraw(false); return; }   // 방금 비밀번호로 들어왔으면 다시 묻지 않는다
   chatClose(); S.view.pin = ''; S.view.pinError = ''; S.view.pinPurpose = 'chat'; openModal(pinSheet('부모님으로 말하기', '내 부모님 비밀번호를 누르면 내 닉네임으로 말해요.'));
 };
-ACTS.chatParentOut = () => { parentOff(); chatDraw(false); toast('부모님으로 말하기를 마쳤어요. 다음엔 비밀번호를 다시 물어봐요 🔒'); };
+ACTS.chatParentOut = () => {
+  if (S.parentView){ parentLeave('부모님 모드를 마쳤어요. 다음엔 비밀번호를 다시 물어봐요 🔒'); return; }
+  parentOff(); chatDraw(false); toast('부모님으로 말하기를 마쳤어요. 다음엔 비밀번호를 다시 물어봐요 🔒');
+};
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'chatIn' && !e.isComposing){ e.preventDefault(); ACTS.chatSend(); } });
 
 /* ---------- 🎤 음성 메시지 — 대화방에서 목소리를 녹음해 보낸다 ----------
@@ -2372,7 +2451,7 @@ ACTS.kpTap = async (arg) => {
 ACTS.kpBack = () => { KP.seq.pop(); KP.err = ''; openModal(kpinSheet()); };
 ACTS.kpLater = () => { kidEnterNow(KP.kid); };
 ACTS.kpForgot = () => { S.view.pin = ''; S.view.pinError = ''; S.view.pinPurpose = 'kidin:' + KP.kid; openModal(pinSheet('부모님, 열어 주세요')); };
-ACTS.kpReset = async (arg) => { if (!kid(arg)) return; await Store.update('profiles', arg, { kpin:'' }); toast('그림 비밀번호를 지웠어요. 다음에 들어올 때 새로 정해요'); openModal(parentSheet()); };
+ACTS.kpReset = async (arg) => { if (!kid(arg)) return; await Store.update('profiles', arg, { kpin:'' }); toast('그림 비밀번호를 지웠어요. 다음에 들어올 때 새로 정해요'); parentShow(); };
 
 /* ---------- 💮 참 잘했어요 도장 — 할 일을 끝낸 날·끝낸 할 일에 찍는다 (이 앱에서 새로 그린 도장) ---------- */
 function stampSvg(){
@@ -2387,6 +2466,10 @@ function stampSvg(){
 
 function draw(){
   const screen = $('#screen'), tabs = $('#tabs'), who = $('#whoami'), home = $('#homeBtn');
+  if (S.parentView && !parentOn()){                          // 부모님 모드가 끝났다(15분) — 시작 화면으로
+    S.parentView = false; parentOff(); S.kidId = null; S.tab = 'today'; S.view.game = null;
+    setTimeout(() => toast('부모님 모드가 잠겼어요. 다시 볼 때는 비밀번호를 눌러요 🔒'), 60);
+  }
   const onHome = !S.data.profiles.length || !S.kidId || !curKid();
   $('#topbar').classList.toggle('home', onHome);
 
@@ -2402,22 +2485,27 @@ function draw(){
   }
   // 프로필 미선택 → 시작 화면
   if (!S.kidId || !curKid()){
-    tabs.hidden = true; who.hidden = true; home.hidden = true;
+    tabs.hidden = true; who.hidden = true; home.hidden = true; home.textContent = '🏠';
     screen.innerHTML = viewGate();
     notiCheck(); chatBadge(); chatRefresh();
     if (VSN.ch && !VS) vsNetStop();
     return;
   }
 
-  const k = curKid(), col = kidColor(k);
+  const k = curKid(), col = kidColor(k), pm = S.parentView ? parentMe() : null;
   who.hidden = false; home.hidden = false;
-  who.innerHTML = `<span class="avatar" style="background:${col.bg}">${esc(k.avatar||'🐰')}</span><b>${esc(k.name)}</b>`;
+  who.innerHTML = pm ? `<span class="avatar" style="background:#FFF1D0">${esc(pm.avatar)}</span><b>${esc(pm.nick)}</b><span class="wm-kid"><i class="wm-eye">👀</i><span class="avatar sm" style="background:${col.bg}">${esc(k.avatar||'🐰')}</span><b class="wm-name">${esc(k.name)} ▾</b></span>`
+    : `<span class="avatar" style="background:${col.bg}">${esc(k.avatar||'🐰')}</span><b>${esc(k.name)}</b>`;
+  who.setAttribute('aria-label', pm ? `부모님 모드 — ${k.name} 화면 보는 중, 눌러서 아이 바꾸기` : `${k.name} — 눌러서 시작 화면으로`);
+  home.setAttribute('aria-label', pm ? '부모님 모드 마치기' : '시작 화면으로'); home.textContent = pm ? '🔒' : '🏠';
+  $('#topbar').classList.toggle('pmode', !!pm);
 
   tabs.hidden = false;
   const items = [
     ['today','오늘','🌤'], ['shelf','책장','📚'], ['words','단어장','🫧'], ['write','받아쓰기','✏️'], ['speech','스피치','🦜'],
     ['think','생각','💭'], ['world','세계','🌏'], ['versus','배움기록','📒'], ['games','놀이','🎈']
-  ];
+  ].concat(S.parentView ? [['parent','부모님 관리','👪']] : []);
+  if (S.tab === 'parent' && !S.parentView) S.tab = 'today';
   tabs.innerHTML = items.map(([id,label,ico]) =>
     `<button data-tab="${id}" aria-current="${S.tab===id}"><span class="ico">${ico}</span>${label}</button>`
   ).join('');
@@ -2427,16 +2515,16 @@ function draw(){
     tabs.scrollLeft = Math.max(0, curTab.offsetLeft - (tabs.clientWidth - curTab.offsetWidth) / 2);
 
   // 다른 아이가 올린 승인 요청은 어느 화면에서든 보이게 한다 (부모님 폰에서 바로 승인)
-  const others = pendingRequests().filter(r => r.kidId !== S.kidId);
+  const others = S.parentView ? pendingRequests() : pendingRequests().filter(r => r.kidId !== S.kidId);   // 부모님 모드는 보고 있는 아이의 요청도
 
-  const views = { today:viewToday, shelf:viewShelf, words:viewWords, write:viewWrite, speech:viewSpeech, think:viewThink, world:viewWorld, versus:viewVersus, games:viewGames };
+  const views = { today:viewToday, shelf:viewShelf, words:viewWords, write:viewWrite, speech:viewSpeech, think:viewThink, world:viewWorld, versus:viewVersus, games:viewGames, parent:viewParentTab };
   screen.innerHTML = `<div class="wrap stack${S.tab === 'world' ? ' wide' : ''}">${storageBanner()}${others.map(askCard).join('')}${(views[S.tab]||viewToday)()}</div>`;
 
   if (S.tab === 'shelf') requestAnimationFrame(fitSpines);
   if (S.tab === 'world') worldMount();          // 지구본 캔버스는 하나를 계속 다시 붙여 쓴다
   hydratePhotos(screen);
   notiCheck(); chatBadge(); chatRefresh();
-  if (!VS && VSN.me !== S.kidId) vsNetStart();
+  if (!S.parentView && !VS && VSN.me !== S.kidId) vsNetStart();   // 부모님 모드는 아이가 들어온 게 아니다
   if (VS && VS.phase === 'lobby') vsRender();
 }
 
@@ -2528,6 +2616,7 @@ function affGo(d){
 ACTS.affNext = () => { if (Date.now() - AFF.swiped < 500) return; affGo(1); affTimer(true); };
 ACTS.affSay = () => { nvUnlock(); voice(AFFIRMS[affIndex()][1], { lang:'ko' }); affTimer(true); };
 /* 옆으로 밀어서 넘기기 — 화면을 다시 그려도 되도록 문서에 한 번만 단다 */
+document.addEventListener('input', () => { if (S.parentView || (CHAT.open && isParentId(CHAT.as))) parentTouch(); }, true);   // 부모님이 글을 쓰는 중이면 잠그지 않는다
 document.addEventListener('pointerdown', e => { AFF.x0 = e.target.closest && e.target.closest('.aff-slide') ? e.clientX : null; }, true);
 document.addEventListener('pointerup', e => {
   if (AFF.x0 == null) return;
@@ -2569,11 +2658,11 @@ function viewGate(){
           ${list.length ? (pct>=100 ? '오늘 할 일 끝! 🎉' : `할 일 ${done}/${list.length}`) : '할 일이 없어요'}</div>
       </button>`;
     }).join('')}
-    ${kids().length < 2 ? `<button class="kidcard addkid" id="addKidHere">
+    <button class="kidcard addkid" id="addUser">
       <span class="av" style="background:var(--blush)">＋</span>
-      <div class="nm">친구 추가</div>
-      <div class="muted" style="font-size:12px;margin-top:6px">한 명 더 같이 해요</div>
-    </button>` : ''}</div>
+      <div class="nm">사용자 추가</div>
+      <div class="muted" style="font-size:12px;margin-top:6px">아이·부모님</div>
+    </button></div>
 
   </div>
   <div class="parentbar">
@@ -3383,7 +3472,7 @@ function notifyTab(){
 
 async function tgRefresh(userAsked){
   S.view.tg = { ...(S.view.tg || {}), loading:true };
-  if (S.view.parentTab === 'notify') openModal(parentSheet());
+  if (S.view.parentTab === 'notify') parentShow();
   let next;
   try {
     const r = await fetch(`/api/telegram-link?familyId=${encodeURIComponent(S.familyId)}`);
@@ -3402,7 +3491,7 @@ async function tgRefresh(userAsked){
     next = { loading:false, error:'알림 연결 상태를 불러오지 못했어요. 인터넷을 확인해 주세요.' };
   }
   S.view.tg = next;
-  if (S.view.parentTab === 'notify' && $('#modalRoot .sheet')) openModal(parentSheet());
+  if (S.view.parentTab === 'notify' && parentVisible()) parentShow();
 }
 
 async function tgSendTest(afterLink){
@@ -3453,8 +3542,9 @@ const PD_THINK = {
 const byAtDesc = k => (a, b) => String(b[k] || '').localeCompare(String(a[k] || ''));
 /* 기록 관리에서도 — 이 부모님이 들어 있는 방의 글만 (방에 없는 사람은 열람할 수 없다) */
 function pdRoomOk(room){ const me = 'p:' + (S.parentId || 'owner'); return chatCanSee(me, chatRoom(room || 'family')); }
+/* 할 일은 '할 일' 칸, 책·단어·여행·가고 싶은 곳은 아이 화면에서 바로 고치고 지운다 — 여기에는 아이 화면에서 못 고치는 기록만 */
 const PD_KINDS = [
-  { id:'todos', ico:'📋', label:'할 일', coll:'todos', list:k => S.data.todos.filter(x => x.kidId === k.id && !x.archived),
+  { id:'todos', hidden:true, ico:'📋', label:'할 일', coll:'todos', list:k => S.data.todos.filter(x => x.kidId === k.id && !x.archived),
     t:x => `${x.icon || '📌'} ${x.title}`,
     s:x => `${x.repeatDays && x.repeatDays.length ? x.repeatDays.slice().sort().map(i => DAYNAMES[i]).join('·') + '요일' : '매일'} · ${x.createdBy === 'kid' ? '아이가 정한 할 일' : '부모님이 정한 할 일'}`,
     f:() => [['title', '할 일', 'text', 40], ['icon', '그림 (이모지 하나)', 'text', 8]], need:'title',
@@ -3463,27 +3553,9 @@ const PD_KINDS = [
     t:x => pdTodo(x.todoId), s:x => `${pdDate(x.date)} · ${x.done ? '했어요' : '하는 중'}${x.durationSec ? ` · ${Math.round(x.durationSec / 60)}분` : ''}`,
     f:() => [['mins', '공부한 시간 (분)', 'number', 3]], get:(x, key) => key === 'mins' ? String(Math.round((x.durationSec || 0) / 60)) : x[key],
     put:v => ({ durationSec:clamp(Math.round(+v.mins || 0), 0, 600) * 60 }), delNote:() => '이 날 한 일이 “아직 안 한 일”로 돌아가요.' },
-  { id:'books', ico:'📚', label:'책장', coll:'books',
-    list:k => S.data.books.filter(b => b.kidId === k.id).sort((a, b) => String(b.readAt || b.addedAt || '').localeCompare(String(a.readAt || a.addedAt || ''))),
-    t:b => `${bookRead(b) ? '📗' : '📘'} ${b.title || '제목 없는 책'}`,
-    s:b => [b.author || '지은이 몰라요', b.category, bookRead(b) ? (b.readAt ? pdDate(b.readAt) + ' 읽음' : '읽음') : '읽을 책', b.ar ? 'AR ' + b.ar : '', b.feel ? '💭 ' + b.feel : ''].filter(Boolean).join(' · '),
-    edit:'book', delNote:() => '책장에서 사라져요. 이 책에서 담은 낱말은 단어 가방에 남아요.', del:async b => { await removeCoverFile(b); await Store.remove('books', b.id); } },
-  { id:'words', ico:'🫧', label:'단어 가방', coll:'words', list:k => S.data.words.filter(w => w.kidId === k.id).slice().reverse(),
-    t:w => `${w.emoji || ''} ${w.term}`, s:w => `${w.meaning || '뜻이 아직 없어요'} · 복습 ${w.box || 1}단계`,
-    f:() => [['term', '낱말', 'text', 40], ['meaning', '뜻', 'text', 80], ['meaningEn', '쉬운 영어 풀이', 'text', 120], ['emoji', '그림 (이모지 하나)', 'text', 8]], need:'term' },
   { id:'think', ico:'💭', label:'생각 기록', coll:'think', list:k => S.data.think.filter(x => x.kidId === k.id && PD_THINK[x.type]).sort(byAtDesc('at')),
     t:x => PD_THINK[x.type].t(x), s:x => `${pdDate(x.at)} · ${PD_THINK[x.type].s(x) || '아직 비어 있어요'}`, f:x => PD_THINK[x.type].f,
     del:async x => { if (x.img){ try { await photoDel(x.img); } catch(e){} } await Store.remove('think', x.id); } },
-  { id:'trips', ico:'🌏', label:'여행', coll:'trips', list:k => S.data.trips.filter(x => (x.kidIds || []).includes(k.id)).sort(byAtDesc('at')),
-    t:x => `${wFlag(x.code)} ${wName(x.code)}${x.place ? ' · ' + x.place : ''}`, s:x => [x.date, x.with, x.did].filter(Boolean).join(' · ') || '적은 내용이 없어요',
-    f:() => [['place', '어디', 'text', 30], ['date', '언제', 'date', 10], ['with', '누구랑', 'text', 40], ['did', '한 일', 'area', 150], ['ate', '먹은 것', 'text', 60], ['best', '제일 기억에 남는 것', 'text', 80]],
-    delNote:x => (x.kidIds || []).length > 1 ? '함께 간 여행이라 이 아이 기록에서만 빠져요.' : '사진과 함께 지워지고 되돌릴 수 없어요.',
-    del:async (x, k) => { const rest = (x.kidIds || []).filter(i => i !== k.id);
-      if (rest.length) await Store.update('trips', x.id, { kidIds:rest });
-      else { for (const ph of (x.photos || [])){ try { await photoDel(ph); } catch(e){} } await Store.remove('trips', x.id); } } },
-  { id:'wishes', ico:'⭐', label:'가고 싶은 곳', coll:'wishes', list:k => S.data.wishes.filter(x => x.kidId === k.id).sort(byAtDesc('at')),
-    t:x => `${wFlag(x.code)} ${wName(x.code)}${x.place ? ' · ' + x.place : ''}`, s:x => [x.why, x.todo].filter(Boolean).join(' · ') || '적은 내용이 없어요',
-    f:() => [['place', '어디', 'text', 30], ['why', '가고 싶은 까닭', 'area', 100], ['todo', '하고 싶은 것', 'text', 80], ['with', '누구랑', 'text', 40], ['when', '언제', 'text', 30], ['pack', '챙길 것', 'text', 60]] },
   { id:'stamps', ico:'🛂', label:'여권 도장', coll:'stamps', list:k => S.data.stamps.filter(x => x.kidId === k.id).sort(byAtDesc('at')),
     t:x => `${wFlag(x.code)} ${wName(x.code)}`, s:x => `${pdDate(x.date || x.at)} · ${x.kind === 'found' ? '진짜 지구본에서 찾았어요' : '오늘의 나라를 배웠어요'}` },
   { id:'kudos', ico:'💌', label:'받은 칭찬', coll:'kudos', list:k => S.data.kudos.filter(x => x.to === k.id && pdRoomOk(x.room)).sort(byAtDesc('at')),
@@ -3501,9 +3573,9 @@ const PD_KINDS = [
     delNote:() => '철자 연습 기록이 처음으로 돌아가요.' }
 ];
 function pdState(){
-  const ks = kids(), v = S.view.pd || (S.view.pd = { kid:'', kind:'todos', edit:null, del:null, more:40 });
+  const ks = kids(), v = S.view.pd || (S.view.pd = { kid:'', kind:'sessions', edit:null, del:null, more:40 });
   if (!ks.some(k => k.id === v.kid)) v.kid = (ks.find(k => k.id === S.kidId) || ks[0] || {}).id || '';
-  if (!PD_KINDS.some(x => x.id === v.kind)) v.kind = 'todos';
+  if (!PD_KINDS.some(x => x.id === v.kind)) v.kind = PD_KINDS.find(x => !x.hidden).id;
   return v;
 }
 function pdField(key, label, type, max){
@@ -3535,7 +3607,7 @@ function pdTab(){
   return `<div class="card">
     <p class="muted" style="margin:0 0 8px;font-size:13px">아이마다 기록을 보고 ✏️ 고치거나 🗑 지울 수 있어요. 지운 기록은 되돌릴 수 없어요.</p>
     <div class="pd-kidtabs" role="tablist" aria-label="아이 고르기">${ks.map(x => `<button class="pd-kidtab" role="tab" data-act="pdKid" data-arg="${x.id}" aria-selected="${x.id === v.kid}"><span class="avatar" style="background:${kidColor(x).bg}">${esc(x.avatar || '')}</span><b>${esc(x.name)}</b></button>`).join('')}</div>
-    <div class="chips">${PD_KINDS.map(x => { const n = x.list(k).length; return `<button class="chip" data-act="pdKind" data-arg="${x.id}" aria-pressed="${x.id === v.kind}">${x.ico} ${x.label}${n ? ` <small>${n}</small>` : ''}</button>`; }).join('')}</div>
+    <div class="chips">${PD_KINDS.filter(x => !x.hidden || x.id === v.kind).map(x => { const n = x.list(k).length; return `<button class="chip" data-act="pdKind" data-arg="${x.id}" aria-pressed="${x.id === v.kind}">${x.ico} ${x.label}${n ? ` <small>${n}</small>` : ''}</button>`; }).join('')}</div>
   </div>
   <div class="card">
     <h3 class="sub" style="margin:0 0 6px">${kind.ico} ${esc(k.name)}의 ${kind.label} <span class="muted" style="font-size:14px">${all.length}개</span></h3>
@@ -3544,7 +3616,7 @@ function pdTab(){
   </div>`;
 }
 function pdFind(id){ const v = pdState(), kind = PD_KINDS.find(x => x.id === v.kind); return { v, kind, k:kid(v.kid), x:(S.data[kind.coll] || []).find(y => y.id === id) }; }
-function pdOpen(){ openModal(parentSheet()); }
+function pdOpen(){ parentShow(); }
 ACTS.pdKid = (arg) => { const v = pdState(); v.kid = arg; v.edit = v.del = null; v.more = 40; kvClear('pd_'); pdOpen(); };
 ACTS.pdKind = (arg) => { const v = pdState(); v.kind = arg; v.edit = v.del = null; v.more = 40; kvClear('pd_'); pdOpen(); };
 ACTS.pdMore = () => { pdState().more += 40; pdOpen(); };
@@ -3555,14 +3627,15 @@ ACTS.pdEdit = (arg) => {
   (kind.f(x) || []).forEach(f => kvSet('pd_' + f[0], String(kind.get ? kind.get(x, f[0]) : (x[f[0]] == null ? '' : x[f[0]]))));
   v.edit = x.id; v.del = null; pdOpen();
 };
-ACTS.pdEditNo = () => { const v = pdState(); v.edit = null; kvClear('pd_'); pdOpen(); };
+function pdDone(v){ if (v.back === 'todos'){ v.back = null; v.kind = PD_KINDS.find(x => !x.hidden).id; S.view.parentTab = 'todos'; } }   // 할 일 칸에서 왔으면 돌아간다
+ACTS.pdEditNo = () => { const v = pdState(); v.edit = null; kvClear('pd_'); pdDone(v); pdOpen(); };
 ACTS.pdSave = async (arg) => {
   const { v, kind, x } = pdFind(arg); if (!x) return;
   const vals = {};
   (kind.f(x) || []).forEach(f => { vals[f[0]] = String(kv('pd_' + f[0])).trim().slice(0, f[3] || 200); });
   if (kind.need && !vals[kind.need]){ toast('비워 둘 수 없는 칸이 있어요'); return; }
   await Store.update(kind.coll, x.id, kind.put ? kind.put(vals) : vals);
-  v.edit = null; kvClear('pd_'); toast('고쳤어요 ✨'); pdOpen();
+  v.edit = null; kvClear('pd_'); toast('고쳤어요 ✨'); pdDone(v); pdOpen();
 };
 ACTS.pdDel = (arg) => { const v = pdState(); v.del = arg; v.edit = null; pdOpen(); };
 ACTS.pdDelNo = () => { pdState().del = null; pdOpen(); };
@@ -3576,7 +3649,7 @@ ACTS.pdBack = () => { S.view.bookEdit = null; pdOpen(); };
 /* 할 일 탭의 ✏️ — 기록 관리의 할 일 고치기로 바로 간다 */
 ACTS.pdTodoEdit = (arg) => {
   const t = S.data.todos.find(x => x.id === arg); if (!t) return;
-  S.view.parentTab = 'data'; const v = pdState(); v.kid = t.kidId; v.kind = 'todos'; v.more = 40;
+  S.view.parentTab = 'data'; const v = pdState(); v.kid = t.kidId; v.kind = 'todos'; v.more = 40; v.back = 'todos';   // 고치기가 끝나면 할 일 칸으로
   ACTS.pdEdit(arg);
 };
 
@@ -3591,7 +3664,7 @@ function parentSheet(){
   if (t === 'todos'){
     // 아이마다 탭으로 나눈다 (기록 관리처럼) — 고른 아이의 할 일만
     const newDays = S.view.newTodoDays || (S.view.newTodoDays = {});
-    const tk = ks.find(k => k.id === S.view.todoKid) || ks[0];
+    const tk = ks.find(k => k.id === S.view.todoKid) || ks.find(k => k.id === S.kidId) || ks[0];
     const tabs = ks.length > 1 ? `<div class="pd-kidtabs" role="tablist" aria-label="아이 고르기">${ks.map(x => { const n = S.data.todos.filter(y => y.kidId === x.id && !y.archived).length;
       return `<button class="pd-kidtab" role="tab" data-act="todoKid" data-arg="${x.id}" aria-selected="${!!tk && x.id === tk.id}"><span class="avatar" style="background:${kidColor(x).bg}">${esc(x.avatar || '')}</span><b>${esc(x.name)}</b>${n ? ` <small class="muted">${n}</small>` : ''}</button>`; }).join('')}</div>` : '';
     body = tabs + (tk ? [tk] : []).map(k=>{
@@ -3622,7 +3695,7 @@ function parentSheet(){
               aria-pressed="${picked.includes(i)}">${n}</button>`).join('')}
           </div>
           <div class="row" style="gap:8px">
-            <input class="field grow" data-newtodo="${k.id}" placeholder="할 일 적기 (예: 책 20분 읽기)"
+            <input class="field grow" id="newTodo-${k.id}" data-newtodo="${k.id}" placeholder="할 일 적기 (예: 책 20분 읽기)"
               value="${esc((S.view.newTodoText||{})[k.id] || '')}">
             <button class="btn sm" data-addtodo="${k.id}">추가</button>
           </div>
@@ -3685,7 +3758,6 @@ function parentSheet(){
         <p class="muted" style="margin:5px 0 0;font-size:13px">
           이 주소를 아는 사람만 우리 기록을 볼 수 있어요. 아무에게나 알려주지 마세요.</p>
       </div>
-      <button class="btn ghost wide" id="setPin">비밀번호 바꾸기</button>
       <button class="btn ghost wide" id="netTest">🌐 연결 테스트</button>
       <div id="netResult"></div>
       <button class="btn ghost wide" id="${S.settings.sampleLoaded?'clearSample':'seedSample'}">
@@ -3738,11 +3810,11 @@ function parentSheet(){
 
   if (t === 'settings' && PB.bucket == null) photoBucketOk().then(() => { const el = document.getElementById('pbStatus'); if (el) el.textContent = `📷 여행·그림일기 사진: ${PB.bucket ? '🔒 가족 사진 저장소에 저장돼요 (우리 가족만 볼 수 있어요)' : '📱 지금은 사진을 찍은 기기에만 저장돼요'}`; });
   const pm = parentMe();
-  return `<div class="row" style="gap:8px;padding-right:44px"><h3 class="grow" style="margin:0">부모님 화면${pm ? ` <small class="muted" style="font-size:15px">· ${esc(pm.avatar)} ${esc(pm.nick)}${pm.role === 'owner' ? ' (대표 관리자)' : ''}</small>` : ''}</h3>
-      <button class="btn ghost sm" data-act="parentOut">🔒 나가기</button></div>
+  return `${S.parentView ? '' : `<div class="row" style="gap:8px;padding-right:44px"><h3 class="grow" style="margin:0">부모님 화면${pm ? ` <small class="muted" style="font-size:15px">· ${esc(pm.avatar)} ${esc(pm.nick)}${pm.role === 'owner' ? ' (대표 관리자)' : ''}</small>` : ''}</h3>
+      <button class="btn ghost sm" data-act="parentOut">🔒 나가기</button></div>`}
     <div class="chips" style="margin:8px 0 14px">
-      ${tabBtn('todos','할 일')}${tabBtn('data','📂 기록 관리')}${tabBtn('speech','🦜 스피치')}${tabBtn('dict','✏️ 받아쓰기')}${tabBtn('think','💭 생각')}${tabBtn('kids','아이')}${tabBtn('parents','👪 부모님')}${tabBtn('notify','알림')}${tabBtn('unlock','놀이 승인' +
-      (pendingRequests().length ? `<span class="dot-badge">${pendingRequests().length}</span>` : ''))}${tabBtn('settings','설정')}
+      ${tabBtn('todos','할 일')}${tabBtn('speech','🦜 스피치')}${tabBtn('dict','✏️ 받아쓰기')}${tabBtn('think','💭 생각')}${tabBtn('kids','아이')}${tabBtn('parents','👪 부모님')}${tabBtn('notify','알림')}${tabBtn('unlock','놀이 승인' +
+      (pendingRequests().length ? `<span class="dot-badge">${pendingRequests().length}</span>` : ''))}${tabBtn('settings','설정')}${tabBtn('data','📂 기록 관리')}
     </div>
     ${body}`;
 }
@@ -6739,7 +6811,7 @@ async function eccReview(blob, heardSr){
   ttTalk(t.say + (fb.tip && !nMiss ? ' ' + fb.tip : ''));
 }
 ACTS.eccMic = () => { eccMic(); };
-ACTS.eccSrToggle = async () => { const on = S.settings.eccSr !== 'off' && S.settings.eccSr !== false; await Store.saveSettings({ eccSr:on ? 'off' : 'on' }); ECC.srOff = false; S.view.parentTab = 'speech'; openModal(parentSheet()); };
+ACTS.eccSrToggle = async () => { const on = S.settings.eccSr !== 'off' && S.settings.eccSr !== false; await Store.saveSettings({ eccSr:on ? 'off' : 'on' }); ECC.srOff = false; S.view.parentTab = 'speech'; parentShow(); };
 ACTS.eccStop = () => { eccStop(); };
 ACTS.eccRestart = () => {                                    // 녹음 중 — 처음부터 다시
   const t = TT; if (!t || t.kind !== 'ecc' || t.step !== 'rec') return;
@@ -7086,7 +7158,7 @@ async function ttAddSample(){
 async function ttCheckStatus(){
   try { const r = await fetch('/api/coach', { cache:'no-store' }); S.view.ttStatus = await r.json(); }
   catch(e){ S.view.ttStatus = { error:true }; }
-  if (S.view.parentTab === 'speech' && $('#modalRoot .sheet')) openModal(parentSheet());
+  if (S.view.parentTab === 'speech' && parentVisible()) parentShow();
 }
 function speechTab(){
   if (window.claude){
@@ -7222,7 +7294,7 @@ async function ttRunPrep(){
   const d = S.view.ttDraft; if (!d || d.busy) return;
   const list = d.sentences.map(s => String(s.en || '').trim()).filter(Boolean);
   if (!list.length){ toast('문장이 하나는 있어야 해요'); return; }
-  d.busy = true; d.msg = ''; openModal(parentSheet());
+  d.busy = true; d.msg = ''; parentShow();
   try {
     const j = await ttAsk({ task:'prep', sentences:d.sentences.map(s => ttMask(String(s.en || '').trim())) });
     (j.items || []).forEach((it, i) => {
@@ -7236,7 +7308,7 @@ async function ttRunPrep(){
     d.sentences.forEach((s, i) => ttLocalPrep(s, i));
   }
   d.busy = false;
-  if (S.view.parentTab === 'speech' && $('#modalRoot .sheet')) openModal(parentSheet());
+  if (S.view.parentTab === 'speech' && parentVisible()) parentShow();
 }
 async function ttSaveDraft(){
   const d = S.view.ttDraft; if (!d || d.busy) return;
@@ -7260,18 +7332,18 @@ async function ttSaveDraft(){
   } else await Store.add('scripts', { ...data, createdAt:new Date().toISOString() });
   ttEnsureTodos(kidIds);
   S.view.ttDraft = null;
-  openModal(parentSheet());
+  parentShow();
   toast('원고를 저장했어요 🦜 아이 화면의 스피치 탭에서 시작해요');
 }
 /* 부모님 화면 단추 — 처리했으면 true */
 async function ttParentClick(t, d){
   if (t.id === 'ttNew'){
     S.view.ttDraft = { step:'paste', title:'', text:'', contestDate:'', limitText:'2:00', kidIds:kids().map(k => k.id), sentences:[] };
-    openModal(parentSheet()); return true;
+    parentShow(); return true;
   }
   const dr = S.view.ttDraft;
-  if (t.id === 'ttCancel'){ S.view.ttDraft = null; openModal(parentSheet()); return true; }
-  if (d.ttkid && dr){ dr.kidIds = dr.kidIds.includes(d.ttkid) ? dr.kidIds.filter(x => x !== d.ttkid) : dr.kidIds.concat(d.ttkid); openModal(parentSheet()); return true; }
+  if (t.id === 'ttCancel'){ S.view.ttDraft = null; parentShow(); return true; }
+  if (d.ttkid && dr){ dr.kidIds = dr.kidIds.includes(d.ttkid) ? dr.kidIds.filter(x => x !== d.ttkid) : dr.kidIds.concat(d.ttkid); parentShow(); return true; }
   if (t.id === 'ttSplit' && dr){
     const list = ttSplit(dr.text);
     if (!list.length){ toast('원고를 먼저 붙여넣어 주세요'); return true; }
@@ -7279,13 +7351,13 @@ async function ttParentClick(t, d){
     dr.sentences = list.map((x, i) => old.find(s => ttNorm(s.en).join(' ') === ttNorm(x.en).join(' '))
       || ttLocalPrep({ en:x.en, ko:x.ko || '', cue:'', stress:[], end:'', tricky:[] }, i));
     dr.step = 'edit';
-    openModal(parentSheet());
+    parentShow();
     if (dr.sentences.some(s => !s.ko)) ttRunPrep();            // 뜻이 빈 문장이 있으면 뚜뚜가 바로 채운다
     return true;
   }
-  if (t.id === 'ttBack' && dr){ dr.step = 'paste'; openModal(parentSheet()); return true; }
-  if (t.id === 'ttAddSent' && dr){ dr.sentences.push({ en:'', ko:'', cue:'', stress:[], end:'fall', tricky:[] }); openModal(parentSheet()); return true; }
-  if (d.ttdel && dr){ dr.sentences.splice(+d.ttdel, 1); openModal(parentSheet()); return true; }
+  if (t.id === 'ttBack' && dr){ dr.step = 'paste'; parentShow(); return true; }
+  if (t.id === 'ttAddSent' && dr){ dr.sentences.push({ en:'', ko:'', cue:'', stress:[], end:'fall', tricky:[] }); parentShow(); return true; }
+  if (d.ttdel && dr){ dr.sentences.splice(+d.ttdel, 1); parentShow(); return true; }
   if (t.id === 'ttPrep'){ ttRunPrep(); return true; }
   if (t.id === 'ttSave'){ await ttSaveDraft(); return true; }
   if (d.ttedit){
@@ -7293,14 +7365,14 @@ async function ttParentClick(t, d){
     S.view.ttDraft = { id:sc.id, step:'edit', title:sc.title || '', text:(sc.sentences || []).map(s => s.en).join('\n'),
       contestDate:sc.contestDate || '', limitText:sc.timeLimitSec ? fmtClock(sc.timeLimitSec) : '', kidIds:(sc.kidIds || []).slice(),
       sentences:JSON.parse(JSON.stringify(sc.sentences || [])), prepped:true };
-    openModal(parentSheet()); return true;
+    parentShow(); return true;
   }
   if (d.ttassign){
     const [sid, kidId] = d.ttassign.split('|'), sc = S.data.scripts.find(x => x.id === sid); if (!sc) return true;
     const ids = (sc.kidIds || []).includes(kidId) ? sc.kidIds.filter(x => x !== kidId) : (sc.kidIds || []).concat(kidId);
     await Store.update('scripts', sid, { kidIds:ids });
     if (!sc.sample) ttEnsureTodos(ids);
-    openModal(parentSheet()); return true;
+    parentShow(); return true;
   }
   if (d.ttreset){
     const sc = S.data.scripts.find(x => x.id === d.ttreset); if (!sc) return true;
@@ -7308,7 +7380,7 @@ async function ttParentClick(t, d){
       note:'외운 단계와 복습 날짜가 처음으로 돌아가요. 기기에 있는 녹음은 그대로 남아요.',
       onOk: async () => {
         for (const p of S.data.speech.filter(x => x.scriptId === sc.id)){ delete TT_PID[p.kidId + '|' + p.scriptId]; await Store.remove('speech', p.id); }
-        S.view.parentTab = 'speech'; openModal(parentSheet()); toast('진도를 처음으로 돌렸어요');
+        S.view.parentTab = 'speech'; parentShow(); toast('진도를 처음으로 돌렸어요');
       } });
     return true;
   }
@@ -7319,30 +7391,30 @@ async function ttParentClick(t, d){
       onOk: async () => {
         for (const p of S.data.speech.filter(x => x.scriptId === sc.id)){ delete TT_PID[p.kidId + '|' + p.scriptId]; await Store.remove('speech', p.id); }
         await Store.remove('scripts', sc.id);
-        S.view.parentTab = 'speech'; openModal(parentSheet()); toast('원고를 지웠어요');
+        S.view.parentTab = 'speech'; parentShow(); toast('원고를 지웠어요');
       } });
     return true;
   }
   if (t.id === 'ttAiToggle'){
-    if (S.settings.ttAi === true){ await Store.saveSettings({ ttAi:false }); openModal(parentSheet()); toast('AI 듣기를 껐어요. 기기 안에서만 들어요'); return true; }
+    if (S.settings.ttAi === true){ await Store.saveSettings({ ttAi:false }); parentShow(); toast('AI 듣기를 껐어요. 기기 안에서만 들어요'); return true; }
     askConfirm({ title:'뚜뚜 AI 듣기를 켤까요?', okLabel:'알고 켤게요',
       note:'켜면 아이가 말한 한 문장 녹음(몇 초)을 구글 Gemini로 보내 낱말·발음·억양을 확인해요. 이 앱은 녹음을 서버에 저장하지 않고, 이름이 든 문장은 보내지 않아요. '
         + '다만 무료 등급에서는 보낸 내용이 구글 서비스 개선에 쓰이고 사람이 검토할 수 있어요. 또 Gemini API 약관은 18세 미만이 쓰는 서비스에는 쓰지 않도록 정하고 있어요. '
         + '꺼 두어도 뚜뚜는 기기 안에서 소리 크기·빠르기·높낮이를 봐줘요.',
-      onOk: async () => { await Store.saveSettings({ ttAi:true }); S.view.parentTab = 'speech'; openModal(parentSheet()); toast('AI 듣기를 켰어요 🦜'); } });
+      onOk: async () => { await Store.saveSettings({ ttAi:true }); S.view.parentTab = 'speech'; parentShow(); toast('AI 듣기를 켰어요 🦜'); } });
     return true;
   }
   if (t.id === 'ttVoiceTest'){ say('Hello, everyone! Thank you for listening.', { lang:'en', rate:0.85 }); return true; }
-  if (t.id === 'ttNvToggle'){ await Store.saveSettings({ ttNatural:S.settings.ttNatural === false }); NV.offUntil = 0; NV.fails = 0; openModal(parentSheet()); return true; }
+  if (t.id === 'ttNvToggle'){ await Store.saveSettings({ ttNatural:S.settings.ttNatural === false }); NV.offUntil = 0; NV.fails = 0; parentShow(); return true; }
   if (d.ttkov){
     nvUnlock();
-    if (d.ttkov !== 'test'){ await Store.saveSettings({ koVoice:d.ttkov === 'ai' ? 'ai' : 'device' }); openModal(parentSheet()); }
+    if (d.ttkov !== 'test'){ await Store.saveSettings({ koVoice:d.ttkov === 'ai' ? 'ai' : 'device' }); parentShow(); }
     voice('안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?', { lang:'ko' });
     return true;
   }
   if (d.ttnv){
     nvUnlock(); NV.offUntil = 0; NV.fails = 0;
-    await Store.saveSettings({ ttNvVoice:d.ttnv }); openModal(parentSheet());
+    await Store.saveSettings({ ttNvVoice:d.ttnv }); parentShow();
     const ok = await voice(S.settings.koVoice === 'ai' ? '안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?' : 'Hello! I am Ttuttu. Let’s practice together!', { lang:S.settings.koVoice === 'ai' ? 'ko' : 'en' });
     if (!nvOn()) toast('자연스러운 목소리를 지금은 쓸 수 없어서 기기 목소리로 들려드렸어요');
     return true;
@@ -9033,7 +9105,7 @@ ACTS.vsNo = () => { const p = Object.values(VSN.peers).find(x => x.where === 'lo
 /* ---------- 방 ---------- */
 function vsOpen(game, asId){
   if (VS) return;
-  const k = curKid(), me = asId || (k ? k.id : ''); if (!me) return;
+  const k = curKid(), me = asId || (S.parentView && S.parentId ? 'p:' + S.parentId : (k ? k.id : '')); if (!me) return;   // 부모님 모드면 부모님으로
   if (!S.sb || window.claude){ toast('같이 놀기는 인터넷에 연결된 앱에서만 할 수 있어요'); return; }
   nvUnlock(); audioCtx();
   const peerGame = (Object.values(VSN.peers).find(p => p.where === 'lobby' && VS_GAMES[p.game]) || {}).game;   // 먼저 온 사람이 고른 놀이로
@@ -10693,19 +10765,19 @@ function dlKeep(){
   if (g('dlText') != null) dr.text = g('dlText');
   if (g('dlDate') != null) dr.testDate = g('dlDate');
 }
-ACTS.dlNew = () => { const n = S.data.dlists.filter(l => !l.archived && !l.sample).length + 1; S.view.dlDraft = { no:String(n), title:`${n}급`, text:'', testDate:'', kidIds:[] }; openModal(parentSheet()); };
+ACTS.dlNew = () => { const n = S.data.dlists.filter(l => !l.archived && !l.sample).length + 1; S.view.dlDraft = { no:String(n), title:`${n}급`, text:'', testDate:'', kidIds:[] }; parentShow(); };
 ACTS.dlEdit = (arg) => {
   const l = S.data.dlists.find(x => x.id === arg); if (!l) return;
   S.view.dlDraft = { id:l.id, no:String(l.no || ''), title:l.title || '', text:l.lines.join('\n'), testDate:l.testDate || '', kidIds:Array.isArray(l.kidIds) ? l.kidIds.slice() : [] };
-  openModal(parentSheet());
+  parentShow();
 };
-ACTS.dlCancel = () => { S.view.dlDraft = null; openModal(parentSheet()); };
+ACTS.dlCancel = () => { S.view.dlDraft = null; parentShow(); };
 ACTS.dlWho = (arg) => {
   dlKeep(); const dr = S.view.dlDraft; if (!dr) return;
   if (!arg) dr.kidIds = [];
   else dr.kidIds = dr.kidIds.includes(arg) ? dr.kidIds.filter(x => x !== arg) : dr.kidIds.concat(arg);
   if (dr.kidIds.length >= kids().length) dr.kidIds = [];
-  openModal(parentSheet());
+  parentShow();
 };
 ACTS.dlSave = async () => {
   dlKeep(); const dr = S.view.dlDraft; if (!dr) return;
@@ -10725,7 +10797,7 @@ ACTS.dlSave = async () => {
     }
     await Store.update('dlists', dr.id, data);
   } else await Store.add('dlists', { ...data, createdAt:new Date().toISOString() });
-  S.view.dlDraft = null; toast('급수표를 저장했어요 ✏️'); openModal(parentSheet());
+  S.view.dlDraft = null; toast('급수표를 저장했어요 ✏️'); parentShow();
 };
 ACTS.dlDel = (arg) => {
   const l = S.data.dlists.find(x => x.id === arg); if (!l) return;
@@ -10734,7 +10806,7 @@ ACTS.dlDel = (arg) => {
     onOk: async () => {
       for (const p of S.data.dprog.filter(x => x.listId === l.id)) await Store.remove('dprog', p.id);
       await Store.remove('dlists', l.id);
-      S.view.parentTab = 'dict'; openModal(parentSheet()); toast('지웠어요');
+      S.view.parentTab = 'dict'; parentShow(); toast('지웠어요');
     } });
 };
 ACTS.dlAddGroups = async () => {
@@ -10746,7 +10818,7 @@ ACTS.dlAddGroups = async () => {
     await Store.add('dlists', { no, title:String(g.title || `${no}급`).slice(0, 20), lines:g.lines.slice(0, 40), kidIds:dr.kidIds.slice(),
       testDate:'', createdAt:new Date(Date.now() + n).toISOString() });
   }
-  S.view.dlDraft = null; toast(`급수표 ${dr.groups.length}개를 넣었어요. 시험 날은 ‘고치기’에서 정할 수 있어요 ✏️`); openModal(parentSheet());
+  S.view.dlDraft = null; toast(`급수표 ${dr.groups.length}개를 넣었어요. 시험 날은 ‘고치기’에서 정할 수 있어요 ✏️`); parentShow();
 };
 /* 사진을 줄여서(긴 쪽 1600px) 서버로 보낸다 — 위치 정보 같은 사진 속 정보는 다시 그리면서 사라진다 */
 function imgShrink(file, max, q){
@@ -10766,7 +10838,7 @@ function imgShrink(file, max, q){
 function blobB64(blob){ return new Promise((ok, bad) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1] || ''); r.onerror = () => bad(r.error); r.readAsDataURL(blob); }); }
 async function dlPhoto(file){
   dlKeep(); const dr = S.view.dlDraft; if (!dr || !file) return;
-  dr.busy = true; dr.msg = ''; openModal(parentSheet());
+  dr.busy = true; dr.msg = ''; parentShow();
   try {
     const b = await imgShrink(file, 1600, 0.85);
     const j = await ttAsk({ task:'ocr', image:await blobB64(b), mime:'image/jpeg' }, 60000);
@@ -10780,7 +10852,7 @@ async function dlPhoto(file){
     dr.msgOk = true;
   } catch(e){ dr.msg = (e && e.message) || '사진을 읽지 못했어요. 직접 적어 주세요.'; dr.msgOk = false; }
   dr.busy = false;
-  if (S.view.dlDraft === dr) openModal(parentSheet());
+  if (S.view.dlDraft === dr) parentShow();
 }
 
 /* ============================================================
@@ -11531,20 +11603,20 @@ function thinkTab(){
 ACTS.pGoalAdd = async () => {
   const t = kv('pGoal').trim(); if (!t){ toast('약속을 적어 주세요'); return; }
   const list = (S.settings.goalExtra || []).concat({ id:'x' + Date.now().toString(36), icon:'⭐', text:t.slice(0, 30), auto:'', target:5 });
-  await Store.saveSettings({ goalExtra:list }); kvClear('pGoal'); openModal(parentSheet()); toast('약속 메뉴에 넣었어요');
+  await Store.saveSettings({ goalExtra:list }); kvClear('pGoal'); parentShow(); toast('약속 메뉴에 넣었어요');
 };
-ACTS.pGoalDel = async (arg) => { await Store.saveSettings({ goalExtra:(S.settings.goalExtra || []).filter(g => g.id !== arg) }); openModal(parentSheet()); };
+ACTS.pGoalDel = async (arg) => { await Store.saveSettings({ goalExtra:(S.settings.goalExtra || []).filter(g => g.id !== arg) }); parentShow(); };
 ACTS.pMissionAdd = async () => {
   const t = kv('pMission').trim(); if (!t){ toast('미션을 적어 주세요'); return; }
   const list = (S.settings.missionExtra || []).concat({ id:'x' + Date.now().toString(36), icon:'🧩', title:t.slice(0, 40) });
-  await Store.saveSettings({ missionExtra:list }); kvClear('pMission'); openModal(parentSheet()); toast('미션을 넣었어요');
+  await Store.saveSettings({ missionExtra:list }); kvClear('pMission'); parentShow(); toast('미션을 넣었어요');
 };
-ACTS.pMissionDel = async (arg) => { await Store.saveSettings({ missionExtra:(S.settings.missionExtra || []).filter(m => m.id !== arg) }); openModal(parentSheet()); };
+ACTS.pMissionDel = async (arg) => { await Store.saveSettings({ missionExtra:(S.settings.missionExtra || []).filter(m => m.id !== arg) }); parentShow(); };
 ACTS.pThinkAi = () => {
-  if (S.settings.thinkAi){ Store.saveSettings({ thinkAi:false }).then(() => openModal(parentSheet())); return; }
+  if (S.settings.thinkAi){ Store.saveSettings({ thinkAi:false }).then(() => parentShow()); return; }
   askConfirm({ title:'AI 도우미를 켤까요?', okLabel:'읽었어요, 켤게요',
     note:'아이가 적은 궁금한 점과 일기 글이 Gemini(구글)로 가요. 이름은 가려서 보내요. Gemini API 약관은 18세 미만이 쓰는 서비스에 쓰지 않도록 정하고 있어요. 언제든 끌 수 있어요.',
-    onOk: async () => { await Store.saveSettings({ thinkAi:true }); S.view.parentTab = 'think'; openModal(parentSheet()); } });
+    onOk: async () => { await Store.saveSettings({ thinkAi:true }); S.view.parentTab = 'think'; parentShow(); } });
 };
 
 /* ============================================================
@@ -12231,7 +12303,7 @@ async function worldFound(code){
    이벤트 배선
    ============================================================ */
 document.addEventListener('click', async (e) => {
-  if (CHAT.open && isParentId(CHAT.as)) parentTouch();
+  if (S.parentView || (CHAT.open && isParentId(CHAT.as))) parentTouch();
   const t = e.target.closest('[data-tab],[data-pick],[data-tick],[data-start],[data-stop],[data-deltodo],'+
     '[data-book],[data-mode],[data-say],[data-game],[data-mem],[data-ml],[data-mr],[data-cat],[data-stars],'+
     '[data-close],[data-pin],[data-pinclear],[data-pinback],[data-ptab],[data-addtodo],[data-parentdel],'+
@@ -12277,13 +12349,10 @@ document.addEventListener('click', async (e) => {
   /* --- 프로필 --- */
   if (d.pick){ kidEnter(d.pick); return; }
   if (t.id === 'whoami' || t.id === 'homeBtn'){
+    if (S.parentView){ if (t.id === 'whoami') ACTS.parentSwitch(); else parentLeave('부모님 모드를 마쳤어요. 다음엔 비밀번호를 다시 물어봐요 🔒'); return; }
     S.kidId = null; S.view.game = null; stopStars(); render(); return;
   }
-  if (t.id === 'addKidHere'){
-    S.view.pin=''; S.view.pinError=''; S.view.pinPurpose='parent'; S.view.parentTab='kids';
-    openModal(pinSheet('부모님, 친구를 추가할까요?'));
-    return;
-  }
+  if (t.id === 'addUser'){ openModal(userAddSheet()); return; }
   if (t.id === 'openParent'){ S.view.pin=''; S.view.pinError=''; S.view.pinPurpose='parent'; openModal(pinSheet('부모님 화면')); return; }
 
   /* --- 새 기능 단추 (data-act) — 받아쓰기·철자·생각·세계 --- */
@@ -12312,7 +12381,7 @@ document.addEventListener('click', async (e) => {
   }
   if (d.parentkudo){
     await Store.add('kudos', { from:'p:' + (S.parentId || 'owner'), to:d.parentkudo, reason:'😇 착한 일을 했어요', room:'family', at:new Date().toISOString() });
-    toast('칭찬 스티커를 붙여줬어요 😇'); openModal(parentSheet()); return;
+    toast('칭찬 스티커를 붙여줬어요 😇'); parentShow(); return;
   }
 
   /* --- 탭 --- */
@@ -12442,7 +12511,7 @@ document.addEventListener('click', async (e) => {
     await Store.update('books', e.id, patch);
     S.view.bookEdit = null;
     toast('책을 고쳤어요 ✨');
-    if (e.back === 'parent') openModal(parentSheet()); else showBook(b.id);
+    if (e.back === 'parent') parentShow(); else showBook(b.id);
     return;
   }
   if (d.bookdel){
@@ -12512,6 +12581,7 @@ document.addEventListener('click', async (e) => {
     return;
   }
   if (d.approve){
+    if (S.parentView && parentOn() && !S.fromTelegram){ parentTouch(); approveRequest(d.approve); confetti(); render(); return; }
     S.view.pin=''; S.view.pinError=''; S.view.pinPurpose = 'approve:'+d.approve;
     openModal(pinSheet('승인하시겠어요?', S.fromTelegram ? `텔레그램으로 연 승인은 대표 관리자 ${ownerNick()}의 비밀번호로만 돼요.` : '부모님 비밀번호를 눌러주세요.'));
     return;
@@ -12557,7 +12627,7 @@ document.addEventListener('click', async (e) => {
   if (d.ptab){
     S.view.parentTab = d.ptab;
     if (d.ptab === 'notify') S.view.tg = null;   // 알림 탭을 열 때마다 연결 상태를 새로 확인
-    openModal(parentSheet()); return;
+    parentShow(); return;
   }
   if (d.addtodo){
     const inp = document.querySelector(`[data-newtodo="${d.addtodo}"]`);
@@ -12568,7 +12638,7 @@ document.addEventListener('click', async (e) => {
       repeatDays:days.slice().sort(), createdBy:'parent', createdAt:new Date().toISOString() });
     if (S.view.newTodoDays) S.view.newTodoDays[d.addtodo] = [];
     if (S.view.newTodoText) S.view.newTodoText[d.addtodo] = '';
-    openModal(parentSheet());
+    parentShow();
     toast('할 일을 넣었어요');
     return;
   }
@@ -12585,7 +12655,7 @@ document.addEventListener('click', async (e) => {
       const n = +which;
       S.view.newTodoDays[kidId] = cur.includes(n) ? cur.filter(x=>x!==n) : cur.concat(n).sort();
     }
-    openModal(parentSheet());
+    parentShow();
     return;
   }
   // 이미 있는 할 일의 요일 바꾸기
@@ -12598,18 +12668,18 @@ document.addEventListener('click', async (e) => {
     if (which === 'all') next = [];
     else { const n = +which; next = cur.includes(n) ? cur.filter(x=>x!==n) : cur.concat(n).sort(); }
     await Store.update('todos', todoId, { repeatDays: next });
-    openModal(parentSheet());
+    parentShow();
     return;
   }
-  if (d.parentdel){ await Store.update('todos', d.parentdel, { archived:true }); openModal(parentSheet()); return; }
-  if (d.kidav){ const [id,av] = d.kidav.split('|'); await Store.update('profiles', id, { avatar:av }); openModal(parentSheet()); return; }
-  if (d.kidcol){ const [id,ci] = d.kidcol.split('|'); await Store.update('profiles', id, { colorIdx:+ci }); openModal(parentSheet()); return; }
+  if (d.parentdel){ await Store.update('todos', d.parentdel, { archived:true }); parentShow(); return; }
+  if (d.kidav){ const [id,av] = d.kidav.split('|'); await Store.update('profiles', id, { avatar:av }); parentShow(); return; }
+  if (d.kidcol){ const [id,ci] = d.kidcol.split('|'); await Store.update('profiles', id, { colorIdx:+ci }); parentShow(); return; }
   if (d.kidstyle){
     const [id, f, v] = d.kidstyle.split('|'), k = kid(id); if (!k) return;
     const st = kidStyle(k);
     if (f === 'strengths') st.strengths = st.strengths.includes(v) ? st.strengths.filter(x => x !== v) : st.strengths.concat(v);
     else st[f] = st[f] === v ? '' : v;                    // 한 번 더 누르면 비운다
-    await Store.update('profiles', id, { style:st }); openModal(parentSheet()); return;
+    await Store.update('profiles', id, { style:st }); parentShow(); return;
   }
   if (t.id === 'addKid'){
     askText({
@@ -12618,13 +12688,13 @@ document.addEventListener('click', async (e) => {
         const i = kids().length;
         await Store.add('profiles', { name:n, avatar:AVATARS[i%AVATARS.length],
           colorIdx:i%KID_COLORS.length, stars:0, createdAt:new Date().toISOString() });
-        openModal(parentSheet());
+        parentShow();
       }
     });
     return;
   }
-  if (d.grant){ grantUnlock(d.grant); openModal(parentSheet()); return; }
-  if (d.relock){ relock(d.relock); openModal(parentSheet()); return; }
+  if (d.grant){ grantUnlock(d.grant); parentShow(); return; }
+  if (d.relock){ relock(d.relock); parentShow(); return; }
   if (t.id === 'setPin'){
     S.view.pinNext = 'parent';
     openModal(pinSetSheet());
@@ -12645,7 +12715,7 @@ document.addEventListener('click', async (e) => {
     const next = S.view.pinNext || 'parent';
     S.view.pinNext = null;
     toast('새 비밀번호를 정했어요');
-    if (next === 'parent'){ S.view.parentTab = S.view.parentTab || 'settings'; openModal(parentSheet()); }
+    if (next === 'parent'){ S.view.parentTab = S.view.parentTab || 'settings'; parentShow(); }
     else continueAfterPin(next);
     return;
   }
@@ -12659,7 +12729,7 @@ document.addEventListener('click', async (e) => {
       onOk: async () => {
         await Store.saveSettings({ telegram:null });
         S.view.tg = null; S.view.parentTab = 'notify';
-        openModal(parentSheet()); toast('연결을 끊었어요');
+        parentShow(); toast('연결을 끊었어요');
       }
     });
     return;
@@ -12667,7 +12737,7 @@ document.addEventListener('click', async (e) => {
   if (d.tglink){
     const [id, ...rest] = d.tglink.split('|');
     await Store.saveSettings({ telegram:{ chatId:String(id), name:rest.join('|'), linkedAt:new Date().toISOString() } });
-    openModal(parentSheet());
+    parentShow();
     tgSendTest(true);
     return;
   }
@@ -12688,13 +12758,13 @@ document.addEventListener('click', async (e) => {
   if (t.id === 'exportData'){ exportData(); return; }
   if (t.id === 'seedSample'){
     t.disabled = true; t.textContent = '넣는 중…';
-    await seedSample(); openModal(parentSheet()); return;
+    await seedSample(); parentShow(); return;
   }
   if (t.id === 'clearSample'){
     askConfirm({
       title:'샘플 데이터를 지울까요?', danger:true, okLabel:'지우기',
       note:'예시로 넣은 책·낱말·할 일만 지웁니다. 아이가 직접 넣은 기록은 그대로 있어요.',
-      onOk: async () => { await clearSample(); openModal(parentSheet()); toast('샘플을 지웠어요'); }
+      onOk: async () => { await clearSample(); parentShow(); toast('샘플을 지웠어요'); }
     });
     return;
   }
@@ -12802,6 +12872,7 @@ function pinTitle(){
   if (p.startsWith('globe:')) return '부모님, 확인해 주세요';
   if (p === 'chat') return '부모님으로 말하기';
   if (p.startsWith('kidin:')) return '부모님, 열어 주세요';
+  if (p === 'addParent') return '부모님 추가';
   return '부모님 화면';
 }
 /* 처음 비밀번호(아무도 정하지 않은 상태)로 들어왔으면, 새 비밀번호를 정해야 넘어간다.
@@ -12828,7 +12899,7 @@ function continueAfterPin(purpose){
   } else if (purpose === 'unlock'){
     grantUnlock(S.kidId); closeModal(); confetti(); render();
   } else {
-    S.view.parentTab = S.view.parentTab || 'todos'; openModal(parentSheet());
+    S.view.parentTab = S.view.parentTab || 'todos'; parentStart('parent');
   }
 }
 
@@ -12849,6 +12920,11 @@ function checkPin(){
       setTimeout(() => { const i = $('#newPin1'); if (i) i.focus(); }, 60);
       return;
     }
+    if (purpose === 'addParent'){
+      if (who.role !== 'owner'){ S.parentId = null; S.parentAt = 0; S.view.pinError = `부모님 추가는 대표 관리자 ${ownerNick()}의 비밀번호로 해요`; openModal(pinSheet(pinTitle())); return; }
+      S.parentId = null; S.parentAt = 0; S.view.paWho = { add:true, av:'👩', next:'parent' }; kvClear('pw'); openModal(parentWhoSheet());
+      setTimeout(() => { const i = $('#pwNick'); if (i) i.focus(); }, 60); return;
+    }
     if (who.role === 'owner' && (purpose === 'parent' || purpose === '' || purpose === 'chat')){   // 처음 정한 비밀번호 — 누구인지 고르기
       S.parentId = null; S.parentAt = 0;                       // 고를 때까지는 들어온 걸로 치지 않는다
       S.view.paWho = { add:false, av:'👩', next:purpose || 'parent' }; kvClear('pw'); openModal(parentWhoSheet()); return;
@@ -12859,7 +12935,7 @@ function checkPin(){
       approveRequest(purpose.slice(8)); closeModal(); confetti(); render();
     } else if (purpose === 'unlock'){
       grantUnlock(S.kidId); closeModal(); confetti(); render();
-    } else { S.view.parentTab = S.view.parentTab || 'todos'; openModal(parentSheet()); }
+    } else { S.view.parentTab = S.view.parentTab || 'todos'; parentStart('parent'); }
   } else {
     S.view.pin = ''; S.view.pinError = '비밀번호가 달라요';
     openModal(pinSheet(pinTitle()));
@@ -13423,6 +13499,7 @@ setInterval(() => {
     const tt = document.getElementById('todayTime');
     if (tt) tt.textContent = fmtDur(todaySeconds(S.kidId));
   }
+  if (S.parentView && !parentOn()) render();                  // 부모님 모드 15분 — draw()가 시작 화면으로 돌려보낸다
   const un = S.kidId && activeUnlock(S.kidId);
   const left = document.getElementById('unlockLeft');
   if (left && un) left.textContent = fmtClock((new Date(un.expiresAt).getTime()-Date.now())/1000);
