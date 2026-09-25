@@ -21,7 +21,8 @@ export default async function handler(req, res) {
   const mins = Number(minutes) || 20;
 
   const host = req.headers['x-forwarded-host'] || req.headers.host;
-  const link = familyId ? `https://${host}/#f=${familyId}` : `https://${host}/`;
+  // tg=1 — 텔레그램 단추로 연 승인은 대표 관리자 비밀번호로만 된다(앱이 알아본다)
+  const link = familyId ? `https://${host}/#f=${familyId}&tg=1` : `https://${host}/`;
 
   // 이름 뒤 조사를 받침에 맞춘다 — "하윤이가" / "나리가"
   const last = name.charCodeAt(name.length - 1);
@@ -34,7 +35,7 @@ export default async function handler(req, res) {
     `🔔 <b>${esc(subject)} 놀이를 하고 싶대요!</b>\n` +
     `오늘 할 일을 모두 마쳤어요.\n` +
     `요청한 시간: ${mins}분\n\n` +
-    `아래 버튼을 눌러 앱에서 승인해 주세요.`;
+    `아래 버튼을 눌러 앱에서 승인해 주세요. (대표 관리자 비밀번호)`;
 
   try {
     const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {

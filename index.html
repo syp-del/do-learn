@@ -214,6 +214,13 @@
   .tr-ar{font-size:11px;color:var(--cocoa-soft);white-space:nowrap;}
   /* 📂 기록 관리 */
   .pd-row{display:flex;gap:6px;align-items:center;padding:10px 0;border-bottom:1px solid var(--blush);}
+  .pd-kidtabs{display:flex;gap:6px;margin:0 0 10px;border-bottom:3px solid var(--blush);}
+  .pd-kidtab{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 8px;border:3px solid transparent;border-bottom:0;border-radius:16px 16px 0 0;
+    background:transparent;font-family:inherit;color:var(--cocoa-soft);cursor:pointer;margin-bottom:-3px;}
+  .pd-kidtab b{font-family:var(--display);font-size:18px;}
+  .pd-kidtab[aria-selected="true"]{background:var(--surface);border-color:var(--blush);color:var(--cocoa);box-shadow:0 -4px 10px rgba(107,74,82,.06);}
+  .rec-count{font-family:var(--display);font-size:72px;line-height:1;color:var(--berry-deep);animation:rec-pop .7s ease-out infinite;}
+  @keyframes rec-pop{0%{transform:scale(1.35);opacity:.2}30%{transform:scale(1);opacity:1}100%{transform:scale(.95);opacity:1}}
   .pd-row .btn.sm{padding:6px 10px;}
   .pd-t{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .pd-s{font-size:13px;color:var(--cocoa-soft);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
@@ -557,6 +564,21 @@
   .chat-room-side small{font-size:11px;color:var(--cocoa-soft);}
   .chat-badge.in{position:static;box-shadow:none;}
   .chat-new{background:var(--surface);border:2px solid var(--blush);border-radius:18px;padding:12px;}
+  /* 🎤 음성 메시지 */
+  .cb-voice{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--blush);border-radius:18px 18px 18px 6px;padding:8px 12px;font-family:inherit;color:var(--cocoa);cursor:pointer;min-width:150px;}
+  .cb.me .cb-voice{background:#FFE3EA;border-color:#FFC7D4;border-radius:18px 18px 6px 18px;}
+  .cb-voice .vc-i{width:30px;height:30px;border-radius:50%;background:var(--berry);color:#fff;display:grid;place-items:center;font-size:13px;flex:none;}
+  .cb-voice.on .vc-i{background:var(--mint-deep);}
+  .vc-wave{display:flex;gap:2px;align-items:center;height:22px;}
+  .vc-wave i{width:3px;border-radius:2px;background:#E7A9B6;height:40%;}
+  .vc-wave i:nth-child(3n){height:85%;} .vc-wave i:nth-child(4n+1){height:60%;} .vc-wave i:nth-child(5n+2){height:100%;}
+  .cb-voice.on .vc-wave i{animation:vc-bob .6s ease-in-out infinite alternate;background:var(--mint-deep);}
+  .cb-voice.on .vc-wave i:nth-child(2n){animation-delay:.2s;}
+  @keyframes vc-bob{from{transform:scaleY(.5)}to{transform:scaleY(1.1)}}
+  .cb-voice small{font-size:12px;color:var(--cocoa-soft);white-space:nowrap;}
+  .chat-rec{display:flex;align-items:center;gap:8px;}
+  .chat-rec-dot{width:14px;height:14px;border-radius:50%;background:#E5484D;animation:tt-pulse 1.1s ease-in-out infinite;flex:none;}
+  .chat-rec b{font-family:var(--display);font-size:20px;min-width:44px;}
   /* 🤝 같이 놀기 */
   .vs-row{display:flex;gap:10px;align-items:center;background:var(--surface);border:2px solid var(--blush);border-radius:18px;padding:10px 12px;}
   .vs-row.in{border-color:#9CDDBE;background:#F2FCF7;}
@@ -1092,14 +1114,14 @@ const CHEERS = [
 ];
 /* 다꾸 메모지 — 부모님이 직접 쓴 응원이 있으면 그걸 보여주고, 없으면 오늘의 응원 문구 */
 function memoNote(){
-  const recent = S.data.chat.filter(x => x.from === 'parent' && (x.room || 'family') === 'family' && x.at && Date.now() - new Date(x.at).getTime() < 7 * 86400000)
+  const recent = S.data.chat.filter(x => isParentId(x.from) && x.kind !== 'voice' && (x.room || 'family') === 'family' && x.at && Date.now() - new Date(x.at).getTime() < 7 * 86400000)
     .sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
   const note = recent ? { text:recent.text, at:recent.at } : S.settings.parentNote;
-  const hasNote = note && String(note.text || '').trim();
+  const hasNote = note && String(note.text || '').trim(), who = recent ? chatWho(recent.from).name : '엄마 아빠';
   return `<div class="memo" role="note">
-    <div class="memo-head">${hasNote ? '💌 엄마 아빠가 남긴 쪽지' : '✏️ 오늘의 응원'}</div>
+    <div class="memo-head">${hasNote ? `💌 ${esc(subj(who))} 남긴 쪽지` : '✏️ 오늘의 응원'}</div>
     <p class="memo-text">${esc(hasNote ? note.text : cheerOfDay())}</p>
-    ${hasNote ? `<div class="memo-sign">— 사랑하는 엄마 아빠가</div>` : ''}
+    ${hasNote ? `<div class="memo-sign">— 사랑하는 ${esc(subj(who))}</div>` : ''}
   </div>`;
 }
 
@@ -1183,6 +1205,9 @@ function hasJong(name){
   return (c - 0xAC00) % 28 > 0;
 }
 const subj = name => `${name}${hasJong(name) ? '이가' : '가'}`;   // ~이/가
+/* 몇 번째 — "2번"은 '이번'·'두 번(두 차례)'으로 헷갈리게 읽혀서 우리말 순서 말로 쓴다 */
+const KO_ORD = ['첫', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉', '열', '열한', '열두', '열세', '열네', '열다섯', '열여섯', '열일곱', '열여덟', '열아홉', '스무'];
+const koOrd = n => n >= 1 && n <= KO_ORD.length ? `${KO_ORD[n - 1]} 번째` : `${n}번째`;
 const topic = name => `${name}${hasJong(name) ? '이는' : '는'}`;  // ~이/는
 const callName = name => `${name}${hasJong(name) ? '아' : '야'}`; // 부르는 말 — "서윤아" / "나리야"
 
@@ -1364,7 +1389,7 @@ const Store = {
 async function sbAllItems(){
   const all = [];
   for (let from = 0; from < 50000; from += 1000){
-    const r = await S.sb.from('items').select('id,coll,data').order('id').range(from, from + 999);
+    const r = await S.sb.from('items').select('id,coll,data').neq('coll', 'vclip').order('id').range(from, from + 999);   // 🎤 음성은 누를 때만 받는다
     if (r.error) throw r.error;
     const rows = r.data || [];
     all.push(...rows);
@@ -1583,6 +1608,107 @@ function restoreInputs(root, snap){
   }
 }
 
+/* ============================================================
+   👪 부모님 계정 — 부모님이 여러 명(엄마·아빠·할머니…)이어도 닉네임과 저마다의 비밀번호로 들어온다
+   대표 관리자(owner)는 처음 정한 부모님 비밀번호(settings.pin)의 주인이고, 닉네임은 settings.ownerNick(비우면 "뚜뚜아빠").
+   다른 부모님은 settings.parents [{id, nick, avatar, pinHash, at}] — 비밀번호는 그대로 두지 않고 섞은 값(parentPinHash)만.
+   비밀번호를 누르면 누구인지 알아본다(S.parentId). 비밀번호는 서로 겹치지 않게 만든다.
+   텔레그램 연결·알림과 텔레그램 단추로 연 승인(#tg=1)은 대표 관리자만 한다. 대화방에서는 각자 닉네임으로 말한다(from 'p:id').
+   예전에 'parent'로 쓴 글은 "엄마 아빠"로 보여 준다(누가 썼는지 모르니까).
+   ============================================================ */
+const PARENT_AVATARS = ['👨', '👩', '👵', '👴', '🧑', '🧔', '👱'];
+function ownerNick(){ return String(S.settings.ownerNick || '').trim().slice(0, 10) || '뚜뚜아빠'; }
+function parentList(){
+  const owner = { id:'owner', nick:ownerNick(), avatar:S.settings.ownerAvatar || '👨', role:'owner' };
+  const rest = (Array.isArray(S.settings.parents) ? S.settings.parents : []).filter(p => p && p.id && p.id !== 'owner')
+    .map(p => ({ id:String(p.id), nick:String(p.nick || '부모님').slice(0, 10), avatar:p.avatar || '🧑', role:'admin', pinHash:p.pinHash || '', at:p.at || '' }));
+  return [owner].concat(rest);
+}
+function isParentId(id){ return id === 'parent' || /^p:/.test(String(id || '')); }
+function parentById(id){
+  if (id === 'parent') return { id:'parent', nick:'엄마 아빠', avatar:'👪', role:'legacy' };
+  const pid = String(id || '').replace(/^p:/, '');
+  return parentList().find(p => p.id === pid) || null;
+}
+function parentPinHash(pid, pin){ return kpinHash('parent|' + S.familyId + '|' + pid, String(pin).split('')); }
+function parentByPin(pin){
+  const p = String(pin || '');
+  if (p === String(S.settings.pin || '1234')) return parentList()[0];
+  return parentList().find(x => x.role === 'admin' && x.pinHash && x.pinHash === parentPinHash(x.id, p)) || null;
+}
+/* ~로/~으로 — 받침이 없거나 ㄹ 받침이면 '로' */
+function roEuro(w){ const s = String(w || ''), c = s.charCodeAt(s.length - 1) - 0xAC00, j = c >= 0 && c <= 11171 ? c % 28 : 0; return s + (j === 0 || j === 8 ? '로' : '으로'); }
+function parentMe(){ return S.parentId ? parentById('p:' + S.parentId) : null; }
+function parentIsOwner(){ return S.parentId === 'owner'; }
+/* 부모님 화면 → 👪 부모님 */
+function parentsTab(){
+  const me = parentMe() || parentList()[0], owner = parentIsOwner(), list = parentList(), v = S.view.pa || (S.view.pa = { del:'' });
+  const rows = list.map(p => {
+    if (v.del === p.id) return `<div class="pd-row pd-ask"><div class="grow"><b>🗑 ${esc(p.nick)} 계정을 지울까요?</b><div class="muted" style="font-size:13px">이 비밀번호로는 더 들어올 수 없어요. 대화방에 쓴 글은 남아요.</div></div>
+      <div class="row" style="gap:6px"><button class="btn ghost sm" data-act="paDelNo">그만두기</button><button class="btn sm" data-act="paDelOk" data-arg="${esc(p.id)}" style="background:var(--berry-deep)">지우기</button></div></div>`;
+    return `<div class="pd-row"><span class="avatar" style="background:#FFF1D0;width:40px;height:40px;font-size:24px">${esc(p.avatar)}</span>
+      <div class="grow"><div class="pd-t">${esc(p.nick)}${p.id === me.id ? ' <small class="muted">(나)</small>' : ''}</div>
+        <div class="pd-s">${p.role === 'owner' ? '⭐ 대표 관리자 · 텔레그램 알림·승인' : '부모님 관리자'}</div></div>
+      ${owner && p.role !== 'owner' ? `<button class="btn ghost sm" data-act="paDel" data-arg="${esc(p.id)}" aria-label="지우기">🗑</button>` : ''}</div>`;
+  }).join('');
+  return `<div class="card">
+    <h3 class="sub" style="margin:0 0 4px">👪 부모님 계정</h3>
+    <p class="muted" style="margin:0 0 8px;font-size:13px">부모님마다 닉네임과 비밀번호가 따로 있어요. 비밀번호를 누르면 누구인지 알아봐요. 대화방에서는 닉네임으로 말해요.</p>
+    ${rows}
+  </div>
+  <div class="card stack">
+    <h3 class="sub" style="margin:0">😊 내 닉네임 · 그림</h3>
+    <div class="row" style="gap:8px"><input class="field grow" id="paNick" maxlength="10" value="${esc(me.nick)}" placeholder="닉네임"><button class="btn sm" data-act="paNickSave">저장</button></div>
+    <div class="chips">${PARENT_AVATARS.map(a => `<button class="chip" data-act="paAvatar" data-arg="${a}" aria-pressed="${me.avatar === a}" style="font-size:20px">${a}</button>`).join('')}</div>
+    <button class="btn ghost wide sm" id="setPin">🔑 내 비밀번호 바꾸기</button>
+  </div>
+  ${owner ? `<div class="card stack">
+    <h3 class="sub" style="margin:0">➕ 부모님 추가</h3>
+    <p class="muted" style="margin:0;font-size:13px">대표 관리자만 추가할 수 있어요. 새 부모님은 자기 비밀번호로 들어와 닉네임으로 대화방에 참여해요.</p>
+    <input class="field" id="paNewNick" maxlength="10" placeholder="닉네임 (예: 뚜뚜엄마)" value="${esc(kv('paNewNick'))}" data-keep="paNewNick">
+    <div class="chips">${PARENT_AVATARS.map(a => `<button class="chip" data-act="paNewAv" data-arg="${a}" aria-pressed="${(S.view.paAv || '👩') === a}" style="font-size:20px">${a}</button>`).join('')}</div>
+    <input class="field" id="paNewPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="비밀번호 숫자 4자리">
+    <p class="muted" id="paMsg" style="margin:0;min-height:18px;font-size:13px"></p>
+    <button class="btn wide" data-act="paAdd">부모님 추가</button>
+  </div>` : `<p class="muted" style="font-size:13px;text-align:center">부모님 추가·삭제는 대표 관리자 ${esc(ownerNick())}만 할 수 있어요.</p>`}`;
+}
+function paPinTaken(pin, exceptId){ const p = parentByPin(pin); return !!p && p.id !== exceptId; }
+ACTS.paNickSave = async () => {
+  const me = parentMe(); if (!me) return;
+  const nick = (($('#paNick') || {}).value || '').trim().slice(0, 10); if (!nick){ toast('닉네임을 적어 주세요'); return; }
+  if (me.role === 'owner') await Store.saveSettings({ ownerNick:nick });
+  else await Store.saveSettings({ parents:(S.settings.parents || []).map(p => p.id === me.id ? Object.assign({}, p, { nick }) : p) });
+  toast(`이제 ${roEuro(nick)} 보여요 😊`); openModal(parentSheet());
+};
+ACTS.paAvatar = async (arg) => {
+  const me = parentMe(); if (!me) return;
+  if (me.role === 'owner') await Store.saveSettings({ ownerAvatar:arg });
+  else await Store.saveSettings({ parents:(S.settings.parents || []).map(p => p.id === me.id ? Object.assign({}, p, { avatar:arg }) : p) });
+  openModal(parentSheet());
+};
+ACTS.paNewAv = (arg) => { S.view.paAv = arg; const pin = ($('#paNewPin') || {}).value || ''; openModal(parentSheet()); const i = $('#paNewPin'); if (i) i.value = pin; };
+ACTS.paAdd = async () => {
+  if (!parentIsOwner()) return;
+  const nick = String(kv('paNewNick') || (($('#paNewNick') || {}).value || '')).trim().slice(0, 10), pin = (($('#paNewPin') || {}).value || '').trim();
+  const say = t => { const m = $('#paMsg'); if (m){ m.textContent = t; m.style.color = 'var(--berry-deep)'; } };
+  if (!nick){ say('닉네임을 적어 주세요.'); return; }
+  if (parentList().some(p => p.nick === nick)){ say('같은 닉네임이 있어요. 다른 닉네임으로 해 주세요.'); return; }
+  if (!/^\d{4}$/.test(pin)){ say('비밀번호는 숫자 4자리예요.'); return; }
+  if (pin === '1234' || paPinTaken(pin, '')){ say('다른 부모님과 겹치지 않는 숫자로 정해 주세요.'); return; }
+  const id = uid().slice(0, 8);
+  const list = (S.settings.parents || []).concat({ id, nick, avatar:S.view.paAv || '👩', pinHash:parentPinHash(id, pin), at:new Date().toISOString() });
+  await Store.saveSettings({ parents:list });
+  kvClear('paNew'); S.view.paAv = '';
+  toast(`${nick} 님을 부모님으로 추가했어요 👪`); openModal(parentSheet());
+};
+ACTS.paDel = (arg) => { S.view.pa = { del:arg }; openModal(parentSheet()); };
+ACTS.paDelNo = () => { S.view.pa = { del:'' }; openModal(parentSheet()); };
+ACTS.paDelOk = async (arg) => {
+  if (!parentIsOwner() || arg === 'owner') return;
+  await Store.saveSettings({ parents:(S.settings.parents || []).filter(p => p.id !== arg) });
+  S.view.pa = { del:'' }; toast('부모님 계정을 지웠어요'); openModal(parentSheet());
+};
+
 /* ---------- 💌 쪽지·칭찬 스티커 알림 — 화면 오른쪽에 살짝 떠오른다 ----------
    부모님이 쪽지를 붙이거나(settings.parentNote), 형제·부모님이 칭찬 스티커를 보내면(kudos) 받는 아이 화면 오른쪽에 카드가 뜬다.
    "고마워요!"를 누르면 본 걸로 기억한다(profile.noti = { since, seen[], noteAt }) — 다른 기기에서도 다시 뜨지 않는다.
@@ -1599,16 +1725,16 @@ function notiPending(k){
   if (note && String(note.text || '').trim() && note.at && note.at > st.noteAt && note.at > st.since)
     out.push({ key:'note:' + note.at, kind:'note', text:String(note.text) });
   const mine = new Set(chatRooms(k.id).filter(r => r.members.indexOf(k.id) >= 0).map(r => r.id));
-  chatAll().filter(x => mine.has(x.room) && x.from !== k.id && x.at > chatSeenAt(k.id, x.room) && x.at > st.since && st.seen.indexOf(x.id) < 0 && (x.kind === 'msg' || x.to === k.id))
-    .forEach(x => out.push({ key:x.id, kind:x.kind === 'kudo' ? 'kudo' : 'msg', text:x.text || '💖 칭찬 스티커', from:x.from, room:x.room }));
+  chatAll().filter(x => mine.has(x.room) && x.from !== k.id && x.at > chatSeenAt(k.id, x.room) && x.at > st.since && st.seen.indexOf(x.id) < 0 && (x.kind !== 'kudo' || x.to === k.id))
+    .forEach(x => out.push({ key:x.id, kind:x.kind === 'kudo' ? 'kudo' : 'msg', text:x.text || '💖 칭찬 스티커', from:x.from, room:x.room, clip:x.clip || '' }));
   return out;
 }
-function notiWho(x){ return x.from === 'parent' ? '엄마 아빠' : ((kid(x.from) || {}).name || '친구'); }
+function notiWho(x){ return chatWho(x.from).name; }
 function notiCard(x, more){
   const note = x.kind === 'note', msg = x.kind === 'msg';
   const ico = note ? '💌' : (msg ? '💬' : ((String(x.text).match(/^\S+/) || ['💖'])[0]));
   const rm = x.room && x.room !== 'family' ? chatRoom(x.room) : null;
-  const title = note ? '엄마 아빠가 쪽지를 남겼어요' : (msg ? `${subj(notiWho(x))} 말했어요${rm ? ` · ${rm.emoji} ${rm.name}` : ''}` : (x.from === 'parent' ? '엄마 아빠가 칭찬 스티커를 붙여 줬어요!' : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요!`));
+  const title = note ? '엄마 아빠가 쪽지를 남겼어요' : (msg ? `${subj(notiWho(x))} 말했어요${rm ? ` · ${rm.emoji} ${rm.name}` : ''}` : (isParentId(x.from) ? `${subj(notiWho(x))} 칭찬 스티커를 붙여 줬어요!` : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요!`));
   const body = note || msg ? `“${x.text}”` : String(x.text).replace(/^\S+\s/, '');
   return `<div class="noti-card ${note ? 'note' : 'kudo'}" data-key="${esc(x.key)}" role="status">
     <div class="noti-ico" aria-hidden="true">${esc(ico)}</div>
@@ -1646,6 +1772,7 @@ function notiFind(key){ const k = curKid(); return k ? notiPending(k).find(x => 
 ACTS.notiSay = (arg) => {
   const x = notiFind(arg); if (!x) return;
   nvUnlock();
+  if (x.clip){ vcPlay(x.clip); return; }                     // 🎤 음성 메시지는 그 목소리 그대로
   voice(x.kind === 'note' ? `엄마 아빠가 쪽지를 남겼어요. ${x.text}` : (x.kind === 'msg' ? `${subj(notiWho(x))} 말했어요. ${x.text}` : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요. ${String(x.text).replace(/^\S+\s/, '')}`), { lang:'ko' });
 };
 ACTS.notiChat = async (arg, btn) => { const x = notiFind(arg); await ACTS.notiOk(arg, btn); chatOpen((x && x.room) || 'family'); };
@@ -1656,7 +1783,7 @@ ACTS.notiOk = async (arg, btn) => {
   else if (st.seen.indexOf(arg) < 0) st.seen = st.seen.concat(arg).slice(-80);
   const el = btn && btn.closest('.noti-card');
   if (el){ el.classList.add('out'); setTimeout(() => { el.remove(); notiCheck(); }, 380); }
-  if (x && x.kind === 'kudo') toast(x.from === 'parent' ? '엄마 아빠의 칭찬, 마음에 쏙! 💕' : `${notiWho(x)}의 고마운 마음, 잘 받았어요 💕`);
+  if (x && x.kind === 'kudo') toast(isParentId(x.from) ? `${notiWho(x)}의 칭찬, 마음에 쏙! 💕` : `${notiWho(x)}의 고마운 마음, 잘 받았어요 💕`);
   await Store.update('profiles', k.id, { noti:st });
 };
 
@@ -1670,39 +1797,42 @@ ACTS.notiOk = async (arg, btn) => {
    ============================================================ */
 const CHAT = { open:false, as:'', tray:false, to:'', sig:'', room:'family', view:'room', pick:[], emoji:'🌈' };
 const CHAT_EMOJI = ['🌈', '🐰', '🐻', '🍓', '⭐', '🎈', '🚀', '🌻'];
-function chatMe(){ if (CHAT.as === 'parent') return 'parent'; return S.kidId && curKid() ? S.kidId : ''; }
+function chatMe(){ if (isParentId(CHAT.as)) return CHAT.as; return S.kidId && curKid() ? S.kidId : ''; }
 function chatWho(id){
-  if (id === 'parent') return { name:'엄마 아빠', avatar:'👪', bg:'#FFF1D0' };
+  if (isParentId(id)){ const p = parentById(id); return p ? { name:p.nick, avatar:p.avatar, bg:'#FFF1D0' } : { name:'부모님', avatar:'🧑', bg:'#FFF1D0' }; }
   const k = kid(id); return k ? { name:k.name, avatar:k.avatar || '🐰', bg:kidColor(k).bg } : { name:'친구', avatar:'🙂', bg:'#EEE' };
 }
-function chatFamily(){ return { id:'family', name:'우리 가족', emoji:'👪', members:kids().map(k => k.id).concat('parent'), fixed:true }; }
+function chatFamily(){ return { id:'family', name:'우리 가족', emoji:'👪', members:kids().map(k => k.id).concat(parentList().map(p => 'p:' + p.id)), fixed:true }; }
+/* 방에 있는 사람 — 예전 'parent'는 부모님 모두 */
+function chatMembers(r){ const out = []; (r.members || []).forEach(id => { if (id === 'parent') parentList().forEach(p => out.push('p:' + p.id)); else out.push(id); }); return Array.from(new Set(out)); }
 /* 내가 볼 수 있는 방 — 아이는 초대받은 방만, 엄마 아빠는 모두 */
 function chatRooms(me){
-  const list = S.data.chatrooms.filter(r => Array.isArray(r.members) && (me === 'parent' || r.members.indexOf(me) >= 0))
-    .map(r => ({ id:r.id, name:r.name || '우리 방', emoji:r.emoji || '💬', members:r.members, createdBy:r.createdBy, at:r.at }));
+  const list = S.data.chatrooms.filter(r => Array.isArray(r.members) && (isParentId(me) || chatMembers(r).indexOf(me) >= 0))
+    .map(r => ({ id:r.id, name:r.name || '우리 방', emoji:r.emoji || '💬', members:chatMembers(r), createdBy:r.createdBy, at:r.at }));
   return [chatFamily()].concat(list.sort((a, b) => String(chatLastAt(b.id) || b.at || '').localeCompare(String(chatLastAt(a.id) || a.at || ''))));
 }
-function chatRoom(id){ if (id === 'family' || !id) return chatFamily(); const r = S.data.chatrooms.find(x => x.id === id); return r ? { id:r.id, name:r.name || '우리 방', emoji:r.emoji || '💬', members:r.members || [], createdBy:r.createdBy } : null; }
-function chatInRoom(me, room){ return !!room && (me === 'parent' || room.members.indexOf(me) >= 0); }
+function chatRoom(id){ if (id === 'family' || !id) return chatFamily(); const r = S.data.chatrooms.find(x => x.id === id); return r ? { id:r.id, name:r.name || '우리 방', emoji:r.emoji || '💬', members:chatMembers(r), createdBy:r.createdBy } : null; }
+function chatInRoom(me, room){ return !!room && room.members.indexOf(me) >= 0; }          // 말할 수 있는 사람 — 방에 있는 사람
+function chatCanSee(me, room){ return !!room && (isParentId(me) || room.members.indexOf(me) >= 0); }   // 볼 수 있는 사람 — 부모님은 모든 방
 function chatAll(){
-  const a = S.data.chat.map(x => ({ id:x.id, kind:'msg', room:x.room || 'family', from:x.from, text:String(x.text || ''), at:String(x.at || '') }));
+  const a = S.data.chat.map(x => ({ id:x.id, kind:x.kind === 'voice' ? 'voice' : 'msg', room:x.room || 'family', from:x.from, text:x.kind === 'voice' ? '🎤 음성 메시지' : String(x.text || ''), clip:x.clip || '', secs:x.secs || 0, at:String(x.at || '') }));
   const b = S.data.kudos.map(x => ({ id:x.id, kind:'kudo', room:x.room || 'family', from:x.from, to:x.to, text:String(x.reason || ''), at:String(x.at || '') }));
   return a.concat(b).filter(x => x.at).sort((p, q) => p.at.localeCompare(q.at));
 }
 function chatItems(roomId){ const id = roomId || 'family'; return chatAll().filter(x => x.room === id).slice(-200); }
 function chatLastAt(roomId){ const it = chatItems(roomId); return it.length ? it[it.length - 1].at : ''; }
 function chatSeenMap(me){
-  if (me === 'parent'){ try { return JSON.parse(lsGet('dolearn.chatSeen.parent') || '{}') || {}; } catch(e){ return {}; } }
+  if (isParentId(me)){ try { return JSON.parse(lsGet('dolearn.chatSeen.' + me) || '{}') || {}; } catch(e){ return {}; } }
   const k = kid(me), n = (k && k.noti) || {};
   const m = Object.assign({}, n.chatSeen || {});
   if (!m.family && n.chatAt) m.family = n.chatAt;                         // 예전(방이 하나일 때) 기록
   return m;
 }
-function chatSeenAt(me, roomId){ const m = chatSeenMap(me); return m[roomId] || (me === 'parent' ? '' : notiState(kid(me)).since); }
+function chatSeenAt(me, roomId){ const m = chatSeenMap(me); return m[roomId] || (isParentId(me) ? '' : notiState(kid(me)).since); }
 /* 방마다 나에게 온 새 글 — 남이 쓴 글, 나에게 온 칭찬 스티커(엄마 아빠는 방 안의 모든 칭찬) */
 function chatUnreadIn(me, roomId){
   const seen = chatSeenAt(me, roomId);
-  return chatItems(roomId).filter(x => x.at > seen && x.from !== me && (x.kind === 'msg' || x.to === me || me === 'parent'));
+  return chatItems(roomId).filter(x => x.at > seen && x.from !== me && (x.kind !== 'kudo' || x.to === me || isParentId(me)));
 }
 function chatUnread(me){
   if (!me) return [];
@@ -1717,7 +1847,7 @@ function chatBadge(){
 async function chatMarkRead(){
   const me = chatMe(); if (!me || CHAT.view !== 'room') return;
   const room = CHAT.room, last = chatLastAt(room), note = S.settings.parentNote;
-  if (me === 'parent'){ const m = chatSeenMap('parent'); if (last && (m[room] || '') < last){ m[room] = last; lsSet('dolearn.chatSeen.parent', JSON.stringify(m)); } chatBadge(); return; }
+  if (isParentId(me)){ const m = chatSeenMap(me); if (last && (m[room] || '') < last){ m[room] = last; lsSet('dolearn.chatSeen.' + me, JSON.stringify(m)); } chatBadge(); return; }
   const k = kid(me); if (!k) return;
   const st = notiState(k), m = chatSeenMap(me);
   const noteNew = room === 'family' && note && note.at && note.at > (st.noteAt || '');   // 📌 쪽지도 가족방 맨 위에서 봤다
@@ -1735,7 +1865,7 @@ function chatRoomsHtml(){
   const me = chatMe();
   const rows = chatRooms(me).map(r => {
     const it = chatItems(r.id), last = it[it.length - 1], n = me && r.members.indexOf(me) >= 0 ? chatUnreadIn(me, r.id).length : 0;
-    const prev = last ? (last.kind === 'kudo' ? `🎁 ${chatWho(last.from).name} → ${chatWho(last.to).name} 칭찬 스티커` : `${chatWho(last.from).name}: ${last.text}`) : '아직 아무 말도 없어요';
+    const prev = last ? (last.kind === 'kudo' ? `🎁 ${chatWho(last.from).name} → ${chatWho(last.to).name} 칭찬 스티커` : `${chatWho(last.from).name}: ${last.kind === 'voice' ? `🎤 음성 메시지 (${vcTime(last.secs)})` : last.text}`) : '아직 아무 말도 없어요';
     return `<button class="chat-room" data-act="chatGo" data-arg="${esc(r.id)}"><span class="chat-room-ico">${esc(r.emoji)}</span>
       <div class="grow" style="min-width:0"><div class="row" style="gap:6px"><b>${esc(r.name)}</b><span class="chat-room-av">${chatAvatars(r.members)}</span></div>
         <div class="chat-room-last">${esc(prev)}</div></div>
@@ -1743,11 +1873,11 @@ function chatRoomsHtml(){
   }).join('');
   return `<div class="chat-rooms">${rows}
     ${me ? '<button class="btn ghost wide" data-act="chatNew" style="margin-top:6px">➕ 새 방 만들기</button>' : ''}
-    ${me === 'parent' ? '<p class="muted" style="font-size:12px;text-align:center;margin:6px 0 0">👀 엄마 아빠는 모든 방을 볼 수 있어요</p>' : ''}</div>`;
+    ${isParentId(me) ? '<p class="muted" style="font-size:12px;text-align:center;margin:6px 0 0">👀 부모님은 모든 방을 볼 수 있어요</p>' : ''}</div>`;
 }
 /* ---------- 새 방 만들기 — 초대할 사람 고르기 ---------- */
 function chatNewHtml(){
-  const me = chatMe(), all = kids().map(k => k.id).concat('parent');
+  const me = chatMe(), all = kids().map(k => k.id).concat(parentList().map(p => 'p:' + p.id));
   const picked = new Set(CHAT.pick.concat(me));
   const auto = Array.from(picked).map(id => chatWho(id).name).join('·');
   return `<div class="chat-new">
@@ -1759,7 +1889,7 @@ function chatNewHtml(){
     <input class="field" id="chatRoomName" maxlength="16" placeholder="${esc(auto)}" autocomplete="off">
     <div class="muted" style="font-size:14px;margin:10px 0 4px">방 그림</div>
     <div class="chips">${CHAT_EMOJI.map(e => `<button class="chip" data-act="chatEmoji" data-arg="${e}" aria-pressed="${CHAT.emoji === e}" style="font-size:20px">${e}</button>`).join('')}</div>
-    ${me !== 'parent' && !picked.has('parent') ? '<p class="muted" style="font-size:12px;margin:8px 0 0">👀 엄마 아빠는 모든 방을 볼 수 있어요</p>' : ''}
+    ${!isParentId(me) ? '<p class="muted" style="font-size:12px;margin:8px 0 0">👀 부모님은 모든 방을 볼 수 있어요</p>' : ''}
     <div class="row" style="gap:8px;margin-top:12px"><button class="btn ghost grow" data-act="chatList">그만두기</button><button class="btn grow" data-act="chatCreate" ${picked.size >= 2 ? '' : 'disabled'}>방 만들기</button></div>
   </div>`;
 }
@@ -1776,6 +1906,10 @@ function chatListHtml(){
       out += `<div class="cb kudo${mine ? ' me' : ''}"><span class="cb-av" style="background:${w.bg}">${esc(w.avatar)}</span>
         <div class="cb-body"><div class="cb-name">${esc(w.name)} → ${esc(to.name)} · ${chatTime(x.at)}</div>
           <div class="cb-sticker"><span class="cb-ico">${esc(ico)}</span><div><b>칭찬 스티커</b><div>${esc(body)}</div></div></div></div></div>`;
+    } else if (x.kind === 'voice'){
+      out += `<div class="cb${mine ? ' me' : ''}"><span class="cb-av" style="background:${w.bg}">${esc(w.avatar)}</span>
+        <div class="cb-body"><div class="cb-name">${esc(w.name)} · ${chatTime(x.at)}</div>
+          <button class="cb-voice${VC.playing === x.clip ? ' on' : ''}" data-act="chatPlay" data-arg="${esc(x.clip)}" aria-label="음성 메시지 듣기"><span class="vc-i">${VC.playing === x.clip ? '⏸' : '▶'}</span><span class="vc-wave">${'<i></i>'.repeat(Math.min(14, 4 + Math.round((x.secs || 1) / 2)))}</span><small>🎤 ${vcTime(x.secs)}</small></button></div></div>`;
     } else {
       out += `<div class="cb${mine ? ' me' : ''}"><span class="cb-av" style="background:${w.bg}">${esc(w.avatar)}</span>
         <div class="cb-body"><div class="cb-name">${esc(w.name)} · ${chatTime(x.at)}</div><div class="cb-text">${esc(x.text)}</div></div></div>`;
@@ -1784,17 +1918,17 @@ function chatListHtml(){
   return out;
 }
 /* 칭찬 스티커 — 이 방에 있는 다른 아이에게 (아이끼리는 하루 3번까지) */
-function chatKudoTargets(){ const me = chatMe(), r = chatRoom(CHAT.room); return r ? r.members.filter(id => id !== me && id !== 'parent' && kid(id)) : []; }
-function chatReasons(me){ return me === 'parent' ? KUDOS.concat(['😇 착한 일을 했어요', '🌟 끝까지 해냈어요']) : KUDOS; }
+function chatKudoTargets(){ const me = chatMe(), r = chatRoom(CHAT.room); return r && chatInRoom(me, r) ? r.members.filter(id => id !== me && !isParentId(id) && kid(id)) : []; }
+function chatReasons(me){ return isParentId(me) ? KUDOS.concat(['😇 착한 일을 했어요', '🌟 끝까지 해냈어요']) : KUDOS; }
 function chatTrayHtml(){
   const me = chatMe(); if (!me) return '';
   const others = chatKudoTargets();
   if (!others.length) return '<div class="chat-tray"><p class="muted" style="margin:0">이 방에는 칭찬 스티커를 보낼 친구가 없어요.</p></div>';
   if (others.indexOf(CHAT.to) < 0) CHAT.to = others[0];
-  const left = me === 'parent' ? 99 : 3 - kudosToday(me);
+  const left = isParentId(me) ? 99 : 3 - kudosToday(me);
   return `<div class="chat-tray">
     ${others.length > 1 ? `<div class="chips" style="margin-bottom:6px">${others.map(id => `<button class="chip" data-act="chatTo" data-arg="${id}" aria-pressed="${CHAT.to === id}">${esc(chatWho(id).avatar)} ${esc(chatWho(id).name)}</button>`).join('')}</div>`
-      : `<div class="muted" style="font-size:13px;margin-bottom:6px">🎁 ${esc(chatWho(CHAT.to).name)}에게 칭찬 스티커 보내기${me === 'parent' ? '' : ` (오늘 ${Math.max(0, left)}번 남았어요)`}</div>`}
+      : `<div class="muted" style="font-size:13px;margin-bottom:6px">🎁 ${esc(chatWho(CHAT.to).name)}에게 칭찬 스티커 보내기${isParentId(me) ? '' : ` (오늘 ${Math.max(0, left)}번 남았어요)`}</div>`}
     ${left > 0 ? `<div class="chat-stickers">${chatReasons(me).map((r, i) => `<button class="chat-st" data-act="chatKudo" data-arg="${i}">${esc(r)}</button>`).join('')}</div>`
       : '<p class="muted" style="margin:0;font-size:13px">오늘은 칭찬 스티커를 다 보냈어요. 내일 또 보내요! 글로 고마운 마음을 전해도 좋아요 💕</p>'}
   </div>`;
@@ -1803,22 +1937,25 @@ function chatComposeHtml(){
   const me = chatMe();
   if (!me) return `<div class="chat-who"><div class="muted" style="font-size:14px;margin-bottom:6px">누구로 말할까요?</div>
     <div class="chips" style="justify-content:center">${kids().map(k => `<button class="chip" data-act="chatAsKid" data-arg="${k.id}">${esc(k.avatar || '')} ${esc(k.name)}</button>`).join('')}
-      <button class="chip" data-act="chatAsParent">👪 엄마 아빠</button></div></div>`;
+      <button class="chip" data-act="chatAsParent">👪 부모님 (비밀번호)</button></div></div>`;
   if (CHAT.view !== 'room') return '';
   const room = chatRoom(CHAT.room);
   if (!chatInRoom(me, room)) return '<p class="muted" style="text-align:center;margin:0">이 방의 친구만 말할 수 있어요</p>';
+  if (CHAT.rec) return `<div class="chat-rec"><span class="chat-rec-dot"></span><b id="chatRecT">${CHAT.rec.starting ? '3…' : vcTime((Date.now() - CHAT.rec.t0) / 1000)}</b><span class="muted" style="font-size:13px">/ 0:30</span>
+      <div class="tt-level grow" id="chatRecLv"><span></span></div>
+      <button class="btn ghost sm" data-act="chatVoiceCancel">✕ 그만</button><button class="btn sm" data-act="chatVoiceSend">⏹ 보내기</button></div>`;
   return `${CHAT.tray ? chatTrayHtml() : ''}
     <div class="chat-compose">
+      ${micSupported() ? '<button class="btn ghost sm" data-act="chatVoice" aria-label="목소리로 보내기">🎤</button>' : ''}
       ${chatKudoTargets().length ? `<button class="btn ghost sm chat-gift" data-act="chatTray" aria-pressed="${CHAT.tray}" aria-label="칭찬 스티커">🎁</button>` : ''}
-      <input class="field grow" id="chatIn" maxlength="200" placeholder="${me === 'parent' ? '아이들에게 한마디 (쪽지)' : '하고 싶은 말'}" enterkeyhint="send" autocomplete="off">
-      ${srOk() ? '<button class="btn ghost sm" data-act="chatMic" aria-label="말로 쓰기">🎙</button>' : ''}
+      <input class="field grow" id="chatIn" maxlength="200" placeholder="${isParentId(me) ? '아이들에게 한마디 (쪽지)' : '하고 싶은 말'}" enterkeyhint="send" autocomplete="off">
       <button class="btn sm" data-act="chatSend">보내기</button>
     </div>`;
 }
 function chatHeadHtml(){
   const me = chatMe(), who = me ? chatWho(me) : null, r = chatRoom(CHAT.room);
   if (CHAT.view === 'room' && r){
-    const canDel = !r.fixed && (me === 'parent' || r.createdBy === me), canLeave = !r.fixed && me && me !== 'parent' && r.members.indexOf(me) >= 0;
+    const canDel = !r.fixed && (isParentId(me) || r.createdBy === me), canLeave = !r.fixed && me && !isParentId(me) && r.members.indexOf(me) >= 0;
     return `<button class="ttl-x" data-act="chatList" aria-label="방 목록">◀</button>
       <b class="chat-title">${esc(r.emoji)} ${esc(r.name)}</b><span class="chat-room-av">${chatAvatars(r.members)}</span>
       ${canDel ? '<button class="btn ghost sm" data-act="chatDel" aria-label="방 지우기">🗑</button>' : (canLeave ? '<button class="btn ghost sm" data-act="chatLeave">나가기</button>' : '')}
@@ -1848,15 +1985,18 @@ function chatOpen(room){
   CHAT.open = true; CHAT.tray = false;
   const me = chatMe();
   let r = chatRoom(room || CHAT.room);
-  if (!r || (me && !chatInRoom(me, r))) r = chatFamily();
+  if (!r || (me && !chatCanSee(me, r))) r = chatFamily();
   CHAT.room = r.id; CHAT.view = 'room';
   let w = document.getElementById('chatWrap');
   const first = !w;
   if (!w){ w = document.createElement('div'); w.id = 'chatWrap'; w.className = 'chat-wrap'; document.body.appendChild(w); }
   chatDraw(false, first);                                  // 처음 열 때만 오른쪽에서 스르륵
+  vcCleanup();
   const box = document.getElementById('notiBox'); if (box) box.innerHTML = '';   // 알림 카드는 대화방 안에서 다 보인다
 }
 function chatClose(){
+  if (CHAT.rec){ clearInterval(CHAT.recT); recCancel(); CHAT.rec = null; }
+  vcStop();
   CHAT.open = false; CHAT.as = ''; CHAT.tray = false;
   const w = document.getElementById('chatWrap'); if (w) w.remove();
   chatBadge(); setTimeout(notiCheck, 60);
@@ -1884,7 +2024,7 @@ ACTS.chatPick = (arg) => { const i = CHAT.pick.indexOf(arg); if (i >= 0) CHAT.pi
 ACTS.chatEmoji = (arg) => { CHAT.emoji = arg; const nm = ($('#chatRoomName') || {}).value || ''; chatDraw(false); const f = $('#chatRoomName'); if (f) f.value = nm; };
 ACTS.chatCreate = async () => {
   const me = chatMe(); if (!me) return;
-  const members = Array.from(new Set(CHAT.pick.concat(me))).filter(id => id === 'parent' || kid(id));
+  const members = Array.from(new Set(CHAT.pick.concat(me))).filter(id => (isParentId(id) && parentById(id)) || kid(id));
   if (members.length < 2){ toast('함께할 사람을 한 명 더 골라 주세요'); return; }
   const name = (($('#chatRoomName') || {}).value || '').trim().slice(0, 16) || members.map(id => chatWho(id).name).join('·');
   const id = await Store.add('chatrooms', { name, emoji:CHAT.emoji || '💬', members, createdBy:me, at:new Date().toISOString() });
@@ -1892,7 +2032,7 @@ ACTS.chatCreate = async () => {
   toast(`${name} 방을 만들었어요! 💬`);
 };
 ACTS.chatDel = () => {
-  const me = chatMe(), r = chatRoom(CHAT.room); if (!r || r.fixed || !(me === 'parent' || r.createdBy === me)) return;
+  const me = chatMe(), r = chatRoom(CHAT.room); if (!r || r.fixed || !(isParentId(me) || r.createdBy === me)) return;
   const l = document.getElementById('chatList');
   if (l) l.insertAdjacentHTML('afterbegin', `<div class="pd-row pd-ask" style="margin-bottom:8px"><div class="grow"><b>🗑 「${esc(r.name)}」 방을 지울까요?</b><div class="muted" style="font-size:13px">방 안의 글과 칭찬 스티커도 함께 지워져요.</div></div>
     <div class="row" style="gap:6px"><button class="btn ghost sm" data-act="chatGo" data-arg="${esc(r.id)}">그만두기</button><button class="btn sm" data-act="chatDelOk" style="background:var(--berry-deep)">지우기</button></div></div>`);
@@ -1900,15 +2040,17 @@ ACTS.chatDel = () => {
 };
 ACTS.chatDelOk = async () => {
   const r = chatRoom(CHAT.room); if (!r || r.fixed) return;
-  for (const x of S.data.chat.filter(m => m.room === r.id)) await Store.remove('chat', x.id);
+  const gone = S.data.chat.filter(m => m.room === r.id);
+  await vcDelete(gone.map(m => m.clip));
+  for (const x of gone) await Store.remove('chat', x.id);
   for (const x of S.data.kudos.filter(m => m.room === r.id)) await Store.remove('kudos', x.id);
   await Store.remove('chatrooms', r.id);
   CHAT.room = 'family'; CHAT.view = 'list'; chatDraw(false); toast('방을 지웠어요');
 };
 ACTS.chatLeave = async () => {
-  const me = chatMe(), rec = S.data.chatrooms.find(x => x.id === CHAT.room); if (!rec || !me || me === 'parent') return;
-  const members = (rec.members || []).filter(id => id !== me);
-  if (members.length < 2){ for (const x of S.data.chat.filter(m => m.room === rec.id)) await Store.remove('chat', x.id); await Store.remove('chatrooms', rec.id); }
+  const me = chatMe(), rec = S.data.chatrooms.find(x => x.id === CHAT.room); if (!rec || !me || isParentId(me)) return;
+  const members = chatMembers(rec).filter(id => id !== me);
+  if (members.length < 2){ const gone = S.data.chat.filter(m => m.room === rec.id); await vcDelete(gone.map(m => m.clip)); for (const x of gone) await Store.remove('chat', x.id); await Store.remove('chatrooms', rec.id); }
   else await Store.update('chatrooms', rec.id, { members });
   CHAT.room = 'family'; CHAT.view = 'list'; chatDraw(false); toast('방에서 나왔어요');
 };
@@ -1928,18 +2070,105 @@ ACTS.chatKudo = async (arg) => {
   const me = chatMe(); if (!me) return;
   const to = CHAT.to, reasons = chatReasons(me);
   if (!to || to === me || !kid(to) || chatKudoTargets().indexOf(to) < 0) return;
-  if (me !== 'parent' && kudosToday(me) >= 3){ toast('오늘은 칭찬 스티커를 다 보냈어요. 내일 또 보내요!'); return; }
+  if (!isParentId(me) && kudosToday(me) >= 3){ toast('오늘은 칭찬 스티커를 다 보냈어요. 내일 또 보내요!'); return; }
   await Store.add('kudos', { from:me, to, reason:reasons[+arg] || KUDOS[4], room:CHAT.room, at:new Date().toISOString() });
   CHAT.tray = false; chatFootRedraw(); chatRefresh();
   const l = document.getElementById('chatList'); if (l) l.scrollTop = l.scrollHeight;
   confetti(); try { ttChime(); } catch(e){}
-  toast(me === 'parent' ? `${chatWho(to).name}에게 칭찬 스티커를 붙여 줬어요 😇` : `고마운 마음을 전하는 ${chatWho(me).name}, 정말 멋져요! 💌`);
+  toast(isParentId(me) ? `${chatWho(to).name}에게 칭찬 스티커를 붙여 줬어요 😇` : `고마운 마음을 전하는 ${chatWho(me).name}, 정말 멋져요! 💌`);
 };
-ACTS.chatMic = () => { thListen('chatMsg', () => { const i = $('#chatIn'); if (i){ i.value = ((i.value ? i.value + ' ' : '') + kv('chatMsg')).trim().slice(0, 200); kvSet('chatMsg', ''); i.focus(); } }); };
 ACTS.chatAsKid = (arg) => { chatClose(); kidEnter(arg, () => chatOpen()); };
-ACTS.chatAsParent = () => { chatClose(); S.view.pin = ''; S.view.pinError = ''; S.view.pinPurpose = 'chat'; openModal(pinSheet('엄마 아빠로 말하기')); };
-ACTS.chatParent = () => { closeModal(); CHAT.as = 'parent'; chatOpen('family'); };   // 부모님 화면(비밀번호를 이미 넣음)에서 바로
+ACTS.chatAsParent = () => { chatClose(); S.view.pin = ''; S.view.pinError = ''; S.view.pinPurpose = 'chat'; openModal(pinSheet('부모님으로 말하기', '내 부모님 비밀번호를 누르면 내 닉네임으로 말해요.')); };
+ACTS.chatParent = () => { closeModal(); CHAT.as = 'p:' + (S.parentId || 'owner'); chatOpen('family'); };   // 부모님 화면(비밀번호를 이미 넣음)에서 바로
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'chatIn' && !e.isComposing){ e.preventDefault(); ACTS.chatSend(); } });
+
+/* ---------- 🎤 음성 메시지 — 대화방에서 목소리를 녹음해 보낸다 ----------
+   녹음은 30초까지, 작게(32kbps) 만든다. 소리는 가족 데이터의 따로 칸(coll 'vclip' {mime, secs, b64, at})에 두고,
+   5초 동기화에서는 빼서(sbAllItems) 누를 때만 받아 온다(한 번 받은 건 이 기기에 저장). 2주가 지나면 지운다(vcCleanup).
+   대화 글은 chat {room, from, kind:'voice', clip, secs, at}. AI로는 보내지 않는다. */
+const VC = { mem:new Map(), audio:null, playing:'', cleaned:false };
+function vcKey(id){ return 'vclip|' + id; }
+async function vcGet(id){
+  if (VC.mem.has(id)) return VC.mem.get(id);
+  try { const hit = await AudioBox.ttsGet(vcKey(id)); if (hit && hit.data){ const b = new Blob([hit.data], { type:hit.mime || 'audio/mp4' }); VC.mem.set(id, b); return b; } } catch(e){}
+  if (!S.sb) return null;
+  const r = await S.sb.from('items').select('data').eq('id', id).maybeSingle();
+  const d = r && r.data && r.data.data; if (!d || !d.b64) return null;
+  const bin = atob(d.b64), u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  const blob = new Blob([u8], { type:d.mime || 'audio/mp4' });
+  VC.mem.set(id, blob); if (VC.mem.size > 30) VC.mem.delete(VC.mem.keys().next().value);
+  AudioBox.ttsPut({ k:vcKey(id), at:Date.now(), data:u8.buffer, mime:d.mime || 'audio/mp4' }).catch(() => {});
+  return blob;
+}
+function vcStop(){ if (VC.audio){ try { VC.audio.pause(); } catch(e){} if (VC.audio._url) try { URL.revokeObjectURL(VC.audio._url); } catch(e){} } VC.audio = null; const was = VC.playing; VC.playing = ''; if (was) vcMark(was, false); }
+function vcMark(id, on){ document.querySelectorAll(`[data-act="chatPlay"][data-arg="${id}"]`).forEach(el => { el.classList.toggle('on', !!on); const i = el.querySelector('.vc-i'); if (i) i.textContent = on ? '⏸' : '▶'; }); }
+async function vcPlay(id){
+  if (VC.playing === id){ vcStop(); return; }
+  vcStop(); hush(); playStop();
+  VC.playing = id; vcMark(id, true);
+  let blob = null; try { blob = await vcGet(id); } catch(e){ blob = null; }
+  if (VC.playing !== id) return;
+  if (!blob){ VC.playing = ''; vcMark(id, false); toast('이 음성 메시지는 이제 들을 수 없어요 (2주가 지나면 지워져요)'); return; }
+  const a = new Audio(); a.setAttribute('playsinline', ''); a._url = URL.createObjectURL(blob); a.src = a._url; VC.audio = a;
+  a.onended = () => { if (VC.audio === a) vcStop(); };
+  a.onerror = () => { if (VC.audio === a){ vcStop(); toast('이 기기에서는 이 소리를 틀 수 없어요'); } };
+  a.play().catch(() => { if (VC.audio === a) vcStop(); });
+}
+/* 2주가 지난 음성은 지운다 — 한 번 열 때 한 번만 */
+async function vcCleanup(){
+  if (VC.cleaned || !S.sb) return; VC.cleaned = true;
+  try { await S.sb.from('items').delete().eq('coll', 'vclip').lt('data->>at', new Date(Date.now() - 14 * 86400000).toISOString()); } catch(e){}
+}
+async function vcDelete(ids){ if (!S.sb) return; for (const id of ids.filter(Boolean)){ try { await S.sb.from('items').delete().eq('id', id).eq('coll', 'vclip'); } catch(e){} VC.mem.delete(id); } }
+function vcTime(s){ s = Math.max(0, Math.round(s || 0)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
+async function chatVoiceStart(){
+  const me = chatMe(); if (!me || CHAT.rec || !chatInRoom(me, chatRoom(CHAT.room))) return;
+  if (!micSupported()){ toast('이 기기에서는 녹음을 할 수 없어요'); return; }
+  nvUnlock(); hush(); playStop(); vcStop();
+  CHAT.rec = { t0:Date.now(), room:CHAT.room, starting:true };
+  chatFootRedraw();
+  try {
+    await recStart({ maxSec:30, silenceMs:600000, bps:32000,
+      onCount:n => { if (!CHAT.rec) return; const el = document.getElementById('chatRecT'); if (el) el.textContent = n ? `${n}…` : '말해요!'; },
+      onLevel:lv => { const el = document.querySelector('#chatRecLv span'); if (el) el.style.width = Math.round(lv * 100) + '%'; },
+      onAuto:() => chatVoiceSend() });
+  } catch(e){
+    recCancel(); CHAT.rec = null; chatFootRedraw();
+    toast(e && e.name === 'NotAllowedError' ? '마이크를 쓰려면 “허용”을 눌러 주세요' : '마이크를 켜지 못했어요. 잠깐 뒤에 다시 해 볼까요?');
+    return;
+  }
+  if (!CHAT.rec){ recCancel(); return; }
+  CHAT.rec.starting = false; CHAT.rec.t0 = Date.now();
+  clearInterval(CHAT.recT);
+  CHAT.recT = setInterval(() => { const el = document.getElementById('chatRecT'); if (!CHAT.rec){ clearInterval(CHAT.recT); return; } if (el) el.textContent = vcTime((Date.now() - CHAT.rec.t0) / 1000); }, 250);
+  chatFootRedraw();
+}
+async function chatVoiceSend(){
+  const r = CHAT.rec, me = chatMe(); if (!r || r.starting || r.sending) return;
+  r.sending = true; clearInterval(CHAT.recT);
+  const secs = (Date.now() - r.t0) / 1000;
+  const blob = await recStop();
+  CHAT.rec = null; chatFootRedraw();
+  if (!blob || blob.size < 600 || secs < 0.8){ toast('너무 짧아요. 🎤을 누르고 조금 더 길게 말해 볼까요?'); return; }
+  const id = uid(), mime = (blob.type || 'audio/mp4').split(';')[0], at = new Date().toISOString();
+  const u8 = new Uint8Array(await blob.arrayBuffer());
+  VC.mem.set(id, blob); AudioBox.ttsPut({ k:vcKey(id), at:Date.now(), data:u8.buffer, mime }).catch(() => {});
+  if (S.sb){
+    try {
+      const res = await syncWrite(() => S.sb.from('items').insert({ id, family_id:S.familyId, coll:'vclip', data:{ mime, secs:Math.round(secs), b64:bytesBase64(u8), at } }));
+      if (res && res.error) throw res.error;
+    } catch(e){ toast('음성 메시지를 보내지 못했어요. 인터넷을 확인해 볼까요?'); return; }
+  }
+  await Store.add('chat', { room:r.room, from:me, kind:'voice', clip:id, secs:Math.max(1, Math.round(secs)), mime, text:'', at });
+  chatRefresh(); const l = document.getElementById('chatList'); if (l) l.scrollTop = l.scrollHeight;
+  ttTone(880, 0, 0.08, 0.05);
+}
+function chatVoiceCancel(){ clearInterval(CHAT.recT); recCancel(); CHAT.rec = null; chatFootRedraw(); }
+ACTS.chatVoice = () => chatVoiceStart();
+ACTS.chatVoiceSend = () => chatVoiceSend();
+ACTS.chatVoiceCancel = () => chatVoiceCancel();
+ACTS.chatPlay = (arg) => { nvUnlock(); vcPlay(arg); };
 
 /* ============================================================
    🔐 그림 비밀번호 — 아이마다 자기 공간(할 일·책장·단어…)을 지킨다
@@ -2584,7 +2813,7 @@ function viewVersus(){
       <div class="muted" style="font-size:14px">${other ? `${esc(other.name)}에게 고마운 마음을 보내 볼까요? (하루 3번까지 · 오늘 ${Math.max(0, 3 - sent)}번 남았어요)` : '가족에게 하고 싶은 말을 보내요'}</div></div>
       <button class="btn" data-act="chatOpen">💬 열기</button></div>
     ${got.length ? `<div style="margin-top:10px"><div class="muted" style="margin-bottom:4px">${esc(me ? subj(me.name) : '')} 받은 칭찬</div>
-      ${got.map(x => `<div style="font-size:15px">💌 ${esc(x.reason)} <span class="muted" style="font-size:12px">— ${x.from === 'parent' ? '엄마 아빠' : esc((kid(x.from) || {}).name || '')}</span></div>`).join('')}</div>` : ''}
+      ${got.map(x => `<div style="font-size:15px">💌 ${esc(x.reason)} <span class="muted" style="font-size:12px">— ${esc(chatWho(x.from).name)}</span></div>`).join('')}</div>` : ''}
   </div>
 
   <div class="card" style="background:var(--mint-soft)">
@@ -3047,9 +3276,10 @@ const PD_KINDS = [
   { id:'stamps', ico:'🛂', label:'여권 도장', coll:'stamps', list:k => S.data.stamps.filter(x => x.kidId === k.id).sort(byAtDesc('at')),
     t:x => `${wFlag(x.code)} ${wName(x.code)}`, s:x => `${pdDate(x.date || x.at)} · ${x.kind === 'found' ? '진짜 지구본에서 찾았어요' : '오늘의 나라를 배웠어요'}` },
   { id:'kudos', ico:'💌', label:'받은 칭찬', coll:'kudos', list:k => S.data.kudos.filter(x => x.to === k.id).sort(byAtDesc('at')),
-    t:x => x.reason || '칭찬 스티커', s:x => `${pdDate(x.at)} · ${subj(x.from === 'parent' ? '엄마 아빠' : ((kid(x.from) || {}).name || '친구'))} 보냈어요` },
+    t:x => x.reason || '칭찬 스티커', s:x => `${pdDate(x.at)} · ${subj(chatWho(x.from).name)} 보냈어요` },
   { id:'chat', ico:'💬', label:'대화', coll:'chat', list:k => S.data.chat.filter(x => x.from === k.id).sort(byAtDesc('at')),
-    t:x => { const r = chatRoom(x.room || 'family'); return `${r ? r.emoji + ' ' + r.name : '💬 지운 방'} · ${pdDate(x.at)}`; }, s:x => x.text || '' },
+    t:x => { const r = chatRoom(x.room || 'family'); return `${r ? r.emoji + ' ' + r.name : '💬 지운 방'} · ${pdDate(x.at)}`; }, s:x => x.kind === 'voice' ? `🎤 음성 메시지 (${vcTime(x.secs)})` : (x.text || ''),
+    del:async x => { if (x.clip) await vcDelete([x.clip]); await Store.remove('chat', x.id); } },
   { id:'goals', ico:'🎯', label:'이번 주 약속', coll:'goals', list:k => S.data.goals.filter(x => x.kidId === k.id).sort(byAtDesc('week')),
     t:x => `${pdDate(x.week)} 주의 약속`, s:x => (x.picks || []).map(q => `${q.icon || ''} ${q.text || ''}`).join(' · ') || '고른 약속이 없어요' },
   { id:'dprog', ico:'✏️', label:'받아쓰기', coll:'dprog', list:k => S.data.dprog.filter(x => x.kidId === k.id),
@@ -3093,7 +3323,7 @@ function pdTab(){
   };
   return `<div class="card">
     <p class="muted" style="margin:0 0 8px;font-size:13px">아이마다 기록을 보고 ✏️ 고치거나 🗑 지울 수 있어요. 지운 기록은 되돌릴 수 없어요.</p>
-    <div class="chips" style="margin-bottom:8px">${ks.map(x => `<button class="chip" data-act="pdKid" data-arg="${x.id}" aria-pressed="${x.id === v.kid}">${esc(x.avatar || '')} ${esc(x.name)}</button>`).join('')}</div>
+    <div class="pd-kidtabs" role="tablist" aria-label="아이 고르기">${ks.map(x => `<button class="pd-kidtab" role="tab" data-act="pdKid" data-arg="${x.id}" aria-selected="${x.id === v.kid}"><span class="avatar" style="background:${kidColor(x).bg}">${esc(x.avatar || '')}</span><b>${esc(x.name)}</b></button>`).join('')}</div>
     <div class="chips">${PD_KINDS.map(x => { const n = x.list(k).length; return `<button class="chip" data-act="pdKind" data-arg="${x.id}" aria-pressed="${x.id === v.kind}">${x.ico} ${x.label}${n ? ` <small>${n}</small>` : ''}</button>`; }).join('')}</div>
   </div>
   <div class="card">
@@ -3225,8 +3455,6 @@ function parentSheet(){
       </div>
       <div><div class="muted">놀이 시간 (분)</div>
         <input class="field" type="number" min="5" max="120" id="setGameMin" value="${S.settings.gameMinutes}"></div>
-      <div><div class="muted">🧸 숨바꼭질 놀이 이름</div>
-        <input class="field" id="setHideTitle" maxlength="20" value="${esc(S.settings.hideTitle || '')}" placeholder="곰돌이 숨바꼭질"></div>
       <div><div class="muted">이번 주 함께 읽기 목표 (권)</div>
         <input class="field" type="number" min="2" max="200" id="setGoal" value="${S.settings.weeklyGoal}"></div>
       <div><div class="muted">책 종류 (쉼표로 구분)</div>
@@ -3261,7 +3489,12 @@ function parentSheet(){
     </div>`;
   }
   if (t === 'notify'){
-    body = notifyTab();
+    body = parentIsOwner() || !S.parentId ? notifyTab()
+      : `<div class="card"><h3 class="sub">🔔 텔레그램 알림</h3><p style="margin:0">텔레그램 알림 연결과 텔레그램으로 하는 놀이 승인은 대표 관리자 <b>${esc(ownerNick())}</b>만 할 수 있어요.</p>
+        <p class="muted" style="margin:8px 0 0;font-size:13px">앱의 🔔 승인 카드나 놀이 승인 탭에서는 모든 부모님이 승인할 수 있어요.</p></div>`;
+  }
+  if (t === 'parents'){
+    body = parentsTab();
   }
   if (t === 'speech'){
     body = speechTab();
@@ -3293,9 +3526,10 @@ function parentSheet(){
   }
 
   if (t === 'settings' && PB.bucket == null) photoBucketOk().then(() => { const el = document.getElementById('pbStatus'); if (el) el.textContent = `📷 여행·그림일기 사진: ${PB.bucket ? '🔒 가족 사진 저장소에 저장돼요 (우리 가족만 볼 수 있어요)' : '📱 지금은 사진을 찍은 기기에만 저장돼요'}`; });
-  return `<h3>부모님 화면</h3>
+  const pm = parentMe();
+  return `<h3>부모님 화면${pm ? ` <small class="muted" style="font-size:15px">· ${esc(pm.avatar)} ${esc(pm.nick)}${pm.role === 'owner' ? ' (대표 관리자)' : ''}</small>` : ''}</h3>
     <div class="chips" style="margin:8px 0 14px">
-      ${tabBtn('todos','할 일')}${tabBtn('data','📂 기록 관리')}${tabBtn('speech','🦜 스피치')}${tabBtn('dict','✏️ 받아쓰기')}${tabBtn('think','💭 생각')}${tabBtn('kids','아이')}${tabBtn('notify','알림')}${tabBtn('unlock','놀이 승인' +
+      ${tabBtn('todos','할 일')}${tabBtn('data','📂 기록 관리')}${tabBtn('speech','🦜 스피치')}${tabBtn('dict','✏️ 받아쓰기')}${tabBtn('think','💭 생각')}${tabBtn('kids','아이')}${tabBtn('parents','👪 부모님')}${tabBtn('notify','알림')}${tabBtn('unlock','놀이 승인' +
       (pendingRequests().length ? `<span class="dot-badge">${pendingRequests().length}</span>` : ''))}${tabBtn('settings','설정')}
     </div>
     ${body}`;
@@ -3518,24 +3752,27 @@ async function autoWeather(interactive){
 const NOVELTY_VOICE = /Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Deranged|Good News|Hysterical|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Junior|Ralph|Fred|Kathy|Princess|Grandma|Grandpa|Rocko|Shelley|Flo|Eddy|Reed|Sandy/i;
 function voiceList(){ try { return (window.speechSynthesis && speechSynthesis.getVoices()) || []; } catch(e){ return []; } }
 function voiceScore(v, lang){
-  const L = String(v.lang || '').replace('_', '-');
-  if (NOVELTY_VOICE.test(v.name)) return -1;
+  const L = String(v.lang || '').replace('_', '-'), nm = String(v.name || '');
+  if (NOVELTY_VOICE.test(nm)) return -1;
   let s = 0;
   if (lang === 'ko'){ if (!/^ko/i.test(L)) return -1; s += 50; }
   else {
     if (/^en-US/i.test(L)) s += 50; else if (/^en-(GB|AU|CA|IE|NZ)/i.test(L)) s += 30; else if (/^en/i.test(L)) s += 10; else return -1;
   }
-  if (/premium|enhanced|natural|neural/i.test(v.name)) s += 20;
-  if (/Samantha|Ava|Allison|Nicky|Zoe|Susan|Google US English|Yuna|Google 한국/i.test(v.name)) s += 10;
-  if (v.localService) s += 3;
+  if (/premium|enhanced|natural|neural|향상|고품질/i.test(nm)) s += 20;
+  if (/Samantha|Ava|Allison|Nicky|Zoe|Susan|Google US English|Yuna|유나|Google 한국|Samsung|삼성/i.test(nm)) s += 10;
+  // 안드로이드(갤럭시): 인터넷 목소리(-network)는 늦게 나오거나 끊겨서, 기기에 깔린 목소리(local)를 먼저
+  if (v.localService) s += 8;
+  if (/network/i.test(nm)) s -= 6;
+  if (/-local$/i.test(nm)) s += 4;
   return s;
 }
 function pickVoice(lang){
   const all = voiceList();
   const want = lang === 'en' ? S.settings.ttVoice : '';
   if (want){ const v = all.find(x => x.voiceURI === want); if (v) return v; }
-  // 한국어는 부모님이 고른 목소리 이름으로 찾는다 — 기기마다 주소(voiceURI)는 달라도 이름이 같으면 두 아이가 같은 목소리로 듣는다
-  const kn = lang === 'ko' ? String(S.settings.koVoiceName || '') : '';
+  // 한국어는 이 기기에서 고른 목소리(기기마다 깔린 목소리가 달라서 기기에 기억한다), 없으면 예전 가족 설정 이름
+  const kn = lang === 'ko' ? String(lsGet('dolearn.koVoice') || S.settings.koVoiceName || '') : '';
   if (kn){ const v = all.find(x => x.name === kn && /^ko/i.test(String(x.lang || ''))); if (v) return v; }
   let best = null, bs = -1;
   for (const v of all){ const sc = voiceScore(v, lang); if (sc > bs){ bs = sc; best = v; } }
@@ -3562,17 +3799,53 @@ try { if (window.speechSynthesis){ speechSynthesis.getVoices(); speechSynthesis.
    (기기 목소리는 "🎉"를 "파티 폭죽"이라고 읽고, "~"를 "물결"이라고 읽어 어색했다)
    keepLen 이면 글자 수를 그대로 둔다 — 기기 목소리의 단어 위치(onword)로 불을 켜는 곳이 어긋나지 않게. */
 const SPEECH_JUNK = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\u{25A0}-\u{25FF}\u{FE0F}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu;
+const SPEECH_JUNK_JOSA = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\u{25A0}-\u{25FF}][\u{FE0F}\u{200D}\u{20E3}]*(?:으로|이랑|에서|까지|로|를|을|가|이|는|은|도|에|와|과|랑)(?=[\s,.!?]|$)/gu;
 function speechText(t, keepLen){
   const sp = m => keepLen ? ' '.repeat(m.length) : ' ';
-  let s = String(t || '').replace(SPEECH_JUNK, sp).replace(/[~～]/g, sp).replace(/[“”"«»]/g, sp).replace(/[()\[\]{}<>]/g, sp)
+  let s = String(t || '').replace(SPEECH_JUNK_JOSA, sp)      // "🔊로 먼저" → "먼저" (조사만 덩그러니 남아 "로 먼저"라고 읽었다)
+    .replace(SPEECH_JUNK, sp).replace(/[~～]/g, sp).replace(/[“”"«»]/g, sp).replace(/[()\[\]{}<>]/g, sp)
     .replace(/…/g, ',').replace(/\.{3}/g, keepLen ? ',  ' : ', ').replace(/·/g, ',').replace(/_{2,}/g, sp);
   if (!keepLen) s = s.replace(/\s{2,}/g, ' ').replace(/\s+([,.!?])/g, '$1').replace(/,(\s*,)+/g, ',').replace(/^[\s,]+|[\s,]+$/g, '');
   return s;
 }
+/* 한국어 속 숫자는 우리말로 바꿔 읽는다 — 목소리가 "3번"을 "쓰리번", "2개"를 "투개"처럼 영어로 읽었다.
+   세는 말(개·명·마리·권·번·가지·장·살…) 앞은 한·두·세·네…, 나머지(분·초·점·단계·월·일…)는 일·이·삼… */
+const KO_NATIVE1 = ['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉'], KO_NATIVE10 = ['', '열', '스물', '서른', '마흔', '쉰', '예순', '일흔', '여든', '아흔'];
+const KO_SINO = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
+function koNative(n){ if (n <= 0 || n >= 100) return koSino(n); if (n === 20) return '스무'; return KO_NATIVE10[Math.floor(n / 10)] + KO_NATIVE1[n % 10]; }
+function koSino(n){
+  if (!n) return '영';
+  if (n >= 100000000) return String(n);
+  let out = '', rest = n;
+  const big = [[10000, '만'], [1000, '천'], [100, '백'], [10, '십']];
+  for (const [u, w] of big){ const d = Math.floor(rest / u); if (d){ out += (d === 1 ? '' : (u === 10000 ? koSino(d) : KO_SINO[d])) + w; rest %= u; } }
+  return out + KO_SINO[rest];
+}
+const KO_MONTH = ['', '일월', '이월', '삼월', '사월', '오월', '유월', '칠월', '팔월', '구월', '시월', '십일월', '십이월'];
+function koNumSpeak(t){
+  return String(t || '')
+    .replace(/(\d{1,2})월\s*(\d{1,2})일/g, (m, a, b) => (KO_MONTH[+a] || koSino(+a) + '월') + ' ' + koSino(+b) + '일')
+    .replace(/(\d{1,2})월/g, (m, a) => KO_MONTH[+a] || koSino(+a) + '월')
+    .replace(/(\d+)\s*(개|명|마리|권|번|가지|장|문장|살|시간|군데|곳|사람|송이|그루|켤레|잔|판)/g, (m, d, u) => `${koNative(+d)} ${u}`)
+    .replace(/(\d+)\s*(분|초|점|단계|월|일|년|쪽|층|주|회|등|퍼센트|%)/g, (m, d, u) => `${koSino(+d)}${u === '%' ? ' 퍼센트' : ' ' + u}`)
+    .replace(/\d+/g, d => d.length > 8 ? d : koSino(+d));
+}
 /* 말하기 — 끝나면 풀리는 Promise. onword(글자 위치)로 읽는 단어에 불을 켤 수 있다.
    아이패드는 첫 말하기가 반드시 손가락 누른 순간에 일어나야 해서, 말하는 중이 아니면 바로 말한다. */
 const SAY = { u:null, at:0 };
-function say(text, { lang='en', rate, onword, onstart } = {}){
+function voicesReady(ms){
+  if (voiceList().length || !window.speechSynthesis) return Promise.resolve();
+  return new Promise(ok => {
+    let fin = false; const go = () => { if (!fin){ fin = true; ok(); } };
+    try { speechSynthesis.addEventListener('voiceschanged', go, { once:true }); } catch(e){}
+    setTimeout(go, ms || 900);
+  });
+}
+function say(text, opt){
+  if (window.speechSynthesis && !voiceList().length) return voicesReady(900).then(() => sayNow(text, opt));
+  return sayNow(text, opt);
+}
+function sayNow(text, { lang='en', rate, onword, onstart } = {}){
   return new Promise(done => {
     try {
       text = speechText(text, true);
@@ -3580,7 +3853,8 @@ function say(text, { lang='en', rate, onword, onstart } = {}){
       const u = new SpeechSynthesisUtterance(text);
       const other = lang !== 'ko' && lang !== 'en' && /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(lang || '');   // 'fr-FR' 같은 다른 나라 말
       u.lang = other ? lang : (lang === 'ko' ? 'ko-KR' : 'en-US');
-      const v = other ? pickVoiceFor(lang) : pickVoice(lang === 'ko' ? 'ko' : 'en'); if (v) u.voice = v;
+      const v = other ? pickVoiceFor(lang) : pickVoice(lang === 'ko' ? 'ko' : 'en');
+      if (v){ u.voice = v; if (v.lang) u.lang = String(v.lang).replace('_', '-'); }   // 고른 목소리의 말 표시에 맞춘다(안드로이드는 ko_KR 처럼 온다)
       u.rate = rate || (lang === 'ko' ? 1 : 0.85);
       let fin = false, tm = 0;
       const end = ok => { if (fin) return; fin = true; clearTimeout(tm); if (SAY.u === u) SAY.u = null; done(ok); };
@@ -3613,6 +3887,11 @@ function nvVoice(){ const v = S.settings.ttNvVoice; return NV_VOICES.some(x => x
 function nvEl(){ if (!NV.el){ NV.el = new Audio(); NV.el.setAttribute('playsinline', ''); NV.el.preload = 'auto'; } return NV.el; }
 /* 누른 순간에 한 번 — 아이패드가 나중에(목소리를 받아 온 뒤에) 소리를 내도록 허락받는다 */
 function nvUnlock(){
+  if (NV.needFresh){                                          // 녹음 뒤 — 칸을 새로 만들고, 기기 목소리도 비운다
+    NV.needFresh = false; NV.unlocked = false;
+    if (NV.el){ try { NV.el.pause(); NV.el.removeAttribute('src'); NV.el.load(); } catch(e){} NV.el = null; }
+    try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch(e){}
+  }
   try { if (window.speechSynthesis && !SAY.primed){ const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); SAY.primed = true; } } catch(e){}
   if (NV.unlocked) return;
   const a = nvEl();
@@ -3633,6 +3912,21 @@ async function nvFetch(text, style){
   AudioBox.ttsPut({ k, at:Date.now(), data:u8.buffer }).catch(() => {});
   return blob;
 }
+/* 문장을 열면 미리 받아 둔다 — 누르면 바로 들린다. 한 번에 하나씩, 이미 있으면 그냥 넘어간다 */
+const NVQ = { q:[], busy:false, seen:new Set() };
+function nvStyleFor(lang, rate, style){ return style || (lang === 'ko' ? (rate && rate <= 0.85 ? 'dict' : 'ko') : (rate && rate <= 0.65 ? 'slow' : (rate >= 1 ? 'speech' : 'en'))); }
+function nvPrefetch(text, lang, rate){
+  const clean = speechText(text);
+  if (!clean || !nvOn() || (lang === 'ko' && S.settings.koVoice !== 'ai') || (lang !== 'ko' && ttHasName(clean))) return;
+  const style = nvStyleFor(lang, rate), key = style + '|' + clean;
+  if (NVQ.seen.has(key)) return; NVQ.seen.add(key);
+  NVQ.q.push([clean, style]); nvPrefetchRun();
+}
+async function nvPrefetchRun(){
+  if (NVQ.busy) return; NVQ.busy = true;
+  while (NVQ.q.length && nvOn()){ const [text, style] = NVQ.q.shift(); try { await nvFetch(text, style); } catch(e){ break; } }
+  NVQ.busy = false;
+}
 /* 끝나면 true, 못 하면 false (그때는 기기 목소리로) */
 function nvPlay(text, { style = 'en', rate = 1, onstart, onprogress } = {}){
   if (NV.curEnd) NV.curEnd(true);                     // 하던 말은 끝낸 걸로
@@ -3648,7 +3942,12 @@ function nvPlay(text, { style = 'en', rate = 1, onstart, onprogress } = {}){
     };
     NV.curEnd = end;
     let blob;
-    try { blob = await nvFetch(text, style); }
+    try {
+      // 6초가 넘게 걸리면 이번엔 기기 목소리로 — 받아 오던 목소리는 다음에 쓴다
+      const job = nvFetch(text, style); job.catch(() => {});
+      blob = await Promise.race([job, new Promise(ok => setTimeout(() => ok(null), 6000))]);
+      if (!blob){ end(false); return; }
+    }
     catch(e){
       NV.fails++;
       if (e && (e.code === 'no_key' || e.code === 'busy' || e.code === 'no_family' || NV.fails >= 2))
@@ -3672,6 +3971,7 @@ function nvStop(){ const e = NV.curEnd; NV.cur = null; NV.curEnd = null; if (NV.
 /* 뚜뚜 목소리 — 자연스러운 목소리를 먼저, 안 되면 기기 목소리.
    rate: 0.6 천천히 · 0.8 보통 · 1 대회 속도 (자연스러운 목소리는 말투로, 기기 목소리는 빠르기로) */
 async function voice(text, { lang = 'en', rate, onword, onprogress, onstart, style, nvRate } = {}){
+  if (lang === 'ko') text = koNumSpeak(text);                 // 한국어 속 숫자는 우리말로
   const clean = speechText(text);
   if (!clean) return false;
   // 한국어는 기본으로 기기의 서울말 목소리 하나로 읽는다. AI 목소리는 만들 때마다 억양이 달라지고(이름이 든 말은 아이마다 따로 만든다),
@@ -3679,7 +3979,7 @@ async function voice(text, { lang = 'en', rate, onword, onprogress, onstart, sty
   const koDevice = (lang === 'ko' && S.settings.koVoice !== 'ai') || (lang !== 'ko' && ttHasName(clean));
   if (nvOn() && !koDevice){
     // 한국어를 천천히(받아쓰기) 읽을 때는 'dict', 그 나라 인사말은 부르는 쪽이 style:'hello'
-    const st = style || (lang === 'ko' ? (rate && rate <= 0.85 ? 'dict' : 'ko') : (rate && rate <= 0.65 ? 'slow' : (rate >= 1 ? 'speech' : 'en')));
+    const st = nvStyleFor(lang, rate, style);
     if (await nvPlay(clean, { style:st, rate:nvRate || 1, onstart, onprogress })) return true;
   }
   return say(text, { lang, rate, onword, onstart });
@@ -3703,12 +4003,22 @@ function recMime(){
   }
   return '';
 }
+/* 아이패드 — 녹음하는 동안 기기가 '녹음+재생' 모드로 바뀐다. 끝난 뒤에도 그대로면 뚜뚜 목소리·내 목소리가
+   안 나거나 수화기 쪽으로 아주 작게 났다(녹음 전에는 잘 되고 녹음 뒤에만 안 됨). 끝나면 '재생' 모드로 되돌리고,
+   소리 크기를 재던 오디오 엔진도 닫고, 뚜뚜 목소리 칸은 다음에 누를 때 새로 만든다(nvUnlock). */
+function audioSessionRecord(){ try { if (navigator.audioSession) navigator.audioSession.type = 'play-and-record'; } catch(e){} }
+function audioSessionPlay(){
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch(e){}
+  NV.needFresh = true; SAY.primed = false;
+}
 async function recStart(opts = {}){
   if (REC.mr) return false;
+  audioSessionRecord();
   const ctx = audioCtx();                         // 누른 순간에 깨워 둔다 (아이패드)
   const stream = await navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:true, noiseSuppression:true, autoGainControl:true } });
   REC.stream = stream; REC.mime = recMime(); REC.chunks = [];
-  const mr = new MediaRecorder(stream, REC.mime ? { mimeType:REC.mime } : undefined);
+  const mo = {}; if (REC.mime) mo.mimeType = REC.mime; if (opts.bps) mo.audioBitsPerSecond = opts.bps;
+  let mr; try { mr = new MediaRecorder(stream, mo); } catch(e){ mr = new MediaRecorder(stream, REC.mime ? { mimeType:REC.mime } : undefined); }
   REC.mr = mr;
   mr.ondataavailable = e => { if (e.data && e.data.size) REC.chunks.push(e.data); };
   mr.onstop = () => {
@@ -3717,11 +4027,11 @@ async function recStart(opts = {}){
     recRelease();
     if (r) r(blob);
   };
-  mr.start(250);
-  REC.t0 = performance.now(); REC.heard = false; REC.quiet = 0; REC.floor = null;
+  REC.heard = false; REC.quiet = 0; REC.floor = null; REC.counting = !!opts.onCount; REC.t0 = performance.now();
+  if (!REC.counting) mr.start(250);
   if (ctx){
     try {
-      REC.src = ctx.createMediaStreamSource(stream);
+      REC.src = ctx.createMediaStreamSource(stream); REC.ctxUsed = true;
       REC.an = ctx.createAnalyser(); REC.an.fftSize = 1024;
       REC.src.connect(REC.an);
       const buf = new Float32Array(REC.an.fftSize);
@@ -3734,6 +4044,7 @@ async function recStart(opts = {}){
         // 주변 소음 높이를 천천히 따라가서, 그보다 확실히 클 때만 "말하는 중"으로 본다
         REC.floor = REC.floor == null ? lv : (lv < REC.floor ? lv : REC.floor + (lv - REC.floor) * 0.003);
         if (opts.onLevel) opts.onLevel(lv);
+        if (REC.counting){ REC.raf = requestAnimationFrame(tick); return; }   // 3·2·1 동안은 소리 크기만 보여 준다
         const now = performance.now();
         if (lv > Math.max(0.28, REC.floor + 0.18)){ REC.heard = true; REC.quiet = 0; }
         else if (REC.heard && lv < REC.floor + 0.1){
@@ -3746,11 +4057,23 @@ async function recStart(opts = {}){
       REC.raf = requestAnimationFrame(tick);
     } catch(e){}
   }
+  if (REC.counting){                                         // 3 · 2 · 1 → 말해요!
+    for (let n = 3; n >= 1; n--){
+      if (REC.mr !== mr) return false;
+      opts.onCount(n); try { ttTone(660, 0, 0.1, 0.06); } catch(e){}
+      await new Promise(ok => setTimeout(ok, 700));
+    }
+    if (REC.mr !== mr) return false;
+    REC.counting = false; REC.t0 = performance.now();
+    try { mr.start(250); } catch(e){}
+    opts.onCount(0);
+  }
   return true;
 }
 function recStop(){
   return new Promise(res => {
     if (!REC.mr){ res(null); return; }
+    if (REC.counting){ recCancel(); res(null); return; }       // 3·2·1 사이에 멈추면 녹음한 게 없다
     REC.resolve = res;
     try { if (REC.mr.state !== 'inactive') REC.mr.stop(); else { REC.resolve = null; recRelease(); res(null); } }
     catch(e){ REC.resolve = null; recRelease(); res(null); }
@@ -3760,7 +4083,10 @@ function recRelease(){
   cancelAnimationFrame(REC.raf);
   try { REC.src && REC.src.disconnect(); } catch(e){}
   try { REC.stream && REC.stream.getTracks().forEach(t => t.stop()); } catch(e){}
+  const had = !!(REC.stream || REC.mr);
   REC.stream = null; REC.mr = null; REC.src = null; REC.an = null;
+  if (REC.ctxUsed){ REC.ctxUsed = false; try { if (AC && AC.state !== 'closed') AC.close(); } catch(e){} AC = null; }   // 마이크를 물고 있던 엔진은 닫는다
+  if (had) audioSessionPlay();
 }
 function recCancel(){
   if (REC.mr){ REC.resolve = null; try { REC.mr.onstop = null; if (REC.mr.state !== 'inactive') REC.mr.stop(); } catch(e){} }
@@ -3772,7 +4098,8 @@ const PLAY = { el:null, url:'' };
 function playBlob(blob){
   playStop();
   if (!blob) return;
-  const a = new Audio(); a.setAttribute('playsinline', '');
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch(e){}
+  const a = new Audio(); a.setAttribute('playsinline', ''); a.volume = 1;
   PLAY.url = URL.createObjectURL(blob); a.src = PLAY.url; PLAY.el = a;
   a.onended = () => playStop();
   a.play().catch(() => {});
@@ -5627,9 +5954,10 @@ async function ttMicStart(){
   const t = TT; if (!t || t.step !== 'speak') return;
   const it0 = ttItem(); if (!it0){ ttFinish(); return; }   // 남은 문장이 없으면 수업을 마친다
   hush(); playStop();
-  t.step = 'rec'; ttMood('listen'); ttLayer();
+  t.step = 'rec'; t.count = 3; ttMood('listen'); ttLayer();
   try {
     await recStart({
+      onCount:n => { if (TT !== t) return; t.count = n; const c = document.getElementById('recCount'); if (n && c) c.textContent = String(n); else ttLayer(); },
       maxSec: it0.type === 'chain' ? 40 : 15,
       silenceMs: (it0.type !== 'new' || t.stage >= 3) ? 2300 : 1400,
       onLevel: lv => { const el = document.querySelector('#ttLevel span'); if (el) el.style.width = Math.round(lv * 100) + '%'; },
@@ -5727,6 +6055,11 @@ function ttRetry(){
 }
 
 /* ---------- 수업 화면 ---------- */
+/* 3 · 2 · 1 — 마이크는 먼저 켜 두고, 숫자가 끝나면 "말해요!"와 함께 녹음이 시작된다 */
+function recCountHtml(n){
+  return `<div class="rec-count" id="recCount" aria-live="assertive">${n}</div>
+    <p class="muted" style="margin:4px 0 0">준비… 숫자가 끝나고 “말해요!” 하면 시작해요</p>`;
+}
 function ttLessonView(){
   const t = TT;
   if (t.step !== 'intro' && t.step !== 'done' && !ttItem()) t.step = 'done';   // 문장이 없으면 마침 화면으로
@@ -5788,6 +6121,7 @@ function ttSpeakCard(){
   const stg = it.type === 'chain' ? '⛄ 이어 말하기' : `${TT_STAGES[t.stage].icon} ${TT_STAGES[t.stage].name}`;
   let action;
   if (think) action = `<div class="waiting"><i></i><i></i><i></i></div><p class="muted" style="margin:0">뚜뚜가 듣고 있어요…</p>`;
+  else if (rec && t.count) action = recCountHtml(t.count);
   else if (rec) action = `<button class="tt-mic rec" id="ttStop" aria-label="다 말했어요">⏹</button>
       <div class="tt-level" id="ttLevel"><span></span></div>
       <p class="muted" style="margin:6px 0 0">말이 끝나면 뚜뚜가 알아서 멈춰요 · 다 말했으면 눌러요</p>
@@ -5889,6 +6223,8 @@ function ttStyleNote(k, p){
   return lines.length ? `<div class="banner info" style="text-align:left"><span>✨</span><span>${lines.map(esc).join('<br>')}</span></div>` : '';
 }
 function ttAfterDraw(){
+  if (TT && TT.kind === 'ecc' && TT.step !== 'done'){ nvPrefetch(eccText(TT, TT.i), 'en', TT.rate); if (TT.i + 1 < TT.script.sentences.length) nvPrefetch(eccText(TT, TT.i + 1), 'en', TT.rate); }
+  else if (TT && TT.kind === 'lesson' && TT.step !== 'intro' && TT.step !== 'done' && ttItem()) nvPrefetch(ttItemSentence(ttItem()).en, 'en', TT.rate);
   const cv = document.getElementById('ttWave');
   if (cv && TT && TT.fb && TT.fb.local && TT.fb.local.contour){
     const it = TT.kind === 'lesson' ? ttItem() : null;
@@ -5922,7 +6258,7 @@ function ttDrawWave(cv, contour, end){
    ============================================================ */
 const ECC = { srOff:false };
 const ECC_NUM = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
-function eccSrOk(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition) && !window.claude && S.settings.eccSr !== false && !ECC.srOff; }
+function eccSrOk(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition) && !window.claude && S.settings.eccSr !== false && S.settings.eccSr !== 'off' && !ECC.srOff; }
 function ttKidName(k){ return String((k && k.nameEn) || '').trim(); }
 function ttNameFill(en, k){ const n = ttKidName(k); return String(en || '').replace(/\{name\}/g, n || '____'); }
 function eccText(t, i){ return ttNameFill((t.script.sentences[i] || {}).en, kid(t.kidId)); }
@@ -5950,7 +6286,7 @@ function eccOpen(start){
   if (i < 0 || i >= n) i = 0;
   TT = { kind:'ecc', kidId:k.id, script:sc, prog, i, step:'ready', fb:null, clip:null, live:null, sr:null, done:{},
          rate:+(lsGet('dolearn.ttRate') || 0.8), mood:'happy', quiet:false, talking:false, t0:Date.now(), lastSave:Date.now(),
-         say:`${callName(k.name)}, ECC speech 연습이야! 한 문장씩 읽어 보자. 🔊로 먼저 들어 봐도 좋아.` };
+         say:`${callName(k.name)}, ECC speech 연습이야! 한 문장씩 읽어 보자. 뚜뚜 목소리로 먼저 들어 봐도 좋아.` };
   ttLayer(); ttTalk(TT.say); wakeOn();
 }
 function eccTop(){
@@ -5976,6 +6312,7 @@ function eccCard(){
   const miss = fb && fb.marks ? eccMissWords(t, fb) : [];
   let action;
   if (think) action = `<div class="waiting"><i></i><i></i><i></i></div><p class="muted" style="margin:0">뚜뚜가 잘 듣고 있어요…</p>`;
+  else if (rec && t.count) action = recCountHtml(t.count);
   else if (rec) action = `<button class="tt-mic rec" data-act="eccStop" aria-label="다 읽었어요">⏹</button>
       <div class="tt-level" id="ttLevel"><span></span></div>
       <p class="muted" style="margin:4px 0 0">${t.sr ? '맞게 읽은 단어는 바로 초록색으로 바뀌어요 · 다 읽으면 눌러요' : '다 읽으면 눌러요 · 조용해지면 뚜뚜가 알아서 멈춰요'}</p>
@@ -6075,6 +6412,7 @@ function eccSrStart(t){
     const f = st.onEnd; st.onEnd = null; if (f) f();
     if (TT === t && t.step === 'rec' && !REC.mr && t.sr === st) eccStop();   // 녹음 없이 인식만 하던 때 — 인식이 끝나면 멈춘다
   };
+  audioSessionRecord();
   try { r.start(); } catch(e){ t.sr = null; }
 }
 function eccSrText(st){ return (st.finals.filter(Boolean).join(' ') + ' ' + (st.interim || '')).replace(/\s+/g, ' ').trim(); }
@@ -6088,7 +6426,7 @@ function eccSrStop(t){
     try { st.r.stop(); } catch(e){ done(); }
   });
 }
-function eccSrAbort(t){ const st = t && t.sr; if (!st) return; st.on = false; st.onEnd = null; try { st.r.abort(); } catch(e){} t.sr = null; }
+function eccSrAbort(t){ const st = t && t.sr; if (!st) return; st.on = false; st.onEnd = null; try { st.r.abort(); } catch(e){} t.sr = null; audioSessionPlay(); }
 /* 읽는 동안 — 알아들은 단어를 바로 초록색으로 (빨강은 다 읽은 뒤에만) */
 function eccLive(t, heard){
   const marks = eccAlign(t, eccText(t, t.i), heard);
@@ -6099,19 +6437,20 @@ function eccLive(t, heard){
 async function eccMic(){
   const t = TT; if (!t || t.kind !== 'ecc' || (t.step !== 'ready' && t.step !== 'fb')) return;
   hush(); playStop(); ttMouth(false);
-  t.step = 'rec'; t.fb = null; t.clip = null; t.live = []; t.starting = true; t.stopWanted = false; t.recOn = false; ttMood('listen');
-  t.say = '천천히, 또박또박 읽어 봐!'; ttLayer();
+  t.step = 'rec'; t.fb = null; t.clip = null; t.live = []; t.starting = true; t.stopWanted = false; t.recOn = false; t.count = micSupported() ? 3 : 0; ttMood('listen');
+  t.say = '뚜뚜가 “말해요!” 하면 천천히, 또박또박 읽어 봐!'; ttLayer();
   let recOk = false;
   if (micSupported()){
     try {
       await recStart({ maxSec:40, silenceMs:2400,
+        onCount:n => { if (TT !== t) return; t.count = n; const c = document.getElementById('recCount'); if (n && c) c.textContent = String(n); else ttLayer(); },
         onLevel:lv => { const el = document.querySelector('#ttLevel span'); if (el) el.style.width = Math.round(lv * 100) + '%'; },
         onAuto:() => eccStop() });
       recOk = true;
     } catch(e){ recCancel(); t.micErr = (e && e.name) || 'err'; }
   }
   if (TT !== t || t.step !== 'rec'){ if (recOk) recCancel(); t.starting = false; return; }
-  t.recOn = recOk;
+  t.recOn = recOk; t.count = 0;
   eccSrStart(t);
   t.starting = false;
   if (!recOk && !t.sr){
@@ -6127,7 +6466,7 @@ async function eccStop(){
   if (t.starting){ t.stopWanted = true; return; }
   t.step = 'think'; ttMood('think'); t.say = '뚜뚜가 잘 들었어! 잠깐만…'; ttLayer();
   const res = await Promise.all([REC.mr ? recStop() : Promise.resolve(null), eccSrStop(t)]);
-  t.sr = null;
+  t.sr = null; audioSessionPlay();
   if (TT !== t) return;
   await eccReview(res[0], res[1]);
 }
@@ -6152,6 +6491,9 @@ async function eccReview(blob, heardSr){
     } catch(e){ ttAiFail(e); fb = null; t.aiNote = `${e.message || '뚜뚜가 잠깐 쉬고 있어요.'} 이번엔 기기로만 봤어요.`; }
   }
   if (TT !== t) return;
+  if (heardSr && t.recOn && (!blob || !blob.size || (m && m.silent)) && !ECC.srOff){
+    ECC.srOff = true; toast('이 기기에서는 녹음과 실시간 초록 표시를 같이 못 해서, 다음부터는 녹음을 먼저 할게요 🎤');
+  }
   if (fb && fb.heard) fb.marks = eccAlign(t, s.en, fb.heard);
   else {
     fb = ttLocalFb(m, s);
@@ -6185,19 +6527,20 @@ async function eccReview(blob, heardSr){
   ttTalk(t.say + (fb.tip && !nMiss ? ' ' + fb.tip : ''));
 }
 ACTS.eccMic = () => { eccMic(); };
+ACTS.eccSrToggle = async () => { const on = S.settings.eccSr !== 'off' && S.settings.eccSr !== false; await Store.saveSettings({ eccSr:on ? 'off' : 'on' }); ECC.srOff = false; S.view.parentTab = 'speech'; openModal(parentSheet()); };
 ACTS.eccStop = () => { eccStop(); };
 ACTS.eccRestart = () => {                                    // 녹음 중 — 처음부터 다시
   const t = TT; if (!t || t.kind !== 'ecc' || t.step !== 'rec') return;
   recCancel(); eccSrAbort(t); t.step = 'ready'; t.live = null;
   setTimeout(() => { if (TT === t) eccMic(); }, 250);
 };
-ACTS.eccListen = () => { const t = TT; if (!t || t.kind !== 'ecc') return; playStop(); ttModel(eccText(t, t.i), t.rate); };
-ACTS.eccMine = () => { const t = TT; if (t && t.clip){ hush(); playBlob(t.clip); } };
-ACTS.eccRate = (arg) => { const t = TT; if (!t) return; t.rate = +arg || 0.8; lsSet('dolearn.ttRate', String(t.rate)); ttLayer(); ttModel(eccText(t, t.i), t.rate); };
+ACTS.eccListen = () => { const t = TT; if (!t || t.kind !== 'ecc') return; nvUnlock(); playStop(); ttModel(eccText(t, t.i), t.rate); };
+ACTS.eccMine = () => { const t = TT; if (t && t.clip){ nvUnlock(); hush(); playBlob(t.clip); } };
+ACTS.eccRate = (arg) => { const t = TT; if (!t) return; nvUnlock(); t.rate = +arg || 0.8; lsSet('dolearn.ttRate', String(t.rate)); ttLayer(); ttModel(eccText(t, t.i), t.rate); };
 ACTS.eccWord = async (arg) => {
   const t = TT; if (!t || t.kind !== 'ecc' || t.step === 'rec' || t.step === 'think') return;
   const words = eccText(t, t.i).match(/[A-Za-z0-9’'-]+/g) || [], wi = +arg, w = words[wi]; if (!w) return;
-  hush(); playStop();
+  nvUnlock(); hush(); playStop();
   const phrase = words.slice(Math.max(0, wi - 1), wi + 2).join(' ');
   t.say = `여기 이렇게 말해 보자! “${w}” — ${eccTip(t, w, t.fb)}`;
   const b = document.getElementById('ttBubble'); if (b) b.textContent = t.say;
@@ -6221,7 +6564,7 @@ function eccMove(i){
   }
   t.i = clamp(i, 0, n - 1); t.step = 'ready'; t.fb = null; t.clip = null; t.live = null; ttMood('happy');
   const saved = (t.prog.ecc || {})[t.i];
-  t.say = saved && (saved.best || 0) >= 3 ? `${t.i + 1}번 문장! 전에 잘 읽었던 문장이야. 한 번 더 해볼까?` : `${t.i + 1}번 문장이야. 🔊로 먼저 들어 보고 읽어 봐!`;
+  t.say = saved && (saved.best || 0) >= 3 ? `${koOrd(t.i + 1)} 문장! 전에 잘 읽었던 문장이야. 한 번 더 해볼까?` : `${koOrd(t.i + 1)} 문장이야. 뚜뚜 목소리로 먼저 들어 보고 읽어 봐!`;
   ttLayer(); ttTalk(t.say);
 }
 ACTS.eccNext = () => { const t = TT; if (t) eccMove(t.i + 1); };
@@ -6583,8 +6926,14 @@ function speechTab(){
           녹음 파일은 이 기기에만 저장되고 서버에 남지 않아요. 이름이 들어간 문장은 보내지 않아요.</div></div>
       <button class="chip" id="ttAiToggle" aria-pressed="${on}">${on ? '켜짐' : '꺼짐'}</button>
     </div>
+    <div class="row" style="align-items:flex-start">
+      <div class="grow"><b>🟢 ECC 연습 — 읽는 동안 초록 표시 (기기 음성 인식)</b>
+        <div class="muted" style="font-size:13px">읽는 대로 맞은 단어가 바로 초록색이 돼요. 기기가 가진 음성 인식을 써요(아이패드는 Apple).
+          녹음이 조용하게 되거나 소리가 이상하면 꺼 주세요 — 꺼도 녹음·내 목소리 듣기·AI 듣기는 그대로예요.</div></div>
+      <button class="chip" data-act="eccSrToggle" aria-pressed="${S.settings.eccSr !== 'off' && S.settings.eccSr !== false}">${S.settings.eccSr !== 'off' && S.settings.eccSr !== false ? '켜짐' : '꺼짐'}</button>
+    </div>
     <div><div class="muted">AI에 보내지 않을 이름 (영어 철자, 쉼표로)</div>
-      <input class="field" id="ttMaskIn" value="${esc(S.settings.ttMask || '')}" placeholder="예: Iseo, Ihyeon"
+      <input class="field" id="ttMaskIn" value="${esc(S.settings.ttMask || '')}" placeholder="예: Minji, Jiwoo"
         autocapitalize="off" autocorrect="off" spellcheck="false">
       <p class="muted" style="margin:5px 0 0;font-size:13px">원고에 이 낱말이 든 문장은 기기 안에서만 들어요. 한글 이름은 자동으로 가려요.</p></div>
     <div class="row" style="align-items:flex-start">
@@ -6601,9 +6950,11 @@ function speechTab(){
         <button class="chip" data-ttkov="test" aria-label="한국어 목소리 들어보기">🔊 들어보기</button></div>
       ${S.settings.koVoice !== 'ai' ? `<select class="field" id="koVoiceSel" style="margin-top:8px">
           <option value="">자동으로 고르기 (고품질 목소리를 먼저)</option>
-          ${voiceList().filter(v => /^ko/i.test(String(v.lang || '')) && !NOVELTY_VOICE.test(v.name)).map(v => `<option value="${esc(v.name)}" ${S.settings.koVoiceName === v.name ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}
+          ${voiceList().filter(v => /^ko/i.test(String(v.lang || '')) && !NOVELTY_VOICE.test(v.name)).map(v => `<option value="${esc(v.name)}" ${(lsGet('dolearn.koVoice') || S.settings.koVoiceName) === v.name ? 'selected' : ''}>${esc(v.name)}${v.localService ? '' : ' (인터넷)'}</option>`).join('')}
         </select>` : ''}
-      <p class="muted" style="margin:5px 0 0;font-size:13px">기기 목소리는 아나운서처럼 바른 서울말로 읽고, 누가 써도 똑같이 들려요. 두 아이패드에서 같은 목소리로 들리게 하려면 두 기기 모두 설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성 → 한국어에서 같은 목소리(예: 유나 향상됨)를 받아 두고 여기서 골라 주세요. 영어는 지금처럼 자연스러운 목소리로 읽어요.</p></div>
+      <p class="muted" style="margin:5px 0 0;font-size:13px">기기 목소리는 아나운서처럼 바른 서울말로 읽어요. 목소리는 기기마다 달라서 <b>이 기기에서 고른 목소리를 이 기기에 기억</b>해요.
+        아이패드는 설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성 → 한국어에서 고품질 목소리(예: 유나 향상됨)를,
+        갤럭시 탭은 설정 → 일반 → 텍스트 음성 변환(TTS)에서 기본 엔진(삼성 또는 Google)과 한국어 음성 데이터를 받아 두고 여기서 골라 주세요. 그래도 어색하면 🎙 AI 목소리로 바꿔 보세요. 영어는 지금처럼 자연스러운 목소리로 읽어요.</p></div>
     <div><div class="muted">기기 영어 목소리 (자연스러운 목소리를 못 쓸 때)</div>
       <div class="row" style="gap:8px">
         <select class="field grow" id="ttVoice">
@@ -8991,7 +9342,7 @@ function dtNextItem(){
   d.fb = null; d.retried = false; d.confirm = false; d.typed = '';
   d.qi++;
   if (d.qi >= d.q.length){ if (d.mode === 'note'){ d.step = 'check'; d.say = '다 썼구나! 이제 공책이랑 비교해 볼까?'; dtMood('happy'); dtLayer(); dtTalk(d.say); } else dtFinish(); return; }
-  d.step = 'item'; d.say = `${d.qi + 1}번 문장이야. 잘 들어 봐!`; dtMood('listen');
+  d.step = 'item'; d.say = `${koOrd(d.qi + 1)} 문장이야. 잘 들어 봐!`; dtMood('listen');
   dtLayer(); dtRead();
 }
 ACTS.dtGo = (arg) => { dtOpen(arg); };
@@ -9003,7 +9354,7 @@ ACTS.dtSample = async () => {
   if (!has) await Store.add('dlists', { no:0, title:'예시', lines:DT_SAMPLE.slice(), kidIds:[], testDate:'', sample:true, createdAt:new Date().toISOString() });
   toast('예시 문장을 넣었어요! 뚜뚜랑 해 볼까요? ✏️');
 };
-ACTS.dtBegin = () => { const d = DT; if (!d) return; d.step = 'item'; d.qi = 0; d.say = '1번 문장이야. 잘 들어 봐!'; dtMood('listen'); dtLayer(); dtRead(); };
+ACTS.dtBegin = () => { const d = DT; if (!d) return; d.step = 'item'; d.qi = 0; d.say = '첫 번째 문장이야. 잘 들어 봐!'; dtMood('listen'); dtLayer(); dtRead(); };
 ACTS.dtAgain = () => { if (DT) dtRead(1); };
 ACTS.dtNoteNext = () => { if (DT){ hush(); dtNextItem(); } };
 ACTS.dtCheck = () => {
@@ -10860,7 +11211,7 @@ document.addEventListener('click', async (e) => {
     return;
   }
   if (d.parentkudo){
-    await Store.add('kudos', { from:'parent', to:d.parentkudo, reason:'😇 착한 일을 했어요', at:new Date().toISOString() });
+    await Store.add('kudos', { from:'p:' + (S.parentId || 'owner'), to:d.parentkudo, reason:'😇 착한 일을 했어요', room:'family', at:new Date().toISOString() });
     toast('칭찬 스티커를 붙여줬어요 😇'); openModal(parentSheet()); return;
   }
 
@@ -11062,7 +11413,7 @@ document.addEventListener('click', async (e) => {
   }
   if (d.approve){
     S.view.pin=''; S.view.pinError=''; S.view.pinPurpose = 'approve:'+d.approve;
-    openModal(pinSheet('승인하시겠어요?', '부모님 비밀번호를 눌러주세요.'));
+    openModal(pinSheet('승인하시겠어요?', S.fromTelegram ? `텔레그램으로 연 승인은 대표 관리자 ${ownerNick()}의 비밀번호로만 돼요.` : '부모님 비밀번호를 눌러주세요.'));
     return;
   }
   if (d.deny){ denyRequest(d.deny); return; }
@@ -11186,7 +11537,10 @@ document.addEventListener('click', async (e) => {
     if (!/^\d{4}$/.test(a)){ say('숫자 4자리로 적어주세요.'); $('#newPin1').focus(); return; }
     if (a === '1234'){ say('처음 비밀번호와 같아요. 다른 숫자로 정해주세요.'); $('#newPin1').focus(); return; }
     if (a !== b){ say('두 번 적은 숫자가 달라요. 다시 확인해 주세요.'); $('#newPin2').focus(); return; }
-    await Store.saveSettings({ pin:a, pinSet:true });
+    const pid = S.parentId || 'owner';
+    if (paPinTaken(a, pid)){ say('다른 부모님 비밀번호와 같아요. 다른 숫자로 정해 주세요.'); $('#newPin1').focus(); return; }
+    if (pid === 'owner') await Store.saveSettings({ pin:a, pinSet:true });
+    else await Store.saveSettings({ parents:(S.settings.parents || []).map(x => x.id === pid ? Object.assign({}, x, { pinHash:parentPinHash(pid, a) }) : x) });
     const next = S.view.pinNext || 'parent';
     S.view.pinNext = null;
     toast('새 비밀번호를 정했어요');
@@ -11291,11 +11645,10 @@ document.addEventListener('change', async (e) => {
   if (el.id === 'dlPhoto' && el.files && el.files[0]){ await dlPhoto(el.files[0]); el.value = ''; return; }
   if (el.id === 'wtPhoto' && el.files && el.files.length){ await wTripPhotos(el.files); return; }
   if (el.id === 'ttVoice'){ await Store.saveSettings({ ttVoice: el.value || '' }); say('Hello, everyone!', { lang:'en' }); }
-  if (el.id === 'koVoiceSel'){ await Store.saveSettings({ koVoiceName: el.value || '' }); say('안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?', { lang:'ko' }); }
+  if (el.id === 'koVoiceSel'){ lsSet('dolearn.koVoice', el.value || ''); say('안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?', { lang:'ko' }); }
   if (el.id === 'ttMaskIn') await Store.saveSettings({ ttMask: el.value.trim().slice(0, 200) });
   if (el.id === 'ttDate' && S.view.ttDraft) S.view.ttDraft.contestDate = el.value;
   if (el.id === 'setGameMin') await Store.saveSettings({ gameMinutes: clamp(+el.value||20, 5, 120) });
-  if (el.id === 'setHideTitle'){ await Store.saveSettings({ hideTitle: el.value.trim().slice(0, 20) }); const t = bhTitle(), c = t.charCodeAt(t.length - 1) - 0xAC00, jj = c >= 0 && c <= 11171 ? c % 28 : 0; toast(`놀이 이름을 ‘${t}’${jj === 0 || jj === 8 ? '로' : '으로'} 정했어요`); }
   if (el.id === 'setGoal') await Store.saveSettings({ weeklyGoal: clamp(+el.value||20, 2, 200) });
   if (el.id === 'setCats'){
     const cats = el.value.split(',').map(s=>s.trim()).filter(Boolean);
@@ -11347,7 +11700,7 @@ function pinTitle(){
   if (p === 'unlock') return '부모님, 열어주세요';
   if (p.startsWith('approve:')) return '승인하시겠어요?';
   if (p.startsWith('globe:')) return '부모님, 확인해 주세요';
-  if (p === 'chat') return '엄마 아빠로 말하기';
+  if (p === 'chat') return '부모님으로 말하기';
   if (p.startsWith('kidin:')) return '부모님, 열어 주세요';
   return '부모님 화면';
 }
@@ -11367,7 +11720,7 @@ function pinSetSheet(note){
     <button class="btn wide" id="savePin" style="margin-top:6px">저장하고 계속</button>`;
 }
 function continueAfterPin(purpose){
-  if (purpose === 'chat'){ closeModal(); CHAT.as = 'parent'; chatOpen(); return; }
+  if (purpose === 'chat'){ closeModal(); CHAT.as = 'p:' + (S.parentId || 'owner'); chatOpen(); return; }
   if (purpose.startsWith('kidin:')){ kidEnterNow(purpose.slice(6)); return; }
   if (purpose.startsWith('globe:')){ closeModal(); worldFound(purpose.slice(6)); render(); return; }
   if (purpose.startsWith('approve:')){
@@ -11380,7 +11733,14 @@ function continueAfterPin(purpose){
 }
 
 function checkPin(){
-  if (S.view.pin === String(S.settings.pin || '1234')){
+  const who = parentByPin(S.view.pin);
+  const tgOnly = S.fromTelegram && String(S.view.pinPurpose || '').indexOf('approve:') === 0;
+  if (who && tgOnly && who.role !== 'owner'){
+    S.view.pin = ''; S.view.pinError = `텔레그램으로 연 승인은 대표 관리자 ${ownerNick()}만 할 수 있어요`;
+    openModal(pinSheet(pinTitle())); return;
+  }
+  if (who){
+    S.parentId = who.id;                                       // 지금 부모님 화면에 들어온 사람
     const purpose = S.view.pinPurpose || '';
     S.view.pin = '';
     if (needsNewPin()){
@@ -12004,6 +12364,7 @@ document.addEventListener('visibilitychange', () => {
    시작
    ============================================================ */
 function start(){
+  S.fromTelegram = new URLSearchParams(location.hash.slice(1)).get('tg') === '1';   // 텔레그램 "열어주러 가기" 단추로 열었다
   S.familyId = resolveFamilyId();
   // 앱을 열면 항상 메인 홈(시작 화면)부터. 누가 공부할지는 매번 고른다.
   S.kidId = null;
