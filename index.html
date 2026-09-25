@@ -505,6 +505,58 @@
   }
 
   /* ---------- 할 일 완료 응원 팝업 ---------- */
+  /* 💬 우리 가족 대화방 — 오른쪽에서 열린다 */
+  .chatbtn{position:relative;}
+  .chat-badge{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:#E5484D;color:#fff;font-size:12px;font-weight:800;
+    display:grid;place-items:center;padding:0 5px;box-shadow:0 0 0 2px var(--cream);}
+  .chat-wrap{position:fixed;inset:0;z-index:59;display:flex;justify-content:flex-end;}
+  .chat-dim{position:absolute;inset:0;background:rgba(74,48,54,.28);}
+  .chat-panel{position:relative;width:min(420px,100vw);height:100%;background:var(--cream);display:flex;flex-direction:column;
+    box-shadow:-10px 0 30px rgba(74,48,54,.25);animation:chat-in .28s ease-out;padding-top:env(safe-area-inset-top,0px);}
+  @keyframes chat-in{from{transform:translateX(100%)}to{transform:none}}
+  .chat-head{display:flex;align-items:center;gap:8px;padding:12px 12px 10px 16px;border-bottom:2px solid var(--blush);background:var(--surface);}
+  .chat-head b{font-family:var(--display);font-size:19px;flex:1;}
+  .chat-me{display:flex;align-items:center;gap:5px;font-size:14px;color:var(--cocoa-soft);}
+  .chat-list{flex:1;overflow-y:auto;padding:12px 12px 16px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch;}
+  .chat-date{align-self:center;font-size:12px;color:var(--cocoa-soft);background:var(--blush);border-radius:999px;padding:2px 10px;}
+  .chat-pin{background:#FFF6D8;border:2px dashed #F1CF7A;border-radius:14px;padding:8px 10px;font-size:14px;}
+  .chat-empty{text-align:center;color:var(--cocoa-soft);margin:auto 10px;line-height:1.6;}
+  .cb{display:flex;gap:8px;align-items:flex-end;max-width:88%;}
+  .cb.me{align-self:flex-end;flex-direction:row-reverse;}
+  .cb-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:19px;flex:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.8);}
+  .cb-av.sm{width:26px;height:26px;font-size:15px;}
+  .cb-body{min-width:0;}
+  .cb-name{font-size:12px;color:var(--cocoa-soft);margin:0 4px 2px;}
+  .cb.me .cb-name{text-align:right;}
+  .cb-text{background:var(--surface);border:2px solid var(--blush);border-radius:18px 18px 18px 6px;padding:8px 12px;font-size:16px;line-height:1.4;word-break:break-word;}
+  .cb.me .cb-text{background:#FFE3EA;border-color:#FFC7D4;border-radius:18px 18px 6px 18px;}
+  .cb-sticker{display:flex;gap:10px;align-items:center;background:linear-gradient(160deg,#FFFDF3,#FFEFD2);border:3px solid #FFD98E;border-radius:20px;padding:10px 12px;
+    box-shadow:0 4px 10px rgba(214,150,80,.2);transform:rotate(-1.5deg);}
+  .cb.me .cb-sticker{transform:rotate(1.5deg);}
+  .cb-ico{font-size:36px;line-height:1;}
+  .cb-sticker b{font-family:var(--display);font-size:15px;color:#9A6A12;}
+  .chat-foot{border-top:2px solid var(--blush);background:var(--surface);padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px));}
+  .chat-compose{display:flex;gap:6px;align-items:center;}
+  .chat-compose .field{min-width:0;margin:0;}
+  .chat-gift[aria-pressed="true"]{background:#FFF1C4;border-color:#E7B53C;}
+  .chat-tray{background:#FFFBEF;border:2px solid #FFE3A3;border-radius:16px;padding:8px;margin-bottom:8px;}
+  .chat-stickers{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .chat-st{border:2px solid #FFD98E;background:#fff;border-radius:14px;padding:8px 6px;font-size:14px;font-family:inherit;color:var(--cocoa);cursor:pointer;text-align:left;}
+  .chat-st:active{transform:scale(.96);}
+  .chat-who{text-align:center;}
+  /* 🔐 그림 비밀번호 */
+  .kp-dots{display:flex;gap:12px;justify-content:center;margin:6px 0 10px;}
+  .kp-dots i{width:18px;height:18px;border-radius:50%;border:3px solid var(--blush);}
+  .kp-dots i.on{background:var(--berry);border-color:var(--berry);}
+  .kp-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:300px;margin:0 auto;}
+  .kp-b{aspect-ratio:1;border-radius:22px;border:3px solid var(--blush);background:var(--surface);font-size:40px;cursor:pointer;box-shadow:var(--shadow);}
+  .kp-b:active{transform:scale(.92);background:var(--berry-soft);}
+  /* 💮 참 잘했어요 도장 */
+  .stamp{width:100%;height:100%;display:block;}
+  .weekstrip .dot.on{background:#FFF1F1;}
+  .weekstrip .dot .stamp{width:34px;height:34px;transform:rotate(-12deg);}
+  .todo-stamp{width:50px;height:50px;flex:none;transform:rotate(-14deg);animation:stamp-in .45s cubic-bezier(.2,1.6,.4,1) both;}
+  @keyframes stamp-in{from{transform:rotate(-14deg) scale(2.2);opacity:0}to{transform:rotate(-14deg) scale(1);opacity:1}}
   /* 💌 쪽지·칭찬 알림 — 오른쪽 위에서 살짝 */
   .noti-box{position:fixed;right:12px;top:calc(78px + env(safe-area-inset-top,0px));z-index:58;display:flex;flex-direction:column;gap:10px;
     width:min(320px, calc(100vw - 24px));pointer-events:none;}
@@ -517,7 +569,8 @@
   .noti-t{font-family:var(--display);font-size:17px;line-height:1.25;color:var(--cocoa);}
   .noti-b{font-size:15px;margin-top:3px;word-break:keep-all;}
   .noti-more{font-size:12px;color:var(--cocoa-soft);margin-top:3px;}
-  .noti-btns{display:flex;gap:6px;justify-content:flex-end;margin-top:8px;}
+  .noti-btns{display:flex;gap:6px;justify-content:flex-end;margin-top:8px;flex-wrap:wrap;}
+  .noti-btns .btn{padding:6px 10px;font-size:14px;white-space:nowrap;min-height:36px;}
   @media (max-width:599px){ .noti-card{padding:10px 10px 8px;border-radius:18px;} .noti-ico{font-size:28px;} .noti-t{font-size:15px;} .noti-b{font-size:14px;} .noti-btns{margin-top:6px;} }
   @keyframes noti-in{from{transform:translateX(115%) rotate(4deg);opacity:0}to{transform:none;opacity:1}}
   @keyframes noti-out{to{transform:translateX(115%);opacity:0}}
@@ -929,6 +982,7 @@
       <button class="datechip" id="dateChip"></button>
     </div>
     <div class="row tb-right" style="gap:8px">
+      <button class="homebtn chatbtn" id="chatBtn" data-act="chatOpen" hidden aria-label="우리 가족 대화방">💬<span class="chat-badge" id="chatBadge" hidden></span></button>
       <button class="homebtn" id="homeBtn" hidden aria-label="시작 화면으로">🏠</button>
       <button class="whoami" id="whoami" hidden></button>
     </div>
@@ -953,7 +1007,7 @@
 const SB_URL = 'https://xirclohwurvtschwrtxw.supabase.co';
 const SB_KEY = 'sb_publishable_97VPBM0syPSyG2r1S6ScMg_azkVXgdN';
 
-const COLLS = ['profiles','books','words','todos','sessions','unlocks','dict','requests','scripts','speech','kudos',
+const COLLS = ['profiles','books','words','todos','sessions','unlocks','dict','requests','scripts','speech','kudos','chat',
   'dlists','dprog','spell','think','goals','trips','wishes','stamps'];
 const DEFAULT_CATS = ['그림책','동화책','영어책','지식책','만화','시'];
 const KID_COLORS = [
@@ -998,7 +1052,9 @@ const CHEERS = [
 ];
 /* 다꾸 메모지 — 부모님이 직접 쓴 응원이 있으면 그걸 보여주고, 없으면 오늘의 응원 문구 */
 function memoNote(){
-  const note = S.settings.parentNote;
+  const recent = S.data.chat.filter(x => x.from === 'parent' && x.at && Date.now() - new Date(x.at).getTime() < 7 * 86400000)
+    .sort((a, b) => String(b.at).localeCompare(String(a.at)))[0];
+  const note = recent ? { text:recent.text, at:recent.at } : S.settings.parentNote;
   const hasNote = note && String(note.text || '').trim();
   return `<div class="memo" role="note">
     <div class="memo-head">${hasNote ? '💌 엄마 아빠가 남긴 쪽지' : '✏️ 오늘의 응원'}</div>
@@ -1095,7 +1151,7 @@ const callName = name => `${name}${hasJong(name) ? '아' : '야'}`; // 부르는
 const CHEER_LINES = [
   { e:'⭐', t:'{call} 멋지다!',        s:'하나 끝! 반짝반짝 잘했어요' },
   { e:'🌟', t:'{subj} 해냈어요!',       s:'스스로 해낸 거 정말 대단해' },
-  { e:'🍓', t:'우와, 벌써 {done}개!',   s:'이 기세로 계속 가볼까?' },
+  { e:'💮', t:'우와, 벌써 {done}개!',   s:'이 기세로 계속 가볼까?' },
   { e:'🎀', t:'척척 잘하네!',           s:'{call}, 한 걸음씩 가는 거 최고야' },
   { e:'🌈', t:'오늘도 한 뼘 자랐어',    s:'{call}, 끝까지 해낸 거 멋져' },
   { e:'💖', t:'최고예요!',              s:'집중하는 모습이 정말 멋졌어' },
@@ -1495,29 +1551,31 @@ function restoreInputs(root, snap){
 const NOTI = { kid:'', rung:new Set() };
 function notiState(k){
   const n = (k && k.noti) || {};
-  return { since:n.since || new Date(Date.now() - 86400000).toISOString(), seen:Array.isArray(n.seen) ? n.seen.slice() : [], noteAt:n.noteAt || '' };
+  return { since:n.since || new Date(Date.now() - 86400000).toISOString(), seen:Array.isArray(n.seen) ? n.seen.slice() : [], noteAt:n.noteAt || '', chatAt:n.chatAt || '' };
 }
 function notiPending(k){
   if (!k) return [];
   const st = notiState(k), out = [], note = S.settings.parentNote;
   if (note && String(note.text || '').trim() && note.at && note.at > st.noteAt && note.at > st.since)
     out.push({ key:'note:' + note.at, kind:'note', text:String(note.text) });
-  S.data.kudos.filter(x => x.to === k.id && x.from !== k.id && String(x.at || '') > st.since && st.seen.indexOf(x.id) < 0)
-    .sort((a, b) => String(a.at || '').localeCompare(String(b.at || '')))
-    .forEach(x => out.push({ key:x.id, kind:'kudo', text:String(x.reason || '💖 칭찬 스티커'), from:x.from }));
+  const after = st.chatAt && st.chatAt > st.since ? st.chatAt : st.since;          // 대화방을 연 뒤의 것만
+  chatItems().filter(x => x.from !== k.id && x.at > after && st.seen.indexOf(x.id) < 0 && (x.kind === 'msg' || x.to === k.id))
+    .forEach(x => out.push({ key:x.id, kind:x.kind === 'kudo' ? 'kudo' : 'msg', text:x.text || '💖 칭찬 스티커', from:x.from }));
   return out;
 }
 function notiWho(x){ return x.from === 'parent' ? '엄마 아빠' : ((kid(x.from) || {}).name || '친구'); }
 function notiCard(x, more){
-  const note = x.kind === 'note', ico = note ? '💌' : ((String(x.text).match(/^\S+/) || ['💖'])[0]);
-  const title = note ? '엄마 아빠가 쪽지를 남겼어요' : (x.from === 'parent' ? '엄마 아빠가 칭찬 스티커를 붙여 줬어요!' : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요!`);
-  const body = note ? `“${x.text}”` : String(x.text).replace(/^\S+\s/, '');
+  const note = x.kind === 'note', msg = x.kind === 'msg';
+  const ico = note ? '💌' : (msg ? '💬' : ((String(x.text).match(/^\S+/) || ['💖'])[0]));
+  const title = note ? '엄마 아빠가 쪽지를 남겼어요' : (msg ? `${subj(notiWho(x))} 말했어요` : (x.from === 'parent' ? '엄마 아빠가 칭찬 스티커를 붙여 줬어요!' : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요!`));
+  const body = note || msg ? `“${x.text}”` : String(x.text).replace(/^\S+\s/, '');
   return `<div class="noti-card ${note ? 'note' : 'kudo'}" data-key="${esc(x.key)}" role="status">
     <div class="noti-ico" aria-hidden="true">${esc(ico)}</div>
     <div class="noti-main"><div class="noti-t">${esc(title)}</div><div class="noti-b">${esc(body)}</div>
       ${more ? `<div class="noti-more">그리고 ${more}개 더 있어요 💕</div>` : ''}
       <div class="noti-btns"><button class="btn ghost sm" data-act="notiSay" data-arg="${esc(x.key)}" aria-label="읽어 주기">🔊</button>
-        <button class="btn sm" data-act="notiOk" data-arg="${esc(x.key)}">${note ? '읽었어요 💕' : '고마워요 💕'}</button></div></div>
+        <button class="btn ghost sm" data-act="notiChat" data-arg="${esc(x.key)}">💬 답장</button>
+        <button class="btn sm" data-act="notiOk" data-arg="${esc(x.key)}">${note || msg ? '읽었어요 💕' : '고마워요 💕'}</button></div></div>
   </div>`;
 }
 function notiBox(){
@@ -1531,6 +1589,7 @@ function notiCheck(){
   if (NOTI.kid !== k.id){ box.innerHTML = ''; NOTI.kid = k.id; }
   const items = notiPending(k), show = items.slice(0, window.innerWidth < 600 ? 1 : 2), keys = new Set(show.map(x => x.key));   // 폰은 하나씩, 아이패드는 둘까지
   box.querySelectorAll('.noti-card').forEach(el => { if (!keys.has(el.dataset.key) && !el.classList.contains('out')) el.remove(); });
+  if (CHAT.open){ box.innerHTML = ''; return; }            // 대화방이 열려 있으면 거기서 다 보인다
   if (document.querySelector('.ttl') || document.querySelector('#modalRoot .sheet') || document.querySelector('.cheer-pop')) return;
   let fresh = 0;
   show.forEach((x, i) => {
@@ -1546,8 +1605,9 @@ function notiFind(key){ const k = curKid(); return k ? notiPending(k).find(x => 
 ACTS.notiSay = (arg) => {
   const x = notiFind(arg); if (!x) return;
   nvUnlock();
-  voice(x.kind === 'note' ? `엄마 아빠가 쪽지를 남겼어요. ${x.text}` : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요. ${String(x.text).replace(/^\S+\s/, '')}`, { lang:'ko' });
+  voice(x.kind === 'note' ? `엄마 아빠가 쪽지를 남겼어요. ${x.text}` : (x.kind === 'msg' ? `${subj(notiWho(x))} 말했어요. ${x.text}` : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요. ${String(x.text).replace(/^\S+\s/, '')}`), { lang:'ko' });
 };
+ACTS.notiChat = async (arg, btn) => { await ACTS.notiOk(arg, btn); chatOpen(); };
 ACTS.notiOk = async (arg, btn) => {
   const k = curKid(); if (!k) return;
   const x = notiFind(arg), st = notiState(k);
@@ -1558,6 +1618,235 @@ ACTS.notiOk = async (arg, btn) => {
   if (x && x.kind === 'kudo') toast(x.from === 'parent' ? '엄마 아빠의 칭찬, 마음에 쏙! 💕' : `${notiWho(x)}의 고마운 마음, 잘 받았어요 💕`);
   await Store.update('profiles', k.id, { noti:st });
 };
+
+/* ============================================================
+   💬 우리 가족 대화방 — 오른쪽 위 💬 단추 → 오른쪽에서 열리는 대화방
+   아이들·엄마 아빠가 글과 💌 칭찬 스티커를 주고받는다. 흩어져 있던 쪽지·칭찬 스티커를 여기 하나로 모았다.
+   글은 컬렉션 chat {from:아이 id | 'parent', text, at}, 칭찬 스티커는 예전처럼 kudos {from, to, reason, at}(배움기록·왕관이 센다).
+   아이는 지금 들어와 있는 아이로만 쓴다(그림 비밀번호로 들어온 아이). 엄마 아빠로 쓰려면 부모님 비밀번호(대화방을 닫으면 끝).
+   안 읽은 글은 💬 단추에 빨간 숫자로. 대화방을 열면 읽은 걸로 — 아이는 profile.noti.chatAt, 부모님은 이 기기에만(localStorage).
+   부모님의 예전 쪽지(settings.parentNote)는 맨 위에 📌로 보여 준다. 5초 동기화 때는 글 목록만 다시 그려서 쓰던 글은 그대로 남는다.
+   ============================================================ */
+const CHAT = { open:false, as:'', tray:false, to:'', sig:'' };
+function chatMe(){ if (CHAT.as === 'parent') return 'parent'; return S.kidId && curKid() ? S.kidId : ''; }
+function chatWho(id){
+  if (id === 'parent') return { name:'엄마 아빠', avatar:'👪', bg:'#FFF1D0' };
+  const k = kid(id); return k ? { name:k.name, avatar:k.avatar || '🐰', bg:kidColor(k).bg } : { name:'친구', avatar:'🙂', bg:'#EEE' };
+}
+function chatItems(){
+  const a = S.data.chat.map(x => ({ id:x.id, kind:'msg', from:x.from, text:String(x.text || ''), at:String(x.at || '') }));
+  const b = S.data.kudos.map(x => ({ id:x.id, kind:'kudo', from:x.from, to:x.to, text:String(x.reason || ''), at:String(x.at || '') }));
+  return a.concat(b).filter(x => x.at).sort((p, q) => p.at.localeCompare(q.at)).slice(-200);
+}
+function chatSeenAt(me){
+  if (me === 'parent') return lsGet('dolearn.chatAt.parent') || '';
+  const k = kid(me); return (k && k.noti && k.noti.chatAt) || notiState(k).since;
+}
+/* 나에게 온 새 글 — 남이 쓴 글, 나에게 온 칭찬 스티커(부모님은 아이들 사이 칭찬도) */
+function chatUnread(me){
+  if (!me) return [];
+  const seen = chatSeenAt(me);
+  return chatItems().filter(x => x.at > seen && x.from !== me && (x.kind === 'msg' || x.to === me || me === 'parent'));
+}
+function chatBadge(){
+  const b = document.getElementById('chatBtn'); if (!b) return;
+  b.hidden = !S.data.profiles.length;
+  const n = CHAT.open ? 0 : chatUnread(chatMe()).length, el = document.getElementById('chatBadge');
+  if (el){ el.hidden = !n; el.textContent = n > 9 ? '9+' : String(n); }
+}
+async function chatMarkRead(){
+  const me = chatMe(), items = chatItems(); if (!me || !items.length) return;
+  const last = items[items.length - 1].at;
+  if (me === 'parent'){ if ((lsGet('dolearn.chatAt.parent') || '') < last) lsSet('dolearn.chatAt.parent', last); chatBadge(); return; }
+  const k = kid(me); if (!k) return;
+  const st = notiState(k), note = S.settings.parentNote;
+  const noteNew = note && note.at && note.at > (st.noteAt || '');          // 📌 쪽지도 대화방 맨 위에서 봤다
+  if ((st.chatAt || '') >= last && !noteNew) return;
+  if ((st.chatAt || '') < last) st.chatAt = last;
+  if (noteNew) st.noteAt = note.at;
+  await Store.update('profiles', k.id, { noti:st });
+}
+function chatDay(at){ const d = new Date(at); return `${d.getMonth() + 1}월 ${d.getDate()}일 ${DAYNAMES[d.getDay()]}요일`; }
+function chatTime(at){ const d = new Date(at), h = d.getHours(); return `${h < 12 ? '오전' : '오후'} ${h % 12 || 12}:${String(d.getMinutes()).padStart(2, '0')}`; }
+function chatListHtml(){
+  const me = chatMe(), items = chatItems(), note = S.settings.parentNote;
+  let day = '', out = '';
+  if (note && String(note.text || '').trim()) out += `<div class="chat-pin">📌 <b>엄마 아빠의 쪽지</b> ${esc(note.text)}</div>`;
+  if (!items.length) out += `<div class="chat-empty">💬 아직 아무 말도 없어요.<br>“안녕!” 하고 먼저 말을 걸어 볼까요? 칭찬 스티커 🎁도 보낼 수 있어요.</div>`;
+  for (const x of items){
+    const d = chatDay(x.at); if (d !== day){ day = d; out += `<div class="chat-date">${esc(d)}</div>`; }
+    const w = chatWho(x.from), mine = x.from === me;
+    if (x.kind === 'kudo'){
+      const to = chatWho(x.to), ico = (x.text.match(/^\S+/) || ['💖'])[0], body = x.text.replace(/^\S+\s/, '');
+      out += `<div class="cb kudo${mine ? ' me' : ''}"><span class="cb-av" style="background:${w.bg}">${esc(w.avatar)}</span>
+        <div class="cb-body"><div class="cb-name">${esc(w.name)} → ${esc(to.name)} · ${chatTime(x.at)}</div>
+          <div class="cb-sticker"><span class="cb-ico">${esc(ico)}</span><div><b>칭찬 스티커</b><div>${esc(body)}</div></div></div></div></div>`;
+    } else {
+      out += `<div class="cb${mine ? ' me' : ''}"><span class="cb-av" style="background:${w.bg}">${esc(w.avatar)}</span>
+        <div class="cb-body"><div class="cb-name">${esc(w.name)} · ${chatTime(x.at)}</div><div class="cb-text">${esc(x.text)}</div></div></div>`;
+    }
+  }
+  return out;
+}
+/* 칭찬 스티커 고르기 — 아이는 형제에게(하루 3번까지), 부모님은 고른 아이에게 */
+function chatTrayHtml(){
+  const me = chatMe(); if (!me) return '';
+  const others = kids().filter(k => k.id !== me);
+  if (!others.length) return '<div class="chat-tray"><p class="muted" style="margin:0">칭찬 스티커를 보낼 친구가 아직 없어요.</p></div>';
+  if (!others.some(k => k.id === CHAT.to)) CHAT.to = others[0].id;
+  const left = me === 'parent' ? 99 : 3 - kudosToday(me);
+  const reasons = me === 'parent' ? KUDOS.concat(['😇 착한 일을 했어요', '🌟 끝까지 해냈어요']) : KUDOS;
+  return `<div class="chat-tray">
+    ${others.length > 1 ? `<div class="chips" style="margin-bottom:6px">${others.map(k => `<button class="chip" data-act="chatTo" data-arg="${k.id}" aria-pressed="${CHAT.to === k.id}">${esc(k.avatar || '')} ${esc(k.name)}</button>`).join('')}</div>`
+      : `<div class="muted" style="font-size:13px;margin-bottom:6px">🎁 ${esc(chatWho(CHAT.to).name)}에게 칭찬 스티커 보내기${me === 'parent' ? '' : ` (오늘 ${Math.max(0, left)}번 남았어요)`}</div>`}
+    ${left > 0 ? `<div class="chat-stickers">${reasons.map((r, i) => `<button class="chat-st" data-act="chatKudo" data-arg="${i}">${esc(r)}</button>`).join('')}</div>`
+      : '<p class="muted" style="margin:0;font-size:13px">오늘은 칭찬 스티커를 다 보냈어요. 내일 또 보내요! 글로 고마운 마음을 전해도 좋아요 💕</p>'}
+  </div>`;
+}
+function chatComposeHtml(){
+  const me = chatMe();
+  if (!me) return `<div class="chat-who"><div class="muted" style="font-size:14px;margin-bottom:6px">누구로 말할까요?</div>
+    <div class="chips" style="justify-content:center">${kids().map(k => `<button class="chip" data-act="chatAsKid" data-arg="${k.id}">${esc(k.avatar || '')} ${esc(k.name)}</button>`).join('')}
+      <button class="chip" data-act="chatAsParent">👪 엄마 아빠</button></div></div>`;
+  return `${CHAT.tray ? chatTrayHtml() : ''}
+    <div class="chat-compose">
+      <button class="btn ghost sm chat-gift" data-act="chatTray" aria-pressed="${CHAT.tray}" aria-label="칭찬 스티커">🎁</button>
+      <input class="field grow" id="chatIn" maxlength="200" placeholder="${me === 'parent' ? '아이들에게 한마디 (쪽지)' : '가족에게 하고 싶은 말'}" enterkeyhint="send" autocomplete="off">
+      ${srOk() ? '<button class="btn ghost sm" data-act="chatMic" aria-label="말로 쓰기">🎙</button>' : ''}
+      <button class="btn sm" data-act="chatSend">보내기</button>
+    </div>`;
+}
+function chatOpen(){
+  CHAT.open = true; CHAT.tray = false;
+  let w = document.getElementById('chatWrap');
+  if (!w){ w = document.createElement('div'); w.id = 'chatWrap'; w.className = 'chat-wrap'; document.body.appendChild(w); }
+  const me = chatMe(), who = me ? chatWho(me) : null;
+  w.innerHTML = `<div class="chat-dim" data-act="chatClose"></div>
+    <aside class="chat-panel" role="dialog" aria-label="우리 가족 대화방">
+      <div class="chat-head"><b>💬 우리 가족 대화방</b>
+        ${who ? `<span class="chat-me"><span class="cb-av sm" style="background:${who.bg}">${esc(who.avatar)}</span>${esc(who.name)}</span>` : ''}
+        <button class="ttl-x" data-act="chatClose" aria-label="대화방 닫기">✕</button></div>
+      <div class="chat-list" id="chatList">${chatListHtml()}</div>
+      <div class="chat-foot" id="chatFoot">${chatComposeHtml()}</div>
+    </aside>`;
+  CHAT.sig = chatItems().length + '|' + ((chatItems().slice(-1)[0] || {}).id || '');
+  const l = document.getElementById('chatList'); if (l) l.scrollTop = l.scrollHeight;
+  chatMarkRead(); chatBadge();
+  const box = document.getElementById('notiBox'); if (box) box.innerHTML = '';   // 알림 카드는 대화방 안에서 다 보인다
+}
+function chatClose(){
+  CHAT.open = false; CHAT.as = ''; CHAT.tray = false;
+  const w = document.getElementById('chatWrap'); if (w) w.remove();
+  chatBadge(); setTimeout(notiCheck, 60);
+}
+/* 동기화로 새 글이 오면 목록만 다시 — 아래를 보고 있었으면 계속 아래로 */
+function chatRefresh(){
+  if (!CHAT.open) return;
+  const items = chatItems(), sig = items.length + '|' + ((items[items.length - 1] || {}).id || '') + '|' + JSON.stringify(S.settings.parentNote || null).length;
+  if (sig === CHAT.sig) return;
+  CHAT.sig = sig;
+  const l = document.getElementById('chatList'); if (!l) return;
+  const atEnd = l.scrollHeight - l.scrollTop - l.clientHeight < 80;
+  l.innerHTML = chatListHtml();
+  if (atEnd) l.scrollTop = l.scrollHeight;
+  chatMarkRead();
+}
+function chatFootRedraw(){ const f = document.getElementById('chatFoot'), keep = ($('#chatIn') || {}).value || ''; if (f){ f.innerHTML = chatComposeHtml(); const i = $('#chatIn'); if (i) i.value = keep; } }
+ACTS.chatOpen = () => { nvUnlock(); chatOpen(); };
+ACTS.chatClose = () => chatClose();
+ACTS.chatTray = () => { CHAT.tray = !CHAT.tray; chatFootRedraw(); };
+ACTS.chatTo = (arg) => { CHAT.to = arg; chatFootRedraw(); };
+ACTS.chatSend = async () => {
+  const me = chatMe(), inp = $('#chatIn'); if (!me || !inp) return;
+  const text = inp.value.trim().slice(0, 200);
+  if (!text){ inp.focus(); return; }
+  inp.value = '';
+  await Store.add('chat', { from:me, text, at:new Date().toISOString() });
+  chatRefresh(); const l = document.getElementById('chatList'); if (l) l.scrollTop = l.scrollHeight;
+  ttTone(880, 0, 0.08, 0.05);
+};
+ACTS.chatKudo = async (arg) => {
+  const me = chatMe(); if (!me) return;
+  const to = CHAT.to, reasons = me === 'parent' ? KUDOS.concat(['😇 착한 일을 했어요', '🌟 끝까지 해냈어요']) : KUDOS;
+  if (!to || to === me || !kid(to)) return;
+  if (me !== 'parent' && kudosToday(me) >= 3){ toast('오늘은 칭찬 스티커를 다 보냈어요. 내일 또 보내요!'); return; }
+  await Store.add('kudos', { from:me, to, reason:reasons[+arg] || KUDOS[4], at:new Date().toISOString() });
+  CHAT.tray = false; chatFootRedraw(); chatRefresh();
+  const l = document.getElementById('chatList'); if (l) l.scrollTop = l.scrollHeight;
+  confetti(); try { ttChime(); } catch(e){}
+  toast(me === 'parent' ? `${chatWho(to).name}에게 칭찬 스티커를 붙여 줬어요 😇` : `고마운 마음을 전하는 ${chatWho(me).name}, 정말 멋져요! 💌`);
+};
+ACTS.chatMic = () => { thListen('chatMsg', () => { const i = $('#chatIn'); if (i){ i.value = ((i.value ? i.value + ' ' : '') + kv('chatMsg')).trim().slice(0, 200); kvSet('chatMsg', ''); i.focus(); } }); };
+ACTS.chatAsKid = (arg) => { chatClose(); kidEnter(arg, () => chatOpen()); };
+ACTS.chatAsParent = () => { chatClose(); S.view.pin = ''; S.view.pinError = ''; S.view.pinPurpose = 'chat'; openModal(pinSheet('엄마 아빠로 말하기')); };
+ACTS.chatParent = () => { closeModal(); CHAT.as = 'parent'; chatOpen(); };   // 부모님 화면(비밀번호를 이미 넣음)에서 바로
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'chatIn' && !e.isComposing){ e.preventDefault(); ACTS.chatSend(); } });
+
+/* ============================================================
+   🔐 그림 비밀번호 — 아이마다 자기 공간(할 일·책장·단어…)을 지킨다
+   시작 화면에서 아이를 고르면 그림 9개 중 4개를 순서대로 누른다. 처음이면 아이가 직접 정한다(두 번 눌러 확인).
+   잊어버리면 "비밀번호를 잊었어요" → 부모님 비밀번호로 연다. 부모님 화면 → 아이에서 지우면 다음에 새로 정한다.
+   📒 배움기록·💬 대화방은 함께 보는 곳이다. 비밀번호는 그대로가 아니라 섞어서(kpinHash) profile.kpin 에 둔다.
+   ============================================================ */
+const KPIN_PICS = ['🍓', '🐰', '⭐', '🌈', '🍦', '🚀', '🐬', '🌻', '🎈'];
+const KP = { kid:'', seq:[], mode:'', first:'', err:'', then:null };
+function kpinHash(kidId, seq){ let h = 5381; const s = kidId + '|' + seq.join('-'); for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return 'k' + h.toString(36); }
+function kidEnter(id, then){
+  const k = kid(id); if (!k) return;
+  KP.kid = id; KP.seq = []; KP.err = ''; KP.first = ''; KP.then = then || null;
+  KP.mode = k.kpin ? 'check' : 'new';
+  openModal(kpinSheet());
+}
+function kidEnterNow(id){
+  if (!kid(id)) return;
+  S.kidId = id; lsSet('dolearn.kid', id); S.tab = 'today'; closeModal(); render();
+  const f = KP.then; KP.then = null; if (f) setTimeout(f, 80);
+}
+function kpinSheet(){
+  const k = kid(KP.kid); if (!k) return '';
+  const title = KP.mode === 'check' ? `${esc(k.avatar || '')} ${esc(k.name)}의 그림 비밀번호` : (KP.mode === 'again' ? '한 번 더 눌러 확인해요' : `🔐 ${esc(k.name)}만의 그림 비밀번호를 정해요`);
+  const note = KP.mode === 'check' ? '그림 4개를 순서대로 눌러요' : (KP.mode === 'again' ? '방금 고른 그림 4개를 같은 순서로!' : '그림 4개를 순서대로 골라요. 나만 아는 비밀이에요! 🤫');
+  return `<h3 style="text-align:center">${title}</h3>
+    <p class="muted" style="text-align:center;margin:0 0 8px">${note}</p>
+    <div class="kp-dots">${[0, 1, 2, 3].map(i => `<i class="${KP.seq.length > i ? 'on' : ''}"></i>`).join('')}</div>
+    ${KP.err ? `<p style="text-align:center;color:var(--berry-deep);margin:6px 0">${esc(KP.err)}</p>` : ''}
+    <div class="kp-pad">${KPIN_PICS.map((p, i) => `<button class="kp-b" data-act="kpTap" data-arg="${i}" aria-label="그림 ${i + 1}">${p}</button>`).join('')}</div>
+    <div class="row" style="gap:8px;margin-top:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn ghost sm" data-act="kpBack">← 하나 지우기</button>
+      ${KP.mode === 'check' ? '<button class="btn ghost sm" data-act="kpForgot">비밀번호를 잊었어요</button>' : '<button class="btn ghost sm" data-act="kpLater">나중에 정할래요</button>'}
+    </div>`;
+}
+ACTS.kpTap = async (arg) => {
+  if (KP.seq.length >= 4) return;
+  KP.seq.push(+arg); KP.err = ''; try { ttTone(620 + KP.seq.length * 70, 0, 0.06, 0.05); } catch(e){}
+  if (KP.seq.length < 4){ openModal(kpinSheet()); return; }
+  const k = kid(KP.kid); if (!k) return;
+  const h = kpinHash(k.id, KP.seq);
+  if (KP.mode === 'check'){
+    if (h === k.kpin){ kidEnterNow(k.id); return; }
+    KP.seq = []; KP.err = '앗, 그림이 달라요. 괜찮아요, 천천히 다시 눌러 볼까요?'; openModal(kpinSheet()); return;
+  }
+  if (KP.mode === 'new'){ KP.first = h; KP.seq = []; KP.mode = 'again'; openModal(kpinSheet()); return; }
+  if (h !== KP.first){ KP.seq = []; KP.mode = 'new'; KP.first = ''; KP.err = '두 번 누른 그림이 달라요. 처음부터 다시 정해 볼까요?'; openModal(kpinSheet()); return; }
+  await Store.update('profiles', k.id, { kpin:h });
+  toast('그림 비밀번호를 정했어요! 나만 아는 비밀이에요 🤫');
+  kidEnterNow(k.id);
+};
+ACTS.kpBack = () => { KP.seq.pop(); KP.err = ''; openModal(kpinSheet()); };
+ACTS.kpLater = () => { kidEnterNow(KP.kid); };
+ACTS.kpForgot = () => { S.view.pin = ''; S.view.pinError = ''; S.view.pinPurpose = 'kidin:' + KP.kid; openModal(pinSheet('부모님, 열어 주세요')); };
+ACTS.kpReset = async (arg) => { if (!kid(arg)) return; await Store.update('profiles', arg, { kpin:'' }); toast('그림 비밀번호를 지웠어요. 다음에 들어올 때 새로 정해요'); openModal(parentSheet()); };
+
+/* ---------- 💮 참 잘했어요 도장 — 할 일을 끝낸 날·끝낸 할 일에 찍는다 (이 앱에서 새로 그린 도장) ---------- */
+function stampSvg(){
+  return `<svg class="stamp" viewBox="0 0 100 100" aria-label="참 잘했어요">
+    <circle cx="50" cy="50" r="45" fill="#FFF6F6" stroke="#E5484D" stroke-width="5"/>
+    <circle cx="50" cy="50" r="36.5" fill="none" stroke="#E5484D" stroke-width="2" stroke-dasharray="3.5 3"/>
+    <path d="M50 14 L52.6 19.6 L58.7 20.2 L54.1 24.3 L55.4 30.3 L50 27.2 L44.6 30.3 L45.9 24.3 L41.3 20.2 L47.4 19.6 Z" fill="#E5484D"/>
+    <text x="50" y="54" text-anchor="middle" font-size="21" font-weight="900" fill="#E5484D" font-family="sans-serif">참</text>
+    <text x="50" y="75" text-anchor="middle" font-size="16" font-weight="900" fill="#E5484D" font-family="sans-serif" letter-spacing="-0.5">잘했어요</text>
+  </svg>`;
+}
 
 function draw(){
   const screen = $('#screen'), tabs = $('#tabs'), who = $('#whoami'), home = $('#homeBtn');
@@ -1578,7 +1867,7 @@ function draw(){
   if (!S.kidId || !curKid()){
     tabs.hidden = true; who.hidden = true; home.hidden = true;
     screen.innerHTML = viewGate();
-    notiCheck();
+    notiCheck(); chatBadge(); chatRefresh();
     return;
   }
 
@@ -1608,7 +1897,7 @@ function draw(){
   if (S.tab === 'shelf') requestAnimationFrame(fitSpines);
   if (S.tab === 'world') worldMount();          // 지구본 캔버스는 하나를 계속 다시 붙여 쓴다
   hydratePhotos(screen);
-  notiCheck();
+  notiCheck(); chatBadge(); chatRefresh();
 }
 
 function storageBanner(){
@@ -1769,7 +2058,7 @@ function viewToday(){
     const dk = todayKey(d), isToday = dk === key, future = d > new Date();
     const tl = todosFor(S.kidId, d);
     const ok = tl.length > 0 && doneCount(S.kidId, dk) === tl.length;
-    return `<div><div class="dot ${ok?'on':''} ${isToday?'today':''}">${ok?'🍓':(future?'':'·')}</div>
+    return `<div><div class="dot ${ok?'on':''} ${isToday?'today':''}">${ok?stampSvg():(future?'':'·')}</div>
       <small>${DAYNAMES[d.getDay()]}</small></div>`;
   }).join('');
 
@@ -1823,7 +2112,7 @@ function todoRow(t, key){
         <div class="name">${esc(t.icon||'')} ${esc(t.title)}</div>
         <div class="muted">${done ? '오늘 미션 완료! 멋져요 🎉' : (note ? esc(note) : '뚜뚜 선생님이 기다려요')}</div>
       </div>
-      ${done ? '' : `<button class="btn sm" data-ttgo="1">🦜 하러 가기</button>`}
+      ${done ? `<span class="todo-stamp">${stampSvg()}</span>` : `<button class="btn sm" data-ttgo="1">🦜 하러 가기</button>`}
     </div>`;
   }
   return `<div class="todo ${done?'done':''}">
@@ -1835,7 +2124,7 @@ function todoRow(t, key){
     ${running
       ? `${S.running.est ? `<span class="muted" style="font-size:12px;white-space:nowrap">예상 ${S.running.est}분</span>` : ''}<span class="timer" data-live="${t.id}">${fmtClock((Date.now()-S.running.startedAt)/1000)}</span>
          <button class="btn sm" data-stop="${t.id}">끝</button>`
-      : (done ? '' : `<button class="btn ghost sm" data-start="${t.id}">시작</button>`)}
+      : (done ? `<span class="todo-stamp">${stampSvg()}</span>` : `<button class="btn ghost sm" data-start="${t.id}">시작</button>`)}
     ${t.createdBy === 'kid' ? `<button class="btn ghost sm" data-deltodo="${t.id}" aria-label="지우기">🗑</button>` : ''}
   </div>`;
 }
@@ -2128,12 +2417,11 @@ function viewVersus(){
     </div>
   </div>
 
-  <div class="card">
-    <h3 class="sub">💌 칭찬 스티커</h3>
-    ${other ? `<p class="muted" style="margin:0 0 8px">${esc(other.name)}에게 고마운 마음을 보내볼까요? (하루 3번까지)</p>
-      <div class="chips">${KUDOS.map((r, i) => `<button class="chip" data-kudo="${i}" ${sent >= 3 ? 'disabled' : ''}>${r}</button>`).join('')}</div>
-      ${sent >= 3 ? '<p class="muted" style="margin:8px 0 0;font-size:13px">오늘은 칭찬을 다 보냈어요. 내일 또 보내요!</p>' : ''}` : ''}
-    ${got.length ? `<div style="margin-top:12px"><div class="muted" style="margin-bottom:4px">${esc(me ? me.name : '')}가 받은 칭찬</div>
+  <div class="card" style="background:linear-gradient(170deg,#FFFFFF,#FFF0F4)">
+    <div class="row"><div class="grow"><h3 class="sub" style="margin:0">💌 칭찬 스티커 · 💬 대화방</h3>
+      <div class="muted" style="font-size:14px">${other ? `${esc(other.name)}에게 고마운 마음을 보내 볼까요? (하루 3번까지 · 오늘 ${Math.max(0, 3 - sent)}번 남았어요)` : '가족에게 하고 싶은 말을 보내요'}</div></div>
+      <button class="btn" data-act="chatOpen">💬 열기</button></div>
+    ${got.length ? `<div style="margin-top:10px"><div class="muted" style="margin-bottom:4px">${esc(me ? subj(me.name) : '')} 받은 칭찬</div>
       ${got.map(x => `<div style="font-size:15px">💌 ${esc(x.reason)} <span class="muted" style="font-size:12px">— ${x.from === 'parent' ? '엄마 아빠' : esc((kid(x.from) || {}).name || '')}</span></div>`).join('')}</div>` : ''}
   </div>
 
@@ -2741,6 +3029,9 @@ function parentSheet(){
       <div class="row" style="gap:8px;margin-top:10px"><span class="muted" style="white-space:nowrap">📘 최근 AR 점수</span>
         <input class="field" data-kidar="${k.id}" inputmode="decimal" placeholder="예: 2.5" value="${esc(k.arScore || '')}" style="max-width:110px">
         ${k.arAt ? `<span class="muted" style="font-size:12px">${esc(String(k.arAt).slice(0, 10))}</span>` : ''}</div>
+      <div class="row" style="gap:8px;margin-top:10px"><span class="muted" style="white-space:nowrap">🔐 그림 비밀번호</span>
+        <span class="grow" style="font-size:14px">${k.kpin ? '정해 놓았어요' : '아직 없어요 — 다음에 들어올 때 정해요'}</span>
+        ${k.kpin ? `<button class="btn ghost sm" data-act="kpReset" data-arg="${k.id}">지우기</button>` : ''}</div>
       <div class="row" style="gap:8px;margin-top:10px"><span class="muted" style="white-space:nowrap">🔤 영어 이름</span>
         <input class="field" data-kidnameen="${k.id}" maxlength="20" placeholder="스피치 원고의 {name} 자리" value="${esc(k.nameEn || '')}" autocapitalize="words" autocorrect="off" spellcheck="false" style="max-width:220px"></div>
       <div class="row" style="gap:8px;margin-top:10px"><span class="muted" style="white-space:nowrap">⭐ 모은 별</span>
@@ -2756,10 +3047,10 @@ function parentSheet(){
     const noteText = (S.settings.parentNote && S.settings.parentNote.text) || '';
     body = `<div class="card stack">
       <div>
-        <div class="muted">💌 아이들에게 남기는 쪽지 — 시작 화면 메모지에 보여요</div>
-        <textarea class="field" id="setNote" maxlength="60" style="min-height:74px"
-          placeholder="예: 오늘도 너희가 자랑스러워! 사랑해 💕">${esc(noteText)}</textarea>
-        <p class="muted" style="margin:5px 0 0;font-size:13px">비워두면 매일 바뀌는 응원 문구가 나와요. (60자까지)</p>
+        <div class="muted">💌 아이들에게 쪽지·칭찬 스티커 — 이제 💬 우리 가족 대화방에서 보내요</div>
+        <button class="btn mint wide" data-act="chatParent" style="margin-top:6px">💬 대화방에서 엄마 아빠로 말하기</button>
+        <p class="muted" style="margin:5px 0 0;font-size:13px">보낸 말은 아이 화면 오른쪽에 살짝 떠오르고, 시작 화면 메모지에도 보여요.${noteText ? ' 예전 쪽지는 대화방 맨 위에 📌로 남아 있어요.' : ''}</p>
+        ${noteText ? '<button class="btn ghost sm" id="clearNote" style="margin-top:6px">📌 예전 쪽지 떼기</button>' : ''}
       </div>
       <div><div class="muted">놀이 시간 (분)</div>
         <input class="field" type="number" min="5" max="120" id="setGameMin" value="${S.settings.gameMinutes}"></div>
@@ -9994,7 +10285,7 @@ document.addEventListener('click', async (e) => {
   }
 
   /* --- 프로필 --- */
-  if (d.pick){ S.kidId = d.pick; lsSet('dolearn.kid', d.pick); S.tab='today'; render(); return; }
+  if (d.pick){ kidEnter(d.pick); return; }
   if (t.id === 'whoami' || t.id === 'homeBtn'){
     S.kidId = null; S.view.game = null; stopStars(); render(); return;
   }
@@ -10421,6 +10712,7 @@ document.addEventListener('click', async (e) => {
     if (cb) await cb(v);
     return;
   }
+  if (t.id === 'clearNote'){ await Store.saveSettings({ parentNote:null }); toast('예전 쪽지를 뗐어요'); openModal(parentSheet()); return; }
   if (t.id === 'confirmOk'){
     const cb = S.view.confirmCb; S.view.confirmCb = null;
     closeModal();
@@ -10516,6 +10808,8 @@ function pinTitle(){
   if (p === 'unlock') return '부모님, 열어주세요';
   if (p.startsWith('approve:')) return '승인하시겠어요?';
   if (p.startsWith('globe:')) return '부모님, 확인해 주세요';
+  if (p === 'chat') return '엄마 아빠로 말하기';
+  if (p.startsWith('kidin:')) return '부모님, 열어 주세요';
   return '부모님 화면';
 }
 /* 처음 비밀번호(아무도 정하지 않은 상태)로 들어왔으면, 새 비밀번호를 정해야 넘어간다.
@@ -10534,6 +10828,8 @@ function pinSetSheet(note){
     <button class="btn wide" id="savePin" style="margin-top:6px">저장하고 계속</button>`;
 }
 function continueAfterPin(purpose){
+  if (purpose === 'chat'){ closeModal(); CHAT.as = 'parent'; chatOpen(); return; }
+  if (purpose.startsWith('kidin:')){ kidEnterNow(purpose.slice(6)); return; }
   if (purpose.startsWith('globe:')){ closeModal(); worldFound(purpose.slice(6)); render(); return; }
   if (purpose.startsWith('approve:')){
     approveRequest(purpose.slice(8)); closeModal(); confetti(); render();
@@ -10554,6 +10850,7 @@ function checkPin(){
       setTimeout(() => { const i = $('#newPin1'); if (i) i.focus(); }, 60);
       return;
     }
+    if (purpose === 'chat' || purpose.startsWith('kidin:')){ continueAfterPin(purpose); return; }
     if (purpose.startsWith('globe:')){ closeModal(); worldFound(purpose.slice(6)); render(); }
     else if (purpose.startsWith('approve:')){
       approveRequest(purpose.slice(8)); closeModal(); confetti(); render();

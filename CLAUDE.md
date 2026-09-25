@@ -59,6 +59,9 @@
   - 창(모달) 안 입력칸은 `data-keep="키"`를 달면 칠 때마다 `kv(키)`에 담긴다 → 창을 다시 그려도 글자가 남는다(`kvField`).
   - 동기화: 내가 쓰는 중(`SYNC`)에 받아 온 옛 기록은 버린다. 방금 쓴 답이 몇 초 동안 사라져 보이던 문제를 막는다.
   - 📒 배움기록: `weekStatsAt`(이번 주·지난주), `crownPlan`(반짝 왕관 나누기), 💌 칭찬 스티커(`kudos` 컬렉션)
+  - 💬 우리 가족 대화방 `chat*`(오른쪽 위 💬 → 오른쪽에서 열림, `#chatWrap`): 글은 컬렉션 `chat` {from: 아이 id | 'parent', text, at}, 칭찬 스티커는 `kudos`(배움기록·왕관이 센다). 아이는 들어와 있는 아이로만 쓰고, 엄마 아빠로 쓰려면 부모님 비밀번호(`pinPurpose 'chat'`, 닫으면 끝). 안 읽은 수는 💬 빨간 숫자(아이 `profile.noti.chatAt`, 부모님은 이 기기 localStorage). 5초 동기화 때는 글 목록만 다시 그린다(`chatRefresh`). 시작 화면 메모지는 엄마 아빠가 일주일 안에 쓴 가장 최근 말. 예전 쪽지(`settings.parentNote`)는 📌.
+  - 🔐 그림 비밀번호 `kp*`/`kidEnter`: 시작 화면에서 아이를 고르면 그림 9개 중 4개를 순서대로(`KPIN_PICS`). 처음이면 아이가 정하고(두 번), `profile.kpin`에는 섞은 값(`kpinHash`). 잊으면 부모님 비밀번호(`kidin:아이id`). 부모님 화면 → 아이에서 지운다. 다른 아이 공간에 들어가지 못하게 — 배움기록·대화방은 함께 본다.
+  - 💮 참 잘했어요 도장 `stampSvg()`: 할 일을 끝내면 줄 오른쪽과 이번 주 칸에 찍힌다(예전 🍓 대신).
   - 💌 쪽지·칭찬 알림 `noti*`: 부모님 쪽지(`settings.parentNote`)와 받은 칭찬 스티커가 받는 아이 화면 오른쪽에 카드로 뜬다(`#notiBox`, 창·놀이 층 아래 z 58). "고마워요"를 누르면 `profile.noti`(`since`·`seen`·`noteAt`)에 기억한다. 처음 쓰는 날엔 지난 하루 것만. 창·층이 열려 있으면 닫힌 뒤에 띄운다. 폰은 1장, 아이패드는 2장씩.
   - 📚 책장: `book.status`가 `'toread'`면 📘 읽을 책(`addedAt`, `readAt` 없음), 아니면 📗 읽은 책(`bookRead(b)`, 예전 책은 status가 없다). 등록할 때 "다 읽었어요 / 읽을 예정이에요"를 고른다. 읽은 책만 별점 → 어려웠던 낱말 → 한 줄 느낌(`book.feel`)을 묻는다. 읽을 책장에 있던 책의 바코드를 다시 찍거나 "📗 다 읽었어요!"를 누르면 읽은 책이 된다. 한 주의 책 수는 읽은 책만 센다.
   - 📂 부모님 화면 → 기록 관리(`pdTab`, `PD_KINDS`): 아이마다 할 일·한 일 기록·책장·단어·생각·여행·가고 싶은 곳·도장·칭찬·약속·받아쓰기·철자를 줄 안에서 ✏️ 고치고 🗑 지운다(비밀번호 화면을 떠나지 않게 줄 안에서 한 번 더 묻는다). 책 고치기는 `bookEditOpen(id, 'parent')`. 함께 간 여행은 그 아이만 뺀다. 별 개수는 아이 탭에서 고친다.
@@ -119,7 +122,7 @@
 - **`api/book.js`, `notify.js`, `telegram-*.js`**: 책 찾기, 텔레그램 알림.
 - **데이터**: Supabase `items`(`coll` + `data` jsonb), `settings`.
   - 뚜뚜가 쓰는 컬렉션: `scripts`(원고), `speech`(아이×원고 진도 1줄).
-  - 새 컬렉션: `dlists`·`dprog`·`spell`(받아쓰기·철자), `think`·`goals`(생각), `trips`·`wishes`·`stamps`(세계).
+  - 새 컬렉션: `dlists`·`dprog`·`spell`(받아쓰기·철자), `think`·`goals`(생각), `trips`·`wishes`·`stamps`(세계), `chat`(가족 대화방).
   - 사진 저장소: 비공개 버킷 `memories` + 정책 3개(select·insert·delete, 폴더 = `encode(digest(x-family-id,'sha256'),'hex')`) + `memories_ready()`.
   - 녹음과 뚜뚜 목소리는 기기의 IndexedDB `dolearn-audio`에만 둔다.
 
