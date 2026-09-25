@@ -3767,7 +3767,8 @@ function parentSheet(){
       <div class="muted" id="pbStatus" style="font-size:13px">📷 여행·그림일기 사진: ${PB.bucket === true ? '🔒 가족 사진 저장소에 저장돼요 (우리 가족만 볼 수 있어요)' : (PB.bucket === false ? '📱 지금은 사진을 찍은 기기에만 저장돼요' : '확인하는 중…')}</div>
       <button class="btn ghost wide" id="exportData">💾 전체 기록 내보내기</button>
       <div id="exportBox"></div>
-    </div>`;
+    </div>
+    ${resetCard()}`;
   }
   if (t === 'notify'){
     body = parentIsOwner() || !S.parentId ? notifyTab()
@@ -13460,6 +13461,59 @@ async function clearSample(){
   for (const p of S.data.speech.filter(x => !alive.has(x.scriptId))) await Store.remove('speech', p.id);
   await Store.saveSettings({ sampleLoaded:false });
 }
+
+/* ---------- 🧹 새로 시작하기 — 아이별 기록을 모두 지우고 처음부터 다시 쌓는다 ----------
+   남는 것: 스피치 원고·받아쓰기 급수표(샘플이 아닌 것), 아이 프로필(이름·그림·색·성향·영어 이름·AR·그림 비밀번호), 부모님 계정, 설정, 사전 저장(dict).
+   지우는 것: RESET_COLLS 모두 + 음성 메시지(vclip) + 샘플 원고·급수표 + 프로필의 별·놀이 기록(이또·마음 친구·숨바꼭질·생각 놀이 단계)·알림 기록.
+   대표 관리자만, '지우기'를 적어야 된다. 되돌릴 수 없어서 💾 전체 기록 내보내기를 먼저 권한다. */
+const RESET_COLLS = ['todos', 'sessions', 'books', 'words', 'think', 'goals', 'trips', 'wishes', 'stamps', 'kudos', 'chat', 'chatrooms', 'dprog', 'spell', 'speech', 'requests', 'unlocks'];
+const RESET_LABEL = { todos:'할 일', sessions:'한 일 기록', books:'책장', words:'단어', think:'생각', goals:'약속', trips:'여행', wishes:'가고 싶은 곳', stamps:'도장',
+  kudos:'칭찬', chat:'대화', chatrooms:'대화방', dprog:'받아쓰기 진도', spell:'철자', speech:'스피치 진도', requests:'놀이 요청', unlocks:'놀이 허락' };
+function resetCard(){
+  if (!parentIsOwner()) return `<div class="card"><h3 class="sub" style="margin:0 0 4px">🧹 새로 시작하기</h3><p class="muted" style="margin:0;font-size:13px">아이 기록을 모두 지우고 새로 시작하는 건 대표 관리자 ${esc(ownerNick())}만 할 수 있어요.</p></div>`;
+  const list = RESET_COLLS.map(c => [c, (S.data[c] || []).length]).filter(x => x[1]);
+  const samples = ['scripts', 'dlists'].reduce((s, c) => s + (S.data[c] || []).filter(x => x.sample).length, 0);
+  const keepScripts = S.data.scripts.filter(x => !x.sample).map(x => x.title || '스피치 원고');
+  const ask = !!S.view.resetAsk, busy = !!S.view.resetBusy;
+  return `<div class="card stack" style="margin-top:12px;border:2px dashed var(--berry)">
+    <h3 class="sub" style="margin:0">🧹 새로 시작하기</h3>
+    <p class="muted" style="margin:0;font-size:13px">아이별 기록을 모두 지우고 처음부터 다시 쌓아요. 샘플 데이터도 함께 지워요.</p>
+    <div style="font-size:14px"><b>🗑 지워요</b> — ${list.length ? list.map(([c, n]) => `${RESET_LABEL[c]} ${n}`).join(' · ') : '지울 기록이 없어요'}${samples ? ` · 샘플 원고·급수표 ${samples}` : ''} · 별·놀이 기록(이또·마음 친구·숨바꼭질)</div>
+    <div style="font-size:14px"><b>✅ 남아요</b> — ${keepScripts.length ? `스피치 원고(${keepScripts.map(esc).join(', ')}) · ` : ''}받아쓰기 급수표 · 아이 이름·그림·성향·영어 이름·AR·그림 비밀번호 · 부모님 계정 · 설정</div>
+    <p class="muted" style="margin:0;font-size:13px">되돌릴 수 없어요. 먼저 위의 💾 전체 기록 내보내기로 저장해 두세요.</p>
+    ${busy ? '<p class="muted" style="margin:0;text-align:center">🧹 지우는 중이에요…</p>'
+      : ask ? `<div class="pd-row pd-ask" style="flex-wrap:wrap"><div class="grow"><b>정말 모두 지울까요?</b><div class="muted" style="font-size:13px">아래 칸에 <b>지우기</b>라고 적어 주세요.</div></div>
+          ${kvField('resetWord', '지우기', { max:4 })}
+          <div class="row" style="gap:6px;width:100%"><button class="btn ghost grow sm" data-act="resetNo">그만두기</button><button class="btn grow sm" data-act="resetGo" style="background:var(--berry-deep)">모두 지우고 새로 시작</button></div></div>`
+      : '<button class="btn ghost wide" data-act="resetAsk">🧹 아이 기록 모두 지우고 새로 시작하기</button>'}
+  </div>`;
+}
+ACTS.resetAsk = () => { if (!parentIsOwner()) return; S.view.resetAsk = true; kvClear('resetWord'); parentShow(); };
+ACTS.resetNo = () => { S.view.resetAsk = false; kvClear('resetWord'); parentShow(); };
+ACTS.resetGo = async () => {
+  if (!parentIsOwner() || S.view.resetBusy) return;
+  if (String(kv('resetWord') || '').trim() !== '지우기'){ toast("칸에 '지우기'라고 적어 주세요"); return; }
+  S.view.resetBusy = true; parentShow();
+  const ids = [];
+  RESET_COLLS.forEach(c => (S.data[c] || []).forEach(x => ids.push(x.id)));
+  ['scripts', 'dlists'].forEach(c => (S.data[c] || []).filter(x => x.sample).forEach(x => ids.push(x.id)));
+  try {
+    if (S.sb){
+      const vc = await S.sb.from('items').select('id').eq('coll', 'vclip');          // 음성 메시지는 따로 칸에 있다
+      ((vc && vc.data) || []).forEach(x => ids.push(x.id));
+      for (let i = 0; i < ids.length; i += 100){ const part = ids.slice(i, i + 100); await syncWrite(() => S.sb.from('items').delete().in('id', part)); }
+      RESET_COLLS.forEach(c => { S.data[c] = []; });
+      ['scripts', 'dlists'].forEach(c => { S.data[c] = S.data[c].filter(x => !x.sample); });
+    } else {
+      for (const c of RESET_COLLS) for (const x of (S.data[c] || []).slice()) await Store.remove(c, x.id);
+      for (const c of ['scripts', 'dlists']) for (const x of S.data[c].filter(y => y.sample)) await Store.remove(c, x.id);
+    }
+    for (const k of kids()) await Store.update('profiles', k.id, { stars:0, itto:null, pet:null, bear:null, play:null, noti:{ since:new Date().toISOString() } });
+    await Store.saveSettings({ sampleLoaded:false, parentNote:null });
+    toast('새로 시작할 준비가 됐어요 🌱 오늘부터 다시 차곡차곡 쌓아요!');
+  } catch(e){ console.warn('새로 시작하기 실패', e); toast('다 지우지 못했어요. 인터넷을 확인하고 한 번 더 눌러 주세요'); }
+  S.view.resetAsk = false; S.view.resetBusy = false; kvClear('resetWord'); parentShow();
+};
 
 /* ---------- 연결 테스트 / 내보내기 ---------- */
 async function netTest(){
