@@ -1000,6 +1000,13 @@
   .it-fr.show{z-index:3;animation:it-pop .6s cubic-bezier(.2,1.6,.4,1) both;filter:drop-shadow(0 4px 6px rgba(60,90,40,.35));}
   .it-fr.show svg{animation:it-bob 2.4s ease-in-out .6s infinite;}
   .it-fr.gone{visibility:hidden;}
+  .it-fr.it-sp.show{filter:drop-shadow(0 0 5px #FFF1B8) drop-shadow(0 0 12px rgba(255,170,230,.95));}
+  .it-fr.it-big.show{filter:drop-shadow(0 6px 8px rgba(60,90,40,.4));}
+  .it-glint{position:absolute;z-index:3;width:0;height:0;pointer-events:none;}
+  .it-glint i{position:absolute;font-style:normal;font-size:22px;transform:translate(-50%,-50%);animation:it-glint 1.8s ease-in-out infinite;}
+  .it-glint i:nth-child(2){left:-26px;top:14px;font-size:16px;animation-delay:.6s;}
+  .it-glint i:nth-child(3){left:24px;top:-12px;font-size:14px;animation-delay:1.2s;}
+  @keyframes it-glint{0%,100%{opacity:.15;transform:translate(-50%,-50%) scale(.55) rotate(0)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15) rotate(20deg)}}
   .it-grass{position:absolute;left:0;top:0;width:100%;height:100%;z-index:2;touch-action:none;}
   .it-parts{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;}
   .it-parts i{position:absolute;width:5px;height:11px;border-radius:3px;animation:it-fly .75s ease-out forwards;}
@@ -1059,6 +1066,8 @@
     background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0 7%,rgba(200,235,255,.34) 8% 40%,rgba(255,190,235,.28) 62%,rgba(190,255,235,.24) 82%,rgba(255,255,255,.22));
     border:2px solid rgba(255,255,255,.75);box-shadow:0 0 14px rgba(255,240,200,.55), inset 0 0 10px rgba(255,255,255,.35);}
   .it-nb svg{width:82%;height:82%;display:block;}
+  .it-nb.it-big svg{width:104%;height:104%;}
+  .it-nb.it-sp{border-color:#FFF1B8;box-shadow:0 0 16px rgba(255,190,235,.95), 0 0 6px rgba(255,241,184,.9), inset 0 0 12px rgba(255,255,255,.45);}
   .it-nb.on svg{animation:it-float 3s ease-in-out infinite;}
   .it-nb.away svg{opacity:.15;animation:none;}
   .it-nb.sel{box-shadow:0 0 0 4px #FFE79C, 0 0 20px rgba(255,231,156,.9);}
@@ -1080,6 +1089,9 @@
   .it-book-item b{font-family:var(--display);font-size:18px;}
   .it-book-item small{font-size:12px;}
   .it-book-item.unk svg{filter:brightness(0);opacity:.18;}
+  .it-book-item.it-sp{border-color:#FFD98E;background:linear-gradient(160deg,#FFFDF3,#FFF0F7);}
+  .it-book-item.it-big{border-color:#9BE0C8;}
+  @media (prefers-reduced-motion:reduce){ .it-glint i{animation:none;opacity:.8;} }
 
   /* ---------- 🧸 곰돌이 숨바꼭질 ---------- */
   .ttl.bh{background-color:#FFF4EC;background-image:none;}
@@ -7756,6 +7768,8 @@ function olClick(t){
    ③ 🚗 출발! → 하늘로 슝~ 날아올랐다가 빙글 돌아 땅속으로 쏙! 개미집에 도착한다.
    ④ 개미집: 큰 방들이 굴로 이어져 있고 방마다 버블이 몇 개씩 있다. 차에 탄 친구를 버블에 옮겨 담으면,
       친구들이 굴을 따라 다른 방에 놀러 갔다가 돌아오거나 이사한다. 🌱 정원으로 → 땅 위로 뿅! 풀이 새로 자라 있다.
+   가끔 🌈 특별한 친구(special — 풀숲 어딘가가 반짝반짝)나 🐢 큰 친구(big — 쿵쿵 발소리, 차에 두 자리)가 섞여 숨는다.
+   못 만난 정원이 쌓일수록 조금씩 잘 나오고(profile.itto.sp·bg), 찾았는데 못 태운 특별·큰 친구는 다음 정원에서 기다린다(wait).
    친구들은 이 앱에서 새로 그린 캐릭터다(다른 게임의 캐릭터는 저작권 때문에 쓰지 않는다).
    개미집 버블 자리·차에 탄 친구·만난 친구 수는 아이마다 기억한다(profile.itto).
    화면 위 층(#itLayer)에서 해서 5초 동기화에 깎은 풀이 되살아나지 않는다.
@@ -7768,19 +7782,85 @@ const IT_FRIENDS = [
   { id:'cloud',  name:'솜구름', w:10, note:'폭신폭신, 안으면 구름처럼 가벼워요' },
   { id:'bug',    name:'꼬물이', w:10, note:'천천히 가도 끝까지 가는 친구예요' },
   { id:'star',   name:'반짝이', w:4,  note:'밤하늘에서 떨어진 별이래요. 만나면 행운!', rare:true },
-  { id:'moon',   name:'달님이', w:3,  note:'잠꾸러기 달님, 자장가를 좋아해요', rare:true }
+  { id:'moon',   name:'달님이', w:3,  note:'잠꾸러기 달님, 자장가를 좋아해요', rare:true },
+  // 🌈 특별한 친구 — 보통 때는 안 나오고, 가끔 한 명씩 섞인다(itRare)
+  { id:'rainbow', name:'알록이', w:0, special:true, note:'비가 그친 날 무지개를 타고 놀러 오는 젤리 친구예요' },
+  { id:'mush',    name:'포롱이', w:0, special:true, note:'포롱포롱 날아다니는 버섯 요정이에요' },
+  { id:'flutter', name:'나풀이', w:0, special:true, note:'꽃밭 위를 나풀나풀 — 꼬물이가 자라면 나풀이가 될까요?' },
+  // 🐢 큰 친구 — 몸이 커서 차에 두 자리를 차지한다
+  { id:'melon',   name:'통통이', w:0, big:true, note:'여름 햇볕을 먹고 통통하게 자란 수박 친구. 몸이 커서 차에 두 자리가 필요해요' },
+  { id:'turtle',  name:'느긋이', w:0, big:true, note:'느릿느릿해도 끝까지 가는 거북 친구. 등껍질이 커서 두 자리에 앉아요' }
 ];
-const IT_SEATS = 5;                        // 정원 친구(3~5명)가 모두 탈 수 있게
+const IT_SEATS = 5;                        // 정원 친구(3~5명)가 모두 탈 수 있게 — 큰 친구가 섞이면 친구 수를 줄여 맞춘다
 const itFriend = id => IT_FRIENDS.find(f => f.id === id) || IT_FRIENDS[0];
 const itIGa = w => `${w}${hasJong(w) ? '이' : '가'}`;       // 딸기콩이 · 새싹이가
-function itRoll(){ const sum = IT_FRIENDS.reduce((a, f) => a + f.w, 0); let r = Math.random() * sum; for (const f of IT_FRIENDS){ r -= f.w; if (r < 0) return f.id; } return IT_FRIENDS[0].id; }
+const IT_POOL = IT_FRIENDS.filter(f => !f.special && !f.big);   // 보통 때 숨는 친구들
+const itSize = t => (itFriend(t).big ? 2 : 1);                   // 차에서 차지하는 자리
+const itCarUsed = car => car.reduce((s, t) => s + itSize(t), 0);
+function itCarFit(list){ const out = []; let n = 0; (list || []).forEach(t => { if (IT_FRIENDS.some(f => f.id === t) && n + itSize(t) <= IT_SEATS){ out.push(t); n += itSize(t); } }); return out; }
+function itRoll(){ const sum = IT_POOL.reduce((a, f) => a + f.w, 0); let r = Math.random() * sum; for (const f of IT_POOL){ r -= f.w; if (r < 0) return f.id; } return IT_POOL[0].id; }
+/* 가끔 오는 친구 — chance 만큼의 확률로 kind('special' | 'big') 친구 하나. 도감에 아직 없는 친구를 먼저 고른다.
+   R을 넘기면 그 난수만 쓴다(같이 찾기는 모든 기기가 같은 씨앗으로 같은 친구를 만든다 — found 없이). */
+function itRare(kind, chance, found, R){
+  R = R || Math.random;
+  if (!(R() < chance)) return '';
+  const list = IT_FRIENDS.filter(f => f[kind]), fresh = list.filter(f => !(found || {})[f.id]);
+  const pick = fresh.length && R() < 0.7 ? fresh : list;
+  return pick[Math.floor(R() * pick.length)].id;
+}
+const itChance = (kind, since) => Math.min(0.45, (kind === 'big' ? 0.10 : 0.08) + 0.05 * (since || 0));   // 못 만난 정원 하나마다 +5%
 
 /* ---------- 친구 그림 (앱 스티커 그림체: 코코아 테두리 · 볼 터치) ---------- */
 const itEye = (x, y) => `<ellipse cx="${x}" cy="${y}" rx="4.3" ry="5.3" fill="#3A2A2E"/><circle cx="${x + 1.4}" cy="${y - 1.9}" r="1.6" fill="#fff"/>`;
 const itBlush = (x, y, c) => `<ellipse cx="${x}" cy="${y}" rx="5.4" ry="3.2" fill="${c || '#FF8FA8'}" opacity="0.6"/>`;
 const itSmile = (x, y) => `<path d="M${x - 4} ${y} Q${x} ${y + 4.5} ${x + 4} ${y}" fill="none" stroke="#6B4A52" stroke-width="2.6" stroke-linecap="round"/>`;
+let IT_UID = 0;                              // 그림마다 따로 쓰는 clipPath 이름
 function itArt(id){
   const L = 'stroke="#6B4A52" stroke-width="3.2" stroke-linejoin="round"';
+  const twinkle = (x, y, r) => `<path d="M${x} ${y - r} l${(r * 0.36).toFixed(1)} ${(r * 0.64).toFixed(1)} ${(r * 0.64).toFixed(1)} ${(r * 0.36).toFixed(1)} -${(r * 0.64).toFixed(1)} ${(r * 0.36).toFixed(1)} -${(r * 0.36).toFixed(1)} ${(r * 0.64).toFixed(1)} -${(r * 0.36).toFixed(1)} -${(r * 0.64).toFixed(1)} -${(r * 0.64).toFixed(1)} -${(r * 0.36).toFixed(1)} ${(r * 0.64).toFixed(1)} -${(r * 0.36).toFixed(1)} z" fill="#FFF1B8" stroke="#6B4A52" stroke-width="1.5" stroke-linejoin="round"/>`;
+  if (id === 'rainbow'){                                  // 🌈 알록이 — 무지개 줄무늬 젤리
+    const c = 'itc' + (++IT_UID), dome = 'M16 64 C16 38 32 24 50 24 C68 24 84 38 84 64 L84 78 Q84 88 74 88 L26 88 Q16 88 16 78 Z';
+    return `<defs><clipPath id="${c}"><path d="${dome}"/></clipPath></defs>
+      <g clip-path="url(#${c})">${[['#FFB3C4', 20, 18.5], ['#FFD2A6', 38, 12.5], ['#FFF0A8', 50, 12.5], ['#BDEBD8', 62, 12.5], ['#BFD6F6', 74, 20]].map(([col, y, hh]) => `<rect x="10" y="${y}" width="80" height="${hh}" fill="${col}"/>`).join('')}</g>
+      <path d="${dome}" fill="none" ${L}/>
+      <ellipse cx="33" cy="40" rx="4.5" ry="7.5" fill="#fff" opacity=".75" transform="rotate(-26 33 40)"/>
+      ${twinkle(12, 24, 7)}${twinkle(88, 18, 6)}${twinkle(90, 50, 4.5)}
+      ${itEye(40, 62)}${itEye(60, 62)}${itBlush(31, 71)}${itBlush(69, 71)}${itSmile(50, 72)}`;
+  }
+  if (id === 'mush') return `<ellipse cx="21" cy="66" rx="8.5" ry="13" fill="#E3F4FF" opacity=".95" ${L} transform="rotate(-26 21 66)"/><ellipse cx="79" cy="66" rx="8.5" ry="13" fill="#E3F4FF" opacity=".95" ${L} transform="rotate(26 79 66)"/>
+    <path d="M32 50 C30 68 33 88 50 88 C67 88 70 68 68 50 Z" fill="#FFF6E6" ${L}/>
+    <path d="M12 52 C12 26 30 12 50 12 C70 12 88 26 88 52 C72 60 28 60 12 52 Z" fill="#FF8FA8" ${L}/>
+    <circle cx="33" cy="32" r="6" fill="#fff"/><circle cx="57" cy="23" r="5" fill="#fff"/><circle cx="72" cy="39" r="5.5" fill="#fff"/><circle cx="48" cy="43" r="4" fill="#fff"/><circle cx="21" cy="46" r="3.5" fill="#fff"/>
+    ${twinkle(88, 10, 6)}${twinkle(9, 22, 4.5)}
+    ${itEye(43, 68)}${itEye(57, 68)}${itBlush(37, 77)}${itBlush(63, 77)}${itSmile(50, 78)}`;
+  if (id === 'flutter') return `<path d="M50 50 C36 22 12 20 10 38 C8 54 30 58 50 54 Z" fill="#DCD0F8" ${L}/><path d="M50 50 C64 22 88 20 90 38 C92 54 70 58 50 54 Z" fill="#FFC9D5" ${L}/>
+    <path d="M50 56 C34 58 18 68 22 80 C26 90 42 82 50 64 Z" fill="#FFC9D5" ${L}/><path d="M50 56 C66 58 82 68 78 80 C74 90 58 82 50 64 Z" fill="#DCD0F8" ${L}/>
+    <circle cx="25" cy="38" r="5" fill="#fff" opacity=".85"/><circle cx="75" cy="38" r="5" fill="#fff" opacity=".85"/><circle cx="31" cy="76" r="3.5" fill="#FFE79C"/><circle cx="69" cy="76" r="3.5" fill="#FFE79C"/>
+    <path d="M45 38 C41 28 36 20 30 17 M55 38 C59 28 64 20 70 17" fill="none" stroke="#6B4A52" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="30" cy="17" r="4" fill="#FF8FA8" ${L}/><circle cx="70" cy="17" r="4" fill="#FF8FA8" ${L}/>
+    <ellipse cx="50" cy="57" rx="15" ry="18" fill="#FFF6E6" ${L}/>
+    ${twinkle(90, 70, 5)}
+    ${itEye(44, 54)}${itEye(56, 54)}${itBlush(41, 63)}${itBlush(59, 63)}${itSmile(50, 64)}`;
+  if (id === 'melon'){                                    // 🍉 통통이 — 큰 수박 (자리 둘)
+    const c = 'itc' + (++IT_UID), body = 'M5 60 C5 36 26 22 50 22 C74 22 95 36 95 60 C95 80 74 92 50 92 C26 92 5 80 5 60 Z';
+    return `<ellipse cx="30" cy="93" rx="9" ry="4.5" fill="#5DB768" ${L}/><ellipse cx="70" cy="93" rx="9" ry="4.5" fill="#5DB768" ${L}/>
+      <defs><clipPath id="${c}"><path d="${body}"/></clipPath></defs>
+      <path d="${body}" fill="#A6E39F"/>
+      <g clip-path="url(#${c})" fill="none" stroke="#6CC070" stroke-width="6.5" stroke-linecap="round">${[12, 30, 50, 70, 88].map(x => `<path d="M${x} 16 C${x - 6} 32 ${x + 6} 46 ${x - 2} 60 C${x - 8} 72 ${x + 4} 84 ${x - 2} 98"/>`).join('')}</g>
+      <path d="${body}" fill="none" ${L}/>
+      <path d="M50 22 C50 15 54 10 60 9" fill="none" stroke="#6B4A52" stroke-width="3.2" stroke-linecap="round"/><path d="M57 12 C63 4 73 6 73 12 C67 15 61 15 57 12 Z" fill="#6FCFB0" ${L}/>
+      <ellipse cx="30" cy="42" rx="7" ry="4" fill="#fff" opacity=".6" transform="rotate(-24 30 42)"/>
+      ${itEye(40, 60)}${itEye(60, 60)}${itBlush(30, 69)}${itBlush(70, 69)}${itSmile(50, 71)}`;
+  }
+  if (id === 'turtle') return `<path d="M8 70 L1 75 L9 77 Z" fill="#C8EDC0" ${L}/>
+    <ellipse cx="20" cy="81" rx="9" ry="7" fill="#C8EDC0" ${L}/><ellipse cx="42" cy="85" rx="9" ry="7" fill="#C8EDC0" ${L}/><ellipse cx="62" cy="85" rx="9" ry="7" fill="#C8EDC0" ${L}/>
+    <path d="M6 72 C6 40 22 25 43 25 C64 25 80 40 80 72 Z" fill="#9BE0C8" ${L}/>
+    <g fill="#C3EEDD" stroke="#3FA687" stroke-width="2" stroke-linejoin="round">
+      <path d="M36 38 l7 -4 7 4 0 8 -7 4 -7 -4 z"/><path d="M22 52 l7 -4 7 4 0 8 -7 4 -7 -4 z"/><path d="M50 52 l7 -4 7 4 0 8 -7 4 -7 -4 z"/></g>
+    <g fill="#FFC9D5">${[[43, 58], [40, 61], [46, 61], [41, 64.5], [45, 64.5]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.3"/>`).join('')}</g><circle cx="43" cy="61.5" r="1.8" fill="#FFE79C"/>
+    <path d="M2 72 L84 72 Q86 80 78 81 L10 81 Q0 80 2 72 Z" fill="#6FCFB0" ${L}/>
+    <circle cx="82" cy="57" r="16" fill="#C8EDC0" ${L}/>
+    ${itEye(77, 54)}${itEye(89, 54)}${itBlush(73, 63)}${itBlush(93, 63)}${itSmile(83, 64)}`;
   if (id === 'berry') return `<path d="M50 90 C30 84 16 64 19 45 C21 31 34 25 50 30 C66 25 79 31 81 45 C84 64 70 84 50 90 Z" fill="#FF7A95" ${L}/>
     <g fill="#FFE79C">${[[30, 45], [70, 45], [38, 75], [62, 75], [50, 84], [25, 59], [75, 59]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="1.7" ry="2.5"/>`).join('')}</g>
     <path d="M50 31 C44 22 35 20 30 24 C36 26 40 30 43 33 Z M50 31 C56 22 65 20 70 24 C64 26 60 30 57 33 Z M50 31 C48 22 50 15 54 12 C55 20 54 26 52 32 Z" fill="#6FCFB0" ${L}/>
@@ -7821,9 +7901,13 @@ function itArt(id){
     <text x="82" y="54" font-size="12" fill="#8E7BD6" font-family="sans-serif" font-weight="700">z</text><text x="89" y="44" font-size="9" fill="#8E7BD6" font-family="sans-serif" font-weight="700">z</text>`;
 }
 function itSvg(id){ return `<svg viewBox="0 0 100 100" aria-hidden="true">${itArt(id)}</svg>`; }
-/* 땅속 탐험차 — 앞(오른쪽)에 드릴, 둥근 창문 5개. 창문을 누르면 그 자리 친구를 고른다 */
+/* 땅속 탐험차 — 앞(오른쪽)에 드릴, 둥근 창문 5개. 창문을 누르면 그 자리 친구를 고른다.
+   큰 친구는 창문 두 개를 이어 붙인 긴 창에 앉는다. data-arg = 차에 탄 순서, data-win = 첫 창문 자리 */
 function itCarSvg(seats, sel){
-  const win = [40, 68, 96, 124, 152];
+  const win = [40, 68, 96, 124, 152], spots = []; let p = 0;
+  seats.forEach((t, i) => { const n = itSize(t); if (p + n <= win.length){ spots.push({ i, t, a:p, n }); p += n; } });
+  const free = []; for (let k = p; k < win.length; k++) free.push(k);
+  const art = (t, cx, s) => `<svg x="${(cx - s / 2).toFixed(1)}" y="${(58 - s / 2).toFixed(1)}" width="${s}" height="${s}" viewBox="0 0 100 100">${itArt(t)}</svg>`;
   return `<svg viewBox="0 0 236 116" aria-label="땅속 탐험차">
     <g stroke="#6B4A52" stroke-width="3" stroke-linejoin="round">
       <path d="M178 44 L226 62 L178 80 Z" fill="#FFD98E"/>
@@ -7835,9 +7919,13 @@ function itCarSvg(seats, sel){
       <circle cx="50" cy="93" r="14" fill="#6B4A52"/><circle cx="50" cy="93" r="5" fill="#FFD98E" stroke="none"/>
       <circle cx="148" cy="93" r="14" fill="#6B4A52"/><circle cx="148" cy="93" r="5" fill="#FFD98E" stroke="none"/>
     </g>
-    ${win.map((x, i) => `<g data-act="itSeat" data-arg="${i}" style="cursor:pointer">
-      <circle class="it-win" cx="${x}" cy="58" r="12.5" fill="${sel === i ? '#FFF1B8' : '#E3F4FF'}" stroke="${sel === i ? '#E85C7C' : '#6B4A52'}" stroke-width="${sel === i ? 4 : 3}"/>
-      ${seats[i] ? `<svg x="${x - 11.5}" y="46.5" width="23" height="23" viewBox="0 0 100 100">${itArt(seats[i])}</svg>` : ''}</g>`).join('')}
+    ${free.map(k => `<g data-win="${k}"><circle class="it-win" cx="${win[k]}" cy="58" r="12.5" fill="#E3F4FF" stroke="#6B4A52" stroke-width="3"/></g>`).join('')}
+    ${spots.map(s => {
+      const on = sel === s.i, x0 = win[s.a], x1 = win[s.a + s.n - 1], cx = (x0 + x1) / 2;
+      const paint = `fill="${on ? '#FFF1B8' : '#E3F4FF'}" stroke="${on ? '#E85C7C' : '#6B4A52'}" stroke-width="${on ? 4 : 3}"`;
+      const shape = s.n > 1 ? `<rect class="it-win" x="${x0 - 12.5}" y="45.5" width="${x1 - x0 + 25}" height="25" rx="12.5" ${paint}/>` : `<circle class="it-win" cx="${x0}" cy="58" r="12.5" ${paint}/>`;
+      return `<g data-act="itSeat" data-arg="${s.i}" data-win="${s.a}" style="cursor:pointer">${shape}${art(s.t, cx, s.n > 1 ? 44 : 23)}</g>`;
+    }).join('')}
   </svg>`;
 }
 
@@ -7854,6 +7942,8 @@ function itNoise(dur, vol){
 }
 function itPop(){ ttTone(660, 0, 0.12, 0.1); ttTone(990, 0.07, 0.16, 0.1); ttTone(1320, 0.14, 0.2, 0.08); }
 function itHop(){ ttTone(520, 0, 0.1, 0.08); ttTone(780, 0.06, 0.14, 0.08); }
+function itThud(){ ttTone(150, 0, 0.24, 0.2); ttTone(118, 0.22, 0.3, 0.2); }                              // 쿵… 쿵… — 큰 친구
+function itSparkle(){ [1047, 1319, 1568, 2093, 2637].forEach((f, i) => ttTone(f, i * 0.07, 0.22, 0.07)); }  // 반짝반짝 — 특별한 친구
 function itNote(){ const f = [523, 587, 659, 784, 880][playRand(5)]; ttTone(f, 0, 0.2, 0.09); ttTone(f * 1.5, 0.1, 0.2, 0.07); }
 function itPlop(){
   const c = audioCtx(); if (!c) return;
@@ -7878,7 +7968,8 @@ function ittoOpen(){
   const k = curKid(); if (!k) return;
   nvUnlock(); audioCtx();                                 // 누른 순간에 소리를 깨운다 (아이패드)
   const save = JSON.parse(JSON.stringify(k.itto || {}));
-  IT = { kidId:k.id, scene:'garden', car:(save.car || []).slice(0, IT_SEATS), cave:save.cave || {}, found:save.found || {}, trips:save.trips || 0,
+  IT = { kidId:k.id, scene:'garden', car:itCarFit(save.car), cave:save.cave || {}, found:save.found || {}, trips:save.trips || 0,
+    sp:save.sp || 0, bg:save.bg || 0, wait:(save.wait || []).filter(t => IT_FRIENDS.some(f => f.id === t && (f.special || f.big))).slice(0, 2),
     friends:[], sel:-1, t:{ snd:0, part:0, chk:0 }, tun:0 };
   const el = document.createElement('div');
   el.className = 'ttl it'; el.id = 'itLayer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', '이또 — 풀숲 친구 찾기');
@@ -7887,14 +7978,21 @@ function ittoOpen(){
 }
 function ittoClose(msg){
   if (!IT) return;
-  clearTimeout(IT.tun); (IT.tunT || []).forEach(clearTimeout); itNestStop(); itSave();
+  clearTimeout(IT.tun); (IT.tunT || []).forEach(clearTimeout); itNestStop();
+  if (IT.scene === 'garden') itKeepWaiting();
+  itSave();
   IT.el.remove(); IT = null;
   if (S.view.game === 'itto') S.view.game = null;
   render(); if (msg) toast(msg);
 }
 function itSave(){
   const I = IT, k = I && kid(I.kidId); if (!k) return;
-  Store.update('profiles', k.id, { itto:{ car:I.car.slice(), cave:{ ...I.cave }, found:{ ...I.found }, trips:I.trips } });
+  Store.update('profiles', k.id, { itto:{ car:I.car.slice(), cave:{ ...I.cave }, found:{ ...I.found }, trips:I.trips, sp:I.sp || 0, bg:I.bg || 0, wait:(I.wait || []).slice() } });
+}
+/* 찾았는데 못 태운 특별·큰 친구는 다음 정원에서 기다린다 */
+function itKeepWaiting(){
+  const I = IT; if (!I) return;
+  I.wait = I.friends.filter(f => f.shown && !f.boarded && (itFriend(f.type).special || itFriend(f.type).big)).map(f => f.type).slice(0, 2);
 }
 function itTop(title){
   return `<div class="ttl-top"><button class="ttl-x" data-act="itExit" aria-label="그만하기">✕</button>
@@ -7909,20 +8007,41 @@ function itGarden(first){
   const I = IT; I.scene = 'garden'; I.sel = -1;
   const W = Math.round(Math.min(660, Math.max(280, window.innerWidth - 28))), H = Math.round(W * 0.7);
   const size = Math.round(clamp(W * 0.2, 62, 118));
-  const n = 3 + playRand(3), fr = [];
-  for (let guard = 0; fr.length < n && guard < 500; guard++){
-    const x = size * 0.62 + Math.random() * (W - size * 1.24), y = size * 0.62 + Math.random() * (H - size * 1.24);
-    if (fr.some(f => Math.hypot(f.x - x, f.y - y) < size * 1.08)) continue;
-    fr.push({ x, y, s:size, type:itRoll(), shown:false, boarded:false });
-  }
+  // 이번에 숨을 친구 — 보통 친구 3~5명. 가끔 🌈 특별한 친구·🐢 큰 친구가 섞이고, 지난번에 못 태운 친구는 나와서 기다린다.
+  // 빈 차에 모두 탈 수 있게 자리(큰 친구는 2)를 합쳐 IT_SEATS를 넘지 않는다.
+  const wait = (I.wait || []).slice(); I.wait = [];
+  const waitSp = wait.some(t => itFriend(t).special), waitBig = wait.some(t => itFriend(t).big);
+  const sp = waitSp ? '' : itRare('special', itChance('special', I.sp), I.found), bg = waitBig ? '' : itRare('big', itChance('big', I.bg), I.found);
+  if (!waitSp) I.sp = sp ? 0 : (I.sp || 0) + 1;
+  if (!waitBig) I.bg = bg ? 0 : (I.bg || 0) + 1;
+  const want = 3 + playRand(3), list = wait.map(t => ({ type:t, wait:true })).concat([sp, bg].filter(Boolean).map(t => ({ type:t })));
+  let seats = list.reduce((s2, x) => s2 + itSize(x.type), 0);
+  while (list.length < want && seats < IT_SEATS){ list.push({ type:itRoll() }); seats++; }
+  list.sort((a, b) => itSize(b.type) - itSize(a.type));          // 큰 친구 자리부터 잡는다
+  const fr = [];
+  list.forEach(x => {
+    const s2 = Math.round(size * (itFriend(x.type).big ? 1.5 : 1)), m = s2 * (itFriend(x.type).big ? 0.6 : 0.62);
+    for (let guard = 0; guard < 300; guard++){
+      const px = m + Math.random() * (W - m * 2), py = m + Math.random() * (H - m * 2);
+      if (fr.some(f => Math.hypot(f.x - px, f.y - py) < (f.s + s2) / 2 * 1.08)) continue;
+      fr.push({ x:px, y:py, s:s2, type:x.type, shown:!!x.wait, boarded:false, wait:!!x.wait }); break;
+    }
+  });
   I.friends = fr; I.W = W; I.H = H;
+  const kinds = t => itFriend(t);
+  const hint = [
+    fr.filter(f => f.wait).map(f => `${itIGa(kinds(f.type).name)} 정원에서 기다리고 있었어요! 💕`).join(' '),
+    fr.some(f => !f.wait && kinds(f.type).special) ? '어? 풀숲 어딘가가 반짝반짝 빛나요! ✨' : '',
+    fr.some(f => !f.wait && kinds(f.type).big) ? '쿵… 쿵… 풀숲에서 큰 발소리가 들려요! 👣' : ''
+  ].filter(Boolean).join(' ');
   I.el.innerHTML = `${itTop('🌱 이또 · 정원')}
     <div class="ttl-body it-body">
-      <div class="it-say" id="itSay">${first ? '풀숲을 손가락으로 좌우로 쓱쓱 문질러 봐요! 누가 숨어 있을까요? 🌿' : '풀이 다시 쑥쑥 자랐어요! 이번엔 누가 숨어 있을까요? 🌿'}</div>
+      <div class="it-say" id="itSay">${hint || (first ? '풀숲을 손가락으로 좌우로 쓱쓱 문질러 봐요! 누가 숨어 있을까요? 🌿' : '풀이 다시 쑥쑥 자랐어요! 이번엔 누가 숨어 있을까요? 🌿')}</div>
       <div class="it-garden" id="itGarden" style="width:${W}px;height:${H}px">
         <div class="it-lawn"></div>
-        ${fr.map((f, i) => `<button class="it-fr" id="itF${i}" data-act="itPick" data-arg="${i}" style="left:${f.x.toFixed(0)}px;top:${f.y.toFixed(0)}px;width:${f.s}px;height:${f.s}px" aria-label="숨은 친구">${itSvg(f.type)}</button>`).join('')}
+        ${fr.map((f, i) => `<button class="${itFrClass(f)}" id="itF${i}" data-act="itPick" data-arg="${i}" style="left:${f.x.toFixed(0)}px;top:${f.y.toFixed(0)}px;width:${f.s}px;height:${f.s}px" aria-label="${f.shown ? `${esc(itFriend(f.type).name)} — 누르면 차에 타요` : '숨은 친구'}">${itSvg(f.type)}</button>`).join('')}
         <canvas class="it-grass" id="itGrass" aria-label="풀숲 — 손가락으로 문질러 깎아요"></canvas>
+        ${fr.map((f, i) => !f.shown && itFriend(f.type).special ? `<span class="it-glint" id="itG${i}" style="left:${f.x.toFixed(0)}px;top:${f.y.toFixed(0)}px"><i>✨</i><i>✨</i><i>✨</i></span>` : '').join('')}
         <div class="it-parts" id="itParts"></div>
       </div>
       <div class="it-park"><div class="it-carbox" id="itCar">${itCarSvg(I.car, -1)}</div>
@@ -7936,7 +8055,10 @@ function itGarden(first){
   itDrawGrass(I.g, cv.width, cv.height, dpr);
   itBindGrass(cv);
   itCount();
+  if (fr.some(f => !f.wait && itFriend(f.type).big)) setTimeout(() => { if (IT === I && I.scene === 'garden') itThud(); }, 500);
 }
+/* 정원 친구 단추 모양 — 나타났는지 · 특별한 친구 · 큰 친구 */
+function itFrClass(f){ const fr = itFriend(f.type); return `it-fr${f.shown ? ' show' : ''}${fr.special ? ' it-sp' : ''}${fr.big ? ' it-big' : ''}`; }
 function itDrawGrass(g, W, H, dpr){
   const grd = g.createLinearGradient(0, 0, 0, H); grd.addColorStop(0, '#93DB90'); grd.addColorStop(1, '#69C274');
   g.fillStyle = grd; g.fillRect(0, 0, W, H);
@@ -8007,24 +8129,33 @@ function itReveal(i){
   f.shown = true;
   const fr = itFriend(f.type), first = !I.found[f.type];
   I.found[f.type] = (I.found[f.type] || 0) + 1;
-  const el = document.getElementById('itF' + i);
+  const el = document.getElementById('itF' + i), gl = document.getElementById('itG' + i);
   if (el){ el.classList.add('show'); el.setAttribute('aria-label', `${fr.name} — 누르면 차에 타요`); }
-  itPop(); itTag(f, fr.name);
-  itSay(first ? `✨ 새 친구 발견! ${itIGa(fr.name)} 나타났어요! 📖 도감에 등록됐어요${fr.rare ? ' — 아주 드문 친구예요!' : ''}`
-    : `뿅! ${itIGa(fr.name)} 나타났어요! 눌러서 차에 태워 볼까요?`);
-  if (first){ awardStars(1); if (fr.rare) confetti(); }
+  if (gl) gl.remove();
+  if (fr.special){                                          // 🌈 특별한 친구 — 반짝반짝 + 폭죽, 만날 때마다 ⭐
+    itSparkle(); itTag(f, `🌈 ${fr.name}`); confetti(); awardStars(first ? 2 : 1);
+    itSay(`🌈 우와! 특별한 친구 ${itIGa(fr.name)} 나타났어요! 아주 가끔만 놀러 오는 친구예요${first ? ' — 📖 도감에 등록됐어요!' : '!'}`);
+  } else if (fr.big){                                       // 🐢 큰 친구 — 쿵! 차에 두 자리
+    itThud(); itTag(f, `👣 ${fr.name}`); if (first){ awardStars(1); confetti(); }
+    itSay(`👣 쿵! 큰 친구 ${itIGa(fr.name)} 나타났어요! 몸이 커서 차에 두 자리가 필요해요 🚗${first ? ' 📖 도감에 등록됐어요!' : ''}`);
+  } else {
+    itPop(); itTag(f, fr.name);
+    itSay(first ? `✨ 새 친구 발견! ${itIGa(fr.name)} 나타났어요! 📖 도감에 등록됐어요${fr.rare ? ' — 아주 드문 친구예요!' : ''}`
+      : `뿅! ${itIGa(fr.name)} 나타났어요! 눌러서 차에 태워 볼까요?`);
+    if (first){ awardStars(1); if (fr.rare) confetti(); }
+  }
   itCount();
 }
 function itTag(f, name){
   const box = document.getElementById('itGarden'); if (!box) return;
   const t = document.createElement('span'); t.className = 'it-tag'; t.textContent = `${name}!`;
-  t.style.left = f.x.toFixed(0) + 'px'; t.style.top = Math.max(4, f.y - f.s * 0.64).toFixed(0) + 'px';
+  t.style.left = f.x.toFixed(0) + 'px'; t.style.top = Math.max(4, f.y - f.s * (itFriend(f.type).big ? 0.46 : 0.64)).toFixed(0) + 'px';
   box.appendChild(t); setTimeout(() => t.remove(), 1800);
 }
 function itCount(){
   const I = IT, e = document.getElementById('itCount'); if (!e || !I) return;
   const shown = I.friends.filter(f => f.shown).length;
-  e.textContent = `찾은 친구 ${shown}/${I.friends.length} · 차에 탄 친구 ${I.car.length}/${IT_SEATS}`;
+  e.textContent = `찾은 친구 ${shown}/${I.friends.length} · 차 자리 ${itCarUsed(I.car)}/${IT_SEATS}`;
   if (shown === I.friends.length && I.friends.every(f => f.boarded || !f.shown) && I.car.length) itSay('모두 찾았어요! 🚗 출발하면 하늘로 슝~ 갔다가 땅속 개미집으로 쏙!');
 }
 /* 친구가 날아서 차(또는 버블)로 쏙 — 시작·끝 위치는 누른 순간에 잰다 */
@@ -8041,21 +8172,26 @@ function itFly(fromEl, toEl, type, done){
 ACTS.itPick = (arg) => {
   const I = IT; if (!I || I.scene !== 'garden') return;
   const f = I.friends[+arg]; if (!f || !f.shown || f.boarded) return;
-  if (I.car.length >= IT_SEATS){ itSay('자동차가 꽉 찼어요! 🚗 출발해서 친구들을 버블에 옮겨 볼까요?'); return; }
-  const seat = I.car.length, from = document.getElementById('itF' + arg);
-  const to = document.querySelector(`#itCar [data-arg="${seat}"] .it-win`);
+  const need = itSize(f.type), used = itCarUsed(I.car), name = itFriend(f.type).name;
+  if (used + need > IT_SEATS){
+    itSay(used >= IT_SEATS ? '자동차가 꽉 찼어요! 🚗 출발해서 친구들을 버블에 옮겨 볼까요?'
+      : `${topic(name)} 몸이 커서 두 자리가 필요해요! 🚗 먼저 출발해서 친구들을 개미집에 내려 줄까요? ${name}: 여기서 기다릴게!`);
+    return;
+  }
+  const from = document.getElementById('itF' + arg), to = document.querySelector(`#itCar [data-win="${used}"] .it-win`);
   f.boarded = true; I.car.push(f.type);
   itFly(from, to, f.type, () => { itCarRefresh(); });
   if (from) from.classList.add('gone');
-  itHop();
-  itSay(`${itIGa(itFriend(f.type).name)} 차에 쏙 탔어요! ${I.car.length >= IT_SEATS ? '자리가 꽉 찼어요. 출발해 볼까요?' : '또 누가 숨어 있을까요?'}`);
+  if (need > 1){ itThud(); setTimeout(itHop, 260); } else itHop();
+  const full = itCarUsed(I.car) >= IT_SEATS ? '자리가 꽉 찼어요. 출발해 볼까요?' : '또 누가 숨어 있을까요?';
+  itSay(need > 1 ? `영차! ${itIGa(name)} 두 자리에 쏙 앉았어요! ${full}` : `${itIGa(name)} 차에 쏙 탔어요! ${full}`);
   const go = document.getElementById('itGo'); if (go) go.disabled = false;
   itCount();
 };
 ACTS.itGo = () => {
   const I = IT; if (!I || I.scene !== 'garden') return;
   if (!I.car.length){ itSay('먼저 친구를 차에 태워 볼까요? 풀숲을 쓱쓱! 🌿'); return; }
-  I.trips++; itSave();
+  I.trips++; itKeepWaiting(); itSave();
   itJourney('down', () => itCave(true));
 };
 
@@ -8171,7 +8307,7 @@ function itCave(arrive){
   I.ns = s;
   const rooms = I.nest.rooms.map(r => `<span class="it-room" style="left:${(r.x * s).toFixed(0)}px;top:${((r.y - r.ry + 16) * s).toFixed(0)}px;font-size:${Math.max(13, Math.round(34 * s))}px">${esc(r.n)}</span>`).join('');
   const bubs = I.nest.slots.map((b, i) => { const t = I.cave[i], d = b.d * s;
-    return `<button class="it-nb ${t ? 'on' : ''}" data-act="itBub" data-arg="${i}" style="left:${(b.x * s - d / 2).toFixed(0)}px;top:${(b.y * s - d / 2).toFixed(0)}px;width:${d.toFixed(0)}px;height:${d.toFixed(0)}px"
+    return `<button class="it-nb ${t ? 'on' : ''}${itNbKind(t)}" data-act="itBub" data-arg="${i}" style="left:${(b.x * s - d / 2).toFixed(0)}px;top:${(b.y * s - d / 2).toFixed(0)}px;width:${d.toFixed(0)}px;height:${d.toFixed(0)}px"
       aria-label="${t ? `${esc(itFriend(t).name)} — 누르고 빈 버블을 누르면 걸어가요` : '빈 버블'}">${t ? itSvg(t) : ''}</button>`; }).join('');
   I.el.innerHTML = `${itTop('🐜 이또 · 개미집')}
     <div class="ttl-body it-body">
@@ -8199,9 +8335,12 @@ function itNestCount(put){
   if (put){ const c = document.getElementById('itCount'); if (c) c.textContent = t; }
   return t;
 }
+/* 버블 속 친구 모양 — 큰 친구는 버블에 꽉, 특별한 친구는 반짝 테두리 */
+function itNbKind(t){ const f = t && itFriend(t); return f && f.big ? ' it-big' : f && f.special ? ' it-sp' : ''; }
 function itBubSet(i){
   const el = itBubEl(i), t = IT.cave[i]; if (!el) return;
-  el.classList.toggle('on', !!t); el.classList.remove('away', 'sel');
+  el.classList.toggle('on', !!t); el.classList.remove('away', 'sel', 'it-big', 'it-sp');
+  if (t && itNbKind(t)) el.classList.add(itNbKind(t).trim());
   el.innerHTML = t ? itSvg(t) : '';
   el.setAttribute('aria-label', t ? `${itFriend(t).name} — 누르고 빈 버블을 누르면 걸어가요` : '빈 버블');
 }
@@ -8240,7 +8379,7 @@ function itWalkPath(a, ra, rb, b){
 }
 function itWalk(type, pts, done, opt){
   const I = IT, box = document.getElementById('itWalk');
-  const o = opt || {}, s = I.ns, size = 92 * s, speed = 0.26;              // 설계 단위 / ms
+  const o = opt || {}, s = I.ns, size = 92 * s * (itFriend(type).big ? 1.3 : 1), speed = 0.26;   // 설계 단위 / ms — 큰 친구는 크게
   const seg = []; let L = 0; for (let k = 1; k < pts.length; k++){ const d = Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]); seg.push(d); L += d; }
   let Lp = 0; if (o.pauseAt != null) for (let k = 0; k < o.pauseAt; k++) Lp += seg[k] || 0;
   const pauseMs = o.pauseAt != null ? (o.pauseMs || 1400) : 0, tp = Lp / speed;
@@ -8381,10 +8520,11 @@ ACTS.itBook = () => {
   const d = document.createElement('div'); d.id = 'itBook'; d.className = 'it-book';
   d.innerHTML = `<div class="it-book-card">
     <div class="row"><h3 class="sub grow" style="margin:0">📖 친구 도감 ${got}/${IT_FRIENDS.length}</h3><button class="ttl-x" data-act="itBook" aria-label="도감 닫기">✕</button></div>
-    <p class="muted" style="margin:4px 0 10px;font-size:13px">풀숲에서 만난 친구가 여기에 모여요. 반짝이·달님이는 아주 드물게 나타나요!</p>
+    <p class="muted" style="margin:4px 0 10px;font-size:13px">풀숲에서 만난 친구가 여기에 모여요. 반짝이·달님이는 아주 드물게, 🌈 특별한 친구와 🐢 두 자리에 앉는 큰 친구는 가끔 한 번씩 나타나요!</p>
     <div class="it-book-grid">${IT_FRIENDS.map(f => { const n = I.found[f.id] || 0;
-      return `<div class="it-book-item ${n ? '' : 'unk'}">${itSvg(f.id)}<b>${n ? esc(f.name) : '???'}</b>
-        <small>${n ? `${n}번 만났어요${f.rare ? ' · 드문 친구' : ''}` : (f.rare ? '아주 드문 친구예요' : '아직 못 만났어요')}</small>
+      const tag = f.special ? '🌈 특별한 친구' : f.big ? '🐢 큰 친구 · 두 자리' : f.rare ? '드문 친구' : '';
+      return `<div class="it-book-item ${n ? '' : 'unk'}${f.special ? ' it-sp' : ''}${f.big ? ' it-big' : ''}">${itSvg(f.id)}<b>${n ? esc(f.name) : '???'}</b>
+        <small>${n ? `${n}번 만났어요${tag ? ' · ' + tag : ''}` : (f.special ? '가끔 나타나는 특별한 친구예요' : f.big ? '두 자리에 앉는 큰 친구예요' : f.rare ? '아주 드문 친구예요' : '아직 못 만났어요')}</small>
         ${n ? `<small class="muted">${esc(f.note)}</small>` : ''}</div>`; }).join('')}</div></div>`;
   I.el.appendChild(d);
 };
@@ -8753,7 +8893,7 @@ async function vsNetStart(asId){
   });
 }
 function vsNetStop(){ clearTimeout(VSN.trackT); clearTimeout(VSN.retry); if (VSN.ch){ try { S.sb.removeChannel(VSN.ch); } catch(e){} } VSN.ch = null; VSN.me = ''; VSN.peers = {}; VSN.ok = false; VSN.where = ''; const inv = document.getElementById('vsInvite'); if (inv) inv.remove(); }
-function vsWhere(){ return VS && !VS.solo ? (VS.phase === 'count' || VS.phase === 'play' ? 'play' : 'lobby') : 'app'; }
+function vsWhere(){ return VS ? (VS.phase === 'count' || VS.phase === 'play' ? 'play' : 'lobby') : 'app'; }
 /* 접속 표시(presence)는 '어디 있는지'만, 바뀔 때만, 3초에 한 번 — 자주 보내면 서버가 채널을 닫는다 */
 function vsTrack(){
   if (!VSN.ch || !VSN.ok) return;
@@ -8799,17 +8939,16 @@ function vsInviteCheck(){
 ACTS.vsJoin = () => { const d = document.getElementById('vsInvite'); if (d) d.remove(); if (S.tab !== 'games'){ S.tab = 'games'; S.view.game = null; render(); } vsOpen(); };
 ACTS.vsNo = () => { const p = Object.values(VSN.peers).find(x => x.where === 'lobby'); if (p) VSN.invited[p.who] = Date.now(); const d = document.getElementById('vsInvite'); if (d) d.remove(); };
 /* ---------- 방 ---------- */
-function vsOpen(solo, game, asId){
+function vsOpen(game, asId){
   if (VS) return;
   const k = curKid(), me = asId || (k ? k.id : ''); if (!me) return;
-  if (!solo && (!S.sb || window.claude)){ toast('같이 놀기는 인터넷에 연결된 앱에서만 할 수 있어요'); return; }
+  if (!S.sb || window.claude){ toast('같이 놀기는 인터넷에 연결된 앱에서만 할 수 있어요'); return; }
   nvUnlock(); audioCtx();
   const peerGame = (Object.values(VSN.peers).find(p => p.where === 'lobby' && VS_GAMES[p.game]) || {}).game;   // 먼저 온 사람이 고른 놀이로
-  VS = { me, kidId:isParentId(me) ? null : me, game:VS_GAMES[game] ? game : (peerGame || 'spot'), ready:false, phase:'lobby', scores:{}, done:{}, solo:!!solo, el:null, players:[me], others:[] };
+  VS = { me, kidId:isParentId(me) ? null : me, game:VS_GAMES[game] ? game : (peerGame || 'spot'), ready:false, phase:'lobby', scores:{}, done:{}, el:null, players:[me], others:[] };
   const el = document.createElement('div'); el.className = 'ttl vs'; el.id = 'vsLayer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', '같이 놀기');
   document.body.appendChild(el); VS.el = el;
   const inv = document.getElementById('vsInvite'); if (inv) inv.remove();
-  if (solo){ vsBegin('spot', Math.floor(Math.random() * 2147483647), Date.now() + 2400, [me]); return; }
   vsNetStart(me); vsState(); vsRender();
   if (game && VS_GAMES[game]) vsSend({ t:'pick', game });  // 고르고 들어왔으면 모두에게 알려 준다
 }
@@ -8817,7 +8956,7 @@ function vsClose(msg){
   const v = VS; if (!v) return;
   clearInterval(v.cd); clearInterval(v.tick); clearTimeout(v.waitT);
   if (BH && BH.vs) bearClose();
-  if (!v.solo) vsSend({ t:'leave' });
+  vsSend({ t:'leave' });
   v.el.remove(); VS = null;
   if (isParentId(v.me)) vsNetStop(); else vsState();
   render(); if (msg) toast(msg);
@@ -8875,7 +9014,6 @@ function vsLobbyHtml(){
     <div class="tt-foot">
       ${meOk ? `<button class="btn ${v.ready ? 'mint' : ''}" data-act="vsReady" aria-pressed="${v.ready}">${v.ready ? '👍 준비됐어요! (누르면 취소)' : '👍 준비됐어요!'}</button>`
         : (pend ? '<button class="btn ghost" disabled>⏳ 부모님께 알렸어요</button>' : '<button class="btn" data-act="vsAsk">🔔 부모님께 허락 받기</button>')}
-      ${meParent ? '' : '<button class="btn ghost" data-act="vsSolo">🔍 혼자 연습하기</button>'}
     </div>
     <p class="muted" style="margin:0;font-size:12px;text-align:center">각자 자기 기기에서 들어와요 · 2~${VS_MAX}명 · 대결은 1등 ⭐2 나머지 ⭐1, 함께 놀이는 해내면 모두 ⭐2</p>
   </div>`;
@@ -8885,9 +9023,9 @@ ACTS.vsOpenBtn = () => vsOpen();
 ACTS.vsWith = (arg) => {                                     // 놀이에서 바로 — 그 놀이를 골라 둔 채로 방을 연다
   if (IT) ittoClose(); if (BH && !BH.vs) bearClose();
   if (S.tab !== 'games'){ S.tab = 'games'; S.view.game = null; render(); }
-  vsOpen(false, arg);
+  vsOpen(arg);
 };
-ACTS.vsParent = () => { closeModal(); vsOpen(false, '', 'p:' + (S.parentId || 'owner')); };
+ACTS.vsParent = () => { closeModal(); vsOpen('', 'p:' + (S.parentId || 'owner')); };
 function vsPeerLine(){
   const others = Object.values(VSN.peers);
   if (!others.length) return '각자 기기에서 들어오면 같은 놀이를 같이 해요 (2~4명)';
@@ -8896,9 +9034,8 @@ function vsPeerLine(){
 ACTS.vsPick = (arg) => { const v = VS; if (!v || v.phase !== 'lobby' || !VS_GAMES[arg]) return; v.game = arg; v.ready = false; vsSend({ t:'pick', game:arg }); vsState(); vsRender(); };
 ACTS.vsReady = () => { const v = VS; if (!v || v.phase !== 'lobby') return; if (!isParentId(v.me) && !activeUnlock(v.me)) return; v.ready = !v.ready; vsState(); vsRender(); vsMaybeStart(); };
 ACTS.vsAsk = async () => { await requestUnlock(); toast('부모님께 알렸어요! 조금만 기다려요 ⏳'); vsRender(); };
-ACTS.vsSolo = () => { const was = VS; if (was){ vsClose(); } vsOpen(true); };
 function vsMaybeStart(){
-  const v = VS; if (!v || v.phase !== 'lobby' || v.solo) return;
+  const v = VS; if (!v || v.phase !== 'lobby') return;
   const present = vsPlayers().slice(0, VS_MAX);
   if (present.length < 2 || present.some(p => !p.ready) || present.some(p => !isParentId(p.id) && !activeUnlock(p.id))) return;
   const ids = present.map(p => p.id);
@@ -8918,7 +9055,7 @@ function vsOnMsg(m){
     VSN.peers[m.from] = Object.assign({}, VSN.peers[m.from] || {}, { who:m.from, where:m.where, ready:!!m.ready, game:m.game || '', stAt:m.at || Date.now() });
     vsPeersChanged(); return;
   }
-  const v = VS; if (!v || v.solo) return;
+  const v = VS; if (!v) return;
   if (m.t === 'pick' && v.phase === 'lobby' && VS_GAMES[m.game]){ v.game = m.game; v.ready = false; vsState(); vsRender(); return; }
   if (m.t === 'start' && v.phase === 'lobby'){ const ps = Array.isArray(m.players) ? m.players : [m.from, v.me]; if (ps.indexOf(v.me) >= 0) vsBegin(VS_GAMES[m.game] ? m.game : 'spot', m.seed, m.startAt, ps); return; }
   if (v.players.indexOf(m.from) < 0) return;
@@ -8937,7 +9074,7 @@ function vsBegin(game, seed, startAt, players){
   v.game = game; v.seed = seed >>> 0; v.players = (players && players.length ? players : [v.me]).slice(0, VS_MAX);
   v.others = v.players.filter(id => id !== v.me); v.opp = v.others[0] || '';
   v.scores = {}; v.done = {}; v.phase = 'count'; clearTimeout(v.waitT); v.waitT = 0;
-  vsRender(); if (!v.solo) vsState();
+  vsRender(); vsState();
   const tick = () => {
     if (VS !== v || v.phase !== 'count') return;
     const left = startAt - Date.now(), c = document.getElementById('vsCount');
@@ -8965,7 +9102,7 @@ function vsCheckEnd(force){
   const v = VS; if (!v || v.phase !== 'play' || v.game === 'itto') return;   // 함께 찾기는 모두 찾으면 끝
   const dm = v.done[v.me], allDone = v.players.every(id => v.done[id]);
   const full = v.game === 'spot' && v.players.some(id => v.done[id] && v.done[id].n >= SD_N);
-  if (v.solo || full || allDone || force){ vsFinish(); return; }
+  if (full || allDone || force){ vsFinish(); return; }
   if (dm && !v.waitT) v.waitT = setTimeout(() => { if (VS === v) vsFinish(); }, 4000);   // 다른 사람 결과를 조금 기다린다
 }
 function vsFinish(){
@@ -8990,7 +9127,7 @@ function vsFinish(){
     rankMe = (per.find(p => p.id === me) || {}).rank || 1;
   }
   v.phase = 'result'; v.result = { per, team:!!g.team, success, sum, left:v.others.filter(id => v.done[id] && v.done[id].left) };
-  const stars = v.solo ? (score(me) >= SD_N ? 2 : 1) : (g.team ? (success ? 2 : 1) : (rankMe === 1 ? 2 : 1));
+  const stars = g.team ? (success ? 2 : 1) : (rankMe === 1 ? 2 : 1);
   awardStars(stars); v.result.stars = stars;
   if ((g.team && success) || (!g.team && rankMe === 1)) confetti();
   [523, 659, 784].forEach((f, k) => ttTone(f, k * 0.1, 0.2, 0.08));
@@ -8999,10 +9136,6 @@ function vsFinish(){
 function vsResultHtml(){
   const v = VS, r = v.result || {}, g = VS_GAMES[v.game] || VS_GAMES.spot, me = v.me;
   const unit = v.game === 'spot' ? `/${SD_N}` : (v.game === 'itto' ? '마리' : '점');
-  if (v.solo){ const n = (r.per && r.per[0] && r.per[0].n) || (v.found ? v.found.length : 0);
-    return `<div class="tt-card stack" style="text-align:center"><div style="font-size:52px">${n >= SD_N ? '🏆' : '🔍'}</div>
-      <h3 class="sub" style="margin:0">${n >= SD_N ? '다 찾았어요! 눈이 정말 좋아요 👀' : `${n}개 찾았어요! 다음엔 더 찾을 수 있어요 💪`}</h3>
-      <div class="tt-foot"><button class="btn" data-act="vsSolo">🔁 한 번 더</button><button class="btn ghost" data-act="vsExit">그만하기</button></div></div>`; }
   const MED = ['🥇', '🥈', '🥉', '🏅'];
   const rows = (r.per || []).map(p => { const w = chatWho(p.id);
     return `<div class="vs-rrow${p.id === me ? ' me' : ''}">${r.team ? '<span style="font-size:22px">🤝</span>' : `<span style="font-size:26px">${MED[Math.min(3, (p.rank || 1) - 1)]}</span>`}
@@ -9037,16 +9170,31 @@ ACTS.vsAgain = () => { const v = VS; if (!v) return; v.phase = 'lobby'; v.ready 
    친구가 나타나면 누가 찾았는지 이름표·색 테두리. 다 찾으면 둘 다 ⭐2, 찾은 친구는 각자 이또 도감(profile.itto.found)에 들어간다.
    겨루지 않고 힘을 합친다 — 결과는 "다 같이 N마리". 2~4명 모두 같은 풀숲에서. */
 const GD_N = 6;
-function gdRoll(R){ const tot = IT_FRIENDS.reduce((s, f) => s + (f.w || 1), 0); let r = R() * tot; for (const f of IT_FRIENDS){ r -= (f.w || 1); if (r <= 0) return f.id; } return IT_FRIENDS[0].id; }
+function gdRoll(R){ const tot = IT_POOL.reduce((s, f) => s + f.w, 0); let r = R() * tot; for (const f of IT_POOL){ r -= f.w; if (r <= 0) return f.id; } return IT_POOL[0].id; }
+/* 모든 기기가 같은 풀숲을 만들어야 해서 R()과 사칙연산·제곱근만 쓴다(Math.hypot은 브라우저마다 끝자리가 다를 수 있다).
+   가끔(30%) 🌈 특별한 친구, 가끔(30%) 🐢 큰 친구 — 큰 친구는 둘레가 가장 넓은 자리의 친구가 된다. */
 function gdMake(seed){
   const R = vsRand(seed), fr = [];
   for (let guard = 0; fr.length < GD_N && guard < 900; guard++){
     const x = 0.1 + R() * 0.8, y = 0.14 + R() * 0.72;
-    if (fr.some(f => Math.hypot(f.x - x, (f.y - y) * 0.7) < 0.2)) continue;
+    if (fr.some(f => { const dx = f.x - x, dy = (f.y - y) * 0.7; return dx * dx + dy * dy < 0.04; })) continue;
     fr.push({ x, y, type:gdRoll(R), by:'' });
+  }
+  const sp = itRare('special', 0.3, null, R), bg = itRare('big', 0.3, null, R);
+  if (sp && fr.length) fr[0].type = sp;
+  if (bg && fr.length > 1){
+    let best = fr.length - 1, bestD = -1;
+    fr.forEach((f, i) => {
+      if (i === 0 && sp) return;
+      let d = Math.min(f.x - 0.06, 0.94 - f.x, (f.y - 0.1) * 0.7, (0.9 - f.y) * 0.7);
+      fr.forEach((g, j) => { if (j !== i){ const dx = f.x - g.x, dy = (f.y - g.y) * 0.7, dd = Math.sqrt(dx * dx + dy * dy); if (dd < d) d = dd; } });
+      if (d > bestD){ bestD = d; best = i; }
+    });
+    fr[best].type = bg; fr[best].big = true;
   }
   return { fr, segs:[], out:[], last:null };
 }
+const gdSize = f => (f.big ? 1.5 : 1);
 function gdRender(){
   const v = VS, gd = v.gd; if (!gd) return;
   const W = Math.round(Math.min(660, Math.max(280, window.innerWidth - 28))), H = Math.round(W * 0.7), size = Math.round(clamp(W * 0.2, 62, 118));
@@ -9058,11 +9206,13 @@ function gdRender(){
       <div class="sd-hud"><div class="grow"><b>🤝 함께 찾은 친구 <span id="gdAll">0</span>/${gd.fr.length}</b>
         <div class="gauge" style="height:12px;margin-top:4px"><span id="gdBar" style="width:0%;background:var(--mint-deep)"></span></div>
         <div class="muted" style="font-size:13px;margin-top:3px"><span style="color:${vsColor(v.me)}">나 <b id="gdMe">0</b></span> · ${others}</div></div></div>
-      <div class="it-say" id="gdSay">다 같이 풀숲을 쓱쓱 깎아요! 다른 사람이 깎은 풀도 여기서 같이 깎여요 🌿</div>
+      <div class="it-say" id="gdSay">다 같이 풀숲을 쓱쓱 깎아요! 다른 사람이 깎은 풀도 여기서 같이 깎여요 🌿${gd.fr.some(f => itFriend(f.type).special) ? ' 어딘가 반짝반짝 빛나요! ✨' : ''}${gd.fr.some(f => f.big) ? ' 쿵쿵, 큰 발소리도 들려요! 👣' : ''}</div>
       <div class="it-garden" id="gdGarden" style="width:${W}px;height:${H}px">
         <div class="it-lawn"></div>
-        ${gd.fr.map((f, i) => `<div class="it-fr${f.by ? ' show' : ''}" id="gdF${i}" style="left:${(f.x * W).toFixed(0)}px;top:${(f.y * H).toFixed(0)}px;width:${size}px;height:${size}px${f.by ? `;box-shadow:0 0 0 4px ${vsColor(f.by)};border-radius:50%` : ''}">${itSvg(f.type)}</div>`).join('')}
+        ${gd.fr.map((f, i) => { const fs = Math.round(size * gdSize(f));
+          return `<div class="${itFrClass({ type:f.type, shown:!!f.by })}" id="gdF${i}" style="left:${(f.x * W).toFixed(0)}px;top:${(f.y * H).toFixed(0)}px;width:${fs}px;height:${fs}px${f.by ? `;box-shadow:0 0 0 4px ${vsColor(f.by)};border-radius:50%` : ''}">${itSvg(f.type)}</div>`; }).join('')}
         <canvas class="it-grass" id="gdGrass" aria-label="풀숲 — 손가락으로 문질러 깎아요"></canvas>
+        ${gd.fr.map((f, i) => !f.by && itFriend(f.type).special ? `<span class="it-glint" id="gdG${i}" style="left:${(f.x * W).toFixed(0)}px;top:${(f.y * H).toFixed(0)}px"><i>✨</i><i>✨</i><i>✨</i></span>` : '').join('')}
         <div class="it-parts" id="itParts"></div>
       </div>
     </div>`;
@@ -9106,8 +9256,8 @@ function gdCheck(who){
   const cw = gd.g.canvas.width, ch = gd.g.canvas.height, d = gd.dpr;
   gd.fr.forEach((f, i) => {
     if (f.by) return;
-    const w = Math.max(4, Math.min(cw, ch, Math.round(gd.size * 0.76 * d)));
-    const x0 = clamp(Math.round((f.x * gd.W - gd.size * 0.38) * d), 0, cw - w), y0 = clamp(Math.round((f.y * gd.H - gd.size * 0.38) * d), 0, ch - w);
+    const fs = gd.size * gdSize(f), w = Math.max(4, Math.min(cw, ch, Math.round(fs * 0.76 * d)));
+    const x0 = clamp(Math.round((f.x * gd.W - fs * 0.38) * d), 0, cw - w), y0 = clamp(Math.round((f.y * gd.H - fs * 0.38) * d), 0, ch - w);
     let px; try { px = gd.g.getImageData(x0, y0, w, w).data; } catch(e){ return; }
     let clear = 0, tot = 0;
     for (let yy = 0; yy < w; yy += 5) for (let xx = 0; xx < w; xx += 5){ tot++; if (px[(yy * w + xx) * 4 + 3] < 70) clear++; }
@@ -9117,12 +9267,14 @@ function gdCheck(who){
 function gdReveal(i, who, tell){
   const v = VS, gd = v.gd, f = gd.fr[i]; if (!f || f.by) return;
   f.by = who;
-  const el = document.getElementById('gdF' + i), fr = itFriend(f.type), nm = vsName(who);
+  const el = document.getElementById('gdF' + i), gl = document.getElementById('gdG' + i), fr = itFriend(f.type), nm = vsName(who);
   if (el){ el.classList.add('show'); el.style.boxShadow = `0 0 0 4px ${vsColor(who)}`; el.style.borderRadius = '50%'; }
-  itPop();
+  if (gl) gl.remove();
+  if (fr.special){ itSparkle(); confetti(); } else if (fr.big) itThud(); else itPop();
   const box = document.getElementById('gdGarden');
-  if (box){ const t = document.createElement('span'); t.className = 'it-tag'; t.textContent = `${subj(nm)} 찾았다! ${fr.name}`; t.style.left = (f.x * gd.W).toFixed(0) + 'px'; t.style.top = Math.max(4, f.y * gd.H - gd.size * 0.64).toFixed(0) + 'px'; box.appendChild(t); setTimeout(() => t.remove(), 1900); }
-  const say = document.getElementById('gdSay'); if (say) say.textContent = `${subj(nm)} ${fr.name}${hasJong(fr.name) ? '을' : '를'} 찾았어요! 🎉 ${gd.fr.filter(x => !x.by).length ? '다른 친구도 같이 찾아요!' : ''}`;
+  if (box){ const t = document.createElement('span'); t.className = 'it-tag'; t.textContent = `${subj(nm)} 찾았다! ${fr.special ? '🌈 ' : ''}${fr.name}${fr.big ? ' 👣' : ''}`; t.style.left = (f.x * gd.W).toFixed(0) + 'px'; t.style.top = Math.max(4, f.y * gd.H - gd.size * gdSize(f) * (f.big ? 0.46 : 0.64)).toFixed(0) + 'px'; box.appendChild(t); setTimeout(() => t.remove(), 1900); }
+  const say = document.getElementById('gdSay'), what = fr.special ? `특별한 친구 ${fr.name}` : fr.big ? `큰 친구 ${fr.name}` : fr.name;
+  if (say) say.textContent = `${subj(nm)} ${what}${hasJong(fr.name) ? '을' : '를'} 찾았어요! ${fr.special ? '🌈' : fr.big ? '👣' : '🎉'} ${gd.fr.filter(x => !x.by).length ? '다른 친구도 같이 찾아요!' : ''}`;
   if (tell) vsSend({ t:'found', i });
   gdHud();
   if (gd.fr.every(x => x.by)){ gdFlush(); setTimeout(() => { if (VS === v && v.phase === 'play') vsFinish(); }, 900); }
@@ -9189,7 +9341,7 @@ function sdRender(){
       <div class="ttl-dots"><span class="ttl-chip">🔍 틀린 그림 찾기 · ${esc(v.sd.th.name)}</span></div><span class="bh-time" id="sdTime">⏱ ${SD_SECS}</span></div>
     <div class="ttl-body" style="max-width:1140px">
       <div class="sd-hud"><div class="grow"><b>${esc(me.name)}</b> <span id="sdMe">${v.found.length}</span>/${SD_N}<div class="gauge" style="height:10px;margin-top:3px"><span id="sdMeBar" style="width:${v.found.length / SD_N * 100}%"></span></div></div>
-        ${v.solo ? '<div class="grow muted" style="font-size:13px;text-align:right">두 그림에서 다른 곳 5개를 찾아요!</div>' : v.others.map(id => `<div class="grow" style="text-align:right"><b>${esc(vsName(id))}</b> <span id="vsN-${esc(id)}">${v.scores[id] || 0}</span>/${SD_N}<div class="gauge" style="height:10px;margin-top:3px"><span id="vsB-${esc(id)}" style="width:${(v.scores[id] || 0) / SD_N * 100}%;background:${vsColor(id)}"></span></div></div>`).join('')}</div>
+        ${v.others.map(id => `<div class="grow" style="text-align:right"><b>${esc(vsName(id))}</b> <span id="vsN-${esc(id)}">${v.scores[id] || 0}</span>/${SD_N}<div class="gauge" style="height:10px;margin-top:3px"><span id="vsB-${esc(id)}" style="width:${(v.scores[id] || 0) / SD_N * 100}%;background:${vsColor(id)}"></span></div></div>`).join('')}</div>
       <div class="sd-pics${land ? ' land' : ''}">${sdPic(v.sd.objs, v.sd.th, 'sdL', pw)}${sdPic(v.sd.right, v.sd.th, 'sdR', pw)}</div>
       <p class="muted" style="text-align:center;margin:6px 0 0;font-size:13px" id="sdTip">다른 곳을 찾으면 그림을 눌러요 👆 (어느 그림을 눌러도 돼요)</p>
     </div>`;
@@ -9219,11 +9371,11 @@ function sdTap(ev){
   const n = v.found.length, me = document.getElementById('sdMe'), bar = document.getElementById('sdMeBar');
   if (me) me.textContent = String(n); if (bar) bar.style.width = (n / SD_N * 100) + '%';
   sdMarks();
-  if (!v.solo) vsSend({ t:'score', n });
+  vsSend({ t:'score', n });
   if (n >= SD_N){
     const ms = Math.round(performance.now() - v.t0);
     v.done[v.me] = { n, ms }; v.scores[v.me] = n;
-    if (!v.solo) vsSend({ t:'done', n, ms });
+    vsSend({ t:'done', n, ms });
     vsCheckEnd();
   }
 }
@@ -9233,7 +9385,7 @@ function sdTick(){
   if (el){ const s = Math.ceil(left / 1000); el.textContent = `⏱ ${s}`; el.classList.toggle('hurry', s <= 10); }
   if (left <= 0 && !v.done[v.me]){
     const n = v.found.length; v.done[v.me] = { n, ms:SD_SECS * 1000 }; v.scores[v.me] = n;
-    if (!v.solo) vsSend({ t:'done', n, ms:SD_SECS * 1000 });
+    vsSend({ t:'done', n, ms:SD_SECS * 1000 });
     vsCheckEnd();
   }
 }
@@ -13148,8 +13300,8 @@ setInterval(() => {
   if (OL && !activeUnlock(OL.kidId)) closeOneline('놀이 시간이 끝났어요. 내일 또 해요! 👋');
   if (IT && !activeUnlock(IT.kidId)) ittoClose('놀이 시간이 끝났어요. 친구들이 버블에서 기다릴게요! 👋');
   if (PET && !activeUnlock(PET.kidId)) petClose('놀이 시간이 끝났어요. 마음 친구가 또 기다릴게요! 💕');
-  if (BH && BH.kidId && !activeUnlock(BH.kidId) && !(BH.vs && VS && VS.solo)) { if (BH.vs) vsClose('놀이 시간이 끝났어요. 또 같이 놀아요! 👋'); else bearClose('놀이 시간이 끝났어요. 곰돌이가 또 놀자고 기다릴게요! 👋'); }
-  if (VS && VS.kidId && VS.phase === 'play' && !activeUnlock(VS.kidId)) vsClose(VS.solo ? '놀이 시간이 끝났어요. 내일 또 해요! 👋' : '놀이 시간이 끝났어요. 또 같이 놀아요! 👋');
+  if (BH && BH.kidId && !activeUnlock(BH.kidId)) { if (BH.vs) vsClose('놀이 시간이 끝났어요. 또 같이 놀아요! 👋'); else bearClose('놀이 시간이 끝났어요. 곰돌이가 또 놀자고 기다릴게요! 👋'); }
+  if (VS && VS.kidId && VS.phase === 'play' && !activeUnlock(VS.kidId)) vsClose('놀이 시간이 끝났어요. 또 같이 놀아요! 👋');
 
   // 기다리던 쪽지·칭찬 카드 (응원 팝업이 닫힌 뒤 등) — 3초마다 한 번 살펴본다
   if (S.kidId && Date.now() % 3000 < 1000) notiCheck();
