@@ -225,14 +225,17 @@ async function speech(p, body) {
    앱은 받은 목소리를 기기에 저장해 두고 다시 쓴다 (같은 말은 한 번만 만든다).
    ============================================================ */
 const TTS_VOICES = ['Sulafat', 'Achernar', 'Vindemiatrix', 'Leda', 'Aoede', 'Autonoe', 'Despina', 'Kore', 'Zephyr', 'Laomedeia'];
+// 말투. 영어(en·slow·speech)와 인사말(hello)은 처음 그대로 둔다 — 부모님이 영어 발음은 지금이 좋다고 하셨다.
+// 한국어(ko·dict)는 외국인·사투리 억양이 섞여 어색했다 → 서울 표준어를 쓰는 아나운서처럼 바르고 또렷하게.
 const TTS_STYLES = {
-  ko: 'warm, bright and gentle, like a kind teacher talking to a 7-year-old child; clear and not too fast',
+  ko: 'standard Seoul Korean (표준어) spoken by a native Korean TV announcer: accurate standard pronunciation and natural Seoul intonation, clear and polished articulation, calm and warm, natural speed, speaking kindly to a young child; absolutely no foreign or regional accent, not exaggerated, not sing-song, not robotic',
   en: 'clear, warm and friendly, like a kind English teacher reading to a 7-year-old child, with natural intonation',
   slow: 'very slowly and clearly, word by word, like a kind teacher reading to a young child',
   speech: 'natural, bright and confident, like a cheerful child giving a speech, clear pronunciation',
-  dict: 'slowly and very clearly, like a kind Korean elementary school teacher reading a dictation sentence to 7-year-olds, with a short pause between words',
+  dict: 'standard Seoul Korean (표준어) spoken by a native Korean announcer calmly reading one dictation sentence to first graders: accurate standard pronunciation, a little slower than normal, very clear, natural phrasing with only a light pause between word groups; absolutely no foreign or regional accent, not choppy, not robotic',
   hello: 'warmly and naturally, like a friendly native speaker greeting a young child, with native pronunciation'
 };
+const TTS_KO = new Set(['ko', 'dict']);
 const TTS_MODELS = ['gemini-3.8-flash-tts', 'gemini-3.8-flash-lite-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-flash-preview-tts'];
 let ttsGood = null;                                   // 한 번 되는 모델을 찾으면 기억한다
 const ttsCache = new Map();                           // 같은 서버가 살아 있는 동안 같은 말은 다시 만들지 않는다
@@ -261,13 +264,13 @@ function asWav(b64, mime) {
   h.writeUInt32LE(rate * 2, 28); h.writeUInt16LE(2, 32); h.writeUInt16LE(16, 34); h.write('data', 36); h.writeUInt32LE(buf.length, 40);
   return Buffer.concat([h, buf]).toString('base64');
 }
-async function ttsCall(p, model, text, voice, style) {
+async function ttsCall(p, model, text, voice, style, ko) {
   const legacy = /^gemini-2\./.test(model);
   const url = legacy
     ? `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`
     : 'https://generativelanguage.googleapis.com/v1beta/interactions';
   const body = legacy
-    ? { contents: [{ parts: [{ text: `Say this in a ${style} way: ${text}` }] }],
+    ? { contents: [{ parts: [{ text: ko ? `Read the Korean text below aloud, exactly as written and nothing else. Voice and delivery: ${style}.\n\n${text}` : `Say this in a ${style} way: ${text}` }] }],
         generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } } }
     : { model, input: [{ type: 'user_input', content: [{ type: 'text', text, annotations: [{ type: 'speech_metadata', style }] }] }],
         response_format: { type: 'audio' }, generation_config: { speech_config: [{ voice }] } };
@@ -295,7 +298,7 @@ async function tts(p, body) {
   let last = null;
   for (const model of order) {
     try {
-      const audio = await ttsCall(p, model, text, voice, style);
+      const audio = await ttsCall(p, model, text, voice, style, TTS_KO.has(body.style));
       ttsGood = model;
       ttsCache.set(key, audio);
       if (ttsCache.size > 60) ttsCache.delete(ttsCache.keys().next().value);

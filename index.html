@@ -197,6 +197,28 @@
   .tower .count{font-size:13px;color:var(--cocoa-soft);text-align:center;}
 
   .covers{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px;}
+  /* 읽었어요 / 읽을 예정이에요 — 크게 두 개 */
+  .bk-status{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px;}
+  .bk-st{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 8px;border-radius:16px;border:2px solid var(--blush);background:var(--surface);color:var(--cocoa);font-family:inherit;cursor:pointer;}
+  .bk-st b{font-family:var(--display);font-size:18px;}
+  .bk-st small{font-size:12px;color:var(--cocoa-soft);}
+  .bk-st[aria-pressed="true"]{border-color:var(--mint-deep, #3FB39A);background:var(--mint-soft);box-shadow:0 0 0 3px rgba(111,207,176,.35);}
+  /* 📘 읽을 책장 — 서 있는 책 */
+  .toread{display:flex;flex-wrap:wrap;gap:12px 10px;align-items:flex-end;}
+  .tr-book{width:86px;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;padding:0;cursor:pointer;font-family:inherit;color:var(--cocoa);}
+  .tr-book.fresh{animation:drop .55s cubic-bezier(.3,1.5,.5,1);}
+  .tr-cover{position:relative;width:86px;aspect-ratio:3/4;border-radius:5px 9px 9px 5px;overflow:hidden;display:grid;place-items:center;padding:6px;text-align:center;font-size:12px;line-height:1.25;
+    box-shadow:inset 4px 0 0 rgba(255,255,255,.7), var(--shadow);}
+  .tr-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .tr-t{font-size:12px;max-width:86px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tr-ar{font-size:11px;color:var(--cocoa-soft);white-space:nowrap;}
+  /* 📂 기록 관리 */
+  .pd-row{display:flex;gap:6px;align-items:center;padding:10px 0;border-bottom:1px solid var(--blush);}
+  .pd-row .btn.sm{padding:6px 10px;}
+  .pd-t{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .pd-s{font-size:13px;color:var(--cocoa-soft);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .pd-edit{display:block;background:var(--mint-soft);border-radius:14px;padding:12px;margin:6px 0;border:0;}
+  .pd-ask{background:#FFF0F3;border-radius:14px;padding:10px 12px;margin:6px 0;border:0;flex-wrap:wrap;}
   .cover{aspect-ratio:3/4;border-radius:var(--r-sm);overflow:hidden;background:var(--blush);
     display:grid;place-items:center;text-align:center;font-size:12px;padding:6px;box-shadow:var(--shadow);}
   .cover img{width:100%;height:100%;object-fit:cover;}
@@ -483,6 +505,23 @@
   }
 
   /* ---------- 할 일 완료 응원 팝업 ---------- */
+  /* 💌 쪽지·칭찬 알림 — 오른쪽 위에서 살짝 */
+  .noti-box{position:fixed;right:12px;top:calc(78px + env(safe-area-inset-top,0px));z-index:58;display:flex;flex-direction:column;gap:10px;
+    width:min(320px, calc(100vw - 24px));pointer-events:none;}
+  .noti-card{pointer-events:auto;display:flex;gap:10px;align-items:flex-start;background:#FFFDF8;border:3px solid #FFC7D4;border-radius:20px;padding:12px 12px 10px;
+    box-shadow:0 10px 26px rgba(107,74,82,.22);animation:noti-in .55s cubic-bezier(.2,1.4,.4,1) both;}
+  .noti-card.note{border-color:#FFD98E;background:linear-gradient(170deg,#FFFDF3,#FFF3D6);}
+  .noti-card.out{animation:noti-out .38s ease-in forwards;}
+  .noti-ico{font-size:34px;line-height:1;animation:noti-wig 1.6s ease-in-out .5s 2;}
+  .noti-main{flex:1;min-width:0;}
+  .noti-t{font-family:var(--display);font-size:17px;line-height:1.25;color:var(--cocoa);}
+  .noti-b{font-size:15px;margin-top:3px;word-break:keep-all;}
+  .noti-more{font-size:12px;color:var(--cocoa-soft);margin-top:3px;}
+  .noti-btns{display:flex;gap:6px;justify-content:flex-end;margin-top:8px;}
+  @media (max-width:599px){ .noti-card{padding:10px 10px 8px;border-radius:18px;} .noti-ico{font-size:28px;} .noti-t{font-size:15px;} .noti-b{font-size:14px;} .noti-btns{margin-top:6px;} }
+  @keyframes noti-in{from{transform:translateX(115%) rotate(4deg);opacity:0}to{transform:none;opacity:1}}
+  @keyframes noti-out{to{transform:translateX(115%);opacity:0}}
+  @keyframes noti-wig{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
   .cheer-pop{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;
     pointer-events:none;padding:0 16px;}
   .cp-card{pointer-events:auto;position:relative;background:var(--surface);border:4px solid var(--berry);
@@ -749,35 +788,63 @@
   @keyframes it-tag{0%{opacity:0;margin-top:6px}15%,80%{opacity:1;margin-top:0}100%{opacity:0;margin-top:-8px}}
   .it-park{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:4px;}
   .it-carbox{width:min(250px,64vw);}
+  .it-dock .it-carbox{width:min(250px,46vw);}
+  .it-dock .btn{padding:10px 14px;}
   .it-carbox svg{width:100%;height:auto;display:block;}
   .it-flyer{position:fixed;z-index:96;pointer-events:none;
     transition:left .5s cubic-bezier(.4,.1,.3,1),top .5s cubic-bezier(.3,-.45,.4,1),width .5s,height .5s;}
   .it-flyer svg{width:100%;height:100%;display:block;}
-  .it-tunnel{position:relative;height:min(62vh,540px);border-radius:22px;overflow:hidden;border:3px solid #6B4A52;background:#8B5E3C;}
-  .it-dirt{position:absolute;left:0;right:0;top:0;height:300%;background:linear-gradient(180deg,#A9794D 0%,#8B5E3C 30%,#6E472C 62%,#4F3220 100%);
-    animation:it-dig 2.3s linear forwards;}
-  .it-dirt.up{animation-name:it-rise;}
-  .it-dirt::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:132px;margin-left:-66px;border-radius:66px;
+  .it-journey{position:relative;height:min(62vh,540px);border-radius:22px;overflow:hidden;border:3px solid #6B4A52;background:#BDE7FF;}
+  .it-world{position:absolute;left:0;right:0;top:0;height:400%;transform:translateY(-25.5%);}
+  .it-world.down{animation:it-down 3.4s ease-in-out forwards;}
+  .it-world.up{animation:it-up 3.4s ease-in-out forwards;}
+  @keyframes it-down{0%{transform:translateY(-25.5%)}30%{transform:translateY(0)}52%{transform:translateY(-31.25%)}100%{transform:translateY(-77.5%)}}
+  @keyframes it-up{0%{transform:translateY(-77.5%)}45%{transform:translateY(-31.25%)}68%{transform:translateY(0)}100%{transform:translateY(-25.5%)}}
+  .it-sky{position:absolute;left:0;right:0;top:0;height:45%;background:linear-gradient(180deg,#86CCFF 0%,#BDE7FF 55%,#E8F7FF 100%);}
+  .it-sky span,.it-under span{position:absolute;}
+  .it-under span{opacity:.85;}
+  .it-ground{position:absolute;left:0;right:0;top:45%;height:5%;background:linear-gradient(180deg,#7ED67E 0 34%,#5DB768 34% 40%,#A9794D 40%);}
+  .it-hole{position:absolute;left:50%;top:26%;width:130px;height:36px;margin-left:-65px;border-radius:50%;background:#3A2616;box-shadow:inset 0 6px 10px rgba(0,0,0,.5);}
+  .it-under{position:absolute;left:0;right:0;top:50%;height:50%;background:linear-gradient(180deg,#A9794D 0%,#8B5E3C 30%,#6E472C 62%,#4F3220 100%);}
+  .it-under::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:132px;margin-left:-66px;border-radius:66px;
     background:linear-gradient(90deg,rgba(40,24,12,.6),rgba(70,44,22,.35) 50%,rgba(40,24,12,.6));}
-  .it-dirt span{position:absolute;opacity:.85;}
-  @keyframes it-dig{from{transform:translateY(0)}to{transform:translateY(-66.6%)}}
-  @keyframes it-rise{from{transform:translateY(-66.6%)}to{transform:translateY(0)}}
-  .it-drillcar{position:absolute;left:50%;top:50%;width:170px;animation:it-shake .12s linear infinite;}
-  .it-drillcar svg{width:100%;height:auto;display:block;}
+  .it-jcar{position:absolute;left:50%;top:44%;width:190px;margin-left:-95px;margin-top:-46px;}
+  .it-jcar.down{animation:it-jcar-down 3.4s ease-in-out forwards;}
+  .it-jcar.up{animation:it-jcar-up 3.4s ease-in-out forwards;}
+  @keyframes it-jcar-down{0%{top:70%}10%{top:44%}100%{top:44%}}
+  @keyframes it-jcar-up{0%{top:44%}88%{top:44%}100%{top:70%}}
+  .it-jrot.down{animation:it-jrot-down 3.4s ease-in-out forwards;}
+  .it-jrot.up{animation:it-jrot-up 3.4s ease-in-out forwards;}
+  @keyframes it-jrot-down{0%{transform:rotate(0deg)}8%{transform:rotate(-90deg)}30%{transform:rotate(-90deg)}44%{transform:rotate(90deg)}100%{transform:rotate(90deg)}}
+  @keyframes it-jrot-up{0%{transform:rotate(-90deg)}62%{transform:rotate(-90deg)}84%{transform:rotate(0deg)}100%{transform:rotate(0deg)}}
+  .it-jshake{animation:it-shake .12s linear infinite;}
+  .it-jshake svg{width:100%;height:auto;display:block;}
   @keyframes it-shake{0%,100%{margin-left:-1.5px}50%{margin-left:1.5px}}
+  .it-poof{position:absolute;left:50%;top:56%;transform:translate(-50%,-50%) scale(.2);opacity:0;pointer-events:none;
+    font-family:var(--display);font-size:44px;font-weight:700;color:#FFF7E0;text-shadow:0 3px 0 rgba(0,0,0,.35);}
+  .it-poof.down{animation:it-poof 3.4s linear forwards;}
+  .it-poof.up{animation:it-poof-up 3.4s linear forwards;}
+  @keyframes it-poof{0%,46%{opacity:0;transform:translate(-50%,-50%) scale(.2)}52%{opacity:1;transform:translate(-50%,-50%) scale(1.25)}62%,100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
+  @keyframes it-poof-up{0%,40%{opacity:0;transform:translate(-50%,-50%) scale(.2)}46%{opacity:1;transform:translate(-50%,-50%) scale(1.25)}58%,100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
   .it-tunnel-say{position:absolute;left:0;right:0;bottom:14px;margin:0;text-align:center;font-family:var(--display);font-size:22px;
-    color:#FFF7E0;text-shadow:0 2px 0 rgba(0,0,0,.35);}
-  .it-cave{position:relative;border-radius:22px;overflow:hidden;border:3px solid #6B4A52;
-    background:linear-gradient(180deg,#2E2448 0%,#3B2F63 45%,#26203D 100%);box-shadow:inset 0 10px 30px rgba(0,0,0,.35);}
-  .it-crys{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
-  .it-bub{position:absolute;width:88px;height:88px;border-radius:50%;transform:translateX(-50%);padding:9px;
-    background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0 7%,rgba(200,235,255,.32) 8% 40%,rgba(255,190,235,.26) 62%,rgba(190,255,235,.22) 82%,rgba(255,255,255,.2));
-    border:2px solid rgba(255,255,255,.7);box-shadow:0 0 18px rgba(170,220,255,.45), inset 0 0 12px rgba(255,255,255,.35);}
-  .it-bub svg{width:100%;height:100%;display:block;}
-  .it-bub.on svg{animation:it-float 3s ease-in-out infinite;}
-  .it-bub.play{animation:it-boing .5s cubic-bezier(.2,1.6,.4,1);}
+    color:#FFF7E0;text-shadow:0 2px 0 rgba(0,0,0,.45);}
+  .it-nest{position:relative;margin:0 auto;border-radius:22px;overflow:hidden;border:3px solid #6B4A52;box-shadow:inset 0 10px 30px rgba(0,0,0,.3);}
+  .it-nest-svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
+  .it-room{position:absolute;transform:translateX(-50%);font-family:var(--display);font-weight:700;color:#6B4A52;background:rgba(255,255,255,.72);
+    border-radius:999px;padding:0 10px;white-space:nowrap;pointer-events:none;}
+  .it-nb{position:absolute;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0 7%,rgba(200,235,255,.34) 8% 40%,rgba(255,190,235,.28) 62%,rgba(190,255,235,.24) 82%,rgba(255,255,255,.22));
+    border:2px solid rgba(255,255,255,.75);box-shadow:0 0 14px rgba(255,240,200,.55), inset 0 0 10px rgba(255,255,255,.35);}
+  .it-nb svg{width:82%;height:82%;display:block;}
+  .it-nb.on svg{animation:it-float 3s ease-in-out infinite;}
+  .it-nb.away svg{opacity:.15;animation:none;}
+  .it-nb.sel{box-shadow:0 0 0 4px #FFE79C, 0 0 20px rgba(255,231,156,.9);}
+  .it-nb.play{animation:it-nboing .5s cubic-bezier(.2,1.6,.4,1);}
   @keyframes it-float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
-  @keyframes it-boing{0%{transform:translateX(-50%) scale(1)}40%{transform:translateX(-50%) scale(1.18,.86)}100%{transform:translateX(-50%) scale(1)}}
+  @keyframes it-nboing{0%{transform:scale(1)}40%{transform:scale(1.16,.86)}100%{transform:scale(1)}}
+  .it-walkers{position:absolute;inset:0;pointer-events:none;z-index:4;}
+  .it-walker{position:absolute;left:0;top:0;will-change:transform;}
+  .it-walker svg{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 3px rgba(0,0,0,.3));}
   .it-dock{position:-webkit-sticky;position:sticky;bottom:0;z-index:5;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
     background:rgba(38,32,61,.94);border-radius:20px;padding:10px 12px;box-shadow:0 -6px 18px rgba(0,0,0,.25);}
   .it-heart{position:fixed;z-index:96;pointer-events:none;font-size:22px;animation:it-heart .95s ease-out forwards;}
@@ -802,16 +869,22 @@
   .bh-stage{position:relative;margin:0 auto;border-radius:22px;overflow:hidden;border:3px solid #6B4A52;box-shadow:var(--shadow-lift);
     touch-action:manipulation;user-select:none;-webkit-user-select:none;}
   .bh-cafe{position:absolute;inset:0;width:100%;height:100%;}
-  .bh-spot{position:absolute;}
-  .bh-art{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
-  .bh-art.front{z-index:2;}
-  .bh-hole{position:absolute;overflow:hidden;z-index:1;}
-  .bh-hole.round{border-radius:50%;}
-  .bh-bear{position:absolute;left:0;right:0;bottom:0;width:100%;height:110%;padding:0;border:0;background:none;transform:translateY(105%);
-    transition:transform .16s ease-out;pointer-events:none;}
-  .bh-bear.up{transform:translateY(12%);pointer-events:auto;}
-  .bh-bear svg{width:100%;height:100%;display:block;}
-  .bh-bear.gold svg{filter:drop-shadow(0 0 6px #FFE79C);}
+  .bh-prop{position:absolute;pointer-events:none;overflow:visible;}
+  .bh-toy{position:absolute;transform:translate(-50%,-50%);pointer-events:none;opacity:.9;}
+  .bh-pops{position:absolute;inset:0;z-index:3;}
+  .bh-pop{position:absolute;padding:0;border:0;background:none;transform:translate(-50%,-50%) scale(0);
+    transition:transform .16s cubic-bezier(.2,1.5,.4,1);touch-action:manipulation;}
+  .bh-pop.up{transform:translate(-50%,-50%) scale(1);}
+  .bh-pop.down{transform:translate(-50%,-50%) scale(0);transition-duration:.18s;}
+  .bh-pop svg{position:relative;width:100%;height:100%;display:block;filter:drop-shadow(0 4px 5px rgba(107,74,82,.3));}
+  .bh-pop.gold svg{filter:drop-shadow(0 0 8px #FFE79C);}
+  .bh-pop.oops{animation:bh-shake .3s linear;}
+  @keyframes bh-shake{0%,100%{margin-left:0}25%{margin-left:-6px}75%{margin-left:6px}}
+  .bh-puff{position:absolute;left:50%;top:76%;width:120%;height:44%;margin-left:-60%;border-radius:50%;pointer-events:none;
+    background:radial-gradient(closest-side,rgba(255,255,255,.95),rgba(255,255,255,0));animation:bh-puff .5s ease-out forwards;}
+  @keyframes bh-puff{from{transform:scale(.3);opacity:1}to{transform:scale(1.4);opacity:0}}
+  .bh-plus.bad{color:#6A5AC0;}
+  #bhTip.warn{color:var(--berry-deep);font-weight:700;}
   .bh-fx{position:absolute;inset:0;pointer-events:none;z-index:5;}
   .bh-plus{position:absolute;transform:translate(-50%,-50%);font-family:var(--display);font-size:28px;font-weight:700;color:var(--berry-deep);
     text-shadow:2px 2px 0 #fff,-2px 2px 0 #fff,2px -2px 0 #fff,-2px -2px 0 #fff;animation:bh-plus .8s ease-out forwards;}
@@ -1320,7 +1393,7 @@ function activeUnlock(kidId){
 function weekStatsAt(kidId, back){
   const s0 = weekStart(); s0.setDate(s0.getDate() - 7 * (back || 0));
   const start = s0.getTime(), end = start + 7 * 86400000, inWeek = t => t >= start && t < end;
-  const books = S.data.books.filter(b => b.kidId === kidId && inWeek(new Date(b.readAt || 0).getTime())).length;
+  const books = S.data.books.filter(b => b.kidId === kidId && bookRead(b) && inWeek(new Date(b.readAt || 0).getTime())).length;
   const words = S.data.words.filter(w => w.kidId === kidId && inWeek(new Date(w.createdAt || 0).getTime())).length;
   let sched = 0, done = 0;
   for (let i = 0; i < 7; i++){
@@ -1393,6 +1466,78 @@ function restoreInputs(root, snap){
   }
 }
 
+/* ---------- 💌 쪽지·칭찬 스티커 알림 — 화면 오른쪽에 살짝 떠오른다 ----------
+   부모님이 쪽지를 붙이거나(settings.parentNote), 형제·부모님이 칭찬 스티커를 보내면(kudos) 받는 아이 화면 오른쪽에 카드가 뜬다.
+   "고마워요!"를 누르면 본 걸로 기억한다(profile.noti = { since, seen[], noteAt }) — 다른 기기에서도 다시 뜨지 않는다.
+   처음 쓰는 날에는 지난 하루 것만 보여 준다(예전 칭찬이 한꺼번에 쏟아지지 않게).
+   놀이·수업 층이나 창이 열려 있으면 기다렸다가 닫힌 뒤에 띄운다. 카드는 창·놀이 층보다 아래(z 58)에 있다. */
+const NOTI = { kid:'', rung:new Set() };
+function notiState(k){
+  const n = (k && k.noti) || {};
+  return { since:n.since || new Date(Date.now() - 86400000).toISOString(), seen:Array.isArray(n.seen) ? n.seen.slice() : [], noteAt:n.noteAt || '' };
+}
+function notiPending(k){
+  if (!k) return [];
+  const st = notiState(k), out = [], note = S.settings.parentNote;
+  if (note && String(note.text || '').trim() && note.at && note.at > st.noteAt && note.at > st.since)
+    out.push({ key:'note:' + note.at, kind:'note', text:String(note.text) });
+  S.data.kudos.filter(x => x.to === k.id && x.from !== k.id && String(x.at || '') > st.since && st.seen.indexOf(x.id) < 0)
+    .sort((a, b) => String(a.at || '').localeCompare(String(b.at || '')))
+    .forEach(x => out.push({ key:x.id, kind:'kudo', text:String(x.reason || '💖 칭찬 스티커'), from:x.from }));
+  return out;
+}
+function notiWho(x){ return x.from === 'parent' ? '엄마 아빠' : ((kid(x.from) || {}).name || '친구'); }
+function notiCard(x, more){
+  const note = x.kind === 'note', ico = note ? '💌' : ((String(x.text).match(/^\S+/) || ['💖'])[0]);
+  const title = note ? '엄마 아빠가 쪽지를 남겼어요' : (x.from === 'parent' ? '엄마 아빠가 칭찬 스티커를 붙여 줬어요!' : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요!`);
+  const body = note ? `“${x.text}”` : String(x.text).replace(/^\S+\s/, '');
+  return `<div class="noti-card ${note ? 'note' : 'kudo'}" data-key="${esc(x.key)}" role="status">
+    <div class="noti-ico" aria-hidden="true">${esc(ico)}</div>
+    <div class="noti-main"><div class="noti-t">${esc(title)}</div><div class="noti-b">${esc(body)}</div>
+      ${more ? `<div class="noti-more">그리고 ${more}개 더 있어요 💕</div>` : ''}
+      <div class="noti-btns"><button class="btn ghost sm" data-act="notiSay" data-arg="${esc(x.key)}" aria-label="읽어 주기">🔊</button>
+        <button class="btn sm" data-act="notiOk" data-arg="${esc(x.key)}">${note ? '읽었어요 💕' : '고마워요 💕'}</button></div></div>
+  </div>`;
+}
+function notiBox(){
+  let b = document.getElementById('notiBox');
+  if (!b){ b = document.createElement('div'); b.id = 'notiBox'; b.className = 'noti-box'; b.setAttribute('aria-live', 'polite'); document.body.appendChild(b); }
+  return b;
+}
+function notiCheck(){
+  const box = notiBox(), k = S.kidId && curKid();
+  if (!k){ box.innerHTML = ''; NOTI.kid = ''; return; }
+  if (NOTI.kid !== k.id){ box.innerHTML = ''; NOTI.kid = k.id; }
+  const items = notiPending(k), show = items.slice(0, window.innerWidth < 600 ? 1 : 2), keys = new Set(show.map(x => x.key));   // 폰은 하나씩, 아이패드는 둘까지
+  box.querySelectorAll('.noti-card').forEach(el => { if (!keys.has(el.dataset.key) && !el.classList.contains('out')) el.remove(); });
+  if (document.querySelector('.ttl') || document.querySelector('#modalRoot .sheet') || document.querySelector('.cheer-pop')) return;
+  let fresh = 0;
+  show.forEach((x, i) => {
+    const more = i === show.length - 1 ? items.length - show.length : 0;
+    const old = Array.prototype.find.call(box.querySelectorAll('.noti-card'), el => el.dataset.key === x.key);
+    if (old){ const m = old.querySelector('.noti-more'); if ((m ? 1 : 0) !== (more ? 1 : 0) || (m && more && m.textContent.indexOf(String(more)) < 0)) old.outerHTML = notiCard(x, more); return; }
+    box.insertAdjacentHTML('beforeend', notiCard(x, more));
+    if (!NOTI.rung.has(x.key)){ NOTI.rung.add(x.key); fresh++; }
+  });
+  if (fresh) try { ttChime(); } catch(e){}
+}
+function notiFind(key){ const k = curKid(); return k ? notiPending(k).find(x => x.key === key) : null; }
+ACTS.notiSay = (arg) => {
+  const x = notiFind(arg); if (!x) return;
+  nvUnlock();
+  voice(x.kind === 'note' ? `엄마 아빠가 쪽지를 남겼어요. ${x.text}` : `${subj(notiWho(x))} 칭찬 스티커를 보냈어요. ${String(x.text).replace(/^\S+\s/, '')}`, { lang:'ko' });
+};
+ACTS.notiOk = async (arg, btn) => {
+  const k = curKid(); if (!k) return;
+  const x = notiFind(arg), st = notiState(k);
+  if (String(arg).indexOf('note:') === 0) st.noteAt = String(arg).slice(5);
+  else if (st.seen.indexOf(arg) < 0) st.seen = st.seen.concat(arg).slice(-80);
+  const el = btn && btn.closest('.noti-card');
+  if (el){ el.classList.add('out'); setTimeout(() => { el.remove(); notiCheck(); }, 380); }
+  if (x && x.kind === 'kudo') toast(x.from === 'parent' ? '엄마 아빠의 칭찬, 마음에 쏙! 💕' : `${notiWho(x)}의 고마운 마음, 잘 받았어요 💕`);
+  await Store.update('profiles', k.id, { noti:st });
+};
+
 function draw(){
   const screen = $('#screen'), tabs = $('#tabs'), who = $('#whoami'), home = $('#homeBtn');
   const onHome = !S.data.profiles.length || !S.kidId || !curKid();
@@ -1412,6 +1557,7 @@ function draw(){
   if (!S.kidId || !curKid()){
     tabs.hidden = true; who.hidden = true; home.hidden = true;
     screen.innerHTML = viewGate();
+    notiCheck();
     return;
   }
 
@@ -1441,6 +1587,7 @@ function draw(){
   if (S.tab === 'shelf') requestAnimationFrame(fitSpines);
   if (S.tab === 'world') worldMount();          // 지구본 캔버스는 하나를 계속 다시 붙여 쓴다
   hydratePhotos(screen);
+  notiCheck();
 }
 
 function storageBanner(){
@@ -1676,8 +1823,10 @@ function todoRow(t, key){
    화면: 책장
    ============================================================ */
 function viewShelf(){
-  const mine = S.data.books.filter(b=>b.kidId===S.kidId)
-    .sort((a,b)=>String(a.readAt).localeCompare(String(b.readAt)));
+  const all = S.data.books.filter(b=>b.kidId===S.kidId);
+  const mine = all.filter(bookRead).sort((a,b)=>String(a.readAt).localeCompare(String(b.readAt)));
+  const later = all.filter(b => !bookRead(b)).sort((a,b)=>String(b.addedAt || '').localeCompare(String(a.addedAt || '')));
+  const kObj = curKid();
   const cats = S.settings.cats && S.settings.cats.length ? S.settings.cats : DEFAULT_CATS;
 
   const towers = cats.map(cat=>{
@@ -1699,18 +1848,38 @@ function viewShelf(){
   }).join('');
 
   const withCovers = mine.filter(b=>b.coverAssetId || b.coverUrl).slice().reverse();
-  const arCard = arShelfCard(curKid(), mine);
+  const arCard = arShelfCard(kObj, mine);
+  const laterShelf = later.map(b => {
+    const img = b.coverAssetId ? '/_blob/' + b.coverAssetId : (b.coverUrl || '');
+    const bd = b.ar ? arBand(b.ar, kObj && kObj.arScore) : null;
+    return `<button class="tr-book ${b.id===S.freshBookId?'fresh':''}" data-book="${b.id}" aria-label="${esc(b.title)} — 읽을 책">
+      <span class="tr-cover" style="background:${spineColor(b.id)}">${img ? `<img src="${esc(img)}" alt="">` : `<span>${esc(b.title||'제목 없는 책')}</span>`}</span>
+      <span class="tr-t">${esc(b.title||'제목 없는 책')}</span>
+      ${bd ? `<span class="tr-ar">${bd.ico} ${esc(bd.label)}</span>` : (b.ar ? `<span class="tr-ar">📘 AR ${b.ar}</span>` : '')}
+    </button>`; }).join('');
 
   return `
   <div class="card">
     <div class="row" style="margin-bottom:10px">
       <div class="grow">
-        <h3 class="sub" style="margin:0">내 책탑</h3>
+        <h3 class="sub" style="margin:0">📗 읽은 책</h3>
         <div class="muted">모두 ${mine.length}권 읽었어요</div>
       </div>
       <button class="btn" id="addBook">📷 책 등록</button>
     </div>
     <div class="towers">${towers}</div>
+  </div>
+
+  <div class="card" style="background:linear-gradient(170deg,#FFFFFF,#EAF3FF)">
+    <div class="row" style="margin-bottom:10px">
+      <div class="grow">
+        <h3 class="sub" style="margin:0">📘 읽을 책</h3>
+        <div class="muted">${later.length ? `읽을 책 ${later.length}권이 기다려요. 다 읽으면 책을 눌러요!` : '읽고 싶은 책을 꽂아 두는 책장이에요'}</div>
+      </div>
+      <button class="btn ghost sm" id="addToRead">📘 꽂아 두기</button>
+    </div>
+    ${later.length ? `<div class="toread">${laterShelf}</div><div class="plank"></div>`
+      : `<div class="ghostbox" style="border:2px dashed var(--blush);border-radius:12px;padding:16px;text-align:center;color:var(--cocoa-soft);font-size:14px">책을 등록할 때 <b>📘 읽을 예정이에요</b>를 고르면 여기에 꽂혀요</div>`}
   </div>
 
   ${arCard}
@@ -1724,7 +1893,7 @@ function viewShelf(){
       </button>`).join('')}</div>
   </div>` : ''}
 
-  ${!mine.length ? `<div class="card empty">
+  ${!all.length ? `<div class="card empty">
     <div class="face">📚</div>
     <p>첫 책을 등록해 볼까요?<br>책 뒤쪽 바코드를 찍으면 돼요.</p>
     <button class="btn" id="addBook2">📷 책 등록하기</button>
@@ -1804,7 +1973,10 @@ function viewWords(){
             ${w.meaningEn ? `<div class="muted" style="font-size:13px">${esc(w.meaningEn)}</div>` : ''}
           </div>
           <div class="stack" style="gap:6px;align-items:flex-end">
-            <button class="btn ghost sm" data-say="${esc(w.term)}" data-lang="${w.lang==='ko'?'ko':'en'}">🔊</button>
+            <div class="row" style="gap:6px">
+              <button class="btn ghost sm" data-say="${esc(w.term)}" data-lang="${w.lang==='ko'?'ko':'en'}" aria-label="들어 보기">🔊</button>
+              <button class="btn ghost sm" data-act="wordDel" data-arg="${w.id}" aria-label="${esc(w.term)} 빼기">🗑</button>
+            </div>
             <div class="boxdots">${[1,2,3,4,5].map(i=>`<i class="${(w.box||1)>=i?'on':''}"></i>`).join('')}</div>
           </div>
         </div>
@@ -1995,7 +2167,7 @@ function viewGames(){
     <h3 class="sub">무슨 놀이 할까요?</h3>
     <div class="stack">
       <button class="btn wide ghost" data-game="itto" style="justify-content:flex-start">🌱 이또 — 풀숲 친구 찾기 <span class="newtag">NEW</span></button>
-      <button class="btn wide ghost" data-game="bear" style="justify-content:flex-start">🧸 곰돌이 숨바꼭질 <span class="newtag">NEW</span></button>
+      <button class="btn wide ghost" data-game="bear" style="justify-content:flex-start">🧸 ${esc(bhTitle())} <span class="newtag">NEW</span></button>
       <button class="btn wide ghost" data-game="memory" style="justify-content:flex-start">🐰 같은 그림 찾기</button>
       <button class="btn wide ghost" data-game="stars" style="justify-content:flex-start">⭐ 별똥별 받기</button>
       <button class="btn wide ghost" data-game="match" style="justify-content:flex-start">🫧 단어 짝 맞추기 <span class="muted" style="font-size:14px">별 2배!</span></button>
@@ -2120,6 +2292,7 @@ function closeModal(){
   stopScanner();
   if (!TT) hush();
   $('#modalRoot').innerHTML = '';
+  setTimeout(notiCheck, 60);                     // 창을 닫으면 기다리던 쪽지·칭찬을 띄운다
 }
 
 /* ---------- 책 등록 마법사 ---------- */
@@ -2135,10 +2308,16 @@ function bookWizard(){
       </div>`;
   }
   if (w.step === 'info'){
+    const toread = w.status === 'toread';
     return `<h3>어떤 책인가요?</h3>
       ${w.isbn ? `<p class="muted" style="margin:0 0 8px">바코드: ${esc(w.isbn)}</p>` : ''}
       ${w.busy ? `<p class="muted">🔎 책을 찾아보는 중이에요…</p>` : ''}
       ${w.guessNote ? `<div class="banner info" style="margin-bottom:10px"><span>💡</span><span>${esc(w.guessNote)}</span></div>` : ''}
+      ${w.shelfNote ? `<div class="banner" style="margin-bottom:10px;background:var(--mint-soft)"><span>📘</span><span>${esc(w.shelfNote)}</span></div>` : ''}
+      <div class="bk-status" role="group" aria-label="읽었는지 골라요">
+        <button class="bk-st" data-act="wizStatus" data-arg="read" aria-pressed="${!toread}"><b>📗 다 읽었어요</b><small>읽은 책장에 쌓아요</small></button>
+        <button class="bk-st" data-act="wizStatus" data-arg="toread" aria-pressed="${toread}"><b>📘 읽을 예정이에요</b><small>읽을 책장에 꽂아 둬요</small></button>
+      </div>
       <div class="stack">
         <input class="field" id="wizTitle" placeholder="책 제목" value="${esc(w.title||'')}">
         <input class="field" id="wizAuthor" placeholder="지은이 (몰라도 괜찮아요)" value="${esc(w.author||'')}">
@@ -2156,11 +2335,11 @@ function bookWizard(){
           <div class="chips">${(S.settings.cats||DEFAULT_CATS).map(c=>
             `<button class="chip" data-cat="${esc(c)}" aria-pressed="${w.category===c}">${esc(c)}</button>`).join('')}</div>
         </div>
-        <div>
+        ${toread ? '' : `<div>
           <div class="muted" style="margin-bottom:6px">재미있었나요?</div>
           <div class="chips">${[1,2,3].map(n=>
             `<button class="chip" data-stars="${n}" aria-pressed="${w.stars===n}">${'⭐'.repeat(n)}</button>`).join('')}</div>
-        </div>
+        </div>`}
         <button class="btn wide" id="wizToCover">다음 · 표지 찍기</button>
       </div>`;
   }
@@ -2175,19 +2354,34 @@ function bookWizard(){
       <div class="stack">
         <input type="file" accept="image/*" capture="environment" id="coverInput" class="field">
         ${w.uploading ? `<p class="muted" style="text-align:center">사진을 올리는 중…</p>` : ''}
-        <button class="btn wide" id="wizSave">책장에 쌓기 📚</button>
+        <button class="btn wide" id="wizSave">${w.status === 'toread' ? '읽을 책장에 꽂기 📘' : '책장에 쌓기 📚'}</button>
         ${w.coverUrl ? '' : `<button class="btn ghost wide" id="wizSkipCover">표지 없이 등록할래요</button>`}
       </div>`;
   }
+  if (w.step === 'rate'){                                    // 읽을 책장에 있던 책을 다 읽었을 때
+    return `<h3>📗 「${esc(w.title || '')}」 다 읽었어요!</h3>
+      <p class="muted" style="margin:0 0 10px">끝까지 읽은 거 정말 멋져요! 재미있었나요?</p>
+      <div class="chips" style="margin-bottom:12px">${[1,2,3].map(n=>
+        `<button class="chip" data-stars="${n}" aria-pressed="${w.stars===n}">${'⭐'.repeat(n)}</button>`).join('')}</div>
+      <button class="btn wide" data-act="wizRated">읽은 책장에 쌓기 📚</button>`;
+  }
   if (w.step === 'words'){
-    return `<h3>어려운 낱말이 있었나요?</h3>
-      <p class="muted" style="margin:0 0 10px">담아두면 나중에 단어 가방에서 공부할 수 있어요.</p>
+    return `<h3>어려웠던 낱말이 있었나요?</h3>
+      <p class="muted" style="margin:0 0 10px">담아두면 나중에 단어 가방에서 공부할 수 있어요. 없으면 그냥 다음으로 가요!</p>
       <div class="stack">
         <input class="field" id="wizWord" placeholder="낱말 하나 (예: 무지개)" enterkeyhint="done">
         <div class="chips" id="wizWordList">${(w.words||[]).map(t=>`<span class="chip">${esc(t)}</span>`).join('')}</div>
         <button class="btn ghost wide" id="wizAddWord">+ 담기</button>
-        <button class="btn wide mint" id="wizDone">다 했어요!</button>
+        <button class="btn wide mint" data-act="wizToFeel">다음 · 느낌 쓰기 ▶</button>
       </div>`;
+  }
+  if (w.step === 'feel'){
+    return `<h3>💭 읽고 나니 어땠어요?</h3>
+      <p class="muted" style="margin:0 0 8px">한 줄이면 충분해요. 느낌 낱말을 눌러도 돼요!</p>
+      <div class="chips" style="margin-bottom:8px">${BOOK_FEELS.map((f, i) => `<button class="chip" data-act="wizFeelChip" data-arg="${i}">${f}</button>`).join('')}</div>
+      ${kvField('wizFeel', '예: 구름빵을 먹으면 나도 날 수 있을 것 같았어요', { area:true, max:80, h:70 })}
+      <div class="row" style="gap:8px;margin-top:8px">${micBtn('wizFeel', 'wizFeelMic')}</div>
+      <button class="btn wide mint" id="wizDone" style="margin-top:10px">다 했어요!</button>`;
   }
   return '';
 }
@@ -2324,6 +2518,147 @@ function pinSheet(title, note){
     </div>`;
 }
 
+/* ---------- 부모님 화면 → 📂 기록 관리 ----------
+   아이마다 할 일·한 일 기록·책장·단어·생각·여행… 을 보고 고치거나 지운다.
+   고치기는 줄 안에서 칸을 펼치고(data-keep 칸이라 5초 동기화에도 글자가 남는다), 지우기는 줄 안에서 한 번 더 묻는다.
+   부모님 화면(비밀번호)을 떠나지 않게 askConfirm 대신 줄 안에서 묻는다. */
+function pdDate(v){ if (!v) return ''; const d = new Date(String(v).length === 10 ? v + 'T12:00:00' : v); return isNaN(d.getTime()) ? '' : `${d.getMonth() + 1}/${d.getDate()}`; }
+function pdTodo(id){ const t = S.data.todos.find(x => x.id === id); return t ? `${t.icon || '📌'} ${t.title}` : '지운 할 일'; }
+const PD_THINK = {
+  q:{ t:x => `🌟 ${x.q || '오늘의 질문'}`, s:x => [x.a1, x.a2].filter(Boolean).join(' → '), f:[['a1', '내 생각', 'area', 200], ['a2', '한 번 더 생각', 'area', 200]] },
+  day:{ t:x => `${x.mood || '🙂'} 하루 돌아보기`, s:x => [x.good && '잘한 것: ' + x.good, x.hard && '어려웠던 것: ' + x.hard, x.next && '내일은: ' + x.next].filter(Boolean).join(' · '),
+    f:[['good', '잘한 것', 'text', 100], ['hard', '어려웠던 것', 'text', 100], ['next', '내일은', 'text', 100]] },
+  wonder:{ t:x => `❓ ${x.q || '궁금해 노트'}`, s:x => [x.guess && '내 생각: ' + x.guess, x.found && '알게 된 것: ' + x.found].filter(Boolean).join(' · '),
+    f:[['q', '궁금한 것', 'text', 100], ['guess', '내 생각', 'area', 150], ['found', '알게 된 것', 'area', 200]] },
+  mission:{ t:x => `${x.icon || '🧩'} ${x.title || '문제 해결 미션'}`, s:x => [x.problem, x.tried, x.result].filter(Boolean).join(' · '),
+    f:[['problem', '문제', 'area', 150], ['tried', '해 본 것', 'area', 150], ['result', '어떻게 됐나', 'area', 150], ['reflect', '돌아보기', 'area', 150]] },
+  diary:{ t:x => `🖍 ${x.title || '그림일기'}`, s:x => x.text || '', f:[['title', '제목', 'text', 40], ['text', '일기', 'area', 400]] }
+};
+const byAtDesc = k => (a, b) => String(b[k] || '').localeCompare(String(a[k] || ''));
+const PD_KINDS = [
+  { id:'todos', ico:'📋', label:'할 일', coll:'todos', list:k => S.data.todos.filter(x => x.kidId === k.id && !x.archived),
+    t:x => `${x.icon || '📌'} ${x.title}`,
+    s:x => `${x.repeatDays && x.repeatDays.length ? x.repeatDays.slice().sort().map(i => DAYNAMES[i]).join('·') + '요일' : '매일'} · ${x.createdBy === 'kid' ? '아이가 정한 할 일' : '부모님이 정한 할 일'}`,
+    f:() => [['title', '할 일', 'text', 40], ['icon', '그림 (이모지 하나)', 'text', 8]], need:'title',
+    delNote:() => '할 일 목록에서 빠져요. 지금까지 한 기록은 남아요.', del:x => Store.update('todos', x.id, { archived:true }) },
+  { id:'sessions', ico:'✅', label:'한 일 기록', coll:'sessions', list:k => S.data.sessions.filter(x => x.kidId === k.id).sort(byAtDesc('date')),
+    t:x => pdTodo(x.todoId), s:x => `${pdDate(x.date)} · ${x.done ? '했어요' : '하는 중'}${x.durationSec ? ` · ${Math.round(x.durationSec / 60)}분` : ''}`,
+    f:() => [['mins', '공부한 시간 (분)', 'number', 3]], get:(x, key) => key === 'mins' ? String(Math.round((x.durationSec || 0) / 60)) : x[key],
+    put:v => ({ durationSec:clamp(Math.round(+v.mins || 0), 0, 600) * 60 }), delNote:() => '이 날 한 일이 “아직 안 한 일”로 돌아가요.' },
+  { id:'books', ico:'📚', label:'책장', coll:'books',
+    list:k => S.data.books.filter(b => b.kidId === k.id).sort((a, b) => String(b.readAt || b.addedAt || '').localeCompare(String(a.readAt || a.addedAt || ''))),
+    t:b => `${bookRead(b) ? '📗' : '📘'} ${b.title || '제목 없는 책'}`,
+    s:b => [b.author || '지은이 몰라요', b.category, bookRead(b) ? (b.readAt ? pdDate(b.readAt) + ' 읽음' : '읽음') : '읽을 책', b.ar ? 'AR ' + b.ar : '', b.feel ? '💭 ' + b.feel : ''].filter(Boolean).join(' · '),
+    edit:'book', delNote:() => '책장에서 사라져요. 이 책에서 담은 낱말은 단어 가방에 남아요.', del:async b => { await removeCoverFile(b); await Store.remove('books', b.id); } },
+  { id:'words', ico:'🫧', label:'단어 가방', coll:'words', list:k => S.data.words.filter(w => w.kidId === k.id).slice().reverse(),
+    t:w => `${w.emoji || ''} ${w.term}`, s:w => `${w.meaning || '뜻이 아직 없어요'} · 복습 ${w.box || 1}단계`,
+    f:() => [['term', '낱말', 'text', 40], ['meaning', '뜻', 'text', 80], ['meaningEn', '쉬운 영어 풀이', 'text', 120], ['emoji', '그림 (이모지 하나)', 'text', 8]], need:'term' },
+  { id:'think', ico:'💭', label:'생각 기록', coll:'think', list:k => S.data.think.filter(x => x.kidId === k.id && PD_THINK[x.type]).sort(byAtDesc('at')),
+    t:x => PD_THINK[x.type].t(x), s:x => `${pdDate(x.at)} · ${PD_THINK[x.type].s(x) || '아직 비어 있어요'}`, f:x => PD_THINK[x.type].f,
+    del:async x => { if (x.img){ try { await photoDel(x.img); } catch(e){} } await Store.remove('think', x.id); } },
+  { id:'trips', ico:'🌏', label:'여행', coll:'trips', list:k => S.data.trips.filter(x => (x.kidIds || []).includes(k.id)).sort(byAtDesc('at')),
+    t:x => `${wFlag(x.code)} ${wName(x.code)}${x.place ? ' · ' + x.place : ''}`, s:x => [x.date, x.with, x.did].filter(Boolean).join(' · ') || '적은 내용이 없어요',
+    f:() => [['place', '어디', 'text', 30], ['date', '언제', 'date', 10], ['with', '누구랑', 'text', 40], ['did', '한 일', 'area', 150], ['ate', '먹은 것', 'text', 60], ['best', '제일 기억에 남는 것', 'text', 80]],
+    delNote:x => (x.kidIds || []).length > 1 ? '함께 간 여행이라 이 아이 기록에서만 빠져요.' : '사진과 함께 지워지고 되돌릴 수 없어요.',
+    del:async (x, k) => { const rest = (x.kidIds || []).filter(i => i !== k.id);
+      if (rest.length) await Store.update('trips', x.id, { kidIds:rest });
+      else { for (const ph of (x.photos || [])){ try { await photoDel(ph); } catch(e){} } await Store.remove('trips', x.id); } } },
+  { id:'wishes', ico:'⭐', label:'가고 싶은 곳', coll:'wishes', list:k => S.data.wishes.filter(x => x.kidId === k.id).sort(byAtDesc('at')),
+    t:x => `${wFlag(x.code)} ${wName(x.code)}${x.place ? ' · ' + x.place : ''}`, s:x => [x.why, x.todo].filter(Boolean).join(' · ') || '적은 내용이 없어요',
+    f:() => [['place', '어디', 'text', 30], ['why', '가고 싶은 까닭', 'area', 100], ['todo', '하고 싶은 것', 'text', 80], ['with', '누구랑', 'text', 40], ['when', '언제', 'text', 30], ['pack', '챙길 것', 'text', 60]] },
+  { id:'stamps', ico:'🛂', label:'여권 도장', coll:'stamps', list:k => S.data.stamps.filter(x => x.kidId === k.id).sort(byAtDesc('at')),
+    t:x => `${wFlag(x.code)} ${wName(x.code)}`, s:x => `${pdDate(x.date || x.at)} · ${x.kind === 'found' ? '진짜 지구본에서 찾았어요' : '오늘의 나라를 배웠어요'}` },
+  { id:'kudos', ico:'💌', label:'받은 칭찬', coll:'kudos', list:k => S.data.kudos.filter(x => x.to === k.id).sort(byAtDesc('at')),
+    t:x => x.reason || '칭찬 스티커', s:x => `${pdDate(x.at)} · ${subj(x.from === 'parent' ? '엄마 아빠' : ((kid(x.from) || {}).name || '친구'))} 보냈어요` },
+  { id:'goals', ico:'🎯', label:'이번 주 약속', coll:'goals', list:k => S.data.goals.filter(x => x.kidId === k.id).sort(byAtDesc('week')),
+    t:x => `${pdDate(x.week)} 주의 약속`, s:x => (x.picks || []).map(q => `${q.icon || ''} ${q.text || ''}`).join(' · ') || '고른 약속이 없어요' },
+  { id:'dprog', ico:'✏️', label:'받아쓰기', coll:'dprog', list:k => S.data.dprog.filter(x => x.kidId === k.id),
+    t:x => { const l = S.data.dlists.find(y => y.id === x.listId); return `✏️ ${l ? l.title : '지운 급수표'}`; }, s:x => `연습한 날 ${Object.keys(x.days || {}).length}일`,
+    delNote:() => '이 급수표 연습 기록이 처음으로 돌아가요.' },
+  { id:'spell', ico:'🔤', label:'철자', coll:'spell', list:k => S.data.spell.filter(x => x.kidId === k.id),
+    t:() => '🔤 영어 철자 연습', s:x => `단어 ${Object.keys(x.w || {}).length}개 · 연습한 날 ${Object.keys(x.days || {}).length}일`,
+    delNote:() => '철자 연습 기록이 처음으로 돌아가요.' }
+];
+function pdState(){
+  const ks = kids(), v = S.view.pd || (S.view.pd = { kid:'', kind:'todos', edit:null, del:null, more:40 });
+  if (!ks.some(k => k.id === v.kid)) v.kid = (ks.find(k => k.id === S.kidId) || ks[0] || {}).id || '';
+  if (!PD_KINDS.some(x => x.id === v.kind)) v.kind = 'todos';
+  return v;
+}
+function pdField(key, label, type, max){
+  const k = 'pd_' + key;
+  if (type === 'area') return `<div><div class="muted" style="font-size:13px;margin-bottom:3px">${esc(label)}</div>${kvField(k, label, { area:true, max, h:70 })}</div>`;
+  if (type === 'number' || type === 'date')
+    return `<div><div class="muted" style="font-size:13px;margin-bottom:3px">${esc(label)}</div><input class="field" type="${type}" data-keep="${k}" id="kv-${k}" ${type === 'number' ? 'inputmode="numeric" min="0"' : ''} value="${esc(kv(k))}"></div>`;
+  return `<div><div class="muted" style="font-size:13px;margin-bottom:3px">${esc(label)}</div>${kvField(k, label, { max })}</div>`;
+}
+function pdTab(){
+  const ks = kids(); if (!ks.length) return `<div class="card"><p class="muted" style="margin:0">아직 아이가 없어요.</p></div>`;
+  const v = pdState(), k = kid(v.kid), kind = PD_KINDS.find(x => x.id === v.kind);
+  const all = kind.list(k), rows = all.slice(0, v.more);
+  const row = x => {
+    if (v.del === x.id) return `<div class="pd-row pd-ask"><div class="grow"><b>🗑 「${esc(kind.t(x))}」 지울까요?</b>
+        <div class="muted" style="font-size:13px">${esc(kind.delNote ? kind.delNote(x) : '지우면 되돌릴 수 없어요.')}</div></div>
+      <div class="row" style="gap:6px"><button class="btn ghost sm" data-act="pdDelNo">그만두기</button><button class="btn sm" data-act="pdDelOk" data-arg="${x.id}" style="background:var(--berry-deep)">지우기</button></div></div>`;
+    if (v.edit === x.id) {
+      const fs = typeof kind.f === 'function' ? kind.f(x) : [];
+      return `<div class="pd-row pd-edit"><b>✏️ ${esc(kind.t(x))}</b>
+        <div class="stack" style="gap:8px;margin-top:8px">${fs.map(f => pdField(f[0], f[1], f[2], f[3])).join('')}</div>
+        <div class="row" style="gap:8px;margin-top:10px"><button class="btn ghost grow sm" data-act="pdEditNo">그만두기</button><button class="btn grow sm" data-act="pdSave" data-arg="${x.id}">저장</button></div></div>`;
+    }
+    const canEdit = kind.edit || kind.f;
+    return `<div class="pd-row"><div class="grow" style="min-width:0"><div class="pd-t">${esc(kind.t(x))}</div><div class="pd-s">${esc(kind.s(x))}</div></div>
+      ${canEdit ? `<button class="btn ghost sm" data-act="pdEdit" data-arg="${x.id}" aria-label="고치기">✏️</button>` : ''}
+      <button class="btn ghost sm" data-act="pdDel" data-arg="${x.id}" aria-label="지우기">🗑</button></div>`;
+  };
+  return `<div class="card">
+    <p class="muted" style="margin:0 0 8px;font-size:13px">아이마다 기록을 보고 ✏️ 고치거나 🗑 지울 수 있어요. 지운 기록은 되돌릴 수 없어요.</p>
+    <div class="chips" style="margin-bottom:8px">${ks.map(x => `<button class="chip" data-act="pdKid" data-arg="${x.id}" aria-pressed="${x.id === v.kid}">${esc(x.avatar || '')} ${esc(x.name)}</button>`).join('')}</div>
+    <div class="chips">${PD_KINDS.map(x => { const n = x.list(k).length; return `<button class="chip" data-act="pdKind" data-arg="${x.id}" aria-pressed="${x.id === v.kind}">${x.ico} ${x.label}${n ? ` <small>${n}</small>` : ''}</button>`; }).join('')}</div>
+  </div>
+  <div class="card">
+    <h3 class="sub" style="margin:0 0 6px">${kind.ico} ${esc(k.name)}의 ${kind.label} <span class="muted" style="font-size:14px">${all.length}개</span></h3>
+    ${rows.length ? rows.map(row).join('') : `<p class="muted" style="margin:6px 0 0">아직 기록이 없어요.</p>`}
+    ${all.length > rows.length ? `<button class="btn ghost wide sm" data-act="pdMore" style="margin-top:10px">더 보기 (${all.length - rows.length}개 더)</button>` : ''}
+  </div>`;
+}
+function pdFind(id){ const v = pdState(), kind = PD_KINDS.find(x => x.id === v.kind); return { v, kind, k:kid(v.kid), x:(S.data[kind.coll] || []).find(y => y.id === id) }; }
+function pdOpen(){ openModal(parentSheet()); }
+ACTS.pdKid = (arg) => { const v = pdState(); v.kid = arg; v.edit = v.del = null; v.more = 40; kvClear('pd_'); pdOpen(); };
+ACTS.pdKind = (arg) => { const v = pdState(); v.kind = arg; v.edit = v.del = null; v.more = 40; kvClear('pd_'); pdOpen(); };
+ACTS.pdMore = () => { pdState().more += 40; pdOpen(); };
+ACTS.pdEdit = (arg) => {
+  const { v, kind, x } = pdFind(arg); if (!x) return;
+  if (kind.edit === 'book'){ bookEditOpen(x.id, 'parent'); return; }
+  kvClear('pd_');
+  (kind.f(x) || []).forEach(f => kvSet('pd_' + f[0], String(kind.get ? kind.get(x, f[0]) : (x[f[0]] == null ? '' : x[f[0]]))));
+  v.edit = x.id; v.del = null; pdOpen();
+};
+ACTS.pdEditNo = () => { const v = pdState(); v.edit = null; kvClear('pd_'); pdOpen(); };
+ACTS.pdSave = async (arg) => {
+  const { v, kind, x } = pdFind(arg); if (!x) return;
+  const vals = {};
+  (kind.f(x) || []).forEach(f => { vals[f[0]] = String(kv('pd_' + f[0])).trim().slice(0, f[3] || 200); });
+  if (kind.need && !vals[kind.need]){ toast('비워 둘 수 없는 칸이 있어요'); return; }
+  await Store.update(kind.coll, x.id, kind.put ? kind.put(vals) : vals);
+  v.edit = null; kvClear('pd_'); toast('고쳤어요 ✨'); pdOpen();
+};
+ACTS.pdDel = (arg) => { const v = pdState(); v.del = arg; v.edit = null; pdOpen(); };
+ACTS.pdDelNo = () => { pdState().del = null; pdOpen(); };
+ACTS.pdDelOk = async (arg) => {
+  const { v, kind, k, x } = pdFind(arg); if (!x){ v.del = null; pdOpen(); return; }
+  if (kind.del) await kind.del(x, k); else await Store.remove(kind.coll, x.id);
+  if (kind.coll === 'dprog') delete DT_PID[x.kidId + '|' + x.listId];
+  v.del = null; toast('지웠어요'); pdOpen();
+};
+ACTS.pdBack = () => { S.view.bookEdit = null; pdOpen(); };
+/* 할 일 탭의 ✏️ — 기록 관리의 할 일 고치기로 바로 간다 */
+ACTS.pdTodoEdit = (arg) => {
+  const t = S.data.todos.find(x => x.id === arg); if (!t) return;
+  S.view.parentTab = 'data'; const v = pdState(); v.kid = t.kidId; v.kind = 'todos'; v.more = 40;
+  ACTS.pdEdit(arg);
+};
+
 /* ---------- 부모 화면 ---------- */
 function parentSheet(){
   const ks = kids();
@@ -2342,6 +2677,7 @@ function parentSheet(){
           <div class="row">
             <div class="grow"><div class="name">${esc(x.icon||'')} ${esc(x.title)}</div>
               <div class="muted">${x.createdBy==='kid'?'아이가 추가한 할 일':'부모님이 정한 할 일'}</div></div>
+            <button class="btn ghost sm" data-act="pdTodoEdit" data-arg="${x.id}" aria-label="고치기">✏️</button>
             <button class="btn ghost sm" data-parentdel="${x.id}" aria-label="지우기">🗑</button>
           </div>
           <div class="daypick" style="margin-top:8px">
@@ -2384,6 +2720,8 @@ function parentSheet(){
       <div class="row" style="gap:8px;margin-top:10px"><span class="muted" style="white-space:nowrap">📘 최근 AR 점수</span>
         <input class="field" data-kidar="${k.id}" inputmode="decimal" placeholder="예: 2.5" value="${esc(k.arScore || '')}" style="max-width:110px">
         ${k.arAt ? `<span class="muted" style="font-size:12px">${esc(String(k.arAt).slice(0, 10))}</span>` : ''}</div>
+      <div class="row" style="gap:8px;margin-top:10px"><span class="muted" style="white-space:nowrap">⭐ 모은 별</span>
+        <input class="field" type="number" min="0" max="99999" inputmode="numeric" data-kidstars="${k.id}" value="${k.stars || 0}" style="max-width:110px"></div>
       <button class="btn ghost sm" data-parentkudo="${k.id}" style="margin-top:10px">😇 착한 일 칭찬하기 (착한왕 스티커 +1)</button>
       <div class="muted" style="margin:12px 0 5px">성향 — 뚜뚜가 ${esc(k.name)}에게 맞춰 말하고 도전을 골라줘요</div>
       ${(() => { const st = kidStyle(k); return ['compete','pace','strengths'].map(f => `<div class="chips" style="margin-bottom:7px">${
@@ -2402,6 +2740,8 @@ function parentSheet(){
       </div>
       <div><div class="muted">놀이 시간 (분)</div>
         <input class="field" type="number" min="5" max="120" id="setGameMin" value="${S.settings.gameMinutes}"></div>
+      <div><div class="muted">🧸 숨바꼭질 놀이 이름</div>
+        <input class="field" id="setHideTitle" maxlength="20" value="${esc(S.settings.hideTitle || '')}" placeholder="곰돌이 숨바꼭질"></div>
       <div><div class="muted">이번 주 함께 읽기 목표 (권)</div>
         <input class="field" type="number" min="2" max="200" id="setGoal" value="${S.settings.weeklyGoal}"></div>
       <div><div class="muted">책 종류 (쉼표로 구분)</div>
@@ -2447,6 +2787,9 @@ function parentSheet(){
   if (t === 'think'){
     body = thinkTab();
   }
+  if (t === 'data'){
+    body = pdTab();
+  }
   if (t === 'unlock'){
     const pend = pendingRequests();
     body = `${pend.length ? `<div class="stack" style="margin-bottom:12px">${pend.map(askCard).join('')}</div>` : ''}
@@ -2467,7 +2810,7 @@ function parentSheet(){
   if (t === 'settings' && PB.bucket == null) photoBucketOk().then(() => { const el = document.getElementById('pbStatus'); if (el) el.textContent = `📷 여행·그림일기 사진: ${PB.bucket ? '🔒 가족 사진 저장소에 저장돼요 (우리 가족만 볼 수 있어요)' : '📱 지금은 사진을 찍은 기기에만 저장돼요'}`; });
   return `<h3>부모님 화면</h3>
     <div class="chips" style="margin:8px 0 14px">
-      ${tabBtn('todos','할 일')}${tabBtn('speech','🦜 스피치')}${tabBtn('dict','✏️ 받아쓰기')}${tabBtn('think','💭 생각')}${tabBtn('kids','아이')}${tabBtn('notify','알림')}${tabBtn('unlock','놀이 승인' +
+      ${tabBtn('todos','할 일')}${tabBtn('data','📂 기록 관리')}${tabBtn('speech','🦜 스피치')}${tabBtn('dict','✏️ 받아쓰기')}${tabBtn('think','💭 생각')}${tabBtn('kids','아이')}${tabBtn('notify','알림')}${tabBtn('unlock','놀이 승인' +
       (pendingRequests().length ? `<span class="dot-badge">${pendingRequests().length}</span>` : ''))}${tabBtn('settings','설정')}
     </div>
     ${body}`;
@@ -2706,6 +3049,9 @@ function pickVoice(lang){
   const all = voiceList();
   const want = lang === 'en' ? S.settings.ttVoice : '';
   if (want){ const v = all.find(x => x.voiceURI === want); if (v) return v; }
+  // 한국어는 부모님이 고른 목소리 이름으로 찾는다 — 기기마다 주소(voiceURI)는 달라도 이름이 같으면 두 아이가 같은 목소리로 듣는다
+  const kn = lang === 'ko' ? String(S.settings.koVoiceName || '') : '';
+  if (kn){ const v = all.find(x => x.name === kn && /^ko/i.test(String(x.lang || ''))); if (v) return v; }
   let best = null, bs = -1;
   for (const v of all){ const sc = voiceScore(v, lang); if (sc > bs){ bs = sc; best = v; } }
   return best;
@@ -2727,18 +3073,30 @@ function pickVoiceFor(L){
 }
 try { if (window.speechSynthesis){ speechSynthesis.getVoices(); speechSynthesis.addEventListener('voiceschanged', () => {}); } } catch(e){}
 
+/* 읽기 전에 글자 다듬기 — 이모지·물결(~)·따옴표·괄호는 소리 내어 읽지 않는다.
+   (기기 목소리는 "🎉"를 "파티 폭죽"이라고 읽고, "~"를 "물결"이라고 읽어 어색했다)
+   keepLen 이면 글자 수를 그대로 둔다 — 기기 목소리의 단어 위치(onword)로 불을 켜는 곳이 어긋나지 않게. */
+const SPEECH_JUNK = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\u{25A0}-\u{25FF}\u{FE0F}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu;
+function speechText(t, keepLen){
+  const sp = m => keepLen ? ' '.repeat(m.length) : ' ';
+  let s = String(t || '').replace(SPEECH_JUNK, sp).replace(/[~～]/g, sp).replace(/[“”"«»]/g, sp).replace(/[()\[\]{}<>]/g, sp)
+    .replace(/…/g, ',').replace(/\.{3}/g, keepLen ? ',  ' : ', ').replace(/·/g, ',');
+  if (!keepLen) s = s.replace(/\s{2,}/g, ' ').replace(/\s+([,.!?])/g, '$1').replace(/,(\s*,)+/g, ',').replace(/^[\s,]+|[\s,]+$/g, '');
+  return s;
+}
 /* 말하기 — 끝나면 풀리는 Promise. onword(글자 위치)로 읽는 단어에 불을 켤 수 있다.
    아이패드는 첫 말하기가 반드시 손가락 누른 순간에 일어나야 해서, 말하는 중이 아니면 바로 말한다. */
 const SAY = { u:null, at:0 };
 function say(text, { lang='en', rate, onword, onstart } = {}){
   return new Promise(done => {
     try {
-      if (!window.speechSynthesis || !text){ done(false); return; }
+      text = speechText(text, true);
+      if (!window.speechSynthesis || !text.trim()){ done(false); return; }
       const u = new SpeechSynthesisUtterance(text);
       const other = lang !== 'ko' && lang !== 'en' && /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(lang || '');   // 'fr-FR' 같은 다른 나라 말
       u.lang = other ? lang : (lang === 'ko' ? 'ko-KR' : 'en-US');
       const v = other ? pickVoiceFor(lang) : pickVoice(lang === 'ko' ? 'ko' : 'en'); if (v) u.voice = v;
-      u.rate = rate || (lang === 'ko' ? 1.05 : 0.85);
+      u.rate = rate || (lang === 'ko' ? 1 : 0.85);
       let fin = false, tm = 0;
       const end = ok => { if (fin) return; fin = true; clearTimeout(tm); if (SAY.u === u) SAY.u = null; done(ok); };
       u.onend = () => end(true);
@@ -2777,7 +3135,8 @@ function nvUnlock(){
   try { a.src = NV.silent; const p = a.play(); if (p && p.then) p.then(() => { NV.unlocked = true; }).catch(() => {}); else NV.unlocked = true; } catch(e){}
 }
 async function nvFetch(text, style){
-  const k = `${nvVoice()}|${style}|${text}`;
+  // 한국어(ko·dict)는 아나운서 말투로 바꿨다(v2) — 예전에 받아 둔 한국어 목소리는 다시 쓰지 않는다. 영어는 그대로라 예전 것을 쓴다
+  const k = `${style === 'ko' || style === 'dict' ? 'v2|' : ''}${nvVoice()}|${style}|${text}`;
   if (NV.mem.has(k)) return NV.mem.get(k);
   try { const hit = await AudioBox.ttsGet(k); if (hit && hit.data){ const b = new Blob([hit.data], { type:'audio/wav' }); NV.mem.set(k, b); return b; } } catch(e){}
   const j = await ttAsk({ task:'tts', text, voice:nvVoice(), style }, 20000);
@@ -2828,10 +3187,15 @@ function nvStop(){ const e = NV.curEnd; NV.cur = null; NV.curEnd = null; if (NV.
 /* 뚜뚜 목소리 — 자연스러운 목소리를 먼저, 안 되면 기기 목소리.
    rate: 0.6 천천히 · 0.8 보통 · 1 대회 속도 (자연스러운 목소리는 말투로, 기기 목소리는 빠르기로) */
 async function voice(text, { lang = 'en', rate, onword, onprogress, onstart, style, nvRate } = {}){
-  if (nvOn()){
+  const clean = speechText(text);
+  if (!clean) return false;
+  // 한국어는 기본으로 기기의 서울말 목소리 하나로 읽는다. AI 목소리는 만들 때마다 억양이 달라지고(이름이 든 말은 아이마다 따로 만든다),
+  // 무료 한도가 차면 기기 목소리로 바뀌어서 아이마다 말투가 달리 들렸다. 부모님이 'ai'를 고르면 한국어도 자연스러운 목소리로.
+  const koDevice = lang === 'ko' && S.settings.koVoice !== 'ai';
+  if (nvOn() && !koDevice){
     // 한국어를 천천히(받아쓰기) 읽을 때는 'dict', 그 나라 인사말은 부르는 쪽이 style:'hello'
-    const st = style || (lang === 'ko' ? (rate && rate <= 0.75 ? 'dict' : 'ko') : (rate && rate <= 0.65 ? 'slow' : (rate >= 1 ? 'speech' : 'en')));
-    if (await nvPlay(text, { style:st, rate:nvRate || 1, onstart, onprogress })) return true;
+    const st = style || (lang === 'ko' ? (rate && rate <= 0.85 ? 'dict' : 'ko') : (rate && rate <= 0.65 ? 'slow' : (rate >= 1 ? 'speech' : 'en')));
+    if (await nvPlay(clean, { style:st, rate:nvRate || 1, onstart, onprogress })) return true;
   }
   return say(text, { lang, rate, onword, onstart });
 }
@@ -3238,6 +3602,10 @@ async function onIsbn(raw){
   stopScanner();
   const w = S.view.wiz;
   w.isbn = isbn; w.step = 'info'; w.busy = true;
+  const same = isbn ? S.data.books.filter(b => b.kidId === S.kidId && b.isbn === isbn) : [];
+  const waiting = same.find(b => b.status === 'toread');
+  if (waiting){ w.existing = waiting.id; w.status = 'read'; w.shelfNote = '읽을 책장에 있던 책이에요! 다 읽었으면 📗 다 읽었어요를 골라요'; }
+  else if (same.length) w.shelfNote = '전에 읽은 책이에요! 또 읽었으면 한 번 더 쌓아요 📚';
   openModal(bookWizard());
 
   // 1순위: 서점 책 정보 (알라딘 → 카카오)
@@ -5417,6 +5785,15 @@ function speechTab(){
     </div>
     ${S.settings.ttNatural !== false ? `<div><div class="muted" style="margin-bottom:5px">목소리 고르기 — 누르면 들어볼 수 있어요</div>
       <div class="chips">${NV_VOICES.map(([v, l]) => `<button class="chip" data-ttnv="${v}" aria-pressed="${nvVoice() === v}">${l}</button>`).join('')}</div></div>` : ''}
+    <div><div class="muted" style="margin-bottom:5px">🇰🇷 한국어 목소리 — 뚜뚜·받아쓰기·질문을 한국어로 읽을 때 (두 아이 모두 같아요)</div>
+      <div class="chips"><button class="chip" data-ttkov="device" aria-pressed="${S.settings.koVoice !== 'ai'}">📱 바른 서울말 기기 목소리 (추천)</button>
+        ${S.settings.ttNatural !== false ? `<button class="chip" data-ttkov="ai" aria-pressed="${S.settings.koVoice === 'ai'}">🎙 AI 목소리</button>` : ''}
+        <button class="chip" data-ttkov="test" aria-label="한국어 목소리 들어보기">🔊 들어보기</button></div>
+      ${S.settings.koVoice !== 'ai' ? `<select class="field" id="koVoiceSel" style="margin-top:8px">
+          <option value="">자동으로 고르기 (고품질 목소리를 먼저)</option>
+          ${voiceList().filter(v => /^ko/i.test(String(v.lang || '')) && !NOVELTY_VOICE.test(v.name)).map(v => `<option value="${esc(v.name)}" ${S.settings.koVoiceName === v.name ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}
+        </select>` : ''}
+      <p class="muted" style="margin:5px 0 0;font-size:13px">기기 목소리는 아나운서처럼 바른 서울말로 읽고, 누가 써도 똑같이 들려요. 두 아이패드에서 같은 목소리로 들리게 하려면 두 기기 모두 설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성 → 한국어에서 같은 목소리(예: 유나 향상됨)를 받아 두고 여기서 골라 주세요. 영어는 지금처럼 자연스러운 목소리로 읽어요.</p></div>
     <div><div class="muted">기기 영어 목소리 (자연스러운 목소리를 못 쓸 때)</div>
       <div class="row" style="gap:8px">
         <select class="field grow" id="ttVoice">
@@ -5584,10 +5961,16 @@ async function ttParentClick(t, d){
   }
   if (t.id === 'ttVoiceTest'){ say('Hello, everyone! Thank you for listening.', { lang:'en', rate:0.85 }); return true; }
   if (t.id === 'ttNvToggle'){ await Store.saveSettings({ ttNatural:S.settings.ttNatural === false }); NV.offUntil = 0; NV.fails = 0; openModal(parentSheet()); return true; }
+  if (d.ttkov){
+    nvUnlock();
+    if (d.ttkov !== 'test'){ await Store.saveSettings({ koVoice:d.ttkov === 'ai' ? 'ai' : 'device' }); openModal(parentSheet()); }
+    voice('안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?', { lang:'ko' });
+    return true;
+  }
   if (d.ttnv){
     nvUnlock(); NV.offUntil = 0; NV.fails = 0;
     await Store.saveSettings({ ttNvVoice:d.ttnv }); openModal(parentSheet());
-    const ok = await voice('안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?', { lang:'ko' });
+    const ok = await voice(S.settings.koVoice === 'ai' ? '안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?' : 'Hello! I am Ttuttu. Let’s practice together!', { lang:S.settings.koVoice === 'ai' ? 'ko' : 'en' });
     if (!nvOn()) toast('자연스러운 목소리를 지금은 쓸 수 없어서 기기 목소리로 들려드렸어요');
     return true;
   }
@@ -6100,11 +6483,12 @@ function olClick(t){
 /* ============================================================
    🌱 이또 — 풀숲 친구 찾기 (놀이 시간에)
    ① 정원: 손가락으로 좌우로 쓱쓱 문지르면 풀이 깎이고, 숨어 있던 친구가 뿅! 나타난다.
-   ② 나타난 친구를 누르면 땅속 탐험차에 쏙 탄다 (4자리).
-   ③ 🚗 출발! → 땅속 굴을 뚫고 동굴로. 차에 탄 친구를 하나씩 버블에 옮겨 담는다.
-   ④ 버블 속 친구를 누르면 같이 논다. 🌱 정원으로 → 차를 타고 올라가면 풀이 새로 자라 있다.
+   ② 나타난 친구를 누르면 땅속 탐험차에 쏙 탄다 (5자리 — 친구 모두 탈 수 있다).
+   ③ 🚗 출발! → 하늘로 슝~ 날아올랐다가 빙글 돌아 땅속으로 쏙! 개미집에 도착한다.
+   ④ 개미집: 큰 방들이 굴로 이어져 있고 방마다 버블이 몇 개씩 있다. 차에 탄 친구를 버블에 옮겨 담으면,
+      친구들이 굴을 따라 다른 방에 놀러 갔다가 돌아오거나 이사한다. 🌱 정원으로 → 땅 위로 뿅! 풀이 새로 자라 있다.
    친구들은 이 앱에서 새로 그린 캐릭터다(다른 게임의 캐릭터는 저작권 때문에 쓰지 않는다).
-   동굴의 버블·차에 탄 친구·만난 친구 수는 아이마다 기억한다(profile.itto).
+   개미집 버블 자리·차에 탄 친구·만난 친구 수는 아이마다 기억한다(profile.itto).
    화면 위 층(#itLayer)에서 해서 5초 동기화에 깎은 풀이 되살아나지 않는다.
    ============================================================ */
 const IT_FRIENDS = [
@@ -6117,7 +6501,7 @@ const IT_FRIENDS = [
   { id:'star',   name:'반짝이', w:4,  note:'밤하늘에서 떨어진 별이래요. 만나면 행운!', rare:true },
   { id:'moon',   name:'달님이', w:3,  note:'잠꾸러기 달님, 자장가를 좋아해요', rare:true }
 ];
-const IT_SEATS = 4;
+const IT_SEATS = 5;                        // 정원 친구(3~5명)가 모두 탈 수 있게
 const itFriend = id => IT_FRIENDS.find(f => f.id === id) || IT_FRIENDS[0];
 const itIGa = w => `${w}${hasJong(w) ? '이' : '가'}`;       // 딸기콩이 · 새싹이가
 function itRoll(){ const sum = IT_FRIENDS.reduce((a, f) => a + f.w, 0); let r = Math.random() * sum; for (const f of IT_FRIENDS){ r -= f.w; if (r < 0) return f.id; } return IT_FRIENDS[0].id; }
@@ -6168,23 +6552,23 @@ function itArt(id){
     <text x="82" y="54" font-size="12" fill="#8E7BD6" font-family="sans-serif" font-weight="700">z</text><text x="89" y="44" font-size="9" fill="#8E7BD6" font-family="sans-serif" font-weight="700">z</text>`;
 }
 function itSvg(id){ return `<svg viewBox="0 0 100 100" aria-hidden="true">${itArt(id)}</svg>`; }
-/* 땅속 탐험차 — 앞(오른쪽)에 드릴, 둥근 창문 4개. 창문을 누르면 그 자리 친구를 고른다 */
+/* 땅속 탐험차 — 앞(오른쪽)에 드릴, 둥근 창문 5개. 창문을 누르면 그 자리 친구를 고른다 */
 function itCarSvg(seats, sel){
-  const win = [44, 74, 104, 134];
-  return `<svg viewBox="0 0 210 116" aria-label="땅속 탐험차">
+  const win = [40, 68, 96, 124, 152];
+  return `<svg viewBox="0 0 236 116" aria-label="땅속 탐험차">
     <g stroke="#6B4A52" stroke-width="3" stroke-linejoin="round">
-      <path d="M152 44 L198 62 L152 80 Z" fill="#FFD98E"/>
-      <path d="M161 48 L170 77 M173 53 L180 72 M185 57 L189 67" stroke="#D99A2B" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <path d="M84 20 L84 6" fill="none"/><path d="M84 6 L101 10 L84 14 Z" fill="#9BE0C8"/>
-      <path d="M40 36 C44 16 116 14 124 36 Z" fill="#FFC2CE"/>
-      <rect x="18" y="34" width="140" height="56" rx="26" fill="#FF8FA8"/>
-      <path d="M30 80 L146 80" stroke="#E85C7C" stroke-width="5" stroke-linecap="round"/>
-      <circle cx="48" cy="93" r="14" fill="#6B4A52"/><circle cx="48" cy="93" r="5" fill="#FFD98E" stroke="none"/>
-      <circle cx="128" cy="93" r="14" fill="#6B4A52"/><circle cx="128" cy="93" r="5" fill="#FFD98E" stroke="none"/>
+      <path d="M178 44 L226 62 L178 80 Z" fill="#FFD98E"/>
+      <path d="M187 48 L196 77 M199 53 L206 72 M211 57 L215 67" stroke="#D99A2B" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M98 20 L98 6" fill="none"/><path d="M98 6 L115 10 L98 14 Z" fill="#9BE0C8"/>
+      <path d="M36 36 C42 15 146 13 156 36 Z" fill="#FFC2CE"/>
+      <rect x="14" y="34" width="168" height="56" rx="26" fill="#FF8FA8"/>
+      <path d="M26 80 L170 80" stroke="#E85C7C" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="50" cy="93" r="14" fill="#6B4A52"/><circle cx="50" cy="93" r="5" fill="#FFD98E" stroke="none"/>
+      <circle cx="148" cy="93" r="14" fill="#6B4A52"/><circle cx="148" cy="93" r="5" fill="#FFD98E" stroke="none"/>
     </g>
     ${win.map((x, i) => `<g data-act="itSeat" data-arg="${i}" style="cursor:pointer">
-      <circle class="it-win" cx="${x}" cy="58" r="13.5" fill="${sel === i ? '#FFF1B8' : '#E3F4FF'}" stroke="${sel === i ? '#E85C7C' : '#6B4A52'}" stroke-width="${sel === i ? 4 : 3}"/>
-      ${seats[i] ? `<svg x="${x - 12.5}" y="45.5" width="25" height="25" viewBox="0 0 100 100">${itArt(seats[i])}</svg>` : ''}</g>`).join('')}
+      <circle class="it-win" cx="${x}" cy="58" r="12.5" fill="${sel === i ? '#FFF1B8' : '#E3F4FF'}" stroke="${sel === i ? '#E85C7C' : '#6B4A52'}" stroke-width="${sel === i ? 4 : 3}"/>
+      ${seats[i] ? `<svg x="${x - 11.5}" y="46.5" width="23" height="23" viewBox="0 0 100 100">${itArt(seats[i])}</svg>` : ''}</g>`).join('')}
   </svg>`;
 }
 
@@ -6234,7 +6618,7 @@ function ittoOpen(){
 }
 function ittoClose(msg){
   if (!IT) return;
-  clearTimeout(IT.tun); itSave();
+  clearTimeout(IT.tun); (IT.tunT || []).forEach(clearTimeout); itNestStop(); itSave();
   IT.el.remove(); IT = null;
   if (S.view.game === 'itto') S.view.game = null;
   render(); if (msg) toast(msg);
@@ -6371,7 +6755,7 @@ function itCount(){
   const I = IT, e = document.getElementById('itCount'); if (!e || !I) return;
   const shown = I.friends.filter(f => f.shown).length;
   e.textContent = `찾은 친구 ${shown}/${I.friends.length} · 차에 탄 친구 ${I.car.length}/${IT_SEATS}`;
-  if (shown === I.friends.length && I.friends.every(f => f.boarded || !f.shown) && I.car.length) itSay('모두 찾았어요! 🚗 출발을 눌러 땅속 동굴로 가 볼까요?');
+  if (shown === I.friends.length && I.friends.every(f => f.boarded || !f.shown) && I.car.length) itSay('모두 찾았어요! 🚗 출발하면 하늘로 슝~ 갔다가 땅속 개미집으로 쏙!');
 }
 /* 친구가 날아서 차(또는 버블)로 쏙 — 시작·끝 위치는 누른 순간에 잰다 */
 function itFly(fromEl, toEl, type, done){
@@ -6402,12 +6786,12 @@ ACTS.itGo = () => {
   const I = IT; if (!I || I.scene !== 'garden') return;
   if (!I.car.length){ itSay('먼저 친구를 차에 태워 볼까요? 풀숲을 쓱쓱! 🌿'); return; }
   I.trips++; itSave();
-  itTunnel('down', () => itCave(true));
+  itJourney('down', () => itCave(true));
 };
 
-/* ---------- ② 땅속 굴 (내려가기·올라가기) ---------- */
+/* ---------- ② 여행 — 하늘로 슝 날아올랐다가, 빙글 돌아 땅속으로 쏙! (돌아올 때는 거꾸로) ---------- */
 function itDirt(){
-  const deco = ['🪨', '💎', '🦴', '🐛', '🌱', '🍄', '🐜', '✨', '🪨', '💎'];
+  const deco = ['🪨', '💎', '🦴', '🐛', '🌱', '🍄', '🐜', '✨', '🪨', '🐜'];
   let s = '';
   for (let k = 0; k < 42; k++){
     const left = k % 2 ? 4 + Math.random() * 30 : 66 + Math.random() * 30;
@@ -6415,94 +6799,309 @@ function itDirt(){
   }
   return s;
 }
-function itTunnel(dir, next){
-  const I = IT; I.scene = dir; clearTimeout(I.tun);
-  I.el.innerHTML = `${itTop(dir === 'down' ? '🚗 땅속으로!' : '🚗 정원으로!')}
-    <div class="ttl-body it-body"><div class="it-tunnel">
-      <div class="it-dirt ${dir === 'up' ? 'up' : ''}">${itDirt()}</div>
-      <div class="it-drillcar" style="transform:translate(-50%,-50%) rotate(${dir === 'down' ? 90 : -90}deg)">${itCarSvg(I.car, -1)}</div>
-      <p class="it-tunnel-say">${dir === 'down' ? '부릉부릉~ 땅속으로 출발! ⛏️' : '부릉부릉~ 정원으로 올라가요! 🌱'}</p>
+function itSky(){
+  const deco = ['☁️', '☁️', '🐦', '☁️', '🎈', '☁️', '🐦', '☁️', '🌈', '☁️'];
+  let s = '<span style="left:78%;top:6%;font-size:64px">☀️</span>';
+  for (let k = 0; k < 24; k++){
+    const left = k % 2 ? 2 + Math.random() * 34 : 62 + Math.random() * 32;
+    s += `<span style="left:${left.toFixed(1)}%;top:${(12 + Math.random() * 84).toFixed(1)}%;font-size:${26 + playRand(34)}px;opacity:${(0.75 + Math.random() * 0.25).toFixed(2)}">${deco[k % deco.length]}</span>`;
+  }
+  return s;
+}
+function itWhoosh(up){                                     // 슝~ (올라갈 때는 높아지고, 내려갈 때는 낮아진다)
+  const c = audioCtx(); if (!c) return;
+  const o = c.createOscillator(), g = c.createGain(), t = c.currentTime;
+  o.type = 'triangle'; o.frequency.setValueAtTime(up ? 260 : 900, t); o.frequency.exponentialRampToValueAtTime(up ? 900 : 240, t + 0.9);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.06, t + 0.15); g.gain.exponentialRampToValueAtTime(0.0001, t + 1);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 1.05);
+}
+function itJourney(dir, next){
+  const I = IT; I.scene = dir; clearTimeout(I.tun); (I.tunT || []).forEach(clearTimeout); I.tunT = [];
+  const down = dir === 'down';
+  I.el.innerHTML = `${itTop(down ? '🚗 슝~ 출발!' : '🚗 정원으로!')}
+    <div class="ttl-body it-body"><div class="it-journey">
+      <div class="it-world ${dir}">
+        <div class="it-sky">${itSky()}</div>
+        <div class="it-ground"><div class="it-hole"></div></div>
+        <div class="it-under">${itDirt()}</div>
+      </div>
+      <div class="it-jcar ${dir}"><div class="it-jrot ${dir}"><div class="it-jshake">${itCarSvg(I.car, -1)}</div></div></div>
+      <div class="it-poof ${dir}">${down ? '쏙!' : '뿅!'}</div>
+      <p class="it-tunnel-say" id="itJSay">${down ? '슝~ 하늘 높이 날아올라요! ☁️' : '영차영차~ 땅 위로 올라가요! ⛏️'}</p>
     </div></div>`;
-  itDrill(2.2);
-  I.tun = setTimeout(() => { if (IT === I && I.scene === dir) next(); }, 2350);
+  const say = (ms, t) => I.tunT.push(setTimeout(() => { const e = document.getElementById('itJSay'); if (e && IT === I) e.textContent = t; }, ms));
+  if (down){ itWhoosh(true); say(1250, '빙글~ 이제 땅속으로 쏙! 🕳️'); say(2050, '부릉부릉~ 개미집으로 가요! 🐜'); I.tunT.push(setTimeout(() => { itWhoosh(false); }, 1000)); I.tunT.push(setTimeout(() => itDrill(1.5), 1800)); }
+  else { itDrill(1.5); say(1500, '뿅! 하늘로 나왔어요! ☀️'); say(2500, '사뿐~ 정원에 내려요! 🌱'); I.tunT.push(setTimeout(() => itWhoosh(true), 1500)); }
+  I.tun = setTimeout(() => { if (IT === I && I.scene === dir) next(); }, 3500);
 }
 
-/* ---------- ③ 땅속 동굴 — 버블에 옮겨 담고, 같이 놀기 ---------- */
-function itCrystals(H){
-  let s = '';
-  for (let k = 0; k < 9; k++){ const x = k * 11.5 + playRand(5), h = 18 + playRand(34); s += `<polygon points="${x},0 ${x + 6},0 ${x + 3},${h}" fill="#4A3D78"/>`; }
-  for (let k = 0; k < Math.ceil(H / 80); k++){
-    const x = 2 + Math.random() * 90, y = 50 + Math.random() * (H - 70), c = ['#9BE0FF', '#D5CCF5', '#FFC2CE', '#BFF3E0'][k % 4];
-    s += `<polygon points="${x.toFixed(1)},${y.toFixed(0)} ${(x + 2).toFixed(1)},${(y - 12).toFixed(0)} ${(x + 4).toFixed(1)},${y.toFixed(0)}" fill="${c}" opacity="0.5"/><polygon points="${(x + 3).toFixed(1)},${y.toFixed(0)} ${(x + 5.5).toFixed(1)},${(y - 17).toFixed(0)} ${(x + 8).toFixed(1)},${y.toFixed(0)}" fill="${c}" opacity="0.35"/>`;
+/* ---------- ③ 개미집 — 큰 방들이 굴로 이어져 있고, 방마다 버블이 몇 개씩 ----------
+   친구들은 굴을 따라 다른 방에 놀러 갔다가 돌아오기도 하고, 이사도 한다(버블 자리가 바뀐다).
+   아이는 차에 탄 친구를 누르고 빈 버블을 눌러 옮겨 담고, 버블 속 친구를 누르고 빈 버블을 누르면 그리로 걸어간다.
+   자리는 1000 × 높이 설계 단위로 정하고 화면 너비에 맞춰 줄인다. 방이 차면 아래로 더 판다. */
+const NEST_BASE = [
+  { n:'🎈 놀이방', x:500, y:300, rx:285, ry:135, k:4, deco:['🧸', '🎈'] },
+  { n:'😴 낮잠방', x:245, y:655, rx:215, ry:125, k:3, deco:['🛏️', '💤'] },
+  { n:'🍯 간식방', x:755, y:655, rx:215, ry:125, k:3, deco:['🍯', '🍎'] },
+  { n:'🎵 노래방', x:255, y:1025, rx:220, ry:128, k:3, deco:['🎵', '🎤'] },
+  { n:'💎 보물방', x:745, y:1025, rx:220, ry:128, k:3, deco:['💎', '👑'] }
+];
+const NEST_MORE = [['🌈 무지개방', ['🌈', '✨']], ['🍄 버섯방', ['🍄', '🌱']], ['⭐ 별빛방', ['⭐', '🌙']], ['🫧 거품방', ['🫧', '🛁']], ['🎨 그림방', ['🎨', '🖍️']], ['📚 책방', ['📚', '🔖']]];
+function itNest(extra){
+  const rooms = NEST_BASE.map(r => ({ ...r })), links = [[-1, 0], [0, 1], [0, 2], [1, 3], [2, 4], [3, 4]];
+  for (let f = 0; f < extra; f++){
+    const y = 1395 + f * 370, a = rooms.length, m1 = NEST_MORE[(f * 2) % NEST_MORE.length], m2 = NEST_MORE[(f * 2 + 1) % NEST_MORE.length];
+    rooms.push({ n:m1[0], x:255, y, rx:220, ry:128, k:3, deco:m1[1] }, { n:m2[0], x:745, y, rx:220, ry:128, k:3, deco:m2[1] });
+    links.push([a - 2, a], [a - 1, a + 1], [a, a + 1]);
   }
-  for (let k = 0; k < 26; k++) s += `<circle cx="${(Math.random() * 100).toFixed(1)}" cy="${(Math.random() * H).toFixed(0)}" r="0.6" fill="#FFF7C2" opacity="${(0.3 + Math.random() * 0.5).toFixed(2)}"/>`;
-  return `<svg class="it-crys" viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true">${s}</svg>`;
+  const slots = [];
+  rooms.forEach((r, ri) => {
+    const use = r.rx * 2 * 0.8, sp = use / r.k;
+    for (let k = 0; k < r.k; k++) slots.push({ room:ri, x:r.x - use / 2 + sp * (k + 0.5), y:r.y + 12 + (k % 2 ? 22 : -22), d:Math.min(sp * 0.92, r.ry * 0.84) });
+  });
+  return { rooms, links, slots, Hd:rooms[rooms.length - 1].y + 230 };
+}
+function itRoomC(i){ const N = IT.nest; return i < 0 ? [500, -30] : [N.rooms[i].x, N.rooms[i].y]; }
+function itCurve(j){                                       // 굴 하나 — 가운데를 조금 휘게
+  const [p, q] = IT.nest.links[j], [x1, y1] = itRoomC(p), [x2, y2] = itRoomC(q);
+  const len = Math.hypot(x2 - x1, y2 - y1) || 1, off = (j % 2 ? 1 : -1) * 70;
+  return { x1, y1, x2, y2, cx:(x1 + x2) / 2 - (y2 - y1) / len * off, cy:(y1 + y2) / 2 + (x2 - x1) / len * off };
+}
+function itNestSvg(){
+  const N = IT.nest, Hd = N.Hd;
+  const paths = N.links.map((_, j) => { const c = itCurve(j); return `M${c.x1.toFixed(0)} ${c.y1.toFixed(0)} Q${c.cx.toFixed(0)} ${c.cy.toFixed(0)} ${c.x2.toFixed(0)} ${c.y2.toFixed(0)}`; });
+  let bits = '';
+  for (let k = 0; k < Math.round(Hd / 32); k++){
+    const x = Math.random() * 1000, y = 60 + Math.random() * (Hd - 80);
+    bits += `<ellipse cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" rx="${(5 + Math.random() * 12).toFixed(0)}" ry="${(4 + Math.random() * 8).toFixed(0)}" fill="${['#6B4A30', '#9A7454', '#5A3B25'][k % 3]}" opacity="0.7"/>`;
+  }
+  for (let k = 0; k < 9; k++){ const x = 40 + k * 115 + Math.random() * 40; bits += `<path d="M${x.toFixed(0)} 40 C${(x + 20).toFixed(0)} 90 ${(x - 25).toFixed(0)} 130 ${(x + 5).toFixed(0)} ${(170 + Math.random() * 60).toFixed(0)}" fill="none" stroke="#5A3B25" stroke-width="5" stroke-linecap="round" opacity="0.6"/>`; }
+  return `<svg class="it-nest-svg" viewBox="0 0 1000 ${Hd}" preserveAspectRatio="none" aria-hidden="true">
+    <defs><linearGradient id="itEarth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A6242"/><stop offset="1" stop-color="#4E3322"/></linearGradient>
+      <radialGradient id="itRoomG" cx="50%" cy="38%" r="68%"><stop offset="0" stop-color="#F6E4C4"/><stop offset="1" stop-color="#D9B78D"/></radialGradient></defs>
+    <rect x="0" y="0" width="1000" height="${Hd}" fill="url(#itEarth)"/>${bits}
+    <rect x="0" y="0" width="1000" height="44" fill="#7ED67E"/><path d="M0 44 L1000 44" stroke="#5DB768" stroke-width="6"/>
+    <g fill="none" stroke-linecap="round">${paths.map(d => `<path d="${d}" stroke="#5E3F28" stroke-width="130"/>`).join('')}</g>
+    ${N.rooms.map(r => `<ellipse cx="${r.x}" cy="${r.y}" rx="${r.rx + 13}" ry="${r.ry + 13}" fill="#5E3F28"/>`).join('')}
+    <g fill="none" stroke-linecap="round">${paths.map(d => `<path d="${d}" stroke="#D9B78D" stroke-width="104"/>`).join('')}</g>
+    ${N.rooms.map(r => `<ellipse cx="${r.x}" cy="${r.y}" rx="${r.rx}" ry="${r.ry}" fill="url(#itRoomG)"/>
+      <ellipse cx="${r.x}" cy="${r.y + r.ry * 0.62}" rx="${r.rx * 0.82}" ry="${r.ry * 0.22}" fill="#C9A277" opacity="0.55"/>
+      <text x="${(r.x - r.rx * 0.8).toFixed(0)}" y="${(r.y + r.ry * 0.72).toFixed(0)}" font-size="54" text-anchor="middle">${r.deco[0]}</text>
+      <text x="${(r.x + r.rx * 0.8).toFixed(0)}" y="${(r.y + r.ry * 0.72).toFixed(0)}" font-size="54" text-anchor="middle">${r.deco[1]}</text>`).join('')}
+  </svg>`;
 }
 function itCave(arrive){
-  const I = IT; I.scene = 'cave'; I.sel = -1;
-  const keys = Object.keys(I.cave).map(Number), top = keys.length ? Math.max(...keys) + 1 : 0;
-  const N = Math.max(12, Math.ceil(Math.max(top, keys.length + I.car.length + 3) / 3) * 3);
-  const rowH = 118, H = Math.ceil(N / 3) * rowH + 50;
-  const bubs = Array.from({ length:N }, (_, i) => { const row = Math.floor(i / 3), col = i % 3; return { i, x:[18, 50, 82][col], y:22 + row * rowH + (col === 1 ? 24 : 0) }; });
-  I.el.innerHTML = `${itTop('🫧 이또 · 땅속 동굴')}
+  const I = IT; I.scene = 'cave'; I.sel = null; I.walkers = []; I.busy = new Set(); I.reserved = new Set(); I.walking = 0; I.nextWander = performance.now() + 2500; I.dirty = false; I.lastSave = Date.now();
+  // 방이 모자라면 아래로 더 판다 — 차에 탄 친구 수보다 빈 버블이 2개는 더 있게
+  const keys = Object.keys(I.cave).map(Number), maxIdx = keys.length ? Math.max(...keys) : -1;
+  let extra = 0;
+  while (extra < 30){ const n = itNest(extra); if (n.slots.length > maxIdx && n.slots.length - keys.length >= I.car.length + 2) break; extra++; }
+  I.nest = itNest(extra);
+  const W = Math.round(Math.min(700, Math.max(300, window.innerWidth - 28))), s = W / 1000, H = Math.round(I.nest.Hd * s);
+  I.ns = s;
+  const rooms = I.nest.rooms.map(r => `<span class="it-room" style="left:${(r.x * s).toFixed(0)}px;top:${((r.y - r.ry + 16) * s).toFixed(0)}px;font-size:${Math.max(13, Math.round(34 * s))}px">${esc(r.n)}</span>`).join('');
+  const bubs = I.nest.slots.map((b, i) => { const t = I.cave[i], d = b.d * s;
+    return `<button class="it-nb ${t ? 'on' : ''}" data-act="itBub" data-arg="${i}" style="left:${(b.x * s - d / 2).toFixed(0)}px;top:${(b.y * s - d / 2).toFixed(0)}px;width:${d.toFixed(0)}px;height:${d.toFixed(0)}px"
+      aria-label="${t ? `${esc(itFriend(t).name)} — 누르고 빈 버블을 누르면 걸어가요` : '빈 버블'}">${t ? itSvg(t) : ''}</button>`; }).join('');
+  I.el.innerHTML = `${itTop('🐜 이또 · 개미집')}
     <div class="ttl-body it-body">
-      <div class="it-say" id="itSay">${arrive ? (I.car.length ? '도착! 차에 탄 친구를 누르고, 빈 버블을 눌러 옮겨 담아요 🫧' : '도착! 버블 속 친구를 누르면 같이 놀 수 있어요')
-        : '버블 속 친구를 누르면 같이 놀 수 있어요!'}</div>
-      <div class="it-cave" style="height:${H}px">${itCrystals(H)}
-        ${bubs.map(b => { const t = I.cave[b.i]; return `<button class="it-bub ${t ? 'on' : ''}" data-act="itBub" data-arg="${b.i}" style="left:${b.x}%;top:${b.y}px" aria-label="${t ? `${pzRang(itFriend(t).name)} 놀기` : '빈 버블'}">${t ? itSvg(t) : ''}</button>`; }).join('')}
-      </div>
-      <div class="it-dock"><div class="it-carbox" id="itCar">${itCarSvg(I.car, I.sel)}</div>
+      <div class="it-say" id="itSay">${arrive ? (I.car.length ? '개미집에 도착! 차에 탄 친구를 누르고, 빈 버블을 눌러 방에 넣어 줘요 🫧' : '개미집에 도착! 친구들이 굴을 따라 놀러 다녀요 🐜')
+        : '친구를 누르고 빈 버블을 누르면 그 방으로 걸어가요!'}</div>
+      <div class="it-nest" id="itNest" style="width:${W}px;height:${H}px">${itNestSvg()}${rooms}${bubs}<div class="it-walkers" id="itWalk"></div></div>
+      <div class="it-dock"><div class="it-carbox" id="itCar">${itCarSvg(I.car, -1)}</div>
         <div class="stack" style="gap:6px;align-items:center"><button class="btn mint" data-act="itHome">🌱 정원으로</button>
-          <span id="itCount" style="font-size:13px;color:#E3DCF7">버블 속 친구 ${keys.length}마리</span></div></div>
+          <span id="itCount" style="font-size:13px;color:#E3DCF7">${itNestCount()}</span></div></div>
     </div>`;
   if (arrive) ttChime();
+  if (extra && arrive) toast(`개미집을 더 깊이 팠어요! 방이 ${I.nest.rooms.length}개가 됐어요 ⛏️`);
+  clearInterval(I.wander); I.wander = setInterval(itWanderTick, 400);
 }
+/* 개미집을 떠날 때 — 걷던 친구는 가던 자리에 바로 들어간다(잃어버리지 않게) */
+function itNestStop(){
+  const I = IT; if (!I) return;
+  clearInterval(I.wander); I.wander = 0;
+  (I.walkers || []).slice().forEach(w => { if (!w.fin){ w.fin = true; if (w.el) w.el.remove(); w.done(true); } });
+  I.walkers = [];
+}
+function itBubEl(i){ return IT && IT.el.querySelector(`.it-nb[data-arg="${i}"]`); }
+function itNestCount(put){
+  const I = IT, t = `개미집 친구 ${Object.keys(I.cave).length + I.reserved.size}마리 · 방 ${I.nest.rooms.length}개`;
+  if (put){ const c = document.getElementById('itCount'); if (c) c.textContent = t; }
+  return t;
+}
+function itBubSet(i){
+  const el = itBubEl(i), t = IT.cave[i]; if (!el) return;
+  el.classList.toggle('on', !!t); el.classList.remove('away', 'sel');
+  el.innerHTML = t ? itSvg(t) : '';
+  el.setAttribute('aria-label', t ? `${itFriend(t).name} — 누르고 빈 버블을 누르면 걸어가요` : '빈 버블');
+}
+function itBubPlay(i){ const el = itBubEl(i); if (el){ el.classList.remove('play'); void el.offsetWidth; el.classList.add('play'); } }
 function itHearts(el){
   if (!el) return;
   const r = el.getBoundingClientRect();
   for (let k = 0; k < 3; k++){
     const h = document.createElement('span'); h.className = 'it-heart'; h.textContent = ['💗', '✨', '💖'][k];
-    h.style.left = (r.left + r.width / 2 - 10).toFixed(0) + 'px'; h.style.top = (r.top + 10).toFixed(0) + 'px';
+    h.style.left = (r.left + r.width / 2 - 10).toFixed(0) + 'px'; h.style.top = (r.top + 6).toFixed(0) + 'px';
     h.style.setProperty('--dx', ((k - 1) * 26).toFixed(0) + 'px'); h.style.animationDelay = (k * 80) + 'ms';
     document.body.appendChild(h); setTimeout(() => h.remove(), 1100);
   }
+}
+/* 굴 따라 걷기 — 방에서 방으로 가는 길(BFS)을 찾고, 굴의 곡선을 따라 점을 찍는다 */
+function itRoute(a, b){
+  const adj = {}; IT.nest.links.forEach(([p, q]) => { if (p < 0) return; (adj[p] = adj[p] || []).push(q); (adj[q] = adj[q] || []).push(p); });
+  const prev = { [a]:-2 }, qu = [a];
+  while (qu.length){ const x = qu.shift(); if (x === b) break; for (const y of (adj[x] || [])) if (prev[y] == null){ prev[y] = x; qu.push(y); } }
+  if (prev[b] == null) return [a, b];
+  const out = []; for (let x = b; x !== -2; x = prev[x]) out.unshift(x);
+  return out;
+}
+function itTunnelPts(p, q){
+  const j = IT.nest.links.findIndex(([x, y]) => (x === p && y === q) || (x === q && y === p)); if (j < 0) return [];
+  const c = itCurve(j), pts = [];
+  for (let k = 1; k < 10; k++){ const t = k / 10, u = 1 - t; pts.push([u * u * c.x1 + 2 * u * t * c.cx + t * t * c.x2, u * u * c.y1 + 2 * u * t * c.cy + t * t * c.y2]); }
+  return IT.nest.links[j][0] === p ? pts : pts.reverse();
+}
+function itFloor(i){ const r = IT.nest.rooms[i]; return [r.x, r.y + r.ry * 0.3]; }
+function itWalkPath(a, ra, rb, b){
+  const route = itRoute(ra, rb), pts = [a, itFloor(ra)];
+  for (let k = 1; k < route.length; k++) pts.push(...itTunnelPts(route[k - 1], route[k]), itFloor(route[k]));
+  pts.push(b);
+  return pts;
+}
+function itWalk(type, pts, done, opt){
+  const I = IT, box = document.getElementById('itWalk');
+  const o = opt || {}, s = I.ns, size = 92 * s, speed = 0.26;              // 설계 단위 / ms
+  const seg = []; let L = 0; for (let k = 1; k < pts.length; k++){ const d = Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]); seg.push(d); L += d; }
+  let Lp = 0; if (o.pauseAt != null) for (let k = 0; k < o.pauseAt; k++) Lp += seg[k] || 0;
+  const pauseMs = o.pauseAt != null ? (o.pauseMs || 1400) : 0, tp = Lp / speed;
+  const w = { done, fin:false, el:null };
+  I.walkers.push(w);
+  if (!box){ w.fin = true; done(true); return w; }
+  const el = document.createElement('div'); el.className = 'it-walker'; el.style.width = size.toFixed(0) + 'px'; el.style.height = size.toFixed(0) + 'px'; el.innerHTML = itSvg(type);
+  box.appendChild(el); w.el = el;
+  const t0 = performance.now(); let paused = false;
+  const step = now => {
+    if (w.fin) return;
+    const el0 = now - t0;
+    let dist;
+    if (o.pauseAt == null || el0 < tp) dist = el0 * speed;
+    else if (el0 < tp + pauseMs){ dist = Lp; if (!paused){ paused = true; if (o.onPause) o.onPause(); } }
+    else dist = Lp + (el0 - tp - pauseMs) * speed;
+    if (dist >= L){ w.fin = true; el.remove(); I.walkers = I.walkers.filter(x => x !== w); done(false); return; }
+    let d = dist, k = 0; while (k < seg.length - 1 && d > seg[k]){ d -= seg[k]; k++; }
+    const a = pts[k], b = pts[k + 1] || a, f = seg[k] ? Math.min(1, d / seg[k]) : 1;
+    const x = a[0] + (b[0] - a[0]) * f, y = a[1] + (b[1] - a[1]) * f;
+    const hop = (paused && el0 < tp + pauseMs) ? Math.abs(Math.sin(now / 90)) * 22 : Math.abs(Math.sin(now / 120)) * 10;
+    el.style.transform = `translate(${(x * s - size / 2).toFixed(1)}px, ${((y - hop) * s - size * 0.7).toFixed(1)}px) scaleX(${b[0] < a[0] - 0.5 ? -1 : 1})`;
+    requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+  return w;
+}
+/* 이사 — 빈 버블로 걸어가서 쏙 */
+function itMove(from, to, byKid){
+  const I = IT, type = I.cave[from];
+  if (type == null || I.cave[to] != null || I.reserved.has(to) || I.busy.has(from)) return false;
+  delete I.cave[from]; I.reserved.add(to); I.walking++; I.dirty = true;
+  itBubSet(from);
+  const S0 = I.nest.slots[from], S1 = I.nest.slots[to];
+  itWalk(type, itWalkPath([S0.x, S0.y], S0.room, S1.room, [S1.x, S1.y]), instant => {
+    I.walking--; I.reserved.delete(to); I.cave[to] = type; I.dirty = true;
+    if (instant || IT !== I || I.scene !== 'cave') return;
+    itBubSet(to); itBubPlay(to); itPlop();
+    const mates = Object.keys(I.cave).map(Number).filter(i => i !== to && I.nest.slots[i].room === S1.room && !I.busy.has(i));
+    const name = itFriend(type).name, room = I.nest.rooms[S1.room].n.replace(/^\S+\s/, '');
+    if (mates.length){ const m = mates[playRand(mates.length)]; itBubPlay(m); itHearts(itBubEl(to)); itSay(`${itIGa(name)} ${room}에서 ${pzRang(itFriend(I.cave[m]).name)} 같이 놀아요! 💕`); }
+    else itSay(byKid ? `${itIGa(name)} ${room}에 도착했어요! 🏠` : `${itIGa(name)} ${room}${hasJong(room) ? '으로' : '로'} 이사했어요! 🏠`);
+  });
+  return true;
+}
+/* 놀러 가기 — 친구 방에 가서 같이 놀다가 제자리로 돌아온다 */
+function itVisit(from, friend){
+  const I = IT, type = I.cave[from]; if (type == null || I.busy.has(from)) return;
+  const S0 = I.nest.slots[from], S1 = I.nest.slots[friend];
+  const side = S1.x > 500 ? -1 : 1, spot = [S1.x + side * S1.d * 0.64, S1.y + 12];
+  const out = itWalkPath([S0.x, S0.y], S0.room, S1.room, spot), back = itWalkPath(spot, S1.room, S0.room, [S0.x, S0.y]).slice(1);
+  I.busy.add(from); I.walking++;
+  const el = itBubEl(from); if (el) el.classList.add('away');
+  itWalk(type, out.concat(back), () => {
+    I.walking--; I.busy.delete(from);
+    if (IT === I && I.scene === 'cave'){ const e = itBubEl(from); if (e) e.classList.remove('away'); itBubPlay(from); }
+  }, { pauseAt:out.length - 1, pauseMs:1500, onPause:() => {
+    if (IT !== I || I.scene !== 'cave') return;
+    const other = I.cave[friend]; itBubPlay(friend); itHearts(itBubEl(friend)); itNote();
+    if (other) itSay(`${itIGa(itFriend(type).name)} ${pzRang(itFriend(other).name)} 같이 놀아요! 💕`);
+  } });
+}
+function itWanderTick(){
+  const I = IT; if (!I || I.scene !== 'cave') return;
+  if (I.dirty && Date.now() - I.lastSave > 15000){ I.lastSave = Date.now(); I.dirty = false; itSave(); }
+  const now = performance.now(); if (now < I.nextWander || I.walking >= 2) return;
+  I.nextWander = now + 2600 + Math.random() * 3400;
+  const sel = I.sel && I.sel.bub != null ? I.sel.bub : -1;
+  const filled = Object.keys(I.cave).map(Number).filter(i => !I.busy.has(i) && i !== sel);
+  if (!filled.length) return;
+  const from = filled[playRand(filled.length)], r0 = I.nest.slots[from].room;
+  const friends = Object.keys(I.cave).map(Number).filter(i => i !== from && I.nest.slots[i].room !== r0);
+  const empties = I.nest.slots.map((_, i) => i).filter(i => I.cave[i] == null && !I.reserved.has(i) && I.nest.slots[i].room !== r0);
+  if (friends.length && (Math.random() < 0.62 || !empties.length)) itVisit(from, friends[playRand(friends.length)]);
+  else if (empties.length) itMove(from, empties[playRand(empties.length)], false);
+}
+function itSelMark(){
+  const I = IT; if (!I) return;
+  I.el.querySelectorAll('.it-nb.sel').forEach(e => e.classList.remove('sel'));
+  if (I.sel && I.sel.bub != null){ const e = itBubEl(I.sel.bub); if (e) e.classList.add('sel'); }
+  const c = document.getElementById('itCar'); if (c) c.innerHTML = itCarSvg(I.car, I.sel && I.sel.seat != null ? I.sel.seat : -1);
 }
 ACTS.itSeat = (arg) => {
   const I = IT; if (!I) return;
   const i = +arg, t = I.car[i]; if (!t) return;
   const name = itFriend(t).name;
   if (I.scene !== 'cave'){ itSay(`${itIGa(name)} 두근두근 출발을 기다려요!`); itHop(); return; }
-  I.sel = I.sel === i ? -1 : i; itCarRefresh(); ttTone(700, 0, 0.1, 0.06);
-  itSay(I.sel >= 0 ? `${name}! 이제 빈 버블을 눌러 봐요 🫧` : '친구를 누르고, 빈 버블을 눌러요 🫧');
+  I.sel = I.sel && I.sel.seat === i ? null : { seat:i }; itSelMark(); ttTone(700, 0, 0.1, 0.06);
+  itSay(I.sel ? `${name}! 어느 방에 갈까? 빈 버블을 눌러 봐요 🫧` : '친구를 누르고, 빈 버블을 눌러요 🫧');
 };
 ACTS.itBub = (arg) => {
   const I = IT; if (!I || I.scene !== 'cave') return;
-  const i = +arg, t = I.cave[i], btn = I.el.querySelector(`.it-bub[data-arg="${i}"]`);
-  if (t){                                                // 같이 놀기
-    if (btn){ btn.classList.remove('play'); void btn.offsetWidth; btn.classList.add('play'); }
-    itNote(); itHearts(btn);
+  const i = +arg, t = I.cave[i], btn = itBubEl(i);
+  if (t != null){                                        // 버블 속 친구
+    if (I.busy.has(i)){ itSay('그 친구는 지금 놀러 갔어요. 곧 돌아와요! 🐜'); return; }
     const name = itFriend(t).name;
-    itSay(dtPick([`${itIGa(name)} 까르르 웃어요! 😆`, `${name}: 같이 놀아 줘서 고마워!`, `${itIGa(name)} 빙글빙글 춤을 춰요! 💃`, `${name}: 버블 속은 폭신폭신해요!`, `${itIGa(name)} 하이파이브! 🙌`]));
+    if (I.sel && I.sel.bub != null && I.sel.bub !== i && I.cave[I.sel.bub] != null){   // 둘이 같이 놀기
+      const a = I.sel.bub; I.sel = null; itSelMark();
+      itBubPlay(a); itBubPlay(i); itHearts(btn); itHearts(itBubEl(a)); itNote();
+      itSay(`${itIGa(itFriend(I.cave[a]).name)} ${pzRang(name)} 같이 놀아요! 까르르~ 💕`);
+      return;
+    }
+    if (I.sel && I.sel.bub === i){ I.sel = null; itSelMark(); itBubPlay(i); itNote(); itSay(dtPick([`${itIGa(name)} 까르르 웃어요! 😆`, `${name}: 같이 놀아 줘서 고마워!`, `${itIGa(name)} 빙글빙글 춤을 춰요! 💃`, `${itIGa(name)} 하이파이브! 🙌`])); return; }
+    I.sel = { bub:i }; itSelMark(); itBubPlay(i); itNote(); itHearts(btn);
+    itSay(`${name}! 어디로 놀러 갈까? 빈 버블을 누르면 걸어가요 · 친구를 누르면 같이 놀아요`);
     return;
   }
-  if (!I.car.length){ itSay('차에 탄 친구가 없어요. 정원에 가서 친구를 더 찾아볼까요? 🌱'); return; }
-  const seat = I.sel >= 0 && I.car[I.sel] ? I.sel : 0, type = I.car[seat];
+  // 빈 버블
+  if (I.reserved.has(i)) return;
+  if (I.sel && I.sel.bub != null){                       // 고른 친구가 걸어간다
+    const a = I.sel.bub, who = I.cave[a]; I.sel = null; itSelMark();
+    if (!itMove(a, i, true)) itSay('그 친구는 지금 바빠요. 조금 뒤에 다시 해 볼까요?');
+    else itSay(`${itIGa(itFriend(who).name)} 굴을 따라 걸어가요~ 🐜`);
+    return;
+  }
+  if (!I.car.length){ itSay('친구를 누르고 빈 버블을 누르면 그 방으로 걸어가요! 차에 탄 친구가 없으면 정원에서 더 찾아와요 🌱'); return; }
+  const seat = I.sel && I.sel.seat != null && I.car[I.sel.seat] ? I.sel.seat : 0, type = I.car[seat];
   const from = document.querySelector(`#itCar [data-arg="${seat}"] .it-win`);
-  I.car.splice(seat, 1); I.sel = -1;
+  I.car.splice(seat, 1); I.sel = null;
   itFly(from, btn, type, () => {
     if (!IT || IT !== I) return;
-    I.cave[i] = type;
-    if (btn){ btn.classList.add('on'); btn.innerHTML = itSvg(type); btn.setAttribute('aria-label', `${pzRang(itFriend(type).name)} 놀기`); btn.classList.remove('play'); void btn.offsetWidth; btn.classList.add('play'); }
-    itPlop();
-    const left = I.car.length, name = itFriend(type).name;
-    itSay(left ? `${itIGa(name)} 버블 속에 쏙! 편안해 보여요. 다음 친구도 옮겨 볼까요?` : '모두 버블에 쏙! 🎉 정원에 가서 친구를 더 찾아볼까요?');
+    I.cave[i] = type; itBubSet(i); itBubPlay(i); itPlop(); I.dirty = true;
+    const left = I.car.length, name = itFriend(type).name, room = I.nest.rooms[I.nest.slots[i].room].n.replace(/^\S+\s/, '');
+    itSay(left ? `${itIGa(name)} ${room}에 쏙! 다음 친구도 방에 넣어 줄까요?` : '모두 개미집에 쏙! 🎉 친구들이 굴을 따라 놀러 다닐 거예요');
     if (!left){ awardStars(1); confetti(); }
-    const c = document.getElementById('itCount'); if (c) c.textContent = `버블 속 친구 ${Object.keys(I.cave).length}마리`;
-    itSave();
+    itNestCount(true);
+    itSave(); I.dirty = false; I.lastSave = Date.now();
   });
-  itCarRefresh();
+  itSelMark();
 };
-ACTS.itHome = () => { const I = IT; if (!I || I.scene !== 'cave') return; itSave(); itTunnel('up', () => itGarden(false)); };
+ACTS.itHome = () => { const I = IT; if (!I || I.scene !== 'cave') return; itNestStop(); itSave(); itJourney('up', () => itGarden(false)); };
 ACTS.itExit = () => { ittoClose(); };
 /* 📖 친구 도감 — 만난 친구는 이름과 이야기, 아직 못 만난 친구는 그림자 */
 ACTS.itBook = () => {
@@ -6521,29 +7120,26 @@ ACTS.itBook = () => {
 };
 
 /* ============================================================
-   🧸 곰돌이 숨바꼭질 — 신나는 키즈카페에서 두더지 잡기처럼
-   곰돌이가 놀이집 창문·인형 극장·미끄럼틀·블록 탑·터널·트램펄린·볼풀·장난감 상자·쿠션 뒤에 숨었다가 뿅! 나타난다.
-   보일 때 재빨리 누르면 점수(반짝 곰돌이는 +2). 한 단계는 60초, 목표 점수를 넘으면 🏆 트로피 하나 + 다음 단계는 더 빨라진다.
-   목표에 못 미치면 게임 끝 — "괜찮아요! 다시 해 볼까요?" 트로피와 최고 단계는 아이마다 기억한다(profile.bear).
-   곰돌이는 이 앱에서 새로 그린 캐릭터다(다른 회사 캐릭터는 저작권 때문에 쓰지 않는다).
+   🧸 숨바꼭질 — 신나는 키즈카페에서 두더지 잡기처럼 (이름은 부모님 화면 → 설정에서 정한다: settings.hideTitle)
+   카페 아무 데서나 곰돌이가 뿅! 튀어나왔다 숨는다. 재빨리 누르면 점수(반짝 곰돌이 +2).
+   🐰 토끼도 튀어나오는데 토끼는 잡으면 안 된다(누르면 -1). 단계가 오를수록 토끼가 자주 나온다.
+   한 단계 60초. 목표 점수를 채우면 바로 🏆 + 다음 단계(더 빨리·더 많이). 시간 안에 못 채우면 게임 끝 — "괜찮아요! 다시 해 볼까요?"
+   트로피·최고 단계는 아이마다 기억한다(profile.bear). 곰돌이·토끼는 이 앱에서 새로 그린 캐릭터다.
    빠르게 눌러야 해서 클릭 대신 pointerdown 으로 받는다. 화면 위 층(#bhLayer)에서 한다.
    ============================================================ */
-const BH_SPOTS = [          // 가운데 위치(무대 가로·세로의 %) · 크기(무대 가로의 %) · 무엇 뒤에 숨나
-  { x:15, y:24, w:23, k:'house' }, { x:50, y:22, w:24, k:'stage' }, { x:85, y:24, w:23, k:'slide' },
-  { x:15, y:50, w:23, k:'blocks' }, { x:50, y:49, w:24, k:'tunnel' }, { x:85, y:50, w:23, k:'tramp' },
-  { x:15, y:77, w:24, k:'balls' }, { x:50, y:77, w:24, k:'toybox' }, { x:85, y:77, w:24, k:'cushion' }
-];
+function bhTitle(){ return String(S.settings.hideTitle || '').trim().slice(0, 20) || '곰돌이 숨바꼭질'; }
 function bhParams(n){
-  return { visible:Math.max(600, 1650 - 190 * (n - 1)), gap:Math.max(220, 700 - 80 * (n - 1)), maxOn:n <= 2 ? 1 : (n <= 5 ? 2 : 3), target:15 + 5 * (n - 1), secs:60 };
+  return { visible:Math.max(620, 1650 - 170 * (n - 1)), gap:Math.max(200, 650 - 70 * (n - 1)), maxOn:n <= 1 ? 2 : (n <= 3 ? 3 : (n <= 6 ? 4 : 5)),
+    rabbit:Math.min(0.42, 0.18 + 0.04 * (n - 1)), target:15 + 5 * (n - 1), secs:60 };
 }
-/* 곰돌이 그림 — happy 면 찾았을 때 웃는 얼굴, gold 면 반짝 곰돌이 */
+/* 곰돌이 — happy 면 찾았을 때 웃는 얼굴, gold 면 반짝 곰돌이 */
 function bhBear(gold, happy){
   const fur = gold ? '#F6C453' : '#C98B5E', ear = gold ? '#FFE9A8' : '#F2C7A5', L = 'stroke="#6B4A52" stroke-width="3" stroke-linejoin="round"';
   const eyes = happy ? `<path d="M33 46 Q38 40 43 46 M57 46 Q62 40 67 46" fill="none" stroke="#3A2A2E" stroke-width="3.2" stroke-linecap="round"/>`
     : `<ellipse cx="38" cy="46" rx="4.4" ry="5.4" fill="#3A2A2E"/><circle cx="39.5" cy="44" r="1.6" fill="#fff"/><ellipse cx="62" cy="46" rx="4.4" ry="5.4" fill="#3A2A2E"/><circle cx="63.5" cy="44" r="1.6" fill="#fff"/>`;
   const mouth = happy ? `<path d="M44 64 Q50 73 56 64 Z" fill="#E85C7C" stroke="#6B4A52" stroke-width="2.2" stroke-linejoin="round"/>` : `<path d="M45 64 Q50 68 55 64" fill="none" stroke="#6B4A52" stroke-width="2.4" stroke-linecap="round"/>`;
   return `<svg viewBox="0 0 100 100" aria-hidden="true">
-    <ellipse cx="50" cy="104" rx="34" ry="22" fill="${fur}" ${L}/>
+    <ellipse cx="50" cy="96" rx="30" ry="14" fill="${fur}" ${L}/>
     <circle cx="25" cy="24" r="12" fill="${fur}" ${L}/><circle cx="75" cy="24" r="12" fill="${fur}" ${L}/>
     <circle cx="25" cy="24" r="6" fill="${ear}"/><circle cx="75" cy="24" r="6" fill="${ear}"/>
     <ellipse cx="50" cy="50" rx="34" ry="30" fill="${fur}" ${L}/>
@@ -6551,55 +7147,74 @@ function bhBear(gold, happy){
     <ellipse cx="50" cy="56.5" rx="5" ry="3.6" fill="#6B4A52"/>
     ${eyes}${mouth}
     <ellipse cx="29" cy="59" rx="5.5" ry="3.3" fill="#FF8FA8" opacity="0.6"/><ellipse cx="71" cy="59" rx="5.5" ry="3.3" fill="#FF8FA8" opacity="0.6"/>
-    <path d="M40 82 L50 86 L40 90 Z M60 82 L50 86 L60 90 Z" fill="#E85C7C" ${L}/><circle cx="50" cy="86" r="3" fill="#E85C7C" ${L}/>
-    <circle cx="30" cy="90" r="8" fill="${fur}" ${L}/><circle cx="70" cy="90" r="8" fill="${fur}" ${L}/>
+    <path d="M40 80 L50 84 L40 88 Z M60 80 L50 84 L60 88 Z" fill="#E85C7C" ${L}/><circle cx="50" cy="84" r="3" fill="#E85C7C" ${L}/>
+    <circle cx="26" cy="84" r="8" fill="${fur}" ${L}/><circle cx="74" cy="84" r="8" fill="${fur}" ${L}/>
     ${gold ? `<path d="M10 10 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z M90 8 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6 z" fill="#FFF1B8" stroke="#6B4A52" stroke-width="1.5"/>` : ''}
   </svg>`;
 }
-/* 숨는 곳 — back(곰돌이 뒤) · hole(곰돌이가 나오는 구멍, 칸의 %) · front(곰돌이 앞을 가리는 것) */
+/* 토끼 — 당근을 든 하얀 토끼. oops 면 깜짝 놀란 얼굴 */
+function bhRabbit(oops){
+  const L = 'stroke="#6B4A52" stroke-width="3" stroke-linejoin="round"';
+  const eyes = oops ? `<circle cx="40" cy="55" r="5" fill="#fff" ${L}/><circle cx="60" cy="55" r="5" fill="#fff" ${L}/><circle cx="40" cy="55" r="2" fill="#3A2A2E"/><circle cx="60" cy="55" r="2" fill="#3A2A2E"/>`
+    : `<ellipse cx="40" cy="55" rx="4.2" ry="5.2" fill="#3A2A2E"/><circle cx="41.4" cy="53" r="1.5" fill="#fff"/><ellipse cx="60" cy="55" rx="4.2" ry="5.2" fill="#3A2A2E"/><circle cx="61.4" cy="53" r="1.5" fill="#fff"/>`;
+  const mouth = oops ? `<ellipse cx="50" cy="71" rx="3.6" ry="4.2" fill="#E85C7C" stroke="#6B4A52" stroke-width="2"/>` : `<path d="M50 66 Q46 71 42 69 M50 66 Q54 71 58 69" fill="none" stroke="#6B4A52" stroke-width="2.4" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <ellipse cx="38" cy="24" rx="9" ry="23" fill="#FFFFFF" ${L}/><ellipse cx="62" cy="24" rx="9" ry="23" fill="#FFFFFF" ${L}/>
+    <ellipse cx="38" cy="26" rx="4.2" ry="15" fill="#FFC2CE"/><ellipse cx="62" cy="26" rx="4.2" ry="15" fill="#FFC2CE"/>
+    <ellipse cx="50" cy="94" rx="26" ry="13" fill="#FFFFFF" ${L}/>
+    <ellipse cx="50" cy="60" rx="30" ry="27" fill="#FFFFFF" ${L}/>
+    ${eyes}<path d="M46.5 62 L53.5 62 L50 66 Z" fill="#FF8FA8" stroke="#6B4A52" stroke-width="1.8" stroke-linejoin="round"/>${mouth}
+    <ellipse cx="31" cy="66" rx="5.4" ry="3.2" fill="#FF8FA8" opacity="0.6"/><ellipse cx="69" cy="66" rx="5.4" ry="3.2" fill="#FF8FA8" opacity="0.6"/>
+    <path d="M74 78 L90 66 L84 92 Z" fill="#FFB36B" ${L}/><path d="M88 66 C90 60 94 60 95 62 M90 67 C95 64 98 66 97 69" fill="none" stroke="#3FA687" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="74" cy="84" r="7" fill="#FFFFFF" ${L}/>
+  </svg>`;
+}
+/* 카페 풍경 — 놀이 기구들은 그냥 풍경. 곰돌이·토끼는 카페 아무 데서나 튀어나온다 */
+const BH_PROPS = [
+  { x:15, y:24, w:23, k:'house' }, { x:50, y:22, w:24, k:'stage' }, { x:85, y:24, w:23, k:'slide' },
+  { x:15, y:50, w:23, k:'blocks' }, { x:50, y:49, w:24, k:'tunnel' }, { x:85, y:50, w:23, k:'tramp' },
+  { x:15, y:77, w:24, k:'balls' }, { x:50, y:77, w:24, k:'toybox' }, { x:85, y:77, w:24, k:'cushion' }
+];
 const BH_ART = {
-  house:{ hole:[24, 40, 52, 42], back:`<path d="M6 40 L50 6 L94 40 Z" fill="#FF8FA8"/><rect x="12" y="36" width="76" height="62" rx="6" fill="#FFF1D6"/><rect x="24" y="40" width="52" height="42" rx="5" fill="#8C6E54"/>`,
-    front:`<rect x="24" y="40" width="52" height="42" rx="5" fill="none" stroke="#6B4A52" stroke-width="3"/><rect x="18" y="78" width="64" height="9" rx="3" fill="#B07A4A" stroke="#6B4A52" stroke-width="3"/>
-      <rect x="22" y="86" width="56" height="10" rx="3" fill="#9BE0C8" stroke="#6B4A52" stroke-width="2.5"/><circle cx="32" cy="86" r="4" fill="#FF8FA8"/><circle cx="50" cy="85" r="4" fill="#FFD98E"/><circle cx="68" cy="86" r="4" fill="#FF8FA8"/>
-      <path d="M6 40 L50 6 L94 40" fill="none" stroke="#6B4A52" stroke-width="3" stroke-linejoin="round"/>` },
-  stage:{ hole:[16, 24, 68, 46], back:`<rect x="6" y="6" width="88" height="90" rx="8" fill="#B3A6EE"/><rect x="16" y="24" width="68" height="46" fill="#5B4A7A"/>`,
-    front:`<rect x="6" y="6" width="88" height="90" rx="8" fill="none" stroke="#6B4A52" stroke-width="3"/>
-      <path d="M6 20 Q17 30 28 20 Q39 30 50 20 Q61 30 72 20 Q83 30 94 20 L94 10 L6 10 Z" fill="#E85C7C" stroke="#6B4A52" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M16 24 C24 40 22 56 16 70 Z" fill="#FF8FA8" stroke="#6B4A52" stroke-width="2.5"/><path d="M84 24 C76 40 78 56 84 70 Z" fill="#FF8FA8" stroke="#6B4A52" stroke-width="2.5"/>
-      <rect x="10" y="64" width="80" height="30" rx="4" fill="#FFD98E" stroke="#6B4A52" stroke-width="3"/><path d="M42 78 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" transform="translate(8 -8) scale(.8)" fill="#FFF1B8" stroke="#6B4A52" stroke-width="1.6"/>` },
-  slide:{ hole:[14, 4, 62, 54], back:`<rect x="12" y="34" width="8" height="64" fill="#9DBBEA" stroke="#6B4A52" stroke-width="2.5"/><rect x="70" y="34" width="8" height="64" fill="#9DBBEA" stroke="#6B4A52" stroke-width="2.5"/>
-      <path d="M74 62 C86 72 92 86 98 98 L86 98 C80 86 74 78 66 72 Z" fill="#FFD98E" stroke="#6B4A52" stroke-width="2.5" stroke-linejoin="round"/>`,
-    front:`<rect x="8" y="52" width="72" height="18" rx="6" fill="#FF8FA8" stroke="#6B4A52" stroke-width="3"/><path d="M41 55 l2.5 5 5 2 -5 2 -2.5 5 -2.5 -5 -5 -2 5 -2 z" fill="#FFF1B8" stroke="#6B4A52" stroke-width="1.5"/>
-      <path d="M16 76 L16 98 M24 76 L24 98 M14 80 L26 80 M14 88 L26 88 M14 96 L26 96" stroke="#6B4A52" stroke-width="2.5" stroke-linecap="round"/>` },
-  blocks:{ hole:[14, 2, 72, 60], back:'',
-    front:`<rect x="12" y="70" width="38" height="28" rx="3" fill="#FFD98E" stroke="#6B4A52" stroke-width="3"/><rect x="50" y="70" width="38" height="28" rx="3" fill="#9BE0C8" stroke="#6B4A52" stroke-width="3"/>
-      <rect x="28" y="44" width="44" height="28" rx="3" fill="#FF8FA8" stroke="#6B4A52" stroke-width="3"/>
-      <text x="31" y="91" text-anchor="middle" font-size="18" font-weight="700" fill="#6B4A52" font-family="sans-serif">A</text><text x="69" y="91" text-anchor="middle" font-size="18" font-weight="700" fill="#6B4A52" font-family="sans-serif">B</text>
-      <text x="50" y="65" text-anchor="middle" font-size="18" font-weight="700" fill="#6B4A52" font-family="sans-serif">C</text>` },
-  tunnel:{ hole:[24, 30, 52, 52], round:true, back:`<rect x="2" y="26" width="96" height="66" rx="33" fill="#FFC2CE" stroke="#6B4A52" stroke-width="3"/>
-      <path d="M20 28 L20 90 M36 26 L36 92 M64 26 L64 92 M80 28 L80 90" stroke="#FF8FA8" stroke-width="5"/><circle cx="50" cy="56" r="26" fill="#5B4A7A"/>`,
-    front:`<circle cx="50" cy="56" r="26" fill="none" stroke="#FFD98E" stroke-width="8"/><circle cx="50" cy="56" r="30" fill="none" stroke="#6B4A52" stroke-width="2.5"/><circle cx="50" cy="56" r="22" fill="none" stroke="#6B4A52" stroke-width="2"/>` },
-  tramp:{ hole:[16, 4, 68, 60], back:`<path d="M12 18 L12 72 M88 18 L88 72" stroke="#6B4A52" stroke-width="3" stroke-linecap="round"/><path d="M12 18 Q50 30 88 18" fill="none" stroke="#B3A6EE" stroke-width="2.5" stroke-dasharray="4 3"/>`,
-    front:`<path d="M22 80 L16 98 M78 80 L84 98 M50 82 L50 98" stroke="#6B4A52" stroke-width="3.2" stroke-linecap="round"/>
-      <ellipse cx="50" cy="72" rx="44" ry="13" fill="#9DBBEA" stroke="#6B4A52" stroke-width="3"/><ellipse cx="50" cy="70" rx="34" ry="8" fill="#6FCFB0" stroke="#6B4A52" stroke-width="2"/>` },
-  balls:{ hole:[10, 2, 80, 62], back:`<path d="M6 52 Q50 40 94 52 L94 62 Q50 50 6 62 Z" fill="#FF8FA8" stroke="#6B4A52" stroke-width="2.5"/>`,
-    front:`<path d="M6 60 Q50 72 94 60 L90 96 Q50 104 10 96 Z" fill="#FF8FA8" stroke="#6B4A52" stroke-width="3" stroke-linejoin="round"/>
-      ${[[12, 60, '#FFD98E'], [22, 56, '#9BE0C8'], [32, 60, '#9DBBEA'], [42, 57, '#FFFFFF'], [52, 61, '#FFD98E'], [62, 57, '#B3A6EE'], [72, 60, '#9BE0C8'], [82, 56, '#FFC2CE'], [90, 61, '#9DBBEA'], [18, 66, '#B3A6EE'], [37, 66, '#FFC2CE'], [58, 67, '#9DBBEA'], [78, 66, '#FFD98E']]
-        .map(([x, y, c]) => `<circle cx="${x}" cy="${y}" r="7" fill="${c}" stroke="#6B4A52" stroke-width="2"/>`).join('')}` },
-  toybox:{ hole:[12, 4, 76, 56], back:`<path d="M12 54 L18 18 L90 24 L88 54 Z" fill="#E4B07A" stroke="#6B4A52" stroke-width="2.5" stroke-linejoin="round"/>`,
-    front:`<rect x="8" y="52" width="84" height="44" rx="6" fill="#F1C48A" stroke="#6B4A52" stroke-width="3"/><path d="M8 64 L92 64" stroke="#B07A4A" stroke-width="3"/>
-      <path d="M50 70 l4 8 9 1 -7 6 2 9 -8 -5 -8 5 2 -9 -7 -6 9 -1 z" fill="#FFD98E" stroke="#6B4A52" stroke-width="2" stroke-linejoin="round"/>` },
-  cushion:{ hole:[14, 2, 72, 62], back:'',
-    front:`<ellipse cx="50" cy="66" rx="26" ry="12" fill="#FFC2CE" stroke="#6B4A52" stroke-width="3"/>
-      <ellipse cx="29" cy="82" rx="28" ry="17" fill="#9BE0C8" stroke="#6B4A52" stroke-width="3"/><ellipse cx="71" cy="83" rx="28" ry="16" fill="#FFD98E" stroke="#6B4A52" stroke-width="3"/>
-      <path d="M26 80 c-3 -4 3 -7 4 -3 c1 -4 7 -1 4 3 l-4 4 z M68 81 c-3 -4 3 -7 4 -3 c1 -4 7 -1 4 3 l-4 4 z" fill="#FF8FA8"/>` }
+  house:`<path d="M6 40 L50 6 L94 40 Z" fill="#FF8FA8" stroke="#6B4A52" stroke-width="3" stroke-linejoin="round"/><rect x="12" y="36" width="76" height="62" rx="6" fill="#FFF1D6" stroke="#6B4A52" stroke-width="3"/>
+    <rect x="24" y="44" width="52" height="34" rx="5" fill="#BDE7FF" stroke="#6B4A52" stroke-width="3"/><path d="M50 44 L50 78 M24 61 L76 61" stroke="#6B4A52" stroke-width="2.5"/>
+    <rect x="22" y="80" width="56" height="10" rx="3" fill="#9BE0C8" stroke="#6B4A52" stroke-width="2.5"/><circle cx="32" cy="80" r="4" fill="#FF8FA8"/><circle cx="50" cy="79" r="4" fill="#FFD98E"/><circle cx="68" cy="80" r="4" fill="#FF8FA8"/>`,
+  stage:`<rect x="6" y="6" width="88" height="90" rx="8" fill="#B3A6EE" stroke="#6B4A52" stroke-width="3"/><rect x="16" y="24" width="68" height="46" fill="#5B4A7A"/>
+    <path d="M6 20 Q17 30 28 20 Q39 30 50 20 Q61 30 72 20 Q83 30 94 20 L94 10 L6 10 Z" fill="#E85C7C" stroke="#6B4A52" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M16 24 C24 40 22 56 16 70 Z" fill="#FF8FA8" stroke="#6B4A52" stroke-width="2.5"/><path d="M84 24 C76 40 78 56 84 70 Z" fill="#FF8FA8" stroke="#6B4A52" stroke-width="2.5"/>
+    <rect x="10" y="64" width="80" height="30" rx="4" fill="#FFD98E" stroke="#6B4A52" stroke-width="3"/>`,
+  slide:`<rect x="12" y="34" width="8" height="64" fill="#9DBBEA" stroke="#6B4A52" stroke-width="2.5"/><rect x="70" y="34" width="8" height="64" fill="#9DBBEA" stroke="#6B4A52" stroke-width="2.5"/>
+    <path d="M74 62 C86 72 92 86 98 98 L86 98 C80 86 74 78 66 72 Z" fill="#FFD98E" stroke="#6B4A52" stroke-width="2.5" stroke-linejoin="round"/>
+    <rect x="8" y="52" width="72" height="18" rx="6" fill="#FF8FA8" stroke="#6B4A52" stroke-width="3"/>
+    <path d="M16 76 L16 98 M24 76 L24 98 M14 80 L26 80 M14 88 L26 88 M14 96 L26 96" stroke="#6B4A52" stroke-width="2.5" stroke-linecap="round"/>`,
+  blocks:`<rect x="12" y="70" width="38" height="28" rx="3" fill="#FFD98E" stroke="#6B4A52" stroke-width="3"/><rect x="50" y="70" width="38" height="28" rx="3" fill="#9BE0C8" stroke="#6B4A52" stroke-width="3"/>
+    <rect x="28" y="44" width="44" height="28" rx="3" fill="#FF8FA8" stroke="#6B4A52" stroke-width="3"/>
+    <text x="31" y="91" text-anchor="middle" font-size="18" font-weight="700" fill="#6B4A52" font-family="sans-serif">A</text><text x="69" y="91" text-anchor="middle" font-size="18" font-weight="700" fill="#6B4A52" font-family="sans-serif">B</text>
+    <text x="50" y="65" text-anchor="middle" font-size="18" font-weight="700" fill="#6B4A52" font-family="sans-serif">C</text>`,
+  tunnel:`<rect x="2" y="26" width="96" height="66" rx="33" fill="#FFC2CE" stroke="#6B4A52" stroke-width="3"/>
+    <path d="M20 28 L20 90 M36 26 L36 92 M64 26 L64 92 M80 28 L80 90" stroke="#FF8FA8" stroke-width="5"/><circle cx="50" cy="56" r="26" fill="#5B4A7A"/>
+    <circle cx="50" cy="56" r="26" fill="none" stroke="#FFD98E" stroke-width="8"/>`,
+  tramp:`<path d="M12 18 L12 72 M88 18 L88 72" stroke="#6B4A52" stroke-width="3" stroke-linecap="round"/><path d="M12 18 Q50 30 88 18" fill="none" stroke="#B3A6EE" stroke-width="2.5" stroke-dasharray="4 3"/>
+    <path d="M22 80 L16 98 M78 80 L84 98 M50 82 L50 98" stroke="#6B4A52" stroke-width="3.2" stroke-linecap="round"/>
+    <ellipse cx="50" cy="72" rx="44" ry="13" fill="#9DBBEA" stroke="#6B4A52" stroke-width="3"/><ellipse cx="50" cy="70" rx="34" ry="8" fill="#6FCFB0" stroke="#6B4A52" stroke-width="2"/>`,
+  balls:`<path d="M6 52 Q50 40 94 52 L94 62 Q50 50 6 62 Z" fill="#FF8FA8" stroke="#6B4A52" stroke-width="2.5"/>
+    <path d="M6 60 Q50 72 94 60 L90 96 Q50 104 10 96 Z" fill="#FF8FA8" stroke="#6B4A52" stroke-width="3" stroke-linejoin="round"/>
+    ${[[12, 60, '#FFD98E'], [22, 56, '#9BE0C8'], [32, 60, '#9DBBEA'], [42, 57, '#FFFFFF'], [52, 61, '#FFD98E'], [62, 57, '#B3A6EE'], [72, 60, '#9BE0C8'], [82, 56, '#FFC2CE'], [90, 61, '#9DBBEA'], [18, 66, '#B3A6EE'], [37, 66, '#FFC2CE'], [58, 67, '#9DBBEA'], [78, 66, '#FFD98E']]
+      .map(([x, y, c]) => `<circle cx="${x}" cy="${y}" r="7" fill="${c}" stroke="#6B4A52" stroke-width="2"/>`).join('')}`,
+  toybox:`<path d="M12 54 L18 18 L90 24 L88 54 Z" fill="#E4B07A" stroke="#6B4A52" stroke-width="2.5" stroke-linejoin="round"/>
+    <rect x="8" y="52" width="84" height="44" rx="6" fill="#F1C48A" stroke="#6B4A52" stroke-width="3"/><path d="M8 64 L92 64" stroke="#B07A4A" stroke-width="3"/>
+    <path d="M50 70 l4 8 9 1 -7 6 2 9 -8 -5 -8 5 2 -9 -7 -6 9 -1 z" fill="#FFD98E" stroke="#6B4A52" stroke-width="2" stroke-linejoin="round"/>`,
+  cushion:`<ellipse cx="50" cy="66" rx="26" ry="12" fill="#FFC2CE" stroke="#6B4A52" stroke-width="3"/>
+    <ellipse cx="29" cy="82" rx="28" ry="17" fill="#9BE0C8" stroke="#6B4A52" stroke-width="3"/><ellipse cx="71" cy="83" rx="28" ry="16" fill="#FFD98E" stroke="#6B4A52" stroke-width="3"/>
+    <path d="M26 80 c-3 -4 3 -7 4 -3 c1 -4 7 -1 4 3 l-4 4 z M68 81 c-3 -4 3 -7 4 -3 c1 -4 7 -1 4 3 l-4 4 z" fill="#FF8FA8"/>`
 };
-function bhCafe(){                                         // 키즈카페 벽·바닥·가랜드·창문·풍선
+function bhCafe(h){                                        // 벽·바닥·가랜드·풍선 — h: 설계 높이(너비 400 기준, 화면 비율에 맞춘다)
+  const wall = Math.round(h * 0.653), rows = Math.ceil((h - wall) / 36);
   const flags = Array.from({ length:13 }, (_, k) => { const x = 8 + k * 30; return `<path d="M${x} ${14 + (k % 2) * 3} L${x + 22} ${14 + ((k + 1) % 2) * 3} L${x + 11} ${36} Z" fill="${['#FF8FA8', '#FFD98E', '#9BE0C8', '#B3A6EE', '#9DBBEA'][k % 5]}" stroke="#6B4A52" stroke-width="1.5" stroke-linejoin="round"/>`; }).join('');
-  const tiles = Array.from({ length:24 }, (_, k) => `<rect x="${(k % 8) * 50}" y="${196 + Math.floor(k / 8) * 36}" width="50" height="36" fill="${(k + Math.floor(k / 8)) % 2 ? '#CFEFE3' : '#BFE7D2'}"/>`).join('');
-  return `<svg class="bh-cafe" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  const tiles = Array.from({ length:8 * rows }, (_, k) => `<rect x="${(k % 8) * 50}" y="${wall + Math.floor(k / 8) * 36}" width="50" height="36" fill="${(k + Math.floor(k / 8)) % 2 ? '#CFEFE3' : '#BFE7D2'}"/>`).join('');
+  return `<svg class="bh-cafe" viewBox="0 0 400 ${h}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <defs><linearGradient id="bhWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF1E6"/><stop offset="1" stop-color="#FFE3EA"/></linearGradient></defs>
-    <rect x="0" y="0" width="400" height="196" fill="url(#bhWall)"/><rect x="0" y="176" width="400" height="20" fill="#FFD6E0"/>${tiles}
+    <rect x="0" y="0" width="400" height="${wall}" fill="url(#bhWall)"/><rect x="0" y="${wall - 20}" width="400" height="20" fill="#FFD6E0"/>${tiles}
     <path d="M0 16 Q100 30 200 16 Q300 30 400 16" fill="none" stroke="#6B4A52" stroke-width="1.5"/>${flags}
     <g stroke="#6B4A52" stroke-width="1.5"><path d="M352 60 L348 112 M372 52 L360 112 M386 66 L368 112" fill="none"/>
       <ellipse cx="352" cy="52" rx="11" ry="13" fill="#FF8FA8"/><ellipse cx="372" cy="44" rx="11" ry="13" fill="#9BE0C8"/><ellipse cx="388" cy="58" rx="10" ry="12" fill="#FFD98E"/></g>
@@ -6614,15 +7229,15 @@ function bearOpen(){
   nvUnlock(); audioCtx();
   const save = k.bear || {};
   BH = { kidId:k.id, stage:1, score:0, total:0, runTrophies:0, trophies:save.trophies || 0, best:save.best || 0, bestScore:save.bestScore || 0,
-    running:false, phase:'start', spots:BH_SPOTS.map(() => ({ on:false, hit:false, gold:false, until:0 })), last:-1, raf:0, cd:0 };
+    running:false, phase:'start', pops:[], seq:0, last:null, raf:0, cd:0, nextT:0 };
   const el = document.createElement('div');
-  el.className = 'ttl bh'; el.id = 'bhLayer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', '곰돌이 숨바꼭질');
+  el.className = 'ttl bh'; el.id = 'bhLayer'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', bhTitle());
   document.body.appendChild(el); BH.el = el;
   bhRender();
 }
 function bearClose(msg){
   if (!BH) return;
-  cancelAnimationFrame(BH.raf); clearInterval(BH.cd); clearTimeout(BH.next);
+  cancelAnimationFrame(BH.raf); clearInterval(BH.cd); clearTimeout(BH.nextT);
   bhSave();
   BH.el.remove(); BH = null;
   if (S.view.game === 'bear') S.view.game = null;
@@ -6634,42 +7249,38 @@ function bhSave(){
 }
 function bhRender(){
   const b = BH, p = bhParams(b.stage);
-  const avail = Math.min(760, Math.max(300, window.innerWidth - 28)), W = Math.round(avail), H = Math.round(W * 0.8);
-  b.W = W; b.H = H;
-  const spots = BH_SPOTS.map((s, i) => {
-    const size = Math.round(W * s.w / 100), a = BH_ART[s.k], [hx, hy, hw, hh] = a.hole;
-    return `<div class="bh-spot" style="left:${Math.round(W * s.x / 100 - size / 2)}px;top:${Math.round(H * s.y / 100 - size / 2)}px;width:${size}px;height:${size}px">
-      <svg class="bh-art" viewBox="0 0 100 100" aria-hidden="true">${a.back}</svg>
-      <div class="bh-hole ${a.round ? 'round' : ''}" style="left:${hx}%;top:${hy}%;width:${hw}%;height:${hh}%">
-        <button class="bh-bear" id="bhB${i}" aria-label="곰돌이" tabindex="-1">${bhBear(false, false)}</button></div>
-      <svg class="bh-art front" viewBox="0 0 100 100" aria-hidden="true">${a.front}</svg>
-    </div>`;
-  }).join('');
+  // 세로로 긴 화면(폰·세로 아이패드)에서는 무대를 더 길게 — 튀어나올 자리가 많아진다
+  const W = Math.round(Math.min(760, Math.max(300, window.innerWidth - 28))), H = Math.round(clamp(window.innerHeight - 250, W * 0.8, W * 1.25));
+  b.W = W; b.H = H; b.size = Math.round(clamp(W * 0.16, 54, 118));
+  const props = BH_PROPS.map(s => { const size = Math.round(W * s.w / 100);
+    return `<svg class="bh-prop" viewBox="0 0 100 100" style="left:${Math.round(W * s.x / 100 - size / 2)}px;top:${Math.round(H * s.y / 100 - size / 2)}px;width:${size}px;height:${size}px" aria-hidden="true">${BH_ART[s.k]}</svg>`; }).join('');
+  let toys = '';                                           // 바닥·벽 곳곳의 작은 장난감 (풍경)
+  const TOY = ['🧸', '🪀', '🎲', '🚂', '🧩', '🎈', '🪁', '🚗', '⚽', '🎨'];
+  for (let k = 0; k < 14; k++) toys += `<span class="bh-toy" style="left:${(4 + Math.random() * 92).toFixed(1)}%;top:${(38 + Math.random() * 58).toFixed(1)}%;font-size:${Math.round(W * (0.035 + Math.random() * 0.02))}px">${TOY[k % TOY.length]}</span>`;
   b.el.innerHTML = `<div class="ttl-top"><button class="ttl-x" data-act="bhExit" aria-label="그만하기">✕</button>
-      <div class="ttl-dots"><span class="ttl-chip" id="bhChip">🧸 곰돌이 숨바꼭질 · ${b.stage}단계</span></div>
+      <div class="ttl-dots"><span class="ttl-chip" id="bhChip">🧸 ${esc(bhTitle())} · ${b.stage}단계</span></div>
       <span class="bh-time" id="bhTime">⏱ ${p.secs}</span></div>
     <div class="ttl-body bh-body">
       <div class="bh-hud"><div class="grow"><div class="row" style="justify-content:space-between"><b id="bhScore">찾은 곰돌이 ${b.score} / ${p.target} 🎯</b><span class="muted" id="bhTotal">점수 ${b.total} · 🏆 ${b.runTrophies}</span></div>
-        <div class="gauge" style="height:14px;margin-top:5px"><span id="bhBar" style="width:0%"></span></div></div></div>
-      <div class="bh-stage" id="bhStage" style="width:${W}px;height:${H}px">${bhCafe()}${spots}<div class="bh-fx" id="bhFx"></div>${bhCard()}</div>
+        <div class="gauge" style="height:14px;margin-top:5px"><span id="bhBar" style="width:0%"></span></div>
+        <div class="muted" id="bhTip" style="font-size:13px;margin-top:4px">🐰 토끼는 잡으면 안 돼요!</div></div></div>
+      <div class="bh-stage" id="bhStage" style="width:${W}px;height:${H}px">${bhCafe(Math.round(400 * H / W))}${props}${toys}<div class="bh-pops" id="bhPops"></div><div class="bh-fx" id="bhFx"></div>${bhCard()}</div>
     </div>`;
-  b.el.querySelectorAll('.bh-bear').forEach((btn, i) => btn.addEventListener('pointerdown', ev => { ev.preventDefault(); bhHit(i); }));
+  bhHud();
 }
-/* 무대 위 안내 카드 — 시작 · 단계 성공 · 게임 끝 */
+/* 무대 위 안내 카드 — 시작 · 단계 성공(잠깐 보여 주고 바로 다음 단계) · 게임 끝 · 쉬는 중 */
 function bhCard(){
   const b = BH, p = bhParams(b.stage);
   if (b.phase === 'play') return '';
   const shelf = b.trophies ? `<div class="bh-shelf">${'🏆'.repeat(Math.min(12, b.trophies))}${b.trophies > 12 ? ` ×${b.trophies}` : ''}</div>` : '';
   let body = '';
-  if (b.phase === 'start') body = `<div style="font-size:56px;line-height:1">🧸</div><h3 class="sub" style="margin:4px 0">곰돌이 숨바꼭질</h3>
-      <p style="margin:0">곰돌이가 키즈카페 여기저기 숨었다가 뿅! 나타나요.<br>보이면 재빨리 눌러요! 반짝 곰돌이는 +2 ✨</p>
-      <p class="muted" style="margin:6px 0 0">한 단계는 ${p.secs}초 · 1단계 목표 ${p.target}개${b.best ? ` · 최고 ${b.best}단계` : ''}</p>${shelf}
+  if (b.phase === 'start') body = `<div style="font-size:52px;line-height:1">🧸🐰</div><h3 class="sub" style="margin:4px 0">${esc(bhTitle())}</h3>
+      <p style="margin:0">곰돌이가 키즈카페 아무 데서나 뿅! 튀어나와요.<br>재빨리 눌러요! 반짝 곰돌이는 +2 ✨<br><b>🐰 토끼는 잡으면 안 돼요!</b> (누르면 -1)</p>
+      <p class="muted" style="margin:6px 0 0">한 단계 ${p.secs}초 · 목표를 채우면 바로 다음 단계${b.best ? ` · 최고 ${b.best}단계` : ''}</p>${shelf}
       <button class="btn wide" data-act="bhStart" style="margin-top:10px">시작하기 ▶</button>`;
-  else if (b.phase === 'count') body = `<div class="tt-count" id="bhCount">3</div><p style="margin:0;font-family:var(--display);font-size:22px">${b.stage}단계 · 목표 ${p.target}개!</p>`;
+  else if (b.phase === 'count') body = `<div class="tt-count" id="bhCount">3</div><p style="margin:0;font-family:var(--display);font-size:22px">${b.stage}단계 · 목표 ${p.target}개!${b.stage > 1 ? ' 더 빨라요!' : ''}</p>`;
   else if (b.phase === 'clear') body = `<div class="bh-trophy">🏆</div><h3 class="sub" style="margin:4px 0">${b.stage}단계 성공! 트로피 +1</h3>
-      <p style="margin:0">곰돌이 ${b.score}마리를 찾았어요. 눈이 정말 빨라요! 👀</p>
-      <p class="muted" style="margin:6px 0 0">다음 단계는 곰돌이가 더 빨라요 · 목표 ${bhParams(b.stage + 1).target}개</p>${shelf}
-      <div class="tt-foot" style="margin-top:10px"><button class="btn ghost" data-act="bhExit">그만할래</button><button class="btn" data-act="bhNextStage">다음 단계 ▶</button></div>`;
+      <p style="margin:0">눈이 정말 빨라요! 👀 바로 다음 단계로 가요!</p>${shelf}`;
   else if (b.phase === 'over') body = `<div style="font-size:52px;line-height:1">⏰</div><h3 class="sub" style="margin:4px 0">시간 끝!</h3>
       <p style="margin:0">목표 ${p.target}개 중에 <b>${b.score}개</b>를 찾았어요.<br>괜찮아요! 곰돌이가 너무 빨랐나 봐요. 다시 해 볼까요? 💪</p>
       <p class="muted" style="margin:6px 0 0">이번 판: ${b.stage}단계 · 점수 ${b.total} · 🏆 ${b.runTrophies}${b.best ? ` · 최고 ${b.best}단계` : ''}</p>${shelf}
@@ -6681,14 +7292,19 @@ function bhCard(){
 function bhSetCard(){ const old = document.getElementById('bhCard'); if (old) old.remove(); const st = document.getElementById('bhStage'); if (st && BH.phase !== 'play') st.insertAdjacentHTML('beforeend', bhCard()); }
 function bhHud(){
   const b = BH, p = bhParams(b.stage), $s = document.getElementById('bhScore'), $t = document.getElementById('bhTotal'), bar = document.getElementById('bhBar'), chip = document.getElementById('bhChip');
-  if ($s) $s.textContent = `찾은 곰돌이 ${b.score} / ${p.target} 🎯${b.score >= p.target ? ' 목표 달성!' : ''}`;
+  if ($s) $s.textContent = `찾은 곰돌이 ${b.score} / ${p.target} 🎯`;
   if ($t) $t.textContent = `점수 ${b.total} · 🏆 ${b.runTrophies}`;
   if (bar) bar.style.width = clamp(b.score / p.target * 100, 0, 100) + '%';
-  if (chip) chip.textContent = `🧸 곰돌이 숨바꼭질 · ${b.stage}단계`;
+  if (chip) chip.textContent = `🧸 ${bhTitle()} · ${b.stage}단계`;
 }
 function bhClock(left){
   const el = document.getElementById('bhTime'); if (!el) return;
   const s = Math.ceil(left / 1000); el.textContent = `⏱ ${s}`; el.classList.toggle('hurry', s <= 10);
+}
+function bhTip(text, warn){
+  const e = document.getElementById('bhTip'); if (!e) return;
+  e.textContent = text; e.classList.toggle('warn', !!warn);
+  clearTimeout(BH.tipT); BH.tipT = setTimeout(() => { if (e.isConnected){ e.textContent = '🐰 토끼는 잡으면 안 돼요!'; e.classList.remove('warn'); } }, 1600);
 }
 
 /* ---------- 놀이 흐름 ---------- */
@@ -6708,7 +7324,7 @@ function bhPlay(ms){
   const b = BH, p = bhParams(b.stage);
   b.phase = 'play'; bhSetCard();
   b.endAt = performance.now() + (ms != null ? ms : p.secs * 1000);
-  b.nextAt = performance.now() + 500; b.running = true; b.goal = b.score >= p.target;
+  b.nextAt = performance.now() + 450; b.running = true;
   cancelAnimationFrame(b.raf); b.raf = requestAnimationFrame(bhLoop);
 }
 function bhLoop(){
@@ -6716,66 +7332,91 @@ function bhLoop(){
   const now = performance.now(), p = bhParams(b.stage), left = Math.max(0, b.endAt - now);
   const sec = Math.ceil(left / 1000);
   if (sec !== b.lastSec){ b.lastSec = sec; bhClock(left); if (sec <= 5 && sec > 0) ttTone(880, 0, 0.05, 0.04); }
-  b.spots.forEach((sp, i) => { if (sp.on && !sp.hit && now >= sp.until) bhHide(i); });
-  if (left > 400 && b.spots.filter(s => s.on).length < p.maxOn && now >= b.nextAt){ bhShow(now, p); b.nextAt = now + p.gap * (0.6 + Math.random() * 0.8); }
-  if (left <= 0){ bhEndStage(); return; }
+  b.pops.slice().forEach(o => { if (!o.done && now >= o.until) bhPopHide(o); });
+  if (left > 400 && b.pops.filter(o => !o.done).length < p.maxOn && now >= b.nextAt){ bhSpawn(now, p); b.nextAt = now + p.gap * (0.6 + Math.random() * 0.8); }
+  if (left <= 0){ bhTimeUp(); return; }
   b.raf = requestAnimationFrame(bhLoop);
 }
-function bhShow(now, p){
-  const b = BH, free = b.spots.map((s, i) => i).filter(i => !b.spots[i].on && i !== b.last);
-  if (!free.length) return;
-  const i = free[playRand(free.length)], sp = b.spots[i];
-  sp.on = true; sp.hit = false; sp.gold = Math.random() < 0.08; sp.until = now + p.visible * (sp.gold ? 0.8 : (0.85 + Math.random() * 0.3));
-  b.last = i;
-  const btn = document.getElementById('bhB' + i);
-  if (btn){ btn.innerHTML = bhBear(sp.gold, false); btn.classList.toggle('gold', sp.gold); btn.classList.add('up'); }
+/* 아무 데서나 뿅! — 다른 친구와 겹치지 않고, 방금 나온 자리와도 떨어진 곳 */
+function bhSpawn(now, p){
+  const b = BH, s = b.size, box = document.getElementById('bhPops'); if (!box) return;
+  let x = 0, y = 0, ok = false;
+  for (let t = 0; t < 30 && !ok; t++){
+    x = s * 0.55 + Math.random() * (b.W - s * 1.1); y = b.H * 0.12 + s * 0.5 + Math.random() * (b.H * 0.88 - s * 1.05);
+    ok = b.pops.every(o => o.done || Math.hypot(o.x - x, o.y - y) > s * 1.05) && (!b.last || Math.hypot(b.last[0] - x, b.last[1] - y) > s * 1.2);
+  }
+  const kind = Math.random() < p.rabbit ? 'rabbit' : (Math.random() < 0.08 ? 'gold' : 'bear');
+  const o = { id:++b.seq, x, y, kind, hit:false, done:false, until:now + p.visible * (kind === 'gold' ? 0.8 : (0.85 + Math.random() * 0.3)) };
+  b.last = [x, y]; b.pops.push(o);
+  const el = document.createElement('button');
+  el.className = `bh-pop ${kind}`; el.setAttribute('aria-label', kind === 'rabbit' ? '토끼 — 누르면 안 돼요' : '곰돌이');
+  el.style.left = x.toFixed(0) + 'px'; el.style.top = y.toFixed(0) + 'px'; el.style.width = s + 'px'; el.style.height = s + 'px';
+  el.innerHTML = `<i class="bh-puff"></i>${kind === 'rabbit' ? bhRabbit(false) : bhBear(kind === 'gold', false)}`;
+  el.addEventListener('pointerdown', ev => { ev.preventDefault(); bhTap(o); });
+  box.appendChild(el); o.el = el;
+  requestAnimationFrame(() => el.classList.add('up'));
 }
-function bhHide(i){
-  const b = BH, sp = b.spots[i]; sp.on = false;
-  const btn = document.getElementById('bhB' + i); if (btn) btn.classList.remove('up');
+function bhPopHide(o){
+  o.done = true;
+  if (o.el){ o.el.classList.remove('up'); o.el.classList.add('down'); const e = o.el; setTimeout(() => e.remove(), 220); }
+  BH.pops = BH.pops.filter(x => x !== o);
 }
-function bhHit(i){
-  const b = BH; if (!b || !b.running) return;
-  const sp = b.spots[i]; if (!sp.on || sp.hit) return;
-  sp.hit = true;
-  const pts = sp.gold ? 2 : 1, p = bhParams(b.stage);
+function bhTap(o){
+  const b = BH; if (!b || !b.running || o.done || o.hit) return;
+  o.hit = true;
+  if (o.kind === 'rabbit'){                              // 토끼는 잡으면 안 돼요!
+    b.score = Math.max(0, b.score - 1); b.total = Math.max(0, b.total - 1);
+    if (o.el){ o.el.innerHTML = `<i class="bh-puff"></i>${bhRabbit(true)}`; o.el.classList.add('oops'); }
+    ttTone(196, 0, 0.18, 0.09); ttTone(165, 0.1, 0.2, 0.08);
+    bhFx(o, '-1 🐰', true); bhTip('앗! 토끼는 잡으면 안 돼요 🐰 곰돌이만 찾아요!', true); bhHud();
+    setTimeout(() => { if (BH === b) bhPopHide(o); }, 420);
+    return;
+  }
+  const pts = o.kind === 'gold' ? 2 : 1, p = bhParams(b.stage);
   b.score += pts; b.total += pts;
-  const btn = document.getElementById('bhB' + i);
-  if (btn) btn.innerHTML = bhBear(sp.gold, true);
-  if (sp.gold){ [784, 988, 1175, 1568].forEach((f, k) => ttTone(f, k * 0.06, 0.18, 0.08)); } else { ttTone(880, 0, 0.1, 0.1); ttTone(1320, 0.06, 0.14, 0.08); }
-  bhFx(i, sp.gold ? '+2 ✨' : '+1');
+  if (o.el) o.el.innerHTML = `<i class="bh-puff"></i>${bhBear(o.kind === 'gold', true)}`;
+  if (o.kind === 'gold'){ [784, 988, 1175, 1568].forEach((f, k) => ttTone(f, k * 0.06, 0.18, 0.08)); } else { ttTone(880, 0, 0.1, 0.1); ttTone(1320, 0.06, 0.14, 0.08); }
+  bhFx(o, o.kind === 'gold' ? '+2 ✨' : '+1');
   bhHud();
-  if (!b.goal && b.score >= p.target){ b.goal = true; ttChime(); toast('🎯 목표 달성! 계속 찾으면 점수가 더 쌓여요!'); }
-  setTimeout(() => { if (BH === b){ sp.on = false; if (btn) btn.classList.remove('up'); } }, 260);
+  setTimeout(() => { if (BH === b) bhPopHide(o); }, 240);
+  if (b.score >= p.target) bhClear();                      // 목표를 채우면 바로 다음 단계
 }
-function bhFx(i, text){
-  const fx = document.getElementById('bhFx'), b = BH, s = BH_SPOTS[i]; if (!fx) return;
-  const t = document.createElement('span'); t.className = 'bh-plus'; t.textContent = text;
-  t.style.left = Math.round(b.W * s.x / 100) + 'px'; t.style.top = Math.round(b.H * s.y / 100 - b.W * s.w / 250) + 'px';
+function bhFx(o, text, bad){
+  const fx = document.getElementById('bhFx'); if (!fx) return;
+  const t = document.createElement('span'); t.className = 'bh-plus' + (bad ? ' bad' : ''); t.textContent = text;
+  t.style.left = o.x.toFixed(0) + 'px'; t.style.top = (o.y - BH.size * 0.5).toFixed(0) + 'px';
   fx.appendChild(t); setTimeout(() => t.remove(), 800);
 }
-function bhEndStage(){
+function bhStop(){
   const b = BH; b.running = false; cancelAnimationFrame(b.raf);
-  b.spots.forEach((sp, i) => { if (sp.on) bhHide(i); });
-  const p = bhParams(b.stage);
-  b.bestScore = Math.max(b.bestScore, b.total);
-  if (b.score >= p.target){
-    b.phase = 'clear'; b.runTrophies++; b.trophies++; b.best = Math.max(b.best, b.stage);
-    awardStars(1); confetti(); [523, 659, 784, 1047, 1319].forEach((f, k) => ttTone(f, k * 0.09, 0.25, 0.1));
-  } else {
-    b.phase = 'over'; [659, 523, 440].forEach((f, k) => ttTone(f, k * 0.14, 0.22, 0.07));
-  }
+  b.pops.slice().forEach(bhPopHide); b.pops = [];
+}
+function bhClear(){
+  const b = BH; bhStop();
+  b.phase = 'clear'; b.runTrophies++; b.trophies++; b.best = Math.max(b.best, b.stage); b.bestScore = Math.max(b.bestScore, b.total);
+  awardStars(1); confetti(); [523, 659, 784, 1047, 1319].forEach((f, k) => ttTone(f, k * 0.09, 0.25, 0.1));
+  bhSave(); bhHud(); bhSetCard();
+  clearTimeout(b.nextT);
+  b.nextT = setTimeout(() => {                             // 트로피를 잠깐 보여 주고 바로 다음 단계
+    if (BH !== b || b.phase !== 'clear') return;
+    b.stage++; b.score = 0; bhHud(); bhClock(bhParams(b.stage).secs * 1000);
+    bhCountdown(() => bhPlay());
+  }, 1800);
+}
+function bhTimeUp(){
+  const b = BH; bhStop();
+  b.phase = 'over'; b.bestScore = Math.max(b.bestScore, b.total);
+  [659, 523, 440].forEach((f, k) => ttTone(f, k * 0.14, 0.22, 0.07));
   bhSave(); bhHud(); bhClock(0); bhSetCard();
 }
 ACTS.bhStart = () => { const b = BH; if (!b) return; nvUnlock(); audioCtx(); bhCountdown(() => bhPlay()); };
-ACTS.bhNextStage = () => { const b = BH; if (!b) return; b.stage++; b.score = 0; bhHud(); bhClock(bhParams(b.stage).secs * 1000); bhCountdown(() => bhPlay()); };
 ACTS.bhAgain = () => { const b = BH; if (!b) return; b.stage = 1; b.score = 0; b.total = 0; b.runTrophies = 0; bhHud(); bhClock(bhParams(1).secs * 1000); bhCountdown(() => bhPlay()); };
 ACTS.bhResume = () => { const b = BH; if (!b || b.phase !== 'pause') return; audioCtx(); const left = b.pausedLeft; bhCountdown(() => bhPlay(left)); };
 ACTS.bhExit = () => { bearClose(); };
 /* 다른 앱으로 가면 멈춘다 — 돌아오면 "계속하기" */
 document.addEventListener('visibilitychange', () => {
   const b = BH; if (!b || !document.hidden) return;
-  if (b.running){ b.pausedLeft = Math.max(1000, b.endAt - performance.now()); b.running = false; cancelAnimationFrame(b.raf); b.spots.forEach((sp, i) => { if (sp.on) bhHide(i); }); b.phase = 'pause'; bhSetCard(); }
+  if (b.running){ b.pausedLeft = Math.max(1000, b.endAt - performance.now()); bhStop(); b.phase = 'pause'; bhSetCard(); }
   else if (b.phase === 'count'){ clearInterval(b.cd); b.pausedLeft = bhParams(b.stage).secs * 1000; b.phase = 'pause'; bhSetCard(); }
 });
 
@@ -7056,7 +7697,7 @@ async function dtRead(times){
   d.reading = true; dtEar(true);
   for (let r = 0; r < n; r++){
     if (DT !== d) return;
-    await voice(text, { lang:'ko', rate:r ? 0.62 : 0.7, nvRate:r ? 0.9 : 1, onstart:() => { if (DT === d) dtMouth(true); } });
+    await voice(text, { lang:'ko', rate:r ? 0.72 : 0.8, style:'dict', onstart:() => { if (DT === d) dtMouth(true); } });
     if (DT !== d) return;
     dtMouth(false);
     if (r < n - 1) await new Promise(ok => setTimeout(ok, 1100));
@@ -7178,7 +7819,7 @@ function dtNextItem(){
 ACTS.dtGo = (arg) => { dtOpen(arg); };
 ACTS.dtPick = (arg) => { S.view.dtList = arg; S.view.dtPeek = false; render(); };
 ACTS.dtPeek = () => { S.view.dtPeek = !S.view.dtPeek; render(); };
-ACTS.dtSay = (arg) => { const [id, i] = String(arg).split('|'); const l = S.data.dlists.find(x => x.id === id); if (l && l.lines[+i]){ nvUnlock(); voice(l.lines[+i], { lang:'ko', rate:0.7 }); } };
+ACTS.dtSay = (arg) => { const [id, i] = String(arg).split('|'); const l = S.data.dlists.find(x => x.id === id); if (l && l.lines[+i]){ nvUnlock(); voice(l.lines[+i], { lang:'ko', rate:0.8, style:'dict' }); } };
 ACTS.dtSample = async () => {
   const has = S.data.dlists.some(l => l.sample);
   if (!has) await Store.add('dlists', { no:0, title:'예시', lines:DT_SAMPLE.slice(), kidIds:[], testDate:'', sample:true, createdAt:new Date().toISOString() });
@@ -8192,24 +8833,72 @@ function estLine(est, secs){
 }
 function estHit(est, secs){ if (!est) return false; const act = Math.max(1, Math.round(secs / 60)); return Math.abs(act - est) <= Math.max(2, est * 0.25); }
 
-/* ---------- 📖 책 한 줄 느낌 · 주인공에게 한마디 ---------- */
+/* ---------- 🫧 단어 가방에서 빼기 — 아이가 직접 한다 ---------- */
+ACTS.wordDel = (arg) => {
+  const w = S.data.words.find(x => x.id === arg && x.kidId === S.kidId); if (!w) return;
+  askConfirm({ title:`「${w.term}」 낱말을 가방에서 뺄까요?`, okLabel:'빼기',
+    note:'다 알게 된 낱말이면 빼도 괜찮아요. 다시 알고 싶으면 사전에서 찾아 또 담을 수 있어요.',
+    onOk: async () => { await Store.remove('words', w.id); toast(`「${w.term}」 낱말을 가방에서 뺐어요 🫧`); } });
+};
+/* ---------- 📖 책 한 줄 느낌 (다 읽은 책만) ---------- */
+function bookFeelSheet(b){
+  return `<h3>📖 ${esc(b.title)}</h3>
+    <div class="muted" style="margin:6px 0 6px">💭 읽고 나니 어땠어요? 한 줄이면 충분해요</div>
+    <div class="chips" style="margin-bottom:8px">${BOOK_FEELS.map((f, i) => `<button class="chip" data-act="bookFeelChip" data-arg="${i}">${f}</button>`).join('')}</div>
+    ${kvField('bfFeel', '예: 구름빵을 먹으면 나도 날 수 있을 것 같았어요', { area:true, max:80, h:70 })}
+    <div class="row" style="gap:8px;margin-top:8px">${micBtn('bfFeel', 'bookFeelMic')}</div>
+    <div class="row" style="gap:8px;margin-top:12px"><button class="btn ghost grow" data-act="bookFeelBack">그만두기</button><button class="btn grow" data-act="bookFeelSave">저장</button></div>`;
+}
 ACTS.bookFeel = (arg) => {
   const b = S.data.books.find(x => x.id === arg); if (!b) return;
-  kvSet('bfFeel', b.feel || ''); kvSet('bfHero', b.toHero || '');
+  kvSet('bfFeel', b.feel || '');
   S.view.feelBook = b.id;
-  openModal(`<h3>📖 ${esc(b.title)}</h3>
-    <div class="muted" style="margin:6px 0 4px">💭 한 줄 느낌</div>${kvField('bfFeel', '예: 구름빵을 먹으면 나도 날 수 있을 것 같았어요', { max:80 })}
-    <div class="muted" style="margin:10px 0 4px">💌 주인공에게 한마디</div>${kvField('bfHero', '예: 홍비야, 아빠를 도와준 거 멋졌어!', { max:80 })}
-    <div class="row" style="gap:8px;margin-top:12px"><button class="btn ghost grow" data-act="bookFeelBack">그만두기</button><button class="btn grow" data-act="bookFeelSave">저장</button></div>`);
+  openModal(bookFeelSheet(b));
 };
+function feelAdd(key, i){ const f = String(BOOK_FEELS[+i] || '').replace(/^\S+\s/, ''), cur = kv(key).trim(); if (f && cur.indexOf(f) < 0) kvSet(key, (cur ? cur + ' ' : '') + f); }
+ACTS.bookFeelChip = (arg) => { const b = S.data.books.find(x => x.id === S.view.feelBook); if (!b) return; feelAdd('bfFeel', arg); openModal(bookFeelSheet(b)); };
+ACTS.bookFeelMic = (arg) => { thListen(arg, () => { const b = S.data.books.find(x => x.id === S.view.feelBook); if (b) openModal(bookFeelSheet(b)); }); };
 ACTS.bookFeelBack = () => { const id = S.view.feelBook; kvClear('bf'); if (id) showBook(id); else closeModal(); };
 ACTS.bookFeelSave = async () => {
   const id = S.view.feelBook, b = id && S.data.books.find(x => x.id === id); if (!b) return;
-  const had = !!(b.feel || b.toHero);
-  const feel = kv('bfFeel').trim().slice(0, 80), toHero = kv('bfHero').trim().slice(0, 80);
-  await Store.update('books', id, { feel, toHero });
-  kvClear('bf'); if (!had && (feel || toHero)) awardStars(1);
-  toast('책에 내 생각을 남겼어요 📖'); showBook(id);
+  const had = !!b.feel;
+  const feel = kv('bfFeel').trim().slice(0, 80);
+  await Store.update('books', id, { feel });
+  kvClear('bf'); if (!had && feel) awardStars(1);
+  toast('책에 내 느낌을 남겼어요 📖'); showBook(id);
+};
+/* ---------- 📚 책 등록 마법사 — 읽었어요 / 읽을 예정 · 낱말 · 느낌 ---------- */
+ACTS.beStatus = (arg) => { const e = S.view.bookEdit; if (!e) return; keepBookEditTyping(); e.status = arg === 'toread' ? 'toread' : 'read'; openModal(bookEditSheet()); };
+ACTS.wizStatus = (arg) => { const w = S.view.wiz; if (!w) return; keepWizTyping(); w.status = arg === 'toread' ? 'toread' : 'read'; openModal(bookWizard()); };
+ACTS.wizToFeel = async () => {
+  const w = S.view.wiz; if (!w) return;
+  const inp = $('#wizWord'), typed = inp && (inp.value || '').trim();
+  if (typed) w.words.push(typed);                           // 담기를 안 눌렀어도 적어 둔 낱말은 담는다
+  for (const term of (w.words || [])){
+    await Store.add('words', {
+      kidId:S.kidId, term, lang:/^[a-zA-Z\s'-]+$/.test(term)?'en':'ko',
+      meaning:'', fromBookId:w.savedId||'', box:1,
+      nextReviewAt:new Date().toISOString(), createdAt:new Date().toISOString()
+    });
+  }
+  if ((w.words || []).length) toast(`어려웠던 낱말 ${w.words.length}개를 단어 가방에 담았어요 🫧`);
+  w.words = []; w.step = 'feel';
+  const b = S.data.books.find(x => x.id === w.savedId); kvSet('wizFeel', (b && b.feel) || '');
+  openModal(bookWizard());
+};
+ACTS.wizFeelChip = (arg) => { if (!S.view.wiz) return; feelAdd('wizFeel', arg); openModal(bookWizard()); };
+ACTS.wizFeelMic = (arg) => { thListen(arg, () => { if (S.view.wiz) openModal(bookWizard()); }); };
+/* 읽을 책장에 있던 책 → 다 읽었어요! (별점 → 어려웠던 낱말 → 느낌) */
+ACTS.bookDone = (arg) => {
+  const b = S.data.books.find(x => x.id === arg); if (!b) return;
+  S.view.wiz = { step:'rate', savedId:b.id, existing:b.id, title:b.title, stars:3, words:[], status:'read' };
+  openModal(bookWizard());
+};
+ACTS.wizRated = async () => {
+  const w = S.view.wiz, b = w && S.data.books.find(x => x.id === w.savedId); if (!b) return;
+  await Store.update('books', b.id, { status:'read', readAt:new Date().toISOString(), stars:w.stars || 3 });
+  S.freshBookId = b.id; w.step = 'words';
+  openModal(bookWizard()); confetti(); ttChime();
 };
 
 /* ---------- 부모님 화면 → 💭 생각 ---------- 저녁 대화 카드 · 약속 · 기분 · 궁금해 노트 · 메뉴 고치기 · AI 도우미 */
@@ -9043,8 +9732,8 @@ document.addEventListener('click', async (e) => {
   }
 
   /* --- 책 --- */
-  if (t.id === 'addBook' || t.id === 'addBook2'){
-    S.view.wiz = { step:'scan', category:(S.settings.cats||DEFAULT_CATS)[0], stars:3, words:[] };
+  if (t.id === 'addBook' || t.id === 'addBook2' || t.id === 'addToRead'){
+    S.view.wiz = { step:'scan', category:(S.settings.cats||DEFAULT_CATS)[0], stars:3, words:[], status:t.id === 'addToRead' ? 'toread' : 'read' };
     openModal(bookWizard());
     startScanner();
     return;
@@ -9092,26 +9781,17 @@ document.addEventListener('click', async (e) => {
     if (v){ S.view.wiz.words.push(v); inp.value=''; openModal(bookWizard()); }
     return;
   }
-  if (t.id === 'wizDone'){
-    const w = S.view.wiz;
-    for (const term of (w.words||[])){
-      await Store.add('words', {
-        kidId:S.kidId, term, lang:/^[a-zA-Z\s'-]+$/.test(term)?'en':'ko',
-        meaning:'', fromBookId:w.savedId||'', box:1,
-        nextReviewAt:new Date().toISOString(), createdAt:new Date().toISOString()
-      });
-    }
-    closeModal(); S.tab = 'shelf'; render(); return;
+  if (t.id === 'wizDone'){                                  // 느낌까지 다 썼어요
+    const w = S.view.wiz, feel = kv('wizFeel').trim().slice(0, 80), b = w && S.data.books.find(x => x.id === w.savedId);
+    if (b && feel){ await Store.update('books', b.id, { feel }); if (!b.feel) awardStars(1); }
+    kvClear('wizFeel'); S.view.wiz = null;
+    closeModal(); S.tab = 'shelf'; render();
+    if (feel) toast('책에 내 느낌을 남겼어요 📖');
+    return;
   }
   if (d.book){ showBook(d.book); return; }
   if (d.bookshow){ S.view.bookEdit = null; showBook(d.bookshow); return; }
-  if (d.bookedit){
-    const b = S.data.books.find(x => x.id === d.bookedit); if (!b) return;
-    S.view.bookEdit = { id:b.id, title:b.title || '', author:b.author || '', ar:b.ar || '', category:b.category,
-      stars:b.stars || 3, coverUrl:b.coverUrl || '', coverAssetId:b.coverAssetId || '', coverFile:null, coverPreview:'' };
-    openModal(bookEditSheet());
-    return;
-  }
+  if (d.bookedit){ bookEditOpen(d.bookedit, ''); return; }
   if (d.becat){ keepBookEditTyping(); S.view.bookEdit.category = d.becat; openModal(bookEditSheet()); return; }
   if (d.bestar){ keepBookEditTyping(); S.view.bookEdit.stars = +d.bestar; openModal(bookEditSheet()); return; }
   if (t.id === 'beSave'){
@@ -9120,7 +9800,9 @@ document.addEventListener('click', async (e) => {
     if (!b){ closeModal(); return; }
     if (!e.title.trim()){ toast('책 제목을 적어줄래요? 📚'); $('#beTitle').focus(); return; }
     e.saving = true; openModal(bookEditSheet());
-    const patch = { title:e.title.trim(), author:e.author.trim(), category:e.category, stars:e.stars, ar:arParse(e.ar) };
+    const patch = { title:e.title.trim(), author:e.author.trim(), category:e.category, stars:e.stars, ar:arParse(e.ar), status:e.status === 'toread' ? 'toread' : 'read' };
+    if (patch.status === 'read'){ patch.feel = String(e.feel || '').trim().slice(0, 80); if (!b.readAt) patch.readAt = new Date().toISOString(); }
+    if (patch.status === 'toread'){ patch.readAt = null; if (!b.addedAt) patch.addedAt = new Date().toISOString(); }
     if (e.coverFile){
       const up = await uploadCover(e.coverFile);
       if (up){
@@ -9131,7 +9813,7 @@ document.addEventListener('click', async (e) => {
     await Store.update('books', e.id, patch);
     S.view.bookEdit = null;
     toast('책을 고쳤어요 ✨');
-    showBook(b.id);
+    if (e.back === 'parent') openModal(parentSheet()); else showBook(b.id);
     return;
   }
   if (d.bookdel){
@@ -9430,9 +10112,11 @@ document.addEventListener('change', async (e) => {
   if (el.id === 'dlPhoto' && el.files && el.files[0]){ await dlPhoto(el.files[0]); el.value = ''; return; }
   if (el.id === 'wtPhoto' && el.files && el.files.length){ await wTripPhotos(el.files); return; }
   if (el.id === 'ttVoice'){ await Store.saveSettings({ ttVoice: el.value || '' }); say('Hello, everyone!', { lang:'en' }); }
+  if (el.id === 'koVoiceSel'){ await Store.saveSettings({ koVoiceName: el.value || '' }); say('안녕! 나는 뚜뚜야. 오늘도 같이 해볼까?', { lang:'ko' }); }
   if (el.id === 'ttMaskIn') await Store.saveSettings({ ttMask: el.value.trim().slice(0, 200) });
   if (el.id === 'ttDate' && S.view.ttDraft) S.view.ttDraft.contestDate = el.value;
   if (el.id === 'setGameMin') await Store.saveSettings({ gameMinutes: clamp(+el.value||20, 5, 120) });
+  if (el.id === 'setHideTitle'){ await Store.saveSettings({ hideTitle: el.value.trim().slice(0, 20) }); const t = bhTitle(), c = t.charCodeAt(t.length - 1) - 0xAC00, jj = c >= 0 && c <= 11171 ? c % 28 : 0; toast(`놀이 이름을 ‘${t}’${jj === 0 || jj === 8 ? '로' : '으로'} 정했어요`); }
   if (el.id === 'setGoal') await Store.saveSettings({ weeklyGoal: clamp(+el.value||20, 2, 200) });
   if (el.id === 'setCats'){
     const cats = el.value.split(',').map(s=>s.trim()).filter(Boolean);
@@ -9445,6 +10129,7 @@ document.addEventListener('change', async (e) => {
     toast(text ? '쪽지를 붙였어요 💌' : '쪽지를 뗐어요');
   }
   if (el.dataset.kidname) await Store.update('profiles', el.dataset.kidname, { name: el.value.trim() || '이름' });
+  if (el.dataset && el.dataset.kidstars){ await Store.update('profiles', el.dataset.kidstars, { stars:clamp(Math.round(+el.value || 0), 0, 99999) }); toast('별 개수를 고쳤어요 ⭐'); }
   if (el.dataset && el.dataset.kidar){
     const v = arParse(el.value);
     await Store.update('profiles', el.dataset.kidar, { arScore:v, arAt:v ? new Date().toISOString() : null });
@@ -9872,21 +10557,37 @@ async function saveBook(){
     const up = await uploadCover(w.coverFile);
     if (up){ coverUrl = up.coverUrl || coverUrl; coverAssetId = up.coverAssetId || ''; }
   }
-  const id = await Store.add('books', {
-    kidId:S.kidId, isbn:w.isbn||'', title:w.title, author:w.author||'',
-    category:w.category||(S.settings.cats||DEFAULT_CATS)[0],
-    // 직접 찍은 사진이 있으면 그 주소를 저장한다(예전에는 올린 사진 대신 w.coverUrl을 넣어 사진이 사라졌다)
-    coverAssetId, coverUrl, stars:w.stars||3, ar:w.ar || null,
-    readAt:new Date().toISOString(),
-    source: w.found || 'manual'
-  });
+  const toread = w.status === 'toread', now = new Date().toISOString();
+  const base = { title:w.title, author:w.author||'', category:w.category||(S.settings.cats||DEFAULT_CATS)[0], ar:w.ar || null };
+  let id = w.existing && S.data.books.find(b => b.id === w.existing) ? w.existing : '';
+  if (id){                                                   // 읽을 책장에 있던 책 → 다 읽었어요
+    const patch = { ...base, status:toread ? 'toread' : 'read', readAt:toread ? null : now, stars:toread ? null : (w.stars || 3) };
+    if (coverUrl || coverAssetId){ patch.coverUrl = coverUrl; patch.coverAssetId = coverAssetId; }
+    await Store.update('books', id, patch);
+  } else {
+    id = await Store.add('books', {
+      kidId:S.kidId, isbn:w.isbn||'', ...base,
+      // 직접 찍은 사진이 있으면 그 주소를 저장한다(예전에는 올린 사진 대신 w.coverUrl을 넣어 사진이 사라졌다)
+      coverAssetId, coverUrl, stars:toread ? null : (w.stars || 3),
+      status:toread ? 'toread' : 'read', addedAt:now, readAt:toread ? null : now,
+      source: w.found || 'manual'
+    });
+  }
   S.freshBookId = id;
   w.savedId = id;
   w.uploading = false;
+  if (toread){                                               // 읽을 책은 낱말·느낌을 묻지 않는다
+    closeModal(); S.view.wiz = null; S.tab = 'shelf'; render();
+    cheerPopup({ emoji:'📘', title:'읽을 책장에 꽂았어요!', sub:'다 읽으면 책을 누르고 “다 읽었어요!”를 눌러요. 기대된다!' });
+    return;
+  }
   w.step = 'words';
   openModal(bookWizard());
   confetti();
 }
+/* 읽었는지 — 예전 책(status 없음)은 읽은 책이다 */
+function bookRead(b){ return !!b && b.status !== 'toread'; }
+const BOOK_FEELS = ['😆 재미있었어요', '😮 신기했어요', '🥲 슬펐어요', '🤣 웃겼어요', '😨 조금 무서웠어요', '💖 마음이 따뜻했어요', '🤔 궁금한 게 생겼어요'];
 function showBook(id){
   const b = S.data.books.find(x=>x.id===id);
   if (!b) return;
@@ -9895,9 +10596,11 @@ function showBook(id){
       style="width:100%;max-width:230px;border-radius:var(--r-md);display:block;margin:0 auto 12px">` : ''}
     <p class="muted" style="margin:0">${esc(b.author||'지은이 몰라요')} · ${esc(b.category)} · ${'⭐'.repeat(b.stars||1)}</p>
     ${b.ar ? (() => { const bd = arBand(b.ar, (kid(b.kidId) || {}).arScore); return `<p style="margin:6px 0 0">📘 AR <b>${b.ar}</b>${bd ? ` · ${bd.ico} ${bd.label} — ${bd.note}` : ''}</p>`; })() : ''}
-    <p class="muted" style="margin:4px 0 14px">${new Date(b.readAt).toLocaleDateString('ko-KR')}에 읽었어요</p>
-    ${b.feel || b.toHero ? `<div class="th-ans" style="margin:-4px 0 12px">${b.feel ? `<div>💭 ${esc(b.feel)}</div>` : ''}${b.toHero ? `<div>💌 ${esc(b.toHero)}</div>` : ''}</div>` : ''}
-    <button class="btn mint wide sm" data-act="bookFeel" data-arg="${b.id}" style="margin-bottom:8px">${b.feel || b.toHero ? '💭 느낌 고쳐 쓰기' : '💭 한 줄 느낌 · 주인공에게 한마디'}</button>
+    ${bookRead(b) ? `<p class="muted" style="margin:4px 0 14px">${b.readAt ? new Date(b.readAt).toLocaleDateString('ko-KR') + '에 읽었어요' : '다 읽었어요'}</p>
+    ${b.feel ? `<div class="th-ans" style="margin:-4px 0 12px"><div>💭 ${esc(b.feel)}</div></div>` : ''}
+    <button class="btn mint wide sm" data-act="bookFeel" data-arg="${b.id}" style="margin-bottom:8px">${b.feel ? '💭 느낌 고쳐 쓰기' : '💭 한 줄 느낌 쓰기'}</button>`
+    : `<p class="muted" style="margin:4px 0 14px">📘 읽을 책이에요${b.addedAt ? ` · ${new Date(b.addedAt).toLocaleDateString('ko-KR')}에 꽂았어요` : ''}</p>
+    <button class="btn wide" data-act="bookDone" data-arg="${b.id}" style="margin-bottom:8px">📗 다 읽었어요!</button>`}
     <div class="row" style="gap:8px;margin-bottom:8px">
       <button class="btn ghost grow sm" data-bookedit="${b.id}">✏️ 고치기</button>
       <button class="btn ghost grow sm" data-bookdel="${b.id}">🗑 지우기</button>
@@ -9905,7 +10608,13 @@ function showBook(id){
     <button class="btn wide sm" data-close="1">닫기</button>`);
 }
 
-/* 등록한 책 고치기 — 제목·지은이·종류·별점·표지 */
+/* 등록한 책 고치기 — 제목·지은이·종류·읽었는지·별점·느낌·표지. back:'parent' 면 부모님 화면(기록 관리)으로 돌아간다 */
+function bookEditOpen(id, back){
+  const b = S.data.books.find(x => x.id === id); if (!b) return;
+  S.view.bookEdit = { id:b.id, title:b.title || '', author:b.author || '', ar:b.ar || '', category:b.category, feel:b.feel || '',
+    stars:b.stars || 3, coverUrl:b.coverUrl || '', coverAssetId:b.coverAssetId || '', coverFile:null, coverPreview:'', status:bookRead(b) ? 'read' : 'toread', back:back || '' };
+  openModal(bookEditSheet());
+}
 function bookEditSheet(){
   const e = S.view.bookEdit, cats = S.settings.cats && S.settings.cats.length ? S.settings.cats : DEFAULT_CATS;
   const cover = e.coverPreview || e.coverUrl || (e.coverAssetId ? '/_blob/' + e.coverAssetId : '');
@@ -9916,24 +10625,31 @@ function bookEditSheet(){
       <input class="field" id="beAr" inputmode="decimal" placeholder="📘 AR 지수 (영어책이면, 예: 2.6)" value="${esc(e.ar || '')}">
       <div><div class="muted" style="margin-bottom:6px">어떤 종류예요?</div>
         <div class="chips">${cats.map(c => `<button class="chip" data-becat="${esc(c)}" aria-pressed="${e.category === c}">${esc(c)}</button>`).join('')}</div></div>
-      <div><div class="muted" style="margin-bottom:6px">재미있었나요?</div>
+      <div class="bk-status" role="group" aria-label="읽었는지">
+        <button class="bk-st" data-act="beStatus" data-arg="read" aria-pressed="${e.status !== 'toread'}"><b>📗 다 읽었어요</b></button>
+        <button class="bk-st" data-act="beStatus" data-arg="toread" aria-pressed="${e.status === 'toread'}"><b>📘 읽을 예정이에요</b></button>
+      </div>
+      ${e.status === 'toread' ? '' : `<div><div class="muted" style="margin-bottom:6px">재미있었나요?</div>
         <div class="chips">${[1,2,3].map(n => `<button class="chip" data-bestar="${n}" aria-pressed="${e.stars === n}">${'⭐'.repeat(n)}</button>`).join('')}</div></div>
+      <div><div class="muted" style="margin-bottom:6px">💭 한 줄 느낌</div>
+        <input class="field" id="beFeel" maxlength="80" placeholder="읽고 난 느낌 (비워 둬도 괜찮아요)" value="${esc(e.feel || '')}"></div>`}
       <div><div class="muted" style="margin-bottom:6px">표지</div>
         ${cover ? `<img src="${esc(cover)}" alt="표지" style="display:block;max-width:150px;width:100%;margin:0 auto 8px;border-radius:var(--r-md);box-shadow:var(--shadow)">` : ''}
         <input type="file" accept="image/*" capture="environment" id="beCover" class="field"></div>
       ${e.saving ? '<p class="muted" style="text-align:center;margin:0">저장하는 중…</p>' : ''}
       <div class="row" style="gap:8px">
-        <button class="btn ghost grow" data-bookshow="${e.id}">그만두기</button>
+        <button class="btn ghost grow" ${e.back === 'parent' ? 'data-act="pdBack"' : `data-bookshow="${e.id}"`}>그만두기</button>
         <button class="btn grow" id="beSave" ${e.saving ? 'disabled' : ''}>저장</button>
       </div>
     </div>`;
 }
 function keepBookEditTyping(){
   const e = S.view.bookEdit; if (!e) return;
-  const t = $('#beTitle'), a = $('#beAuthor'), r = $('#beAr');
+  const t = $('#beTitle'), a = $('#beAuthor'), r = $('#beAr'), f = $('#beFeel');
   if (t) e.title = t.value;
   if (a) e.author = a.value;
   if (r) e.ar = r.value;
+  if (f) e.feel = f.value;
 }
 function keepWizTyping(){
   const w = S.view.wiz; if (!w) return;
@@ -10069,6 +10785,9 @@ setInterval(() => {
   if (OL && !activeUnlock(OL.kidId)) closeOneline('놀이 시간이 끝났어요. 내일 또 해요! 👋');
   if (IT && !activeUnlock(IT.kidId)) ittoClose('놀이 시간이 끝났어요. 친구들이 버블에서 기다릴게요! 👋');
   if (BH && !activeUnlock(BH.kidId)) bearClose('놀이 시간이 끝났어요. 곰돌이가 또 놀자고 기다릴게요! 👋');
+
+  // 기다리던 쪽지·칭찬 카드 (응원 팝업이 닫힌 뒤 등) — 3초마다 한 번 살펴본다
+  if (S.kidId && Date.now() % 3000 < 1000) notiCheck();
 
   // 부모님이 다른 기기에서 승인해 주면 여기서 알아채고 축하해 준다
   if (un && S.celebrated !== un.id){ S.celebrated = un.id; confetti(); render(); }
